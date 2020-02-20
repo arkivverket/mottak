@@ -9,20 +9,26 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </head>
 <body>
-	<div class="container mt-4">
-		{% if(!empty($_errors_)) %}
-		<div class="alert alert-danger alert-dismissible fade show" role="alert">
-			<h4 class="alert-heading">Oisann!</h4>
-			<hr>
-			<ul>
-				{% foreach($_errors_ as $error) %}
-					<li>{{$error}}</li>
-				{% endforeach %}
-			</ul>
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="{{$_url->toRoute('dashboard.view')}}">Mottak</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
 			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav ml-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="{{$_url->toRoute('dashboard.view')}}">Forside {% if($_route->getName() === 'dashboard.view') %}<span class="sr-only">(nåværende)</span>{% endif %}</a>
+					</li>
+				</ul>
+			</div>
 		</div>
+	</nav>
+
+	<div class="container-fluid mt-4">
+		{% if(!empty($_errors_)) %}
+			{{view:'partials.alerts.errors', ['errors' => $_errors_]}}
 		{% endif %}
 
 		{{block:content}}{{endblock}}

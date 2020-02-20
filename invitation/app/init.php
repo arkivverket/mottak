@@ -2,7 +2,7 @@
 
 use Symfony\Component\Dotenv\Dotenv;
 
-/**
+/*
  * Configure PHP error reporting.
  * @see http://php.net/manual/en/function.error-reporting.php
  */
@@ -43,7 +43,7 @@ define('MAKO_APPLICATION_PATH', __DIR__);
  */
 include dirname(__DIR__) . '/vendor/autoload.php';
 
-/**
+/*
  * Load environment variables.
  */
 if(file_exists(dirname(__DIR__) . '/.env'))
