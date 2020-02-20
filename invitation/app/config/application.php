@@ -119,7 +119,7 @@ return
 			//mako\application\services\CacheService::class,
 			//mako\application\services\CryptoService::class,
 			mako\application\services\ValidatorFactoryService::class,
-			//mako\application\services\PaginationFactoryService::class,
+			mako\application\services\PaginationFactoryService::class,
 			//mako\application\services\GatekeeperService::class,
 			//mako\application\services\EventService::class,
 			//mako\application\services\CommandBusService::class,

@@ -26,7 +26,7 @@ class Dashboard extends Controller
 	{
 		return $this->view->render('dashboard.view',
 		[
-			'uploads' => $this->getLastUploads(),
+			'invitations' => $this->getLastUploads(),
 		]);
 	}
 }

@@ -10,15 +10,7 @@ $routes->group(['namespace' => 'app\http\controllers', 'middleware' => ['securit
 
 	$routes->group(['prefix' => 'invitations'], function(Routes $routes): void
 	{
-		/*$routes->get('/new', 'Invitations::start', 'invitations.new');
-
-		$routes->post('/new', 'Invitations::parseXml');
-
-		$routes->get('/create', 'Invitations::create', 'invitations.create');
-
-		$routes->post('/create', 'Invitations::store');
-
-		$routes->get('/receipt/{id}', 'Invitations::receipt', 'invitations.receipt')->patterns(['id' => '[0-9]+']);*/
+		$routes->get('/', 'Invitations::list', 'invitations');
 
 		$routes->get('/new', 'Invitations::new', 'invitations.new');
 
@@ -27,5 +19,7 @@ $routes->group(['namespace' => 'app\http\controllers', 'middleware' => ['securit
 		$routes->get('/edit/{id}', 'Invitations::edit', 'invitations.edit')->patterns(['id' => '[0-9]+']);
 
 		$routes->post('/edit/{id}', 'Invitations::update')->patterns(['id' => '[0-9]+']);
+
+		$routes->get('/receipt/{id}', 'Invitations::receipt', 'invitations.receipt')->patterns(['id' => '[0-9]+']);
 	});
 });

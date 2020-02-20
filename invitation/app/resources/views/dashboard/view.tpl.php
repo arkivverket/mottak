@@ -14,41 +14,14 @@
 
 <hr>
 
-{% if($uploads->isEmpty()) %}
+{% if($invitations->isEmpty()) %}
 	{{view:'partials.alerts.info', ['message' => 'Det finnes ingen opplastinger.']}}
 {% else %}
-	<div class="table-responsive">
-		<table class="table table-bordered table-hover">
-			<thead>
-				<tr>
-					<th scope="col">UUID</th>
-					<th scope="col">Dato</th>
-					<th scope="col">Bruker</th>
-					<th scope="col">Type</th>
-					<th scope="col">Størrelse</th>
-					<th scope="col">Status</th>
-					<th scope="col">Handlinger</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% foreach($uploads as $upload) %}
-					<tr {% if(!$upload->archiveType) %}class="alert-warning"{% endif %}>
-						<td>{{$upload->uuid}}</td>
-						<td>{{$upload->created_at->format('Y-m-d H:i:s')}}</td>
-						<td></td>
-						<td>{{$upload->archiveType->type, default: 'Ukjent'}}</td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				{% endforeach %}
-			</tbody>
-		</table>
-	</div>
+	{{view:'invitations.partials.table'}}
 
 	<br>
 
-	<a class="btn btn-primary btn-block" href="{#{$_url->toRoute('invitations.list')}#}" role="button">Vis alle opplastinger</a>
+	<a class="btn btn-primary btn-block" href="{{$_url->toRoute('invitations')}}" role="button">Vis alle opplastinger</a>
 {% endif %}
 
 {% endblock %}

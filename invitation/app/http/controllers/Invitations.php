@@ -9,6 +9,9 @@ use mako\http\exceptions\NotFoundException;
 use mako\http\response\senders\Redirect;
 use mako\http\routing\Controller;
 use mako\validator\input\traits\InputValidationTrait;
+use Symfony\Component\Mailer\Bridge\Mailgun\Transport\MailgunHttpTransport;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
 use Throwable;
 
 /**
@@ -17,6 +20,19 @@ use Throwable;
 class Invitations extends Controller
 {
 	use InputValidationTrait;
+
+	/**
+	 *
+	 */
+	public function list(): string
+	{
+		$invitations = Invitation::descending('id')->paginate();
+
+		return $this->view->render('invitations.list',
+		[
+			'invitations' => $invitations,
+		]);
+	}
 
 	/**
 	 *
@@ -140,7 +156,45 @@ class Invitations extends Controller
 		]);
 	}
 
-	/*
+	/**
+	 *
+	 */
+	protected function buildUrl(Invitation $invitation): string
+	{
+		return 'dpldr://' . base64_encode(json_encode
+		([
+			'reference'  => $invitation->uuid,
+			'uploadUrl'  => getenv('UPLOAD_URL'),
+			'uploadType' => 'tar',
+			'meta'       => ['invitation_id' => $invitation->id],
+		]));
+	}
+
+	/**
+	 *
+	 */
+	protected function sendEmail(string $recipient, string $url): void
+	{
+		$email = new Email;
+
+		$email->to($recipient);
+
+		$email->from('donotreply@' . getenv('MAILGUN_DOMAIN'));
+
+		$email->subject('Invitasjon');
+
+		$email->text($url);
+
+		$email->html("<a href='{$url}'>{$url}</a>");
+
+		$transport = new MailgunHttpTransport(getenv('MAILGUN_API_KEY'), getenv('MAILGUN_DOMAIN'));
+
+		$mailer = new Mailer($transport);
+
+		$mailer->send($email);
+	}
+
+	/**
 	 *
 	 */
 	public function update(int $id): Redirect
@@ -152,6 +206,8 @@ class Invitations extends Controller
 			throw new NotFoundException;
 		}
 
+		$isNewInvitation = $invitation->archive_type_id === null;
+
 		$input = $this->validate($this->request->getData()->all(),
 		[
 			'name'            => ['required'],
@@ -160,6 +216,40 @@ class Invitations extends Controller
 			'is_sensitive'    => ['required', 'in(["0","1"])'],
 		]);
 
-		var_dump($input); exit;
+		$invitation->archive_type_id = $input['archive_type_id'];
+
+		$invitation->is_sensitive = $input['is_sensitive'] === '1' ? true : false;
+
+		$invitation->name = $input['name'];
+
+		$invitation->email = $input['email'];
+
+		$invitation->save();
+
+		if($isNewInvitation)
+		{
+			$this->sendEmail($invitation->email, $this->buildUrl($invitation));
+		}
+
+		return $this->redirectResponse('invitations.receipt', ['id' => $invitation->id]);
+	}
+
+	/**
+	 *
+	 */
+	public function receipt(string $id): string
+	{
+		$invitation = Invitation::get($id);
+
+		if(!$invitation)
+		{
+			throw new NotFoundException;
+		}
+
+		return $this->view->render('invitations.receipt',
+		[
+			'invitation' => $invitation,
+			'url'        => $this->buildUrl($invitation),
+		]);
 	}
 }
