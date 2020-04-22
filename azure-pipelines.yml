@@ -37,6 +37,32 @@ stages:
   - stage: BuildContainers
     displayName: Build all container images
     jobs:
+      - job: BuildExample
+        displayName: Build Example
+        steps:
+          - task: Docker@2
+            displayName: Build Example
+            inputs:
+              containerRegistry: arkivverket
+              repository: mottak/example
+              command: build
+              Dockerfile: example/Dockerfile
+              tags: |
+                latest
+                $(Build.SourceBranchName)
+
+          - task: Docker@2
+            displayName: Push example
+            inputs:
+              containerRegistry: arkivverket
+              repository: mottak/example
+              command: push
+              Dockerfile: example/Dockerfile
+              tags: |
+                latest
+                $(build.SourceBranchName)
+#            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+
       - job: BuildArkade
         displayName: Build Arkade
         steps:
