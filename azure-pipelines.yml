@@ -27,8 +27,8 @@ pool:
 variables:
   DOCKER_BUILDKIT: 1
   dockerRegistryServiceConnection: 'arkivverket'
-  clusterName: 'arkivverket-prod-mottak'
-  namespace: 'mottak'
+  clusterName: 'arkivverket-prod'
+  namespace: 'example'
   imagePullSecret: 'arkivverket-pull-secret'
   containerRegistry: 'arkivverket.azurecr.io'
 
@@ -280,46 +280,75 @@ stages:
   - stage: Deploy
     displayName: Deploy Stage
     dependsOn: BuildContainers
-    condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+#    condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
     jobs:
-      - deployment: DeployInvitation
+#      - deployment: DeployInvitation
+#        environment: $(clusterName)
+#        strategy:
+#          runOnce:
+#            deploy:
+#              steps:
+#                - task: DownloadPipelineArtifact@2
+#                  inputs:
+#                    artifactName: 'invitation-artifacts'
+#                    downloadPath: '$(System.ArtifactsDirectory)/invitation'
+#                # This task is needed so that the deploy task can give the
+#                # secrets to the cluster in the deploy task
+#                - task: KubernetesManifest@0
+#                  displayName: Create imagePullSecret
+#                  inputs:
+#                    action: createSecret
+#                    secretName: $(imagePullSecret)
+#                    namespace: $(namespace)
+#                    dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+#                    kubernetesServiceConnection: $(clusterName)
+#
+#                - task: KubernetesManifest@0
+#                  displayName: Deploy Invitation to Kubernetes cluster
+#                  inputs:
+#                    action: deploy
+#                    namespace: $(namespace)
+#                    manifests: |
+#                      $(System.ArtifactsDirectory)/invitation/invitation-deployment.yaml
+#                      $(System.ArtifactsDirectory)/invitation/invitation-service.yaml
+#                    # imagePullSecrets will make the secrets needed to pull the
+#                    # container image from the container image repository
+#                    # available to the cluster
+#                    imagePullSecrets: |
+#                      $(imagePullSecret)
+#                    # containers will find the container image in the yaml files
+#                    # listed in manifests and add the tag.
+#                    # In this case the tag is $(BuildId.SourceBranchName) which
+#                    # will be replaced with the tag in git
+#                    containers: |
+#                      $(containerRegistry)/mottak/invitation:$(Build.SourceBranchName)
+#                    kubernetesServiceConnection: $(clusterName)
+
+      - deployment: DeployExample
         environment: $(clusterName)
         strategy:
           runOnce:
             deploy:
               steps:
-                - task: DownloadPipelineArtifact@2
+                # Install Helm 3 on the agent (build machine)
+                - task: HelmInstaller@1
                   inputs:
-                    artifactName: 'invitation-artifacts'
-                    downloadPath: '$(System.ArtifactsDirectory)/invitation'
-                # This task is needed so that the deploy task can give the
-                # secrets to the cluster in the deploy task
-                - task: KubernetesManifest@0
-                  displayName: Create imagePullSecret
+                    helmVersionToInstall: 3.1.2
+                
+                - task: HelmDeploy@0
+                  displayName: 'Setup Helm <-> Cluster'
                   inputs:
-                    action: createSecret
-                    secretName: $(imagePullSecret)
-                    namespace: $(namespace)
-                    dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-                    kubernetesServiceConnection: $(clusterName)
+                    connectionType: Azure Resource Manager
+                    azureSubscriptionEndpoint: 'arkivverket-prod-example'
+                    azureResourceGroup: 'arkivverket'
+                    kubernetesCluster: $(clusterName)
 
-                - task: KubernetesManifest@0
-                  displayName: Deploy Invitation to Kubernetes cluster
+                - task: HelmDeploy@0
+                  displayName: Deploy Example to Cluster (Helm)
                   inputs:
-                    action: deploy
-                    namespace: $(namespace)
-                    manifests: |
-                      $(System.ArtifactsDirectory)/invitation/invitation-deployment.yaml
-                      $(System.ArtifactsDirectory)/invitation/invitation-service.yaml
-                    # imagePullSecrets will make the secrets needed to pull the
-                    # container image from the container image repository
-                    # available to the cluster
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    # containers will find the container image in the yaml files
-                    # listed in manifests and add the tag.
-                    # In this case the tag is $(BuildId.SourceBranchName) which
-                    # will be replaced with the tag in git
-                    containers: |
-                      $(containerRegistry)/mottak/invitation:$(Build.SourceBranchName)
-                    kubernetesServiceConnection: $(clusterName)
+                    command: upgrade
+                    chartType: filepath
+                    chartPath: $(System.ArtifactsDirectory)/example
+                    chartName: example
+                    install: true
+                    kubernetesCluster: $(clusterName)
