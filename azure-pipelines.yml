@@ -339,7 +339,7 @@ stages:
                   displayName: 'Setup Helm <-> Cluster'
                   inputs:
                     connectionType: Azure Resource Manager
-                    azureSubscriptionEndpoint: 'arkivverket-prod-example'
+                    azureSubscriptionEndpoint: 'pipeline'
                     azureResourceGroup: 'arkivverket'
                     kubernetesCluster: $(clusterName)
 
