@@ -353,3 +353,4 @@ stages:
                     install: true
                     kubernetesCluster: $(clusterName)
                     azureSubscriptionEndpoint: 'pipeline'
+                    azureResourceGroup: 'arkivverket'
