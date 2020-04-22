@@ -75,6 +75,9 @@ stages:
               save: false
               destination: $(Build.ArtifactStagingDirectory)
 
+          - publish: $(Build.ArtifactStagingDirectory)/example-0.0.1.tgz
+            artifact: example-helm-package
+
 #            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
       # - job: BuildArkade
@@ -348,6 +351,9 @@ stages:
                 - task: HelmInstaller@1
                   inputs:
                     helmVersionToInstall: 3.1.2
+
+                - download: current
+                  artifact: example-helm-package
                 
                 - task: HelmDeploy@0
                   displayName: 'Setup Helm <-> Cluster'
@@ -358,14 +364,14 @@ stages:
                     kubernetesCluster: $(clusterName)
 
                 - script: |
-                    echo Build.ArtifactStagingDirectory; find $(Build.ArtifactStagingDirectory); echo System.DefaultWorkingDirectory; find $(System.DefaultWorkingDirectory); exit 0
+                    echo Pipeline.Workspace; find $(Pipeline.Workspace); exit 0
 
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
                   inputs:
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(Build.ArtifactStagingDirectory)/example-0.0.1.tgz
+                    chartPath: $(Pipeline.Workspace)/example-0.0.1.tgz
                     chartName: example
                     install: true
                     kubernetesCluster: $(clusterName)
