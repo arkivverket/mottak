@@ -343,12 +343,17 @@ stages:
                     azureResourceGroup: 'arkivverket'
                     kubernetesCluster: $(clusterName)
 
+                - task: Bash@3
+                  displayName: Debug
+                  inputs:
+                    script: 'pwd; find .; echo $(Agent.BuildDirectory); exit 0'
+
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
                   inputs:
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(System.ArtifactsDirectory)/example
+                    chartPath: $(Agent.BuildDirectory)/example
                     chartName: example
                     install: true
                     kubernetesCluster: $(clusterName)
