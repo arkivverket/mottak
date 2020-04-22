@@ -343,10 +343,8 @@ stages:
                     azureResourceGroup: 'arkivverket'
                     kubernetesCluster: $(clusterName)
 
-                - task: Bash@3
-                  displayName: Debug
-                  inputs:
-                    script: 'pwd; find .; exit 0'
+                - script: |
+                    pwd; find .; exit 0
 
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
