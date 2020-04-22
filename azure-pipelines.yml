@@ -61,6 +61,19 @@ stages:
               tags: |
                 latest
                 $(build.SourceBranchName)
+
+          # Install Helm 3 on the agent (build machine)
+          - task: HelmInstaller@1
+            inputs:
+              helmVersionToInstall: 3.1.2
+
+          - task: HelmDeploy@0
+            displayName: Package as Helm Chart Archive
+            inputs:
+              command: package
+              chartPath: example/helm
+              destination: $(Build.ArtifactStagingDirectory)
+
 #            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
       # - job: BuildArkade
@@ -344,14 +357,14 @@ stages:
                     kubernetesCluster: $(clusterName)
 
                 - script: |
-                    pwd; find .; exit 0
+                    pwd; find .; find $(Agent.BuildDirectory); exit 0
 
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
                   inputs:
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(Agent.BuildDirectory)/example
+                    chartPath: $(Build.ArtifactStagingDirectory)/example-0.0.1.tgz
                     chartName: example
                     install: true
                     kubernetesCluster: $(clusterName)
