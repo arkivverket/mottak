@@ -379,4 +379,3 @@ stages:
                     azureSubscriptionEndpoint: 'pipeline'
                     azureResourceGroup: 'arkivverket'
                     namespace: example
-                    recreate: true
