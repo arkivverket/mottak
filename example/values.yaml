@@ -5,8 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: mottak/example
-  pullPolicy: IfNotPresent
+  repository: arkivverket.azurecr.io/mottak/example
+  pullPolicy: Always
 
 imagePullSecrets: []
 nameOverride: ""
@@ -14,7 +14,7 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
