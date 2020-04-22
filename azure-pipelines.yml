@@ -352,3 +352,4 @@ stages:
                     chartName: example
                     install: true
                     kubernetesCluster: $(clusterName)
+                    azureSubscriptionEndpoint: 'pipeline'
