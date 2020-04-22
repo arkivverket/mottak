@@ -362,6 +362,7 @@ stages:
                     azureSubscriptionEndpoint: 'pipeline'
                     azureResourceGroup: 'arkivverket'
                     kubernetesCluster: $(clusterName)
+                    namespace: example
 
                 - script: |
                     echo Pipeline.Workspace; find $(Pipeline.Workspace); exit 0
@@ -377,3 +378,4 @@ stages:
                     kubernetesCluster: $(clusterName)
                     azureSubscriptionEndpoint: 'pipeline'
                     azureResourceGroup: 'arkivverket'
+                    namespace: example
