@@ -371,7 +371,7 @@ stages:
                   inputs:
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(Pipeline.Workspace)/example-0.0.1.tgz
+                    chartPath: $(Pipeline.Workspace)/example-helm-package/example-0.0.1.tgz
                     chartName: example
                     install: true
                     kubernetesCluster: $(clusterName)
