@@ -63,219 +63,219 @@ stages:
                 $(build.SourceBranchName)
 #            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildArkade
-        displayName: Build Arkade
-        steps:
-          - task: Docker@2
-            displayName: Build Arkade
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/arkade5
-              command: build
-              Dockerfile: arkade5/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildArkade
+      #   displayName: Build Arkade
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build Arkade
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/arkade5
+      #         command: build
+      #         Dockerfile: arkade5/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push Arkade
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/arkade5
-              command: push
-              Dockerfile: arkade5/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push Arkade
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/arkade5
+      #         command: push
+      #         Dockerfile: arkade5/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildInvitation
-        displayName: Build Invitation
-        steps:
-          - task: Docker@2
-            displayName: Build invitation
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/invitation
-              command: build
-              Dockerfile: invitation/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildInvitation
+      #   displayName: Build Invitation
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build invitation
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/invitation
+      #         command: build
+      #         Dockerfile: invitation/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push invitation
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/invitation
-              command: push
-              Dockerfile: invitation/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push invitation
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/invitation
+      #         command: push
+      #         Dockerfile: invitation/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-          - task: PublishPipelineArtifact@1
-            inputs:
-              artifactName: 'invitation-artifacts'
-              targetPath: 'k8s/invitation'
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: PublishPipelineArtifact@1
+      #       inputs:
+      #         artifactName: 'invitation-artifacts'
+      #         targetPath: 'k8s/invitation'
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildLogService
-        displayName: Build Log Service
-        steps:
-          - task: Docker@2
-            displayName: Build log service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/log
-              command: build
-              Dockerfile: log/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildLogService
+      #   displayName: Build Log Service
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build log service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/log
+      #         command: build
+      #         Dockerfile: log/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push log service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/log
-              command: push
-              Dockerfile: log/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push log service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/log
+      #         command: push
+      #         Dockerfile: log/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildMailer
-        displayName: Build Mailer
-        steps:
-          - task: Docker@2
-            displayName: Build mailer
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/mailer
-              command: build
-              Dockerfile: mailer/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildMailer
+      #   displayName: Build Mailer
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build mailer
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/mailer
+      #         command: build
+      #         Dockerfile: mailer/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push mailer
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/mailer
-              command: push
-              Dockerfile: mailer/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push mailer
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/mailer
+      #         command: push
+      #         Dockerfile: mailer/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildChecksumService
-        displayName: Build Checksum Service
-        steps:
-          - task: Docker@2
-            displayName: Build checksum service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-checksum256
-              command: build
-              Dockerfile: s3-checksum256/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildChecksumService
+      #   displayName: Build Checksum Service
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build checksum service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-checksum256
+      #         command: build
+      #         Dockerfile: s3-checksum256/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push checksum service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-checksum256
-              command: push
-              Dockerfile: s3-checksum256/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push checksum service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-checksum256
+      #         command: push
+      #         Dockerfile: s3-checksum256/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildDeleteService
-        displayName: Build Delete Service
-        steps:
-          - task: Docker@2
-            displayName: Build delete service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-delete
-              command: build
-              Dockerfile: s3-delete/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildDeleteService
+      #   displayName: Build Delete Service
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build delete service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-delete
+      #         command: build
+      #         Dockerfile: s3-delete/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push delete service
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-delete
-              command: push
-              Dockerfile: s3-delete/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push delete service
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-delete
+      #         command: push
+      #         Dockerfile: s3-delete/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildAVScanner
-        displayName: Build AV Scanner
-        steps:
-          - task: Docker@2
-            displayName: Build AV scanner
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-scan-tar
-              command: build
-              Dockerfile: s3-scan-tar/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildAVScanner
+      #   displayName: Build AV Scanner
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build AV scanner
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-scan-tar
+      #         command: build
+      #         Dockerfile: s3-scan-tar/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push AV scanner
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/s3-scan-tar
-              command: build
-              Dockerfile: s3-scan-tar/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push AV scanner
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/s3-scan-tar
+      #         command: build
+      #         Dockerfile: s3-scan-tar/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
-      - job: BuildTusd
-        displayName: Build Tusd
-        steps:
-          - task: Docker@2
-            displayName: Build tusd container
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/tusd
-              command: build
-              Dockerfile: tusd/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
+      # - job: BuildTusd
+      #   displayName: Build Tusd
+      #   steps:
+      #     - task: Docker@2
+      #       displayName: Build tusd container
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/tusd
+      #         command: build
+      #         Dockerfile: tusd/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
 
-          - task: Docker@2
-            displayName: Push tusd container
-            inputs:
-              containerRegistry: arkivverket
-              repository: mottak/tusd
-              command: build
-              Dockerfile: tusd/Dockerfile
-              tags: |
-                latest
-                $(Build.SourceBranchName)
-            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+      #     - task: Docker@2
+      #       displayName: Push tusd container
+      #       inputs:
+      #         containerRegistry: arkivverket
+      #         repository: mottak/tusd
+      #         command: build
+      #         Dockerfile: tusd/Dockerfile
+      #         tags: |
+      #           latest
+      #           $(Build.SourceBranchName)
+      #       condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
 
   - stage: Deploy
     displayName: Deploy Stage
@@ -346,7 +346,7 @@ stages:
                 - task: Bash@3
                   displayName: Debug
                   inputs:
-                    script: 'pwd; find .; echo $(Agent.BuildDirectory); exit 0'
+                    script: 'pwd; find .; exit 0'
 
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
