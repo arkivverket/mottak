@@ -72,6 +72,7 @@ stages:
             inputs:
               command: package
               chartPath: example/helm
+              save: false
               destination: $(Build.ArtifactStagingDirectory)
 
 #            condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
