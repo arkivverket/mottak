@@ -358,7 +358,7 @@ stages:
                     kubernetesCluster: $(clusterName)
 
                 - script: |
-                    pwd; find .; find $(Agent.BuildDirectory); exit 0
+                    echo Build.ArtifactStagingDirectory; find $(Build.ArtifactStagingDirectory); echo System.DefaultWorkingDirectory; find $(System.DefaultWorkingDirectory); exit 0
 
                 - task: HelmDeploy@0
                   displayName: Deploy Example to Cluster (Helm)
