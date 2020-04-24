@@ -1,18 +1,23 @@
 import datetime
 import time
 import os
-import sys
+import logging
 
-print("The example started")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s:%(levelname)s:%(message)s"
+)
 
-SECRET = os.getenv("TEST_SECRET")
+logging.info("The example started")
+
+SECRET = os.getenv("TEST_ENV_SECRET")
 
 if SECRET is not None:
-    print("The example found the env variable TEST_SECRET: " + SECRET) # Secrets should not be logged!
+    # Secrets should not be logged!
+    logging.info("The example found the env variable TEST_ENV_SECRET: {}".format(SECRET))
 else:
-    print("The example could not find the env variable TEST_SECRET", file=sys.stderr)
+    logging.warning("The example could not find the env variable TEST_ENV_SECRET")
 
 while True:
     time.sleep(60)
-    print("The example ran for another minute", datetime.datetime.now().time())
-
+    logging.info("The example ran for another minute")
