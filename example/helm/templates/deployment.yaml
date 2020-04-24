@@ -24,4 +24,4 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: TEST_ENV_SECRET
-              value: "example-env-injector@azurekeyvault"
+              value: "test-env-secret@azurekeyvault"
