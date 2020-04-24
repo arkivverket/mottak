@@ -22,7 +22,6 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          args: ["TEST_ENV_SECRET"]
           env:
             - name: TEST_ENV_SECRET
               value: "example-env-injector@azurekeyvault"
