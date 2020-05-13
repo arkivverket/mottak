@@ -81,15 +81,6 @@ stages:
               containerRepo: ${{ variables.containerRepo }}
               containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
 
-      # - job: BuildRenameService
-      #   displayName: Build Rename Service
-      #   steps:
-      #     - template: build.yaml
-      #       parameters:
-      #         appName: 's3-rename'
-      #         containerRepo: ${{ variables.containerRepo }}
-      #         containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
-
       - job: BuildAVScanner
         displayName: Build AV Scanner
         steps:
@@ -108,7 +99,6 @@ stages:
               containerRepo: ${{ variables.containerRepo }}
               containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
 
-
   - stage: Package
     displayName: Package Mottak as Helm Chart
     dependsOn: Build
@@ -121,7 +111,6 @@ stages:
             parameters:
               appName: 'mottak'
               helmPackageArtifactName: 'mottak-helm-package'
-
 
   - stage: Deploy
     displayName: Deploy Stage
