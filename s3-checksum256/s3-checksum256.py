@@ -10,8 +10,9 @@ from py_objectstore import ArkivverketObjectStorage
 try:
     from dotenv import load_dotenv
     load_dotenv()
-except:
+except Exception as e:
     print("Failed to load dotenv file. Assuming production.")
+    print(e)
 
 ENVERROR = 1
 FILEERROR = 2

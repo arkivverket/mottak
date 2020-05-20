@@ -144,6 +144,7 @@ lockfile = "^0.12.2"
 reference = "fcbb9a04af94654ad107a3bbe8871a79445aa3db"
 type = "git"
 url = "https://github.com/arkivverket/py-objectstore.git"
+
 [[package]]
 category = "main"
 description = "C parser in Python"
@@ -165,6 +166,17 @@ astroid = ">=2.3.0,<2.4"
 colorama = "*"
 isort = ">=4.2.5,<5"
 mccabe = ">=0.6,<0.7"
+
+[[package]]
+category = "main"
+description = "Add .env support to your django/flask apps in development and deployments"
+name = "python-dotenv"
+optional = false
+python-versions = "*"
+version = "0.13.0"
+
+[package.extras]
+cli = ["click (>=5.0)"]
 
 [[package]]
 category = "main"
@@ -223,7 +235,7 @@ python-versions = "*"
 version = "1.11.2"
 
 [metadata]
-content-hash = "ffc46eb4e5e84c540fa6bd0c4c8584b8bb184b2dddea554e1d3ee6fa368f9452"
+content-hash = "7b3fdc66299b6e72101b0d0c80193932c91ed2895057ca66d550d8807f6437cd"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -347,6 +359,10 @@ pycparser = [
 pylint = [
     {file = "pylint-2.4.4-py3-none-any.whl", hash = "sha256:886e6afc935ea2590b462664b161ca9a5e40168ea99e5300935f6591ad467df4"},
     {file = "pylint-2.4.4.tar.gz", hash = "sha256:3db5468ad013380e987410a8d6956226963aed94ecb5f9d3a28acca6d9ac36cd"},
+]
+python-dotenv = [
+    {file = "python-dotenv-0.13.0.tar.gz", hash = "sha256:3b9909bc96b0edc6b01586e1eed05e71174ef4e04c71da5786370cebea53ad74"},
+    {file = "python_dotenv-0.13.0-py2.py3-none-any.whl", hash = "sha256:25c0ff1a3e12f4bde8d592cc254ab075cfe734fc5dd989036716fd17ee7e5ec7"},
 ]
 requests = [
     {file = "requests-2.23.0-py2.py3-none-any.whl", hash = "sha256:43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee"},
