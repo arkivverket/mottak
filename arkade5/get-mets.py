@@ -1,5 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
+# This creates /tmp/dias-mets.xml so we can feed this into Arkade
 
 import os                               # for getenv
 import psycopg2
@@ -9,9 +10,11 @@ import psycopg2.extras
 import logging
 import re
 
-from dotenv import load_dotenv
-load_dotenv()
-
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    print('Dotenv not loaded.')
 
 UUIDERROR = 1  # invalid UUID
 DBERROR = 10
