@@ -38,10 +38,13 @@ spec:
           template: avscan
           dependencies: [task-kontroll]
           when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+        - name: task-unpack
+          template: unpack
+          dependencies: [task-avscan]
+          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
         - name: task-arkade5
           template: arkade5
-          dependencies: [task-avscan]
-          # Don't run arkade5 if the checksum was all wrong.
+          dependencies: [task-unpack]
           when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
           # Done: send mail....
         - name: task-nytt-arkiv
@@ -58,20 +61,25 @@ spec:
 
   - name: sjekksum-kontroll
     container:
-      image: arkivverket/s3-checksum256
+      image: arkivverket.azurecr.io/arkivverket/s3-checksum256
       imagePullPolicy: Always
-      volumeMounts:
-        - name: gcs
-          mountPath: "/etc/gcs"
-          readOnly: true
-      envFrom:
-        - configMapRef:
-            name: workflow-environment
+
       env:
         - name: OBJECT
           value: '{{workflow.parameters.OBJECT}}'
         - name: CHECKSUM
           value: '{{workflow.parameters.CHECKSUM}}'
+        - name: OBJECTSTORE
+          value: abs
+        - name: BUCKET
+          value: 'mottak'
+        - name: AZURE_ACCOUNT
+          value: mottakmvp
+        - name: AZURE_KEY
+          valueFrom:
+              secretKeyRef:
+                  name: storage-key
+                  key: secret-value
 
     outputs:
       parameters:
@@ -83,22 +91,19 @@ spec:
   # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
   - name: sjekksum-feil
     container:
-      image: arkivverket/mailer
+      image: arkivverket.azurecr.io/arkivverket/mailer
       imagePullPolicy: Always
       envFrom:
         - configMapRef:
             name: workflow-environment
       env:
         - name: MAILGUN_DOMAIN
-          valueFrom:
-            secretKeyRef:
-              name: mailgun
-              key: emailDomain
+          value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
         - name: MAILGUN_API_KEY
           valueFrom:
             secretKeyRef:
               name: mailgun
-              key: apiKey
+              key: secret-value
         - name: NAME
           value: '{{workflow.parameters.NAME}}'
         - name: RECIPIENT
@@ -106,37 +111,77 @@ spec:
         - name: SUBJECT
           value: 'Archieve rejected'
         - name: MESSAGE
-          value: 'The archieve {{workflow.parameters.OBJECT}} was rejected due to checksum error. It will be deleted.'
+          value: 'The archieve {{workflow.parameters.UUID}} was rejected due to checksum error. It will be deleted.'
 
   - name: delete
     container:
-      image: arkivverket/s3-delete
+      image: arkivverket.azurecr.io/arkivverket/s3-delete
       imagePullPolicy: Always
-      volumeMounts:
-        - name: gcs
-          mountPath: "/etc/gcs"
-          readOnly: true
-      envFrom:
-        - configMapRef:
-            name: workflow-environment
       env:
         - name: OBJECT
           value: '{{workflow.parameters.OBJECT}}'
+        - name: OBJECTSTORE
+          value: abs
+        - name: BUCKET
+          value: 'mottak'
+        - name: AZURE_ACCOUNT
+          value: mottakmvp
+        - name: AZURE_KEY
+          valueFrom:
+              secretKeyRef:
+                  name: storage-key
+                  key: secret-value
+
 
   - name: avscan
     container:
-      image: arkivverket/s3-scan-tar
+      image: arkivverket.azurecr.io/arkivverket/s3-scan-tar
       imagePullPolicy: Always
-      volumeMounts:
-        - name: gcs
-          mountPath: "/etc/gcs"
-          readOnly: true
-      envFrom:
-        - configMapRef:
-            name: workflow-environment
       env:
-        - name: CHECKSUM
-          value: '{{workflow.parameters.CHECKSUM}}'
+        - name: OBJECT
+          value: '{{workflow.parameters.OBJECT}}'
+        - name: OBJECTSTORE
+          value: abs
+        - name: BUCKET
+          value: 'mottak'
+        - name: AZURE_ACCOUNT
+          value: mottakmvp
+        - name: AZURE_KEY
+          valueFrom:
+              secretKeyRef:
+                  name: storage-key
+                  key: secret-value
+
+        - name: AVLOG
+          value: /tmp/avlog
+    outputs:
+      artifacts:
+        - name: avlog
+          path: /tmp/avlog
+          archive:
+            none: {}
+
+  - name: unpack
+    container:
+      image: arkivverket.azurecr.io/arkivverket/s3-unpack
+      imagePullPolicy: Always
+      env:
+        - name: OBJECT
+          value: '{{workflow.parameters.OBJECT}}'
+        - name: UUID
+          value: '{{workflow.parameters.UUID}}'
+        - name: OBJECTSTORE
+          value: abs
+        - name: BUCKET
+          value: 'mottak'
+        - name: AZURE_ACCOUNT
+          value: mottakmvp
+        - name: AZURE_KEY
+          valueFrom:
+              secretKeyRef:
+                  name: storage-key
+                  key: secret-value
+
         - name: AVLOG
           value: /tmp/avlog
     outputs:
@@ -149,18 +194,17 @@ spec:
 
   - name: arkade5
     container:
-      image: arkivverket/arkade5
+      image: arkivverket.azurecr.io/arkivverket/arkade5
       imagePullPolicy: Always
-      volumeMounts:
-        - name: gcs
-          mountPath: "/etc/gcs"
-          readOnly: true
-      envFrom:
-        - configMapRef:
-            name: workflow-environment
+      # We need this for FUSE / goofys
+      securityContext:
+        privileged: true
+        capabilities:
+            add:
+              - SYS_ADMIN
       env:
-        - name: OBJECT
-          value: '{{workflow.parameters.OBJECT}}'
+        - name: UUID
+          value: '{{workflow.parameters.UUID}}'
         - name: ARCHIEVE_TYPE
           value: '{{workflow.parameters.ARCHIEVE_TYPE}}'
           # It needs the UUID because of the structure of the package. To know where to look for the mets file.
@@ -190,17 +234,14 @@ spec:
             Attached to this email is the report from Arkade5 and the log from the anti-virus scan.
             Please review.
     container:
-      image: arkivverket/mailer
+      image: arkivverket.azurecr.io/arkivverket/mailer
       imagePullPolicy: Always
       envFrom:
         - configMapRef:
             name: workflow-environment
       env:
         - name: MAILGUN_DOMAIN
-          valueFrom:
-            secretKeyRef:
-              name: mailgun
-              key: emailDomain
+          value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
         - name: MAILGUN_API_KEY
           valueFrom:
             secretKeyRef:
