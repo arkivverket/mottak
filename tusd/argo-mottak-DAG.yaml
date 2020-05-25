@@ -207,11 +207,19 @@ spec:
           value: '{{workflow.parameters.UUID}}'
         - name: ARCHIEVE_TYPE
           value: '{{workflow.parameters.ARCHIEVE_TYPE}}'
-          # It needs the UUID because of the structure of the package. To know where to look for the mets file.
-        - name: UUID
-          value: '{{workflow.parameters.UUID}}'
         - name: INVITATIONID
           value: '{{workflow.parameters.INVITATIONID}}'
+        - name: OBJECTSTORE
+          value: abs
+        - name: BUCKET
+          value: 'mottak'
+        - name: AZURE_ACCOUNT
+          value: mottakmvp
+        - name: AZURE_KEY
+          valueFrom:
+              secretKeyRef:
+                  name: storage-key
+                  key: secret-value
     outputs:
       artifacts:
         - name: arkade-report
