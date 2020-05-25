@@ -90,6 +90,15 @@ stages:
               containerRepo: ${{ variables.containerRepo }}
               containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
 
+      - job: BuildUnpacker
+        displayName: Build unpacker
+        steps:
+          - template: build.yaml
+            parameters:
+              appName: 's3-scan-tar'
+              containerRepo: ${{ variables.containerRepo }}
+              containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
+
       - job: BuildTusd
         displayName: Build Tusd
         steps:
