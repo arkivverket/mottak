@@ -19,7 +19,10 @@ RUN pip3 install \
 COPY tusd-hooks/pre-create  /srv/tusd-hooks/pre-create
 COPY tusd-hooks/pre-create  /srv/tusd-hooks/post-finish
 COPY argo-mottak-DAG.yaml /srv/
-COPY --from=argocli /bin/argo /usr/local/bin/argo
+
+RUN wget https://github.com/argoproj/argo/releases/download/v2.8.0/argo-linux-amd64 && \
+    chmod +x argo-linux-amd64 && \
+    mv argo-linux-amd64 /usr/local/bin/argo
 
 WORKDIR /srv/tusd-data
 EXPOSE 1080
