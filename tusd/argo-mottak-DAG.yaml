@@ -12,11 +12,6 @@ kind: Workflow
 metadata:
   generateName: mottak-dag-
 spec:
-  volumes:
-    - name: gcs
-      secret:
-        secretName: gcs-cred
-
   entrypoint: mottak
   templates:
   - name: mottak
@@ -61,7 +56,7 @@ spec:
 
   - name: sjekksum-kontroll
     container:
-      image: arkivverket.azurecr.io/arkivverket/s3-checksum256
+      image: arkivverket.azurecr.io/mottak/s3-checksum256
       imagePullPolicy: Always
 
       env:
@@ -91,7 +86,7 @@ spec:
   # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
   - name: sjekksum-feil
     container:
-      image: arkivverket.azurecr.io/arkivverket/mailer
+      image: arkivverket.azurecr.io/mottak/mailer
       imagePullPolicy: Always
       envFrom:
         - configMapRef:
@@ -115,7 +110,7 @@ spec:
 
   - name: delete
     container:
-      image: arkivverket.azurecr.io/arkivverket/s3-delete
+      image: arkivverket.azurecr.io/mottak/s3-delete
       imagePullPolicy: Always
       env:
         - name: OBJECT
@@ -135,7 +130,7 @@ spec:
 
   - name: avscan
     container:
-      image: arkivverket.azurecr.io/arkivverket/s3-scan-tar
+      image: arkivverket.azurecr.io/mottak/s3-scan-tar
       imagePullPolicy: Always
       env:
         - name: OBJECT
@@ -194,7 +189,7 @@ spec:
 
   - name: arkade5
     container:
-      image: arkivverket.azurecr.io/arkivverket/arkade5
+      image: arkivverket.azurecr.io/mottak/arkade5
       imagePullPolicy: Always
       # We need this for FUSE / goofys
       securityContext:
@@ -242,7 +237,7 @@ spec:
             Attached to this email is the report from Arkade5 and the log from the anti-virus scan.
             Please review.
     container:
-      image: arkivverket.azurecr.io/arkivverket/mailer
+      image: arkivverket.azurecr.io/mottak/mailer
       imagePullPolicy: Always
       envFrom:
         - configMapRef:
