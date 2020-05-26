@@ -158,7 +158,7 @@ spec:
 
   - name: unpack
     container:
-      image: arkivverket.azurecr.io/arkivverket/s3-unpack
+      image: arkivverket.azurecr.io/mottak/s3-unpack
       imagePullPolicy: Always
       env:
         - name: OBJECT
@@ -176,16 +176,6 @@ spec:
               secretKeyRef:
                   name: storage-key
                   key: secret-value
-
-        - name: AVLOG
-          value: /tmp/avlog
-    outputs:
-      artifacts:
-        - name: avlog
-          path: /tmp/avlog
-          archive:
-            none: {}
-
 
   - name: arkade5
     container:
