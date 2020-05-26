@@ -13,7 +13,7 @@ CONTAINER="$UUID-0"
 mkdir -p input output tmp
 mkdir -p $STORE
 
-goofys wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net /objectstore
+goofys wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net $STORE
 
 dotnet /opt/Arkade5CLI-1.5.1/Arkivverket.Arkade.CLI.dll \
     -a $TARGET \
