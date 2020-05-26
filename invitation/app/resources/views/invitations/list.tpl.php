@@ -1,10 +1,15 @@
 {% extends:'body' %}
 
+{% block:breadcrumb %}
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{{$_url->toRoute('dashboard.view')}}">Hjem</a></li>
+			<li class="breadcrumb-item active" aria-current="page">Opplastinger</li>
+		</ol>
+	</nav>
+{% endblock %}
+
 {% block:content %}
-	<h2>Opplastinger</h2>
-
-	<hr>
-
 	{{raw:$invitations->getPagination()->render('partials.pagination')}}
 
 	{% if($invitations->isEmpty()) %}

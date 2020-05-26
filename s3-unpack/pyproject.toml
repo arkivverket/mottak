@@ -1,12 +1,13 @@
 [tool.poetry]
-name = "s3-checksum256"
+name = "s3-unpack"
 version = "0.1.0"
-description = "Container for calculating SHA 256 checksum on objectstore objects."
+description = "Container for clamav scanning objectstore objects."
 authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
 py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
+pyClamd = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"

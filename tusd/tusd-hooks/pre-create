@@ -62,6 +62,8 @@ def my_connect(conn_info):
                                       host=conn_info['host'],
                                       dbname=conn_info['dbname'],
                                       password=conn_info['password'],
+                                      sslmode='require',
+                                      sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
                                       connect_timeout=10)
 
     except (Exception, psycopg2.Error) as error:
@@ -107,6 +109,14 @@ def get_metadata(conn, iid):
         return rec[0]
 
 
+def update_db_with_objectname(conn, iid, objectname):
+    cur = conn.cursor()
+    cur.execute("UPDATE invitations SET object_name = %s WHERE id = %s", (objectname, iid))
+    if cur.rowcount != 1:
+        raise('Invalid number of rows updated')
+
+
+
 def randomString(string_length=32):
     """Generate a random string of fixed length """
     letters = string.ascii_lowercase
@@ -139,10 +149,9 @@ def argo_submit(paramfile):
     """ Submit a job to argo. Takes a YAML file as parameter """
     argocmd = ["argo", "submit", "--parameter-file", paramfile, WORKFLOW]
     logging.info(f"Argo cmd line: {argocmd}")
-    # Python 3.7
-    #submit = subprocess.run(argocmd, timeout=10, capture_output=True)
-    # For Python 3.6 (tusd docker image has python3.6)
+
     submit = subprocess.run(argocmd, timeout=20, stdout=PIPE, stderr=PIPE)
+    # submit = subprocess.run("ls", timeout=20, stdout=PIPE, stderr=PIPE)   # stupid debugging hack to avoid spamming argo.
     if not (submit.returncode == 0):
         logging.error("Argo submit failed")
         if submit.stderr:
@@ -152,6 +161,8 @@ def argo_submit(paramfile):
         exit(ARGOERROR)
 
 
+########################################################
+############# Run from here  ###########################
 ########################################################
 
 # We use the same source for both pre-create and post-finish hook
@@ -181,7 +192,7 @@ connection = my_connect(create_db_access(os.getenv('DBSTRING')))
 metadata = get_metadata(connection, iid)
 if (metadata == None):
     logging.error(f"Failed to fetch metadata for invitation {iid} - no invitation?")
-    exit()
+    exit(UNKNOWNIID)
 
 uuid = metadata['uuid']
 
@@ -206,6 +217,12 @@ except:
     logging.error(json.dump(data))
     exit(JSONERROR)
 
+try:
+    update_db_with_objectname(connection, iid, filename);
+    logging.debug(f"Set object_name to {filename} for iid {iid} in database.")
+except Exception as e:
+    logging.error("Error while updating database {e}")
+    exit(DBERRROR)
 
 if ((metadata) and ('uuid' in metadata)):
     create_param_file(param_file, metadata, data)

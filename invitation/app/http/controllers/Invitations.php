@@ -59,6 +59,8 @@ class Invitations extends Controller
 
 			$uuid = str_replace('UUID:', '', (string) $xml->attributes()['OBJID']);
 
+			$archive = (string) $xml->attributes()['LABEL'];
+
 			$checksum = (string) $xml->fileSec->fileGrp->file->attributes()['CHECKSUM'];
 
 			// Try to find the submitter
@@ -83,7 +85,7 @@ class Invitations extends Controller
 				}
 			}
 
-			return [$contents, compact('name', 'email', 'uuid', 'checksum')];
+			return [$contents, compact('name', 'email', 'uuid', 'archive', 'checksum')];
 		}
 		catch(Throwable $e)
 		{
@@ -111,18 +113,20 @@ class Invitations extends Controller
 
 		$input = $this->validate($data,
 		[
-			'name'     => ['optional'],
-			'email'    => ['optional', 'email'],
+			'name'     => ['optional', 'max_length(255)'],
+			'email'    => ['optional', 'email', 'max_length(255)'],
 			'uuid'     => ['required', 'uuid', 'unique("invitations","uuid")'],
 			'checksum' => ['required', 'exact_length(64)'],
+			'archive'  => ['required', 'max_length(255)'],
 		]);
 
 		$invitation = new Invitation;
 
-		$invitation->name     = $input['name'];
-		$invitation->email    = $input['email'];
-		$invitation->uuid     = $input['uuid'];
-		$invitation->checksum = $input['checksum'];
+		$invitation->name         = $input['name'];
+		$invitation->email        = $input['email'];
+		$invitation->uuid         = $input['uuid'];
+		$invitation->checksum     = $input['checksum'];
+		$invitation->archive      = $input['archive'];
 
 		$invitation->save();
 
@@ -135,6 +139,24 @@ class Invitations extends Controller
 		// Redirect to edit form
 
 		return $this->redirectResponse('invitations.edit', ['id' => $invitation->id]);
+	}
+
+	/**
+	 *
+	 */
+	public function view(int $id): string
+	{
+		$invitation = Invitation::get($id);
+
+		if(!$invitation)
+		{
+			throw new NotFoundException;
+		}
+
+		return $this->view->render('invitations.view',
+		[
+			'invitation' => $invitation,
+		]);
 	}
 
 	/**

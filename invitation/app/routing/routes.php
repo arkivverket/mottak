@@ -16,6 +16,8 @@ $routes->group(['namespace' => 'app\http\controllers', 'middleware' => ['securit
 
 		$routes->post('/new', 'Invitations::create');
 
+		$routes->get('/{id}', 'Invitations::view', 'invitations.view')->patterns(['id' => '[0-9]+']);
+
 		$routes->get('/edit/{id}', 'Invitations::edit', 'invitations.edit')->patterns(['id' => '[0-9]+']);
 
 		$routes->post('/edit/{id}', 'Invitations::update')->patterns(['id' => '[0-9]+']);

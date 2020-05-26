@@ -27,6 +27,8 @@
 	</nav>
 
 	<div class="container-fluid mt-4">
+		{{block:breadcrumb}}{{endblock}}
+
 		{% if(!empty($_errors_)) %}
 			{{view:'partials.alerts.errors', ['errors' => $_errors_]}}
 		{% endif %}
