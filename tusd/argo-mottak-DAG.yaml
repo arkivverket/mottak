@@ -12,245 +12,281 @@ metadata:
 spec:
   entrypoint: mottak
   templates:
-  - name: mottak
-    dag:
-      tasks:
+    - name: mottak
+      dag:
+        tasks:
           # Todo - make the condition less verbose so we don't have to state every condition. dont know how.
-        - name: task-kontroll
-          template: sjekksum-kontroll
-        - name: task-sjekksum-feil
-          template: sjekksum-feil
-          dependencies: [task-kontroll]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' != 'ok'"
-          # Delete the object after notifying the user.
-        - name: task-delete
-          template: delete
-          dependencies: [task-sjekksum-feil]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' != 'ok'"
-        - name: task-avscan
-          template: avscan
-          dependencies: [task-kontroll]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
-        - name: task-unpack
-          template: unpack
-          dependencies: [task-avscan]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
-        - name: task-arkade5
-          template: arkade5
-          dependencies: [task-unpack]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
-          # Done: send mail....
-        - name: task-nytt-arkiv
-          template: nytt-arkiv
-          dependencies: [task-arkade5]
-          when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
-          arguments:
-            artifacts:
-            - name: arkade-report
-              from: "{{tasks.task-arkade5.outputs.artifacts.arkade-report}}"
-            - name: avlog
-              from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+          - name: task-kontroll
+            template: sjekksum-kontroll
+          - name: task-sjekksum-feil
+            template: sjekksum-feil
+            dependencies: [task-kontroll]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' != 'ok'"
+            # Delete the object after notifying the user.
+          - name: task-delete
+            template: delete
+            dependencies: [task-sjekksum-feil]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' != 'ok'"
+          - name: task-avscan
+            template: avscan
+            dependencies: [task-kontroll]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+          - name: task-unpack
+            template: unpack
+            dependencies: [task-avscan]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+          - name: task-arkade5
+            template: arkade5
+            dependencies: [task-unpack]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+          - name: task-logger
+            template: logger
+            dependencies: [task-arkade5]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+            arguments:
+              artifacts:
+                - name: arkade-report
+                  from: "{{tasks.task-arkade5.outputs.artifacts.arkade-report}}"
+                - name: avlog
+                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+                - name: unpacklog
+                  from: "{{tasks.task-unpack.output.artifacts.unpacklog}}"
+            # Done: send mail....
+          - name: task-nytt-arkiv
+            template: nytt-arkiv
+            dependencies: [task-logger]
+            when: "'{{tasks.task-kontroll.outputs.parameters.checksum_result}}' == 'ok'"
+            arguments:
+              artifacts:
+                - name: arkade-report
+                  from: "{{tasks.task-arkade5.outputs.artifacts.arkade-report}}"
+                - name: avlog
+                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+                - name: unpack
+                  from: "{{tasks.task-unpack.output.artifacts.unpacklog}}"
 
+    - name: sjekksum-kontroll
+      container:
+        image: arkivverket.azurecr.io/mottak/s3-checksum256
+        imagePullPolicy: Always
 
-  - name: sjekksum-kontroll
-    container:
-      image: arkivverket.azurecr.io/mottak/s3-checksum256
-      imagePullPolicy: Always
-
-      env:
-        - name: OBJECT
-          value: '{{workflow.parameters.OBJECT}}'
-        - name: CHECKSUM
-          value: '{{workflow.parameters.CHECKSUM}}'
-        - name: OBJECTSTORE
-          value: abs
-        - name: BUCKET
-          value: 'mottak'
-        - name: AZURE_ACCOUNT
-          value: mottakmvp
-        - name: AZURE_KEY
-          valueFrom:
+        env:
+          - name: OBJECT
+            value: "{{workflow.parameters.OBJECT}}"
+          - name: CHECKSUM
+            value: "{{workflow.parameters.CHECKSUM}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "mottak"
+          - name: AZURE_ACCOUNT
+            value: mottakmvp
+          - name: AZURE_KEY
+            valueFrom:
               secretKeyRef:
-                  name: storage-key
-                  key: secret-value
+                name: storage-key
+                key: secret-value
 
-    outputs:
-      parameters:
-       - name: checksum_result
-         valueFrom:
-          path: /tmp/result
+      outputs:
+        parameters:
+          - name: checksum_result
+            valueFrom:
+              path: /tmp/result
 
-  # Kontainer som avviser et arkiv.
-  # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
-  - name: sjekksum-feil
-    container:
-      image: arkivverket.azurecr.io/mottak/mailer
+    # Kontainer som avviser et arkiv.
+    # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
+    - name: sjekksum-feil
+      container:
+        image: arkivverket.azurecr.io/mottak/mailer
 
-      imagePullPolicy: Always
-      envFrom:
-        - configMapRef:
-            name: workflow-environment
-      env:
-        - name: MAILGUN_DOMAIN
-          value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
-        - name: MAILGUN_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: mailgun
-              key: secret-value
-        - name: NAME
-          value: '{{workflow.parameters.NAME}}'
-        - name: RECIPIENT
-          value: '{{workflow.parameters.EMAIL}}'
-        - name: SUBJECT
-          value: 'Archieve rejected'
-        - name: MESSAGE
-          value: 'The archieve {{workflow.parameters.UUID}} was rejected due to checksum error. It will be deleted.'
-
-  - name: delete
-    container:
-      image: arkivverket.azurecr.io/mottak/s3-delete
-      imagePullPolicy: Always
-      env:
-        - name: OBJECT
-          value: '{{workflow.parameters.OBJECT}}'
-        - name: OBJECTSTORE
-          value: abs
-        - name: BUCKET
-          value: 'mottak'
-        - name: AZURE_ACCOUNT
-          value: mottakmvp
-        - name: AZURE_KEY
-          valueFrom:
+        imagePullPolicy: Always
+        envFrom:
+          - configMapRef:
+              name: workflow-environment
+        env:
+          - name: MAILGUN_DOMAIN
+            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+          - name: MAILGUN_API_KEY
+            valueFrom:
               secretKeyRef:
-                  name: storage-key
-                  key: secret-value
+                name: mailgun
+                key: secret-value
+          - name: NAME
+            value: "{{workflow.parameters.NAME}}"
+          - name: RECIPIENT
+            value: "{{workflow.parameters.EMAIL}}"
+          - name: SUBJECT
+            value: "Archieve rejected"
+          - name: MESSAGE
+            value: "The archieve {{workflow.parameters.UUID}} was rejected due to checksum error. It will be deleted."
 
-
-  - name: avscan
-    container:
-      image: arkivverket.azurecr.io/mottak/s3-scan-tar
-
-      imagePullPolicy: Always
-      env:
-        - name: OBJECT
-          value: '{{workflow.parameters.OBJECT}}'
-        - name: OBJECTSTORE
-          value: abs
-        - name: BUCKET
-          value: 'mottak'
-        - name: AZURE_ACCOUNT
-          value: mottakmvp
-        - name: AZURE_KEY
-          valueFrom:
+    - name: delete
+      container:
+        image: arkivverket.azurecr.io/mottak/s3-delete
+        imagePullPolicy: Always
+        env:
+          - name: OBJECT
+            value: "{{workflow.parameters.OBJECT}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "mottak"
+          - name: AZURE_ACCOUNT
+            value: mottakmvp
+          - name: AZURE_KEY
+            valueFrom:
               secretKeyRef:
-                  name: storage-key
-                  key: secret-value
+                name: storage-key
+                key: secret-value
 
-        - name: AVLOG
-          value: /tmp/avlog
-    outputs:
-      artifacts:
-        - name: avlog
-          path: /tmp/avlog
-          archive:
-            none: {}
+    - name: avscan
+      container:
+        image: arkivverket.azurecr.io/mottak/s3-scan-tar
 
-  - name: unpack
-    container:
-      image: arkivverket.azurecr.io/mottak/s3-unpack
-      imagePullPolicy: Always
-      env:
-        - name: OBJECT
-          value: '{{workflow.parameters.OBJECT}}'
-        - name: UUID
-          value: '{{workflow.parameters.UUID}}'
-        - name: OBJECTSTORE
-          value: abs
-        - name: BUCKET
-          value: 'mottak'
-        - name: AZURE_ACCOUNT
-          value: mottakmvp
-        - name: AZURE_KEY
-          valueFrom:
+        imagePullPolicy: Always
+        env:
+          - name: OBJECT
+            value: "{{workflow.parameters.OBJECT}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "mottak"
+          - name: AZURE_ACCOUNT
+            value: mottakmvp
+          - name: AZURE_KEY
+            valueFrom:
               secretKeyRef:
-                  name: storage-key
-                  key: secret-value
-    outputs:
-      artifacts:
-        - name: unpacklog
-          path: /tmp/unpack.log
-          archive:
-            none: {}
+                name: storage-key
+                key: secret-value
 
-  - name: arkade5
-    container:
-      image: arkivverket.azurecr.io/mottak/arkade5
-      imagePullPolicy: Always
-      # We need this for FUSE / goofys
-      securityContext:
-        privileged: true
-        capabilities:
+          - name: AVLOG
+            value: /tmp/avlog
+      outputs:
+        artifacts:
+          - name: avlog
+            path: /tmp/avlog
+            archive:
+              none: {}
+
+    - name: unpack
+      container:
+        image: arkivverket.azurecr.io/mottak/s3-unpack
+        imagePullPolicy: Always
+        env:
+          - name: OBJECT
+            value: "{{workflow.parameters.OBJECT}}"
+          - name: UUID
+            value: "{{workflow.parameters.UUID}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "mottak"
+          - name: AZURE_ACCOUNT
+            value: mottakmvp
+          - name: AZURE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: storage-key
+                key: secret-value
+      outputs:
+        artifacts:
+          - name: unpacklog
+            path: /tmp/unpack.log
+            archive:
+              none: {}
+
+    - name: arkade5
+      container:
+        image: arkivverket.azurecr.io/mottak/arkade5
+        imagePullPolicy: Always
+        # We need this for FUSE / goofys
+        securityContext:
+          privileged: true
+          capabilities:
             add:
               - SYS_ADMIN
-      env:
-        - name: UUID
-          value: '{{workflow.parameters.UUID}}'
-        - name: ARCHIEVE_TYPE
-          value: '{{workflow.parameters.ARCHIEVE_TYPE}}'
-        - name: INVITATIONID
-          value: '{{workflow.parameters.INVITATIONID}}'
-        - name: OBJECTSTORE
-          value: abs
-        - name: BUCKET
-          value: 'mottak'
-        - name: AZURE_ACCOUNT
-          value: mottakmvp
-          # Not that the key is in a slightly different variable here.
-        - name: AZURE_STORAGE_KEY
-          valueFrom:
+        env:
+          - name: UUID
+            value: "{{workflow.parameters.UUID}}"
+          - name: ARCHIEVE_TYPE
+            value: "{{workflow.parameters.ARCHIEVE_TYPE}}"
+          - name: INVITATIONID
+            value: "{{workflow.parameters.INVITATIONID}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "mottak"
+          - name: AZURE_ACCOUNT
+            value: mottakmvp
+            # Not that the key is in a slightly different variable here.
+          - name: AZURE_STORAGE_KEY
+            valueFrom:
               secretKeyRef:
-                  name: storage-key
-                  key: secret-value
-    outputs:
-      artifacts:
-        - name: arkade-report
-          path: /tmp/arkade.html
-          archive:
-            none: {}
+                name: storage-key
+                key: secret-value
+      outputs:
+        artifacts:
+          - name: arkade-report
+            path: /tmp/arkade.html
+            archive:
+              none: {}
 
-  - name: nytt-arkiv
-    inputs:
-      artifacts:
-      - name: arkade-report
-        path: /tmp/attachments/arkade-report.html
-      - name: avlog
-        path: /tmp/attachments/avlog.txt
-      - name: message
-        path: /tmp/message
-        raw:
-          data: |
-            An archieve ({{workflow.parameters.OBJECT}} stored as {{workflow.parameters.OBJECT}}) of type {{workflow.parameters.ARCHIEVE_TYPE}} has been processed.
-            Attached to this email is the report from Arkade5 and the log from the anti-virus scan.
-            Please review.
-    container:
-      image: arkivverket.azurecr.io/mottak/mailer
-      imagePullPolicy: Always
-      env:
-        - name: MAILGUN_DOMAIN
-          value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
-        - name: MAILGUN_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: mailgun-secret
-              key: secret-value
-        - name: NAME
-          value: '{{workflow.parameters.NAME}}'
-        - name: RECIPIENT
-          value: '{{workflow.parameters.EMAIL}}'
-        - name: SUBJECT
-          value: 'Archieve processed'
-        - name: MESSAGE
-          value: /tmp/message
-        - name: ATTACHMENTS
-          value: /tmp/attachments
+    - name: logger
+      inputs:
+        artifacts:
+          - name: arkade-report
+            path: /tmp/arkade-report.html
+          - name: avlog
+            path: /tmp/avlog.txt
+          - name: unpacklog
+            path: /tmp/unpack.log
+      container:
+        image: arkivverket.azurecr.io/mottak/logger
+        imagePullPolicy: Always
+        env:
+          - name: BASEURL
+            value: http://log-service.archive-log-service/
+          - name: FILES
+            value: "/tmp/unpack.log;/tmp/avlog.txt;/tmp/arkade-report.html"
+          - name: UUID
+            value: "{{workflow.parameters.UUID}}"
+          - name: CONDITION
+            value: ok
+          - name: MESSAGE
+            value: "Logging artifacts"
+
+    - name: nytt-arkiv
+      inputs:
+        artifacts:
+          - name: arkade-report
+            path: /tmp/attachments/arkade-report.html
+          - name: avlog
+            path: /tmp/attachments/avlog.txt
+          - name: message
+            path: /tmp/message
+            raw:
+              data: |
+                An archieve ({{workflow.parameters.OBJECT}} stored as {{workflow.parameters.OBJECT}}) of type {{workflow.parameters.ARCHIEVE_TYPE}} has been processed.
+                Attached to this email is the report from Arkade5 and the log from the anti-virus scan.
+                Please review.
+      container:
+        image: arkivverket.azurecr.io/mottak/mailer
+        imagePullPolicy: Always
+        env:
+          - name: MAILGUN_DOMAIN
+            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+          - name: MAILGUN_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mailgun-secret
+                key: secret-value
+          - name: NAME
+            value: "{{workflow.parameters.NAME}}"
+          - name: RECIPIENT
+            value: "{{workflow.parameters.EMAIL}}"
+          - name: SUBJECT
+            value: "Archieve processed"
+          - name: MESSAGE
+            value: /tmp/message
+          - name: ATTACHMENTS
+            value: /tmp/attachments
