@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "artifact-logger"
+version = "0.1.0"
+description = "Container for picking up Argo Artifacts and logging them in the log-archive-service."
+authors = ["Per Buer <per.buer@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+python-magic = "^0.4.18"
+python-dotenv = "^0.13.0"
+requests = "^2.23.0"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
+python-dotenv = "^0.13.0"
+autopep8 = "^1.5.3"
+pudb = "^2019.2"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
