@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "argo-kicker"
+version = "0.1.0"
+description = "Container for kicking off argo workflows based on message queue."
+authors = ["Per Buer <per.buer@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+azure-servicebus = "^0.50.2"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
+python-dotenv = "^0.12.0"
+autopep8 = "^1.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-set -x
+# set -x
 echo "Object:        $OBJECT"
 echo "Archieve type: $ARCHIEVE_TYPE"
 echo "UUID:          $UUID"
