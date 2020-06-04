@@ -1,3 +1,7 @@
 # Argo-kicker
 
-Listens to the message queue and starts off processing workflows when notified to do so.
+(Not yet in use.)
+
+This code is supposed to listen to some sort of MQ in Azure and fire off the Argo client to initiate running the DAGs.
+
+This decouples running the DAG.
