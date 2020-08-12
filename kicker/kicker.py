@@ -74,16 +74,21 @@ def runq():
         while keep_running:
             messages = queue_receiver.fetch_next(timeout=3)
             for message in messages:
-                logging.debug('Got a message on the service bus')
+                logging.info('Got a message on the service bus')
                 # message is a generator. fetch the content, decode it and concat it:
                 msg = ''.join(map(lambda x: x.decode('utf-8'), message.body))
+                logging.info(f'Got a message on the service bus: {msg}')
+
                 parsed = json.loads(msg)
+
+
+                # Here we actually look at the message and decide what to do with it.
                 if parsed["action"] == 'argo-submit':
                     logging.info('Got a argo submission. Submitting.')
                     argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
-                        logging.info('Ignoring shutdown message.')
+                        logging.info('Ignoring shutdown message. Enable MQ shutdown in the code to ... enable this.')
                     else:
                         logging.info('Got a shutdown message. Closing down.')
                         keep_running = False
@@ -95,4 +100,5 @@ if __name__ == '__main__':
     # print(get_workflows(argo))
     logging.basicConfig(level=logging.INFO )     # format='%(asctime)s %(levelname)s %(message)s'                        
     logging.info('kicker starting up.')
+    logging.getLogger("uamqp").setLevel(logging.WARNING)
     runq()
