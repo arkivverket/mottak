@@ -5,7 +5,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends wget ca-certificates python3 python3-pip python3-psycopg2 \
     && apt-get clean
 
-RUN wget -q https://github.com/tus/tusd/releases/download/v1.3.0/tusd_snapshot_amd64.deb && \
+RUN wget -q https://github.com/tus/tusd/releases/download/v1.4.0/tusd_snapshot_amd64.deb && \
     dpkg -i tusd_snapshot_amd64.deb
 
 RUN mkdir -p /srv/tusd-hooks /srv/tusd-data \
