@@ -41,14 +41,16 @@ def generate_sas(client, container):
     return sas_token
 
 
-def generation_action(token, bucket):
+def generation_action(token, bucket, account):
     """ Generate JSON with the SAS token"""
     obj = {
         'action': 'transfer',
         'container': bucket,
+        'account': account,
         'sas_token': token
     }
     return json.dumps(obj)
+
 
 def send_message(q_client, message):
     # Encode the string and generate a message object:
@@ -62,8 +64,9 @@ def send_message(q_client, message):
             logging.warning(f'Message send returned {ret}')
     return ret
 
+
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING)
 
     account = os.getenv('AZURE_ACCOUNT')
     key = os.getenv('AZURE_KEY')
@@ -75,7 +78,7 @@ def main():
     except Exception as e:
         logging.error(f'Could not connect to the azure service bus: {e}')
         exit(SBERROR)
-    try:        
+    try:
         blob_service_client = BlobServiceClient(account_url=get_service_url(account),
                                                 credential=key)
         logging.info('Connected to the blob service')
@@ -85,10 +88,12 @@ def main():
         exit(SASERROR)
 
     token = generate_sas(blob_service_client, bucket)
-    j = generation_action(token, bucket)
+    j = generation_action(token, bucket, account)
     logging.info(f'Message generated: {j}')
+    parsed = json.loads(j)
+    print(json.dumps(parsed, indent=4, sort_keys=True))
     try:
-        send_message(queue_client,j)
+        send_message(queue_client, j)
     except Exception as e:
         logging.error(f'Could not send message: {e}')
 
