@@ -78,6 +78,8 @@ def my_disconnect(conn):
 
 
 def read_tusd_event(step):
+    """ Read stdin and parse the JSON object. Step is given for error reporting.
+    Returns a dict based on the JSON input given"""
     try:
         data = json.load(sys.stdin)
     except ValueError as e:
