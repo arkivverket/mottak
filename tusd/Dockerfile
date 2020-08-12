@@ -17,7 +17,7 @@ RUN pip3 install azure-servicebus
 WORKDIR /srv/tusd-data
 COPY tusd-hooks/pre-create  /srv/tusd-hooks/pre-create
 COPY tusd-hooks/pre-create  /srv/tusd-hooks/post-finish
-COPY start.sh /src/start.sh
+COPY start.sh /srv/start.sh
 
 EXPOSE 1080
 USER tusd
