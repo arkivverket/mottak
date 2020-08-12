@@ -51,7 +51,7 @@ class Invitations extends Controller
 		{
 			$name = $email = null;
 
-			$contents = file_get_contents($filePath);
+			$contents = str_replace("\xEF\xBB\xBF", '', file_get_contents($filePath)); // Strip BOM(s)
 
 			$xml = simplexml_load_string(str_replace(['<mets:', '</mets:'], ['<', '</'], $contents));
 
