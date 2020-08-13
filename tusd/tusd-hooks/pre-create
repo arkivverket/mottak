@@ -60,9 +60,8 @@ def my_connect(conn_info):
                                       password=conn_info['password'],
                                       sslmode='require',
                                       # Thank you azure (only needed outside Azure):
-                                      # sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
+                                      sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
                                       connect_timeout=10)
-
     except (Exception, psycopg2.Error) as error:
         logging.error(f"Error while connecting to PostgreSQL: {error}")
         exit(DBERROR)
@@ -142,6 +141,18 @@ def gather_params(metadata, data):
     return params
 
 
+def get_sb_sender(conn_str, queue):
+    try:
+        queue_client = QueueClient.from_connection_string(
+            conn_str, queue)
+        return queue_client.get_sender()
+    except Exception as exception:
+        logging.error(f'Could not connect to Service Bus Queue')
+        logging.error(f'Connection string: {conn_str}')   # Todo: Potential security issue here. Filter out parts of the string?
+        loggging.error(f'Queue: {queue}')
+        exit(SBERROR)
+
+
 def argo_submit(params):
     """ Submit a job to argo. Takes a dict with parameters. """
     conn_str = os.getenv('AZ_SB_CON_KICKER')
@@ -150,23 +161,14 @@ def argo_submit(params):
         'action': 'argo-submit',
         'params': params,
     }
-    try:
-        queue_client = QueueClient.from_connection_string(
-            conn_str, queue)
-    except Exception as exception:
-        logger.error(f'Could not connect to Service Bus Queue')
-        # Todo: Potential security issue here. Filter out parts of the string?
-        logger.error(f'Connection string: {conn_str}')
-        logger.error(f'Queue: {queue}')
-        exit(SBERROR)
-
-    with queue_client.get_sender() as sender:
+    qsender = get_sb_sender(conn_str, queue)
+    with qsender:
         try:
             message = Message(json.dumps(message).encode('utf8'))
             logging.info(f'Sending message: {message}')
-            ret = sender.send(message)
+            ret = qsender.send(message)
         except Exception as exception:
-            logger.error(
+            logging.error(
                 f'Failed to send message over service bus: {exception}')
             exit(SBERROR)
 
@@ -174,7 +176,7 @@ def argo_submit(params):
 # Todo: refactor, this is pretty long and ugly.
 def main():
     logging.basicConfig(level=os.getenv('LOGLEVEL', 'INFO'))
-    # Silence the overly verbose service bus lib:   
+    # Silence the overly verbose service bus lib:
     logging.getLogger("uamqp").setLevel(logging.WARNING)
 
     hook_name = os.path.basename(__file__)
@@ -204,7 +206,7 @@ def main():
     try:
         uuid = metadata['uuid']
     except Exception as exception:
-        logger.error(
+        logging.error(
             f'Error while looking up uuid from invition ({iid}) from DB: {exception}')
         exit(UNKNOWNIID)
 
@@ -228,7 +230,7 @@ def main():
             logging.debug(f"File name (in objectstore) is {filename}")
         except:
             logging.error("Could not key/filename in JSON. Dumping JSON:")
-            logging.error(json.dump(data))
+            logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
             exit(JSONERROR)
 
         try:
@@ -240,14 +242,9 @@ def main():
             exit(DBERRROR)
 
         if ((metadata) and ('uuid' in metadata)):
-            # create_param_file(param_file, metadata, data)
-            # Create a param dict based on data from DB and tusd
             params = gather_params(metadata, tusd_data)
-            # Submit it the service bus.
             argo_submit(params)
-
             my_disconnect(connection)
-
             exit(0)
         else:
             logging.error("Unknown UUID:" + uuid)
