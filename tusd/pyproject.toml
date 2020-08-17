@@ -8,6 +8,7 @@ authors = ["Per Buer <per.buer@gmail.com>"]
 python = "^3.8"
 azure-servicebus = "^0.50.3"
 psycopg2 = "^2.8.5"
+pytest-coverage = "^0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.1"

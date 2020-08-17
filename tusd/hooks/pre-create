@@ -124,17 +124,17 @@ def update_db_with_objectname(conn, iid, objectname):
         raise(exception)
 
 
-def gather_params(metadata, data):
+def gather_params(dbdata, data):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'UUID': metadata['uuid'],
+        'UUID': dbdata['uuid'],
         'OBJECT': data['Upload']['Storage']['Key'],
-        'CHECKSUM': metadata['checksum'],
-        'ARCHIEVE_TYPE': metadata['type'],
-        'NAME': metadata['name'],
-        'EMAIL': metadata['email'],
-        'INVITATIONID': metadata['id']
+        'CHECKSUM': dbdata['checksum'],
+        'ARCHIEVE_TYPE': dbdata['type'],
+        'NAME': dbdata['name'],
+        'EMAIL': dbdata['email'],
+        'INVITATIONID': dbdata['id']
     }
     return params
 
@@ -145,9 +145,9 @@ def get_sb_sender(conn_str, queue):
             conn_str, queue)
         return queue_client.get_sender()
     except Exception as exception:
-        logging.error(f'Could not connect to Service Bus Queue')
+        logging.error(f'Could not connect to Service Bus Queue: {exception}')
         logging.error(f'Connection string: {conn_str}')   # Todo: Potential security issue here. Filter out parts of the string?
-        loggging.error(f'Queue: {queue}')
+        logging.error(f'Queue: {queue}')
         exit(SBERROR)
 
 
@@ -183,7 +183,7 @@ def main():
     try:
         tusd_data = read_tusd_event(step=hook_name)
     except Exception as exception:
-        logger.error(exception)
+        logging.error(exception)
         exit(JSONERROR)
     if not tusd_data:
         logging.error("Could not read tusd event.")
@@ -244,7 +244,7 @@ def main():
                 f"Set object_name to {filename} for iid {iid} in database.")
         except Exception as exception:
             logging.error("Error while updating database {exception}")
-            exit(DBERRROR)
+            exit(DBERROR)
 
         if ((metadata) and ('uuid' in metadata)):
             params = gather_params(metadata, tusd_data)
