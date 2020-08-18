@@ -8,15 +8,15 @@ RUN apt-get update \
 RUN wget -q https://github.com/tus/tusd/releases/download/v1.4.0/tusd_snapshot_amd64.deb && \
     dpkg -i tusd_snapshot_amd64.deb
 
-RUN mkdir -p /srv/tusd-hooks /srv/tusd-data \
+RUN mkdir -p /srv/hooks /srv/tusd-data \
     && useradd --system --user-group tusd \
     && chown tusd:tusd /srv/tusd-data
 
 # RUN pip3 install --upgrade pip
 RUN pip3 install azure-servicebus
 WORKDIR /srv/tusd-data
-COPY tusd-hooks/pre-create  /srv/tusd-hooks/pre-create
-COPY tusd-hooks/pre-create  /srv/tusd-hooks/post-finish
+COPY hooks/pre-create  /srv/hooks/pre-create
+COPY hooks/pre-create  /srv/hooks/post-finish
 COPY start.sh /srv/start.sh
 
 EXPOSE 1080

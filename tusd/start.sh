@@ -20,17 +20,17 @@ if [ -n "$MAILGUN_API_KEY" ];
     then echo "MAILGUN_API_KEY is set (secret)"
 fi
 echo "Hooks present:"
-find /srv/tusd-hooks
+find /srv/hooks
  
 # pick GCS:
 if [ "$OBJECTSTORE" == "gcs" ]; then
     echo "Backend is GCS (bucket: $BUCKET). Setting GCS_SERVICE_ACCOUNT_FILE to $AUTH_TOKEN"
     export GCS_SERVICE_ACCOUNT_FILE=$AUTH_TOKEN
-    TUSD_PARAMS="-hooks-dir /srv/tusd-hooks -behind-proxy -gcs-bucket ${BUCKET}"
+    TUSD_PARAMS="-hooks-dir /srv/hooks -behind-proxy -gcs-bucket ${BUCKET}"
 # handle Azure here if we're supporting it:
 else
     echo "Assuming we're using the S3 backend"
-    TUSD_PARAMS="-hooks-dir /srv/tusd-hooks -behind-proxy -s3-bucket ${BUCKET} -s3-endpoint ${ENDPOINT}"
+    TUSD_PARAMS="-hooks-dir /srv/hooks -behind-proxy -s3-bucket ${BUCKET} -s3-endpoint ${ENDPOINT}"
 fi
 
 echo tusd command line: "tusd $TUSD_PARAMS $OPT_PARAMS"

@@ -48,7 +48,7 @@ def create_db_access(dbstring):
     for key in ['user', 'password', 'host', 'dbname']:
         if key not in d.keys():
             logging.error('%s not found in DBSTRING' % key)
-            exit(DBERROR)
+            raise ValueError
     return d
 
 
@@ -64,7 +64,7 @@ def my_connect(conn_info):
                                       connect_timeout=10)
     except (Exception, psycopg2.Error) as error:
         logging.error(f"Error while connecting to PostgreSQL: {error}")
-        exit(DBERROR)
+        raise(error)
     finally:
         return connection
 
@@ -74,36 +74,34 @@ def my_disconnect(conn):
 
 
 def read_tusd_event(step):
-    """ Read stdin and parse the JSON object. Step is given for error reporting.
+    """ _ stdin and parse the JSON object. Step is given for error reporting.
     Returns a dict based on the JSON input given"""
     try:
         data = json.load(sys.stdin)
-    except ValueError as ex:
-        logging.error(f"Error parsing JSON({step}): {ex}")
-        logging.error(f"JSON Input: {data}")
-        exit(JSONERROR)
+    except Exception as ex:
+        raise(ex)
     # Enable this when debugging the events. It dumps the input to /tmp so you can re-run the hook with stdin.
     try:
         with open(f'/tmp/json-event-{step}.json', 'w') as event_file:
             json.dump(data, event_file, sort_keys=True, indent=4)
     except Exception as exception:
         logging.error(f'Error while dumping JSON: {exception}')
-
+        # Not really a fatal error. We can continue.
     return data
 
 
-def get_metadata(conn, iid):
+def get_metadata(conn, invitation_id):
     """ Fetch metadata about an invitation from the database using the invitation id as key """
     try:
-        dict_cursor = conn.cursor(
-            cursor_factory=psycopg2.extras.RealDictCursor)
+        dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         dict_cursor.execute('SELECT invitations.id, uuid, checksum, is_sensitive, name, email, type '
                             'FROM invitations, archive_types '
                             'WHERE archive_type_id=archive_types.id '
-                            'AND invitations.id=%s', (iid,))
+                            'AND invitations.id=%s', (invitation_id))
         rec = dict_cursor.fetchall()
+        print(rec)
     except psycopg2.Error as exception:
-        logging.error(f'SQL Query error: {exception}')
+        logging.error(f'Database error: {exception}')
         exit(DBERROR)
 
     if len(rec) == 0:
@@ -120,23 +118,23 @@ def update_db_with_objectname(conn, iid, objectname):
         cur.execute(
             "UPDATE invitations SET object_name = %s WHERE id = %s", (objectname, iid))
         if cur.rowcount != 1:
-            raise(psycopg2.errors.NoDataFound)
+            raise(psycopg2.DataError)
     except psycopg2.Error as exception:
-        logging.error(f'SQL Query error: {exception}')
-        exit(DBERROR)
+        logging.error(f'Database error: {exception}')
+        raise(exception)
 
 
-def gather_params(metadata, data):
+def gather_params(dbdata, data):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'UUID': metadata['uuid'],
+        'UUID': dbdata['uuid'],
         'OBJECT': data['Upload']['Storage']['Key'],
-        'CHECKSUM': metadata['checksum'],
-        'ARCHIEVE_TYPE': metadata['type'],
-        'NAME': metadata['name'],
-        'EMAIL': metadata['email'],
-        'INVITATIONID': metadata['id']
+        'CHECKSUM': dbdata['checksum'],
+        'ARCHIEVE_TYPE': dbdata['type'],
+        'NAME': dbdata['name'],
+        'EMAIL': dbdata['email'],
+        'INVITATIONID': dbdata['id']
     }
     return params
 
@@ -147,9 +145,9 @@ def get_sb_sender(conn_str, queue):
             conn_str, queue)
         return queue_client.get_sender()
     except Exception as exception:
-        logging.error(f'Could not connect to Service Bus Queue')
+        logging.error(f'Could not connect to Service Bus Queue: {exception}')
         logging.error(f'Connection string: {conn_str}')   # Todo: Potential security issue here. Filter out parts of the string?
-        loggging.error(f'Queue: {queue}')
+        logging.error(f'Queue: {queue}')
         exit(SBERROR)
 
 
@@ -182,7 +180,14 @@ def main():
     hook_name = os.path.basename(__file__)
     logging.info(f'hook running as {hook_name}')
     # parse json on stdin into this structure.
-    tusd_data = read_tusd_event(step=hook_name)
+    try:
+        tusd_data = read_tusd_event(step=hook_name)
+    except Exception as exception:
+        logging.error(exception)
+        exit(JSONERROR)
+    if not tusd_data:
+        logging.error("Could not read tusd event.")
+        exit(JSONERROR)
 
     if not (os.getenv('DBSTRING')):
         logging.error("DBSTRING environment variable not set")
@@ -239,7 +244,7 @@ def main():
                 f"Set object_name to {filename} for iid {iid} in database.")
         except Exception as exception:
             logging.error("Error while updating database {exception}")
-            exit(DBERRROR)
+            exit(DBERROR)
 
         if ((metadata) and ('uuid' in metadata)):
             params = gather_params(metadata, tusd_data)
