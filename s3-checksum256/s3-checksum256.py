@@ -26,7 +26,7 @@ def object_checksum(obj):
     try:
         for byte_block in obj:
             sha256_hash.update(byte_block)
-            return sha256_hash.hexdigest()
+        return sha256_hash.hexdigest()
     except Exception as e:
         logging.error(f'error caught while streaming/checksumming: {e}')
 
