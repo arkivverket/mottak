@@ -1,6 +1,7 @@
 #!/bin/bash
-# clean up endpoint
-OPT_PARAMS=""
+# We only enable the hooks we have. This will reduce logging somewhat.
+# Consider hooking into post-terminate for logging.
+OPT_PARAMS="-hooks-enabled-events pre-create,post-finish"
 
 # Handle optional configuration from environment:
 if [ -n "$BASE_PATH" ]; then
