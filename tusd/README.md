@@ -6,19 +6,13 @@ The uploader is invoked with an URL. This is a JSON object that is base64 encode
 
 Whenever an upload is started or finishes tusd runs some hooks. See the hooks folder for details.
 
-# What is needed to get this running on Azure w/minio gw or AWS
+# What is needed to get this running
 
  * DBSTRING, PHP-like formatting, needed for running the hooks
- * AWS_ACCESS_KEY_ID
- * AWS_SECRET_ACCESS_KEY
- * AWS_REGION
- * ENDPOINT
  * BUCKET
-
-See start.sh for details as well as the deployment YAML.
-
-
-
-For GCS - set OBJECTSTORE to gcs and mount the GCS secret JSON file and point GCS_SERVICE_ACCOUNT_FILE to it.
+ * Object-store specifics. See start.sh for details as well as the deployment YAML.
+ * Azure service bus settings.
+   * AZ_SB_CON_KICKER - connection string
+   * AZ_SB_QUEUE - what queue
 
 

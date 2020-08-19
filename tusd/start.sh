@@ -10,11 +10,19 @@ fi
 echo "Enviroment overview:"
 echo "Bucket: ${BUCKET}"
 echo "Endpoint: ${ENDPOINT}"
+echo "Objectstore: ${OBJECTSTORE}"
 echo "AWS Key: ${AWS_ACCESS_KEY_ID}"
 if [ -n "$AWS_SECRET_ACCESS_KEY" ]; then
     echo "AWS_SECRET_ACCESS_KEY is set (secret)"
 fi
 echo "AWS Region: ${AWS_REGION}"
+echo "GCS AUTH_TOKEN: ${AUTH_TOKEN}"
+
+echo "AZURE_ACCOUNT_NAME: ${AZURE_ACCOUNT_NAME}"
+if [ -n "$AZURE_ACCOUNT_KEY" ]; then
+    echo "AZURE_ACCOUNT_KEY is set (secret)"
+fi
+
 echo "Mailgun domain: ${MAILGUN_DOMAIN}"
 if [ -n "$MAILGUN_API_KEY" ]; then
     echo "MAILGUN_API_KEY is set (secret)"
