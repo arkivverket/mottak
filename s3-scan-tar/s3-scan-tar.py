@@ -12,7 +12,12 @@ try:
 except:
     print("Failed to load dotenv file. Assuming production")
 
+from _version import __version__
 
+
+# Exit values
+
+CLAMAVERROR = 10
 
 class BinaryFileLimitedOnSize(io.RawIOBase):
     """ Subclassing the file/RawIOBase class to impose limits on file size by throwing EOF Exception
@@ -46,21 +51,19 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
 def get_clam():
     """Establish connection with Clamd
     :return: pyclamd socket object
+    There is no try/except here as we won't this error to propagate up.
     """
     socket = os.getenv('CLAMD_SOCK', default='/var/run/clamav/clamd.ctl')
     csock = None
-    try:
-        csock = pyclamd.ClamdUnixSocket(socket)
-        csock.ping()
-    except Exception as e:
-        logging.error(f'Failed to ping clamav deamon over socket: {socket}')
-        logging.error(f'Error: {e}')
-        raise
+    csock = pyclamd.ClamdUnixSocket(socket)
+    csock.ping()
     return csock
 
 # ===========================================================================
 # Run from here.
 # ===========================================================================
+
+logging.basicConfig(level=logging.INFO)
 
 bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
@@ -70,6 +73,7 @@ storage = ArkivverketObjectStorage()
 obj = storage.download_stream(bucket, filename)
 file_stream = MakeIterIntoFile(obj)
 
+logging.info(f'{__file__} version {__version__} running')
 
 # If you wanna test this on local files do something like this:
 #file_stream = open(filename,'br')
@@ -93,14 +97,17 @@ cd = None
 try:
     cd = get_clam()
     cver = cd.version()
-    print(f'Intializing scan on {bucket}/{filename} using {cver}')
-except Exception as e:
-    logging.error("Failed to connect to ClamAV")
-    logging.error(f'Error: {e}')
+except Exception as exception:
+    logging.error(f'Could not connect to clam: {exception}')
+    exit(CLAMAVERROR)
+
+print(f'Intializing scan on {bucket}/{filename} using {cver}')
+
 virus = 0
 skipped = 0
 
 with open(avlogfile,mode='w') as avlog:
+    print(f'{__file__} version {__version__} running', file=avlog)
     for member in tfi:
         tar_member =  tf.extractfile(member)
         if tar_member == None:
