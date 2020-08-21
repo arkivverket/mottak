@@ -64,6 +64,7 @@ def get_clam():
 # ===========================================================================
 
 logging.basicConfig(level=logging.INFO)
+logging.info(f'{__file__} version {__version__} running')
 
 bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
@@ -73,7 +74,6 @@ storage = ArkivverketObjectStorage()
 obj = storage.download_stream(bucket, filename)
 file_stream = MakeIterIntoFile(obj)
 
-logging.info(f'{__file__} version {__version__} running')
 
 # If you wanna test this on local files do something like this:
 #file_stream = open(filename,'br')
