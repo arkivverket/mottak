@@ -66,14 +66,14 @@ bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
 avlogfile = os.getenv('AVLOG', default='/tmp/avlog')
 
-# storage = ArkivverketObjectStorage()
-# obj = storage.download_stream(bucket, filename)
-# file_stream = MakeIterIntoFile(obj)
+storage = ArkivverketObjectStorage()
+obj = storage.download_stream(bucket, filename)
+file_stream = MakeIterIntoFile(obj)
 
 
 # If you wanna test this on local files do something like this:
-file_stream = open(filename,'br')
-print("Local File opened:", file_stream)
+#file_stream = open(filename,'br')
+#print("Local File opened:", file_stream)
 
 if file_stream is None:
     logging.error("Could not open file.")
