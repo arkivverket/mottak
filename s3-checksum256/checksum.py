@@ -6,6 +6,7 @@ import sys
 import logging
 import hashlib
 from py_objectstore import ArkivverketObjectStorage
+from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -23,12 +24,9 @@ LOG = '/tmp/checksum.log'
 
 def object_checksum(obj):
     sha256_hash = hashlib.sha256()
-    try:
-        for byte_block in obj:
+    for byte_block in obj:
             sha256_hash.update(byte_block)
-        return sha256_hash.hexdigest()
-    except Exception as e:
-        logging.error(f'error caught while streaming/checksumming: {e}')
+    return sha256_hash.hexdigest()
 
 def write_result(res):
     with open(RESULT, "w") as res_file:
@@ -43,16 +41,20 @@ def get_object_stream():
 
 
 def main():
-        
-    logging.basicConfig(level=logging.INFO, filename=LOG,
-                        filemode='w', format='%(asctime)s %(levelname)s %(message)s')
-    logging.getLogger().addHandler(logging.StreamHandler())
+    logging.basicConfig(level=logging.INFO)
+    logging.info(f'{__file__} version {__version__} running')
+
     try:
         obj = get_object_stream()
     except Exception as e:
         logging.error(f'Error whilst opening stream: {e}')
         exit(FILEERROR)
-    checksum = object_checksum(obj)
+    try:
+        checksum = object_checksum(obj)
+    except Exception as e:
+        logging.error(f'error caught while streaming/checksumming: {e}')
+        exit(FILEERROR)
+        
     expected = os.getenv('CHECKSUM')
     if checksum == expected:
         logging.info(f'Checksum ({checksum}) verified')

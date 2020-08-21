@@ -7,7 +7,7 @@ RUN pip install poetry
 # Install the helper module:
 RUN useradd --home-dir /opt mol
 WORKDIR /opt
-COPY s3-checksum256.py pyproject.toml poetry.lock /opt/
+COPY checksum.py _version.py pyproject.toml poetry.lock /opt/
 RUN chown -R mol /opt
 USER mol
 RUN poetry install
@@ -15,4 +15,4 @@ RUN poetry install
 # alpine seems to be a bit stupid wrt PYTHONPATH handling.
 # COPY gcs.json /opt
 # run the scanner - can be overriden when debugging.
-CMD ["/usr/local/bin/poetry", "run", "/opt/s3-checksum256.py"]
+CMD ["/usr/local/bin/poetry", "run", "/opt/checksum.py"]

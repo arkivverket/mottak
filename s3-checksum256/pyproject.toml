@@ -5,7 +5,7 @@ description = "Container for calculating SHA 256 checksum on objectstore objects
 authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
 
 [tool.poetry.dev-dependencies]
