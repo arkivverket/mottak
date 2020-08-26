@@ -41,7 +41,8 @@ def get_object_stream():
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename=LOG,
+                        filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     logging.info(f'{__file__} version {__version__} running')
 
     try:
