@@ -1,10 +1,10 @@
 [[package]]
 category = "main"
-description = "A standard Python library that abstracts away differences among multiple cloud provider APIs. For more information and documentation, please see http://libcloud.apache.org"
+description = "A standard Python library that abstracts away differences among multiple cloud provider APIs. For more information and documentation, please see https://libcloud.apache.org"
 name = "apache-libcloud"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
-version = "2.8.3"
+python-versions = ">=3.5.*, <4"
+version = "3.1.0"
 
 [package.dependencies]
 requests = ">=2.5.0"
@@ -140,15 +140,15 @@ description = ""
 name = "py-objectstore"
 optional = false
 python-versions = "^3.7"
-version = "0.4.1"
+version = "0.5.2"
 
 [package.dependencies]
-apache-libcloud = "^2.8.0"
+apache-libcloud = "^3.1.0"
 cryptography = "^2.8"
 lockfile = "^0.12.2"
 
 [package.source]
-reference = "fb8c0352f181e9aeccdd77a783bfe8b1c8f9c82d"
+reference = "3e7a0e71485f4b38bc587bb0e0854d4c5606e120"
 type = "git"
 url = "https://github.com/arkivverket/py-objectstore.git"
 [[package]]
@@ -254,8 +254,8 @@ python-versions = "^3.8"
 
 [metadata.files]
 apache-libcloud = [
-    {file = "apache-libcloud-2.8.3.tar.gz", hash = "sha256:70096690b24a7832cc5abdfda1954b49fddc1c09a348a1e6caa781ac867ed4c6"},
-    {file = "apache_libcloud-2.8.3-py2.py3-none-any.whl", hash = "sha256:a3414c1ecc9bb9643fd11af18018b23922f4a2585babf9a4450c3531994935f2"},
+    {file = "apache-libcloud-3.1.0.tar.gz", hash = "sha256:bbb858e045ba5e06d61632c08b9828625766aae30ff4fe727f2bee598c9048ac"},
+    {file = "apache_libcloud-3.1.0-py2.py3-none-any.whl", hash = "sha256:ca281ace61280cf60a966a2c67be0a4faa5997bb0f02f45130f33d907adaa5b4"},
 ]
 astroid = [
     {file = "astroid-2.4.2-py3-none-any.whl", hash = "sha256:bc58d83eb610252fd8de6363e39d4f1d0619c894b0ed24603b881c02e64c7386"},
