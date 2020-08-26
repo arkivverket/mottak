@@ -97,8 +97,8 @@ if file_stream is None:
 tfi = None
 try:
     tf = tarfile.open(fileobj=file_stream, mode='r|')
-    mytfi = TarfileIterator(tf)
-    tfi = iter(mytfi)
+    tfi = TarfileIterator(tf)
+    # tfi = iter(mytfi)
 except Exception as exception:
     logging.error(f'Failed to open stream to object: {bucket} / {filename}')
     logging.error(f'Error: {exception}')
