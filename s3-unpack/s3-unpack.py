@@ -5,6 +5,7 @@ import logging
 
 import tarfile
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
+from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -70,6 +71,7 @@ def main():
     logging.basicConfig(level=logging.INFO, filename='/tmp/unpack.log', filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     # Also log to STDERR so k8s understands what is going on.
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info(f'{__file__} version {__version__} running')
     logging.info(f"Unpacking {filename} into container {target_container}")
     target = create_target(target_container)
     #target = storage.get_container(target_container)
