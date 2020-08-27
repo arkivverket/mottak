@@ -17,9 +17,10 @@ mkdir -p $STORE
 /usr/local/bin/goofys "wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net" "$STORE"
 
 dotnet /opt/arkade5/Arkivverket.Arkade.CLI.dll \
+    test \
     -a "$TARGET" \
-    -p /opt/tmp -o /opt/output -s packing \
-    -m /tmp/dias-mets.xml -t "$ARCHIEVE_TYPE"
+    -p /opt/tmp -o /opt/output  \
+     -t "$ARCHIEVE_TYPE"
 
 # The report is available at /opt/output/Arkaderapport-$UUID.html
 # Move it to a know location so Argo can get at it.
