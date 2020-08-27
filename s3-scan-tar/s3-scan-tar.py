@@ -19,9 +19,11 @@ from _version import __version__
 
 CLAMAVERROR = 10
 
+
 class BinaryFileLimitedOnSize(io.RawIOBase):
     """ Subclassing the file/RawIOBase class to impose limits on file size by returning short reads
     when we cross the limit. Used to handle the 4GB limit in clamav."""
+
     def __init__(self, fh, maxsize=None):
         self.maxsize = maxsize
         self.fh = fh
@@ -36,25 +38,26 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
         if self.maxsize:
             if not read_length:
                 # no lenght given, not sure we if can read this without going over the limit
-                raise(NotImplementedError("Unlimited read requested. Not supported"))
+                raise(NotImplementedError(
+                    "Unlimited read requested. Not supported"))
             if self.fh.tell() + read_length >= self.maxsize:
-                logging.warning("Restricting file object and discarding the rest of the contents")
+                logging.warning(
+                    "Restricting file object and discarding the rest of the contents")
                 self.restricted = True
                 self.read_flush()
                 return None
                 # raise(EOFError("read would cross maxsize boundry"))
             else:
                 return self.fh.read(read_length)
-    
+
     def read_flush(self):
         """ Read and discard the rest of the file. """
-        while len(self.fh.read(1024**2)) > 0: # read big chunks...
+        while len(self.fh.read(1024**2)) > 0:  # read big chunks...
             pass
-    
+
     def tell(self):
         return self.fh.tell()
 
-    
     def seek(self, pos):
         raise(io.UnsupportedOperation)
 
@@ -74,12 +77,14 @@ def get_clam():
 # Run from here.
 # ===========================================================================
 
-logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(level=logging.INFO, filename='/tmp/avlog',
+                    filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+logging.getLogger().addHandler(logging.StreamHandler())
 logging.info(f'{__file__} version {__version__} running')
 
 bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
-avlogfile = os.getenv('AVLOG', default='/tmp/avlog')
 
 storage = ArkivverketObjectStorage()
 obj = storage.download_stream(bucket, filename)
@@ -87,8 +92,8 @@ file_stream = MakeIterIntoFile(obj)
 
 
 # If you wanna test this on local files do something like this:
-#file_stream = open(filename,'br')
-#print("Local File opened:", file_stream)
+# file_stream = open(filename,'br')
+# print("Local File opened:", file_stream)
 
 if file_stream is None:
     logging.error("Could not open file.")
@@ -112,49 +117,41 @@ except Exception as exception:
     logging.error(f'Could not connect to clam: {exception}')
     exit(CLAMAVERROR)
 
-print(f'Intializing scan on {bucket}/{filename} using {cver}')
+logging.info(f'Intializing scan on {bucket}/{filename} using {cver}')
 
 virus = 0
 skipped = 0
 
-with open(avlogfile,mode='w') as avlog:
-    print(f'{__file__} version {__version__} running', file=avlog)
-    for member in tfi:
-        tar_member =  tf.extractfile(member)
-        if tar_member == None:
+for member in tfi:
+    tar_member = tf.extractfile(member)
+    if tar_member == None:
             # Handle is none - likely a directory.
             logging.debug("Handle is none. Skipping...")
             continue
-        limit = int(os.getenv('MAXFILESIZE', 1023)) # size given in megabytes
-        handle = BinaryFileLimitedOnSize(tar_member, 1024**2 * limit)
+    limit = int(os.getenv('MAXFILESIZE', 1023))  # size given in megabytes
+    handle = BinaryFileLimitedOnSize(tar_member, 1024**2 * limit)
         # print(handle.read())
-        try:
-            logging.info(f'Scanning {member.name}...')
-            result = cd.scan_stream(handle)
-            logging.info("...done")
-            if (result is None):
-                print(f'OK - {member.name}', file=avlog)
-            else:
-                print(f'Virus found! {result["stream"][1]} in {member.name}', file=avlog)
-                virus += 1
-            if handle.restricted:
-                logging.warning('Scan restricted by size limit.')
-                skipped += 1
-        except ConnectionResetError as exception:
-            logging.error('clamd reset the connection. Increase max scan size for clamd.')
-            logging.warning('Flushing the file.')
-            handle.read_flush()
-            print(f'SKIPPED (File to big) - {member.name}', file=avlog)
-
+    try:
+        logging.info(f'Scanning {member.name}...')
+        result = cd.scan_stream(handle)
+        if (result is None):
+            logging.info(f'OK - {member.name}')
+        else:
+            logging.warning(f'Virus found! {result["stream"][1]} in {member.name}')
+            virus += 1
+        if handle.restricted:
+            logging.warning('Scan restricted by size limit.')
             skipped += 1
-        except Exception as e:
-            logging.error(f"Failed to scan {member.name}")
-            logging.error(f'Error: {e}')
-            raise(e)
-    print("========", file=avlog)
-    print(f"{virus} viruses found", file=avlog)
-    print(f"{skipped} files skipped", file=avlog)
-    logging.info(f"Archive scanned. Log created as {avlogfile}")
-
-
-
+    except ConnectionResetError as exception:
+        logging.error('clamd reset the connection. Increase max scan size for clamd.')
+        logging.warning('Flushing the file.')
+        handle.read_flush()
+        logging.warning(f'SKIPPED (File to big) - {member.name}')
+        skipped += 1
+    except Exception as e:
+        logging.error(f"Failed to scan {member.name}")
+        logging.error(f'Error: {e}')
+        raise(e)
+logging.info(f"{virus} viruses found")
+logging.info(f"{skipped} files skipped")
+logging.info(f"Archive scanned - exiting")
