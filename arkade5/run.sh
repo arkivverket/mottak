@@ -16,7 +16,7 @@ mkdir -p $STORE
 
 /usr/local/bin/goofys "wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net" "$STORE"
 
-dotnet /opt/Arkade5CLI-1.5.1/Arkivverket.Arkade.CLI.dll \
+dotnet /opt/arkade5/Arkivverket.Arkade.CLI.dll \
     -a "$TARGET" \
     -p /opt/tmp -o /opt/output -s packing \
     -m /tmp/dias-mets.xml -t "$ARCHIEVE_TYPE"
