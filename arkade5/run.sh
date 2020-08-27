@@ -11,7 +11,8 @@ STORE="/objectstore"
 TARGET="$STORE/$UUID/content"
 CONTAINER="$UUID-0"
 
-mkdir -p input output tmp
+
+mkdir -p /opt/output
 mkdir -p $STORE
 
 /usr/local/bin/goofys "wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net" "$STORE"
@@ -19,7 +20,7 @@ mkdir -p $STORE
 dotnet /opt/arkade5/Arkivverket.Arkade.CLI.dll \
     test \
     -a "$TARGET" \
-    -p /opt/tmp -o /opt/output  \
+    -p /tmp -o /opt/output  \
      -t "$ARCHIEVE_TYPE"
 
 # The report is available at /opt/output/Arkaderapport-$UUID.html
