@@ -10,6 +10,7 @@ import base64
 import time
 import magic
 import datetime
+from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -52,6 +53,10 @@ def log(endpoint, token, uuid, path, name, mime, condition, message):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')    
+    logging.info(f'{__file__} version {__version__} running')
+
+
     files = os.getenv('FILES').split(';')
     uuid = os.getenv('UUID')
     condition = os.getenv('CONDITION', 'ok')
