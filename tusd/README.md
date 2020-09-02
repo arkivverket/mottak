@@ -6,6 +6,10 @@ The uploader is invoked with an URL. This is a JSON object that is base64 encode
 
 Whenever an upload is started or finishes tusd runs some hooks. See the hooks folder for details.
 
+# Prerequisite
+The dependency `psycopg2` requires that you have installed postgresql on mac:
+`brew install postgresql`
+
 # What is needed to get this running
 
  * DBSTRING, PHP-like formatting, needed for running the hooks
