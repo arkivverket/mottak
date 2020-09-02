@@ -28,6 +28,7 @@ def object_checksum(obj):
             sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
 
+# Not sure if this is relevant anymore....
 def write_result(res):
     with open(RESULT, "w") as res_file:
         res_file.write(res)
@@ -43,6 +44,7 @@ def get_object_stream():
 def main():
     logging.basicConfig(level=logging.INFO, filename=LOG,
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+    logging.getLogger().addHandler(logging.StreamHandler())
     logging.info(f'{__file__} version {__version__} running')
 
     try:

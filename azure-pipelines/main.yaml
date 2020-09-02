@@ -127,7 +127,7 @@ stages:
               containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
 
       - job: BuildExporter
-        displayName: Build kicker (argo submission service)
+        displayName: Build exporter (ships archives to other services)
         steps:
           - template: build.yaml
             parameters:
