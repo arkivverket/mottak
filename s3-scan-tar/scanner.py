@@ -28,6 +28,7 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
     when we cross the limit. Used to handle the 4GB limit in clamav."""
 
     def __init__(self, filehandle, maxsize=None):
+        super().__init__()
         self.maxsize = maxsize
         self.filehandle = filehandle
         self.restricted = False
@@ -39,16 +40,14 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
         if self.maxsize:
             if not read_length:
                 # no lenght given, not sure we if can read this without going over the limit
-                raise NotImplementedError(
-                    "Unlimited read requested. Not supported")
+                raise NotImplementedError("Unlimited read requested. Not supported")
             if self.filehandle.tell() + read_length >= self.maxsize:
                 logging.warning(
                     "Restricting file object and discarding the rest of the contents")
                 self.restricted = True
                 self.read_flush()
                 return None
-        else:
-            return self.filehandle.read(read_length)
+        return self.filehandle.read(read_length)
 
     def read_flush(self):
         """ Read and discard the rest of the file. """
@@ -138,9 +137,9 @@ def main():
 
     bucket = os.getenv('BUCKET')
     filename = os.getenv('OBJECT')
-    scan_limit = int(os.getenv('MAXFILESIZE', 1023))
+    scan_limit = int(os.getenv('MAXFILESIZE', '1023'))
 
-    logging.info(f'Intializing scan on {bucket}/{filename}')
+    logging.info(f'Intializing scan on {bucket}/{filename} with scan limit {scan_limit} MiB')
 
     storage = ArkivverketObjectStorage()
     obj = storage.download_stream(bucket, filename)
