@@ -57,7 +57,7 @@ def unpack_tar(object_name, target_container):
             continue
         handle = tf.extractfile(member)
         checksum = get_SHA256(handle)
-        logging.info(f'Unpacking {member.name} of type {int(member.type)}, size {member.size} and checksum {checksum}')
+        logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
         create_file(name=member.name, handle=handle, target_container= target_container)
 
 
