@@ -55,6 +55,10 @@ def unpack_tar(object_name, target_container):
             # Handle is none - likely a directory.
             logging.info(f'Skipping {member.name} of type {int(member.type)} and size {member.size}')
             continue
+        # If non directory member isn't a file, logg warning
+        elif not member.isfile():
+            logging.warning(f"Content {member.name} has not been unpacked because it is not a regular type of file")
+            continue
         handle = tf.extractfile(member)
         checksum = get_SHA256(handle)
         logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
