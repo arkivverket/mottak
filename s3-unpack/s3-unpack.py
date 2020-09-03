@@ -2,10 +2,12 @@
 import os
 import sys
 import logging
+import hashlib
 
 import tarfile
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from _version import __version__
+from io import BufferedReader
 
 try:
     from dotenv import load_dotenv
@@ -53,8 +55,9 @@ def unpack_tar(object_name, target_container):
             # Handle is none - likely a directory.
             logging.info(f'Skipping {member.name} of type {int(member.type)} and size {member.size}')
             continue
-        logging.info(f'Unpacking {member.name} of type {int(member.type)} and size {member.size}')
         handle = tf.extractfile(member)
+        checksum = get_SHA256(handle)
+        logging.info(f'Unpacking {member.name} of type {int(member.type)}, size {member.size} and checksum {checksum}')
         create_file(name=member.name, handle=handle, target_container= target_container)
 
 
@@ -67,6 +70,20 @@ def create_target(container_name):
         logging.error(f'While creating container {container_name}: {e}')
         raise(e)
     
+
+def get_SHA256(handle: BufferedReader):
+    """
+    Get SHA256 hash of the file, directly in memory
+    """
+    sha = hashlib.sha256()
+    byte_array = bytearray(128 * 1024)
+    memory_view = memoryview(byte_array)
+
+    for n in iter(lambda: handle.readinto(memory_view), 0):
+        sha.update(memory_view[:n])
+
+    return sha.hexdigest()
+
 
 def main():
     logging.basicConfig(level=logging.INFO, filename='/tmp/unpack.log', filemode='w', format='%(asctime)s %(levelname)s %(message)s')
