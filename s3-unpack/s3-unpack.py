@@ -16,7 +16,8 @@ except:
 bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
 uuid = os.getenv('UUID')
-target_container = f'{uuid}-0'
+ZERO_GENERATION = '0'
+target_container = f'{uuid}-{ZERO_GENERATION}'
 storage = ArkivverketObjectStorage()
 
 obj = storage.download_stream(bucket, filename)
