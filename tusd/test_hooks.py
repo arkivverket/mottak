@@ -42,20 +42,18 @@ def test_db_connect(mocker):
     mocker.patch('psycopg2.connect')
     conn = tusdhooks.my_connect(db_dict)
     assert(conn)
-    psycopg2.connect.assert_called_once() 
+    psycopg2.connect.assert_called_once()
 
 
 def test_read_tusd_pre_event(mocker):
-    mocker.patch('sys.stdin', io.StringIO(pre_event))
-    ret = tusdhooks.read_tusd_event('foo')
+    ret = tusdhooks.read_tusd_event('foo', io.StringIO(pre_event))
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["MetaData"]["invitation_id"] == str(2))
 
 
 def test_read_tusd_post_event(mocker):
-    mocker.patch('sys.stdin', io.StringIO(post_event))
-    ret = tusdhooks.read_tusd_event('bar')
+    ret = tusdhooks.read_tusd_event('bar', io.StringIO(post_event))
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["Storage"]["Key"] ==
@@ -64,9 +62,8 @@ def test_read_tusd_post_event(mocker):
 
 def test_read_tusd_garbage(mocker):
     ret = None
-    mocker.patch('sys.stdin', io.StringIO(' '))
     with pytest.raises(json.decoder.JSONDecodeError):
-        ret = tusdhooks.read_tusd_event('foo')
+        ret = tusdhooks.read_tusd_event('foo', io.StringIO(' '))
     assert(ret == None)
 
 
@@ -115,7 +112,7 @@ def test_update_db_with_objectname_fail(mocker):
 def test_get_sb_sender(mocker):
     # This is just a wrapper function. I'm not gonna test it.
     pass
-    
+
 
 
 def test_gather_params(mocker):
