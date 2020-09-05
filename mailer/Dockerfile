@@ -1,11 +1,10 @@
-FROM python:3.7-alpine
+FROM python:3.8-slim-buster
 
-RUN mkdir -p /opt
-COPY mailer.py /opt
-COPY requirements.txt /opt
+RUN pip install poetry && \
+    mkdir -p /opt
+COPY mailer.py poetry.lock pyproject.toml _version.py start.sh  /opt/
 WORKDIR /opt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN poetry install --no-dev
 
+CMD ["/opt/start.sh"]
 
-# run the scanner - can be overriden when debugging.
-CMD ["/opt/mailer.py"]
