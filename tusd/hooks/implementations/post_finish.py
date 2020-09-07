@@ -8,13 +8,12 @@ import sys
 import json
 import psycopg2
 import psycopg2.extras
-# For python 3.6
-
 import logging
+from azure.servicebus import QueueClient, Message
+
 
 from hooks.implementations.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-
-from azure.servicebus import QueueClient, Message
+from hooks.implementations.error_codes import *
 
 try:
     from dotenv import load_dotenv
@@ -25,17 +24,6 @@ except:
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
-
-# Return codes.
-UUIDERROR = 1    # invalid UUID
-DBERROR = 10     #
-JSONERROR = 11   # JSON parsing
-IOERROR = 12
-USAGEERROR = 13  # some sort of user error.
-ARGOERROR = 14   # no in use anymore
-UNKNOWNUUID = 15  # unknown UUID
-UNKNOWNIID = 16  # unknown invitation
-SBERROR = 17
 
 
 def update_db_with_objectname(conn, iid, objectname):
@@ -145,42 +133,31 @@ def main():
             f'Error while looking up uuid from invition ({iid}) from DB: {exception}')
         exit(UNKNOWNIID)
 
-    if (hook_name == 'post-finish'):
-        # We assume that we're the post-finish hook and we create an input-file for argo
-        # and submit the workflow into argo.
+    # Verify that we have a filename:
+    try:
+        filename = tusd_data['Upload']['Storage']['Key']
+        logging.debug(f"File name (in objectstore) is {filename}")
+    except:
+        logging.error("Could not key/filename in JSON. Dumping JSON:")
+        logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
+        exit(JSONERROR)
 
-        # Verify that we have a filename:
-        try:
-            filename = tusd_data['Upload']['Storage']['Key']
-            logging.debug(f"File name (in objectstore) is {filename}")
-        except:
-            logging.error("Could not key/filename in JSON. Dumping JSON:")
-            logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
-            exit(JSONERROR)
+    try:
+        update_db_with_objectname(connection, iid, filename)
+        logging.debug(
+            f"Set object_name to {filename} for iid {iid} in database.")
+    except Exception as exception:
+        logging.error("Error while updating database {exception}")
+        exit(DBERROR)
 
-        try:
-            update_db_with_objectname(connection, iid, filename)
-            logging.debug(
-                f"Set object_name to {filename} for iid {iid} in database.")
-        except Exception as exception:
-            logging.error("Error while updating database {exception}")
-            exit(DBERROR)
-
-        if ((metadata) and ('uuid' in metadata)):
-            params = gather_params(metadata, tusd_data)
-            argo_submit(params)
-            my_disconnect(connection)
-            exit(0)
-        else:
-            logging.error("Unknown UUID:" + uuid)
-            exit(UUIDERROR)
+    if ((metadata) and ('uuid' in metadata)):
+        params = gather_params(metadata, tusd_data)
+        argo_submit(params)
+        my_disconnect(connection)
+        exit(0)
     else:
-        logging.error(f'Unsupported hook: {hook_name}')
-        exit(USAGEERROR)
-
-    ########################################################
-    ############# Run from here  ###########################
-    ########################################################
+        logging.error("Unknown UUID:" + uuid)
+        exit(UUIDERROR)
 
 
 if __name__ == "__main__":
