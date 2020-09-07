@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from hooks.post_finish import main
+from hooks.implementations.post_finish import main
 
 
 if __name__ == '__main__':

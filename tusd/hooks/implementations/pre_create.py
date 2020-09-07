@@ -5,15 +5,10 @@
 
 import os                               # for getenv
 import sys
-import json
-import psycopg2
-import psycopg2.extras
 
 import logging
 
-from hooks.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-
-from azure.servicebus import QueueClient, Message
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
 
 try:
     from dotenv import load_dotenv

@@ -8,19 +8,14 @@ import sys
 import json
 import psycopg2
 import psycopg2.extras
-import string
-import subprocess
 # For python 3.6
-from subprocess import PIPE
-import re  # for parsing the DBSTRING
-import io
 
 import logging
 
-from hooks.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
 
 from azure.servicebus import QueueClient, Message
-from azure.servicebus.common.constants import ReceiveSettleMode
+
 try:
     from dotenv import load_dotenv
     load_dotenv()

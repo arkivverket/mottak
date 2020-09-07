@@ -1,6 +1,11 @@
-# tusd hooks.
+# tusd hooks
 
 These hooks are run whenever something is uploaded to tusd.
+
+Documentation: https://github.com/tus/tusd/blob/master/docs/hooks.md
+
+For testability we have separated the tusd hook files from the logic, tusd does not allow `.py` extension. Thus the
+logic is found under [implementations](implementations).
 
 When tusd runs a hook to opens the hook and feeds it a JSON document on STDIN. The document varies depending on what kind of event it is. We use pre- and post-hooks. The pre-hook just makes sure that the client has a valid invitation. The event looks like this:
 

@@ -2,8 +2,8 @@ import pytest
 import psycopg2.errors
 import io
 
-from hooks.hooks_utils import *
-from hooks.post_finish import get_metadata, update_db_with_objectname, gather_params
+from hooks.implementations.hooks_utils import *
+from hooks.implementations.post_finish import get_metadata, update_db_with_objectname, gather_params
 
 print("We're running tests....")
 
