@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "mailer"
+version = "0.1.0"
+description = "Mailer service container"
+authors = ["Per Buer <per.buer@gmail.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "^2.24.0"
+python-dotenv = "^0.14.0"
+
+[tool.poetry.dev-dependencies]
+python-dotenv = "^0.14.0"
+pylint = "^2.6.0"
+autopep8 = "^1.5.4"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
