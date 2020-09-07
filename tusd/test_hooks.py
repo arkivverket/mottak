@@ -1,11 +1,9 @@
-
 import pytest
-import tusdhooks
-import psycopg2
 import psycopg2.errors
 import io
-import json
-import unittest
+
+from hooks.hooks_utils import *
+from hooks.post_finish import get_metadata, update_db_with_objectname, gather_params
 
 print("We're running tests....")
 
@@ -33,27 +31,27 @@ invitation_dict = {'id': 2,
 
 def test_create_db_access():
     info_str = 'pgsql::/user=test_user;password=test_password;host=test_host;dbname=test_dbname'
-    generated_dict = tusdhooks.create_db_access(info_str)
+    generated_dict = create_db_access(info_str)
     assert(generated_dict == db_dict)
 
 
 def test_db_connect(mocker):
     # pylint: disable=no-member
     mocker.patch('psycopg2.connect')
-    conn = tusdhooks.my_connect(db_dict)
-    assert(conn)
+    conn = my_connect(db_dict)
+    assert conn
     psycopg2.connect.assert_called_once()
 
 
 def test_read_tusd_pre_event(mocker):
-    ret = tusdhooks.read_tusd_event('foo', io.StringIO(pre_event))
+    ret = read_tusd_event('foo', io.StringIO(pre_event))
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["MetaData"]["invitation_id"] == str(2))
 
 
 def test_read_tusd_post_event(mocker):
-    ret = tusdhooks.read_tusd_event('bar', io.StringIO(post_event))
+    ret = read_tusd_event('bar', io.StringIO(post_event))
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["Storage"]["Key"] ==
@@ -63,8 +61,8 @@ def test_read_tusd_post_event(mocker):
 def test_read_tusd_garbage(mocker):
     ret = None
     with pytest.raises(json.decoder.JSONDecodeError):
-        ret = tusdhooks.read_tusd_event('foo', io.StringIO(' '))
-    assert(ret == None)
+        ret = read_tusd_event('foo', io.StringIO(' '))
+    assert(ret is None)
 
 
 def test_get_metadata1(mocker):
@@ -82,8 +80,8 @@ def test_get_metadata1(mocker):
     mock_cur.fetchall.return_value = mock_metadata
 
     # mock_connection.return_value.cursor.return_value.fetch_all.return_value = mock_metadata
-    ret_metadata = tusdhooks.get_metadata(mock_con, 2)
-    assert(ret_metadata)
+    ret_metadata = get_metadata(mock_con, 2)
+    assert ret_metadata
     assert(ret_metadata['invitation.id'] == 2)
 
 
@@ -93,19 +91,18 @@ def test_update_db_with_objectname(mocker):
     # result of con.cursor(cursor_factory=DictCursor)
     mock_cur = mock_con.cursor.return_value
     mock_cur.rowcount = 1
-    tusdhooks.update_db_with_objectname(mock_con, 2, 'foo.txt')
+    update_db_with_objectname(mock_con, 2, 'foo.txt')
     mock_cur.execute.assert_called_once()
 
 
 def test_update_db_with_objectname_fail(mocker):
-
     # result of psycopg2.connect(**connection_stuff)
     mock_con = mocker.MagicMock()
     # result of con.cursor(cursor_factory=DictCursor)
     mock_cur = mock_con.cursor.return_value
     mock_cur.rowcount = 0
     with pytest.raises(psycopg2.DataError):
-        tusdhooks.update_db_with_objectname(mock_con, 2, 'foo.txt')
+        update_db_with_objectname(mock_con, 2, 'foo.txt')
     mock_cur.execute.assert_called_once()
 
 
@@ -114,17 +111,15 @@ def test_get_sb_sender(mocker):
     pass
 
 
-
 def test_gather_params(mocker):
     expected = {'UUID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'OBJECT': '9090fe36854e6761925e6e9ec475c17f', 'CHECKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a', 'ARCHIEVE_TYPE': 'noark5', 'NAME': 'Joe Black', 'EMAIL': 'perbue@arkivverket.no', 'INVITATIONID': 2}
     data = json.loads(post_event)
     metadata = invitation_dict
-    params = tusdhooks.gather_params(data=data, dbdata=metadata)
+    params = gather_params(data=data, dbdata=metadata)
     assert(params['UUID'] == 'df53d1d8-39bf-4fea-a741-58d472664ce2')
     assert(params['CHECKSUM'] == '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a')
     assert(params['EMAIL'] == 'perbue@arkivverket.no')
     assert(params == expected)
-
 
 
 def test_argo_submit(mocker):

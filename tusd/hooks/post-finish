@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from hooks.pre_create import main
+from hooks.post_finish import main
 
 
 if __name__ == '__main__':
     main()
+

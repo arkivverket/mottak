@@ -72,3 +72,7 @@ def get_metadata(conn, invitation_id):
         return None
     else:
         return rec[0]
+
+
+def my_disconnect(conn):
+    conn.close()
