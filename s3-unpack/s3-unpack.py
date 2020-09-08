@@ -38,7 +38,7 @@ def create_file(name, handle, target_container):
         storage.upload_stream(target_container, name, handle)
     except Exception as e:
         logging.error(f'Failed to do streaming upload to {target_container} / {name}: {e}')
-        exit(UPLOAD_ERROR)
+        sys.exit(UPLOAD_ERROR)
 
 
 def unpack_tar(object_name, target_container):
@@ -53,7 +53,7 @@ def unpack_tar(object_name, target_container):
         # If it is a directory or if a slash is the last char (root node?)
         if member.isdir() or member.name[-1] == '/':
             # Handle is none - likely a directory.
-            logging.info(f'Skipping {member.name} of type {int(member.type)} and size {member.size}')
+            logging.info(f'Skipping {member.name} of size {member.size}')
             continue
         # If non directory member isn't a file, logg warning
         elif not member.isfile():
@@ -94,7 +94,8 @@ def get_SHA256(handle: BufferedReader):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, filename='/tmp/unpack.log', filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(level=logging.INFO, filename='/tmp/unpack.log', filemode='w',
+                        format='%(asctime)s %(levelname)s %(message)s')
     # Also log to STDERR so k8s understands what is going on.
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info(f'{__file__} version {__version__} running')
