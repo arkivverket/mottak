@@ -9,14 +9,16 @@ import io
 import tarfile
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 import pyclamd
+from typing import Any
+
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
 
 from _version import __version__
-
 
 # Exit values
 
@@ -36,28 +38,28 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
     def write(self, s) -> int:
         raise NotImplementedError("write() not supported")
 
-    def read(self, read_length) -> bytes:
+    def read(self, read_length: Any) -> bytes:
         if self.maxsize:
             if not read_length:
                 # no lenght given, not sure we if can read this without going over the limit
                 raise NotImplementedError("Unlimited read requested. Not supported")
-            if self.filehandle.tell() + read_length >= self.maxsize:
+            if self.filehandle.tell() + read_length > self.maxsize:
                 logging.warning(
                     "Restricting file object and discarding the rest of the contents")
                 self.restricted = True
                 self.read_flush()
-                return None
+                return b''
         return self.filehandle.read(read_length)
 
     def read_flush(self):
         """ Read and discard the rest of the file. """
-        while len(self.filehandle.read(1024**2)) > 0:  # read big chunks...
+        while len(self.filehandle.read(1024 ** 2)) > 0:  # read big chunks...
             pass
 
     def tell(self):
         return self.filehandle.tell()
 
-    def seek(self, pos):
+    def seek(self, pos: Any, **kwargs) -> int:
         raise io.UnsupportedOperation
 
 
@@ -73,7 +75,7 @@ def get_clam():
 
 
 def stream_tar(stream):
-    """ Takes an stream and created both a tarfile object
+    """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     if stream is None:
         logging.error("Could not open file.")
@@ -85,10 +87,10 @@ def stream_tar(stream):
         logging.error(f'Failed to open stream to object {stream}')
         logging.error(f'Error: {exception}')
         raise exception
-    return (tar_iterator, t_f)
+    return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket, limit):
+def scan_archive(tar_file, clamd_socket, limit) -> (int, int, int):
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
@@ -99,10 +101,11 @@ def scan_archive(tar_file, clamd_socket, limit):
             # Handle is none - likely a directory.
             logging.debug("Handle is none. Skipping...")
             continue
-        handle = BinaryFileLimitedOnSize(tar_member, 1024**2 * limit)
+        handle = BinaryFileLimitedOnSize(tar_member, limit)
         try:
             logging.info(f'Scanning {member.name}...')
             result = clamd_socket.scan_stream(handle)
+
             if result is None:
                 logging.info(f'clean - {member.name}')
                 clean += 1
@@ -125,7 +128,7 @@ def scan_archive(tar_file, clamd_socket, limit):
             logging.error(f"Failed to scan {member.name}")
             logging.error(f'Error: {exception}')
             raise exception
-    return (clean, virus, skipped)
+    return clean, virus, skipped
 
 
 def main():
@@ -137,7 +140,8 @@ def main():
 
     bucket = os.getenv('BUCKET')
     filename = os.getenv('OBJECT')
-    scan_limit = int(os.getenv('MAXFILESIZE', '1023'))
+    # Get the max file size for clamd. Default is 1023 MiB
+    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * 1024 ** 2
 
     logging.info(f'Intializing scan on {bucket}/{filename} with scan limit {scan_limit} MiB')
 
