@@ -8,7 +8,7 @@ import logging
 from azure.servicebus import QueueClient, Message
 
 from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from .error_codes import *
+from .error_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR
 
 try:
     from dotenv import load_dotenv

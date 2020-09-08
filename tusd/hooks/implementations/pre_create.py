@@ -4,7 +4,7 @@ import sys
 import logging
 
 from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from .error_codes import *
+from .error_codes import JSONERROR, USAGEERROR, UNKNOWNIID, UUIDERROR
 
 try:
     from dotenv import load_dotenv
