@@ -15,18 +15,13 @@ try:
 except:
     print("Failed to load dotenv file. Assuming production")
 
-bucket = os.getenv('BUCKET')
-filename = os.getenv('OBJECT')
-uuid = os.getenv('UUID')
-ZERO_GENERATION = '0'
-METS_FILENAME = "dias-mets.xml"
-target_container = f'{uuid}-{ZERO_GENERATION}'
+# Global variables
 storage = ArkivverketObjectStorage()
 
-obj = storage.download_stream(bucket, filename)
-file_stream = MakeIterIntoFile(obj)
-
-
+# Constants
+LOG_PATH = '/tmp/unpack.log'
+ZERO_GENERATION = '0'
+METS_FILENAME = "dias-mets.xml"
 TAR_ERROR = 10
 UPLOAD_ERROR = 11
 OBJECTSTORE_ERROR = 12
@@ -41,8 +36,10 @@ def create_file(name, handle, target_container):
         sys.exit(UPLOAD_ERROR)
 
 
-def unpack_tar(object_name, target_container):
+def unpack_tar(filename, bucket, target_container):
     try:
+        obj = storage.download_stream(bucket, filename)
+        file_stream = MakeIterIntoFile(obj)
         tf = tarfile.open(fileobj=file_stream, mode='r|')
         tfi = TarfileIterator(tf)
     except Exception as e:
@@ -94,15 +91,22 @@ def get_SHA256(handle: BufferedReader):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, filename='/tmp/unpack.log', filemode='w',
+    logging.basicConfig(level=logging.INFO, filename=LOG_PATH, filemode='w',
                         format='%(asctime)s %(levelname)s %(message)s')
     # Also log to STDERR so k8s understands what is going on.
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info(f'{__file__} version {__version__} running')
+
+    # Load env. variables
+    bucket = os.getenv('BUCKET')
+    filename = os.getenv('OBJECT')
+    uuid = os.getenv('UUID')
+    target_container = f'{uuid}-{ZERO_GENERATION}'
+
     logging.info(f"Unpacking {filename} into container {target_container}")
     target = create_target(target_container)
     # target = storage.get_container(target_container)
-    unpack_tar(filename, target)
+    unpack_tar(filename, bucket, target)
 
 if __name__ == "__main__":
     main()
