@@ -3,11 +3,11 @@ import os
 import sys
 import logging
 import hashlib
-
 import tarfile
+
+from io import BufferedReader
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from _version import __version__
-from io import BufferedReader
 
 try:
     from dotenv import load_dotenv
@@ -28,7 +28,6 @@ OBJECTSTORE_ERROR = 12
 
 def create_file(name, handle, target_container):
     logging.debug(f"Creating {name} in {target_container}")
-    # handle = iter(handle)
     try:
         storage.upload_stream(target_container, name, handle)
     except Exception as e:
@@ -59,7 +58,7 @@ def unpack_tar(filename, bucket, target_container):
         handle = tf.extractfile(member)
         # If member is the mets file, calculate sha256 checksum and log it
         if member.name.endswith(METS_FILENAME):
-            checksum = get_SHA256(handle)
+            checksum = get_sha256(handle)
             logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
             continue
         logging.info(f'Unpacking {member.name} of size {member.size}')
@@ -76,7 +75,7 @@ def create_target(container_name):
         raise e
 
 
-def get_SHA256(handle: BufferedReader):
+def get_sha256(handle: BufferedReader):
     """
     Get SHA256 hash of the file, directly in memory
     """
