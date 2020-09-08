@@ -19,6 +19,7 @@ bucket = os.getenv('BUCKET')
 filename = os.getenv('OBJECT')
 uuid = os.getenv('UUID')
 ZERO_GENERATION = '0'
+METS_FILENAME = "dias-mets.xml"
 target_container = f'{uuid}-{ZERO_GENERATION}'
 storage = ArkivverketObjectStorage()
 
@@ -40,7 +41,6 @@ def create_file(name, handle, target_container):
         exit(UPLOAD_ERROR)
 
 
-
 def unpack_tar(object_name, target_container):
     try:
         tf = tarfile.open(fileobj=file_stream, mode='r|')
@@ -60,8 +60,12 @@ def unpack_tar(object_name, target_container):
             logging.warning(f"Content {member.name} has not been unpacked because it is not a regular type of file")
             continue
         handle = tf.extractfile(member)
-        checksum = get_SHA256(handle)
-        logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
+        # If member is the mets file, calculate sha256 checksum and log it
+        if member.name.endswith(METS_FILENAME):
+            checksum = get_SHA256(handle)
+            logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
+            continue
+        logging.info(f'Unpacking {member.name} of size {member.size}')
         create_file(name=member.name, handle=handle, target_container= target_container)
 
 
@@ -73,7 +77,7 @@ def create_target(container_name):
     except Exception as e:
         logging.error(f'While creating container {container_name}: {e}')
         raise(e)
-    
+
 
 def get_SHA256(handle: BufferedReader):
     """
@@ -96,7 +100,7 @@ def main():
     logging.info(f'{__file__} version {__version__} running')
     logging.info(f"Unpacking {filename} into container {target_container}")
     target = create_target(target_container)
-    #target = storage.get_container(target_container)
+    # target = storage.get_container(target_container)
     unpack_tar(filename, target)
 
 if __name__ == "__main__":
