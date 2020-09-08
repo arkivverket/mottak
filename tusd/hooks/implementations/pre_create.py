@@ -15,7 +15,7 @@ except:
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
-# TODO clean up logging between hooks_utils and this file
+# Todo clean up logging between hooks_utils and this file
 
 
 # Todo: refactor, this is pretty long and ugly.
