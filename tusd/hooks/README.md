@@ -47,6 +47,7 @@ When tusd runs a hook to opens the hook and feeds it a JSON document on STDIN. T
 }
 ```
 The post-upload hook will start argo and feed it the relevant stuff. The event itself looks like this:
+
 ```json
 {
   "Upload": {
