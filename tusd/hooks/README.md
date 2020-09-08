@@ -8,7 +8,7 @@ For testability we have separated the tusd hook files from the logic. tusd does 
 logic is found under [implementations](implementations).
 
 When tusd runs a hook to opens the hook and feeds it a JSON document on STDIN. The document varies depending on what kind of event it is. We use pre- and post-hooks. The pre-hook just makes sure that the client has a valid invitation. The event looks like this:
-
+```Json
 {
   "Upload": {
     "ID": "",
@@ -45,9 +45,9 @@ When tusd runs a hook to opens the hook and feeds it a JSON document on STDIN. T
     }
   }
 }
-
+```
 The post-upload hook will start argo and feed it the relevant stuff. The event itself looks like this:
-
+```json
 {
   "Upload": {
     "ID": "9090fe36854e6761925e6e9ec475c17f",
@@ -86,3 +86,4 @@ The post-upload hook will start argo and feed it the relevant stuff. The event i
     }
   }
 }
+```
