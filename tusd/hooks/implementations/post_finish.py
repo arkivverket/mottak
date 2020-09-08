@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-# TODO clean up logging between hooks_utils and this file
-# TODO Remove unused imports
-# TODO Split hooks_utils into more files (ie db_utils)
-
 import os                               # for getenv
 import sys
 import json
@@ -11,9 +7,8 @@ import psycopg2.extras
 import logging
 from azure.servicebus import QueueClient, Message
 
-
-from hooks.implementations.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from hooks.implementations.error_codes import *
+from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
+from .error_codes import *
 
 try:
     from dotenv import load_dotenv
@@ -24,6 +19,7 @@ except:
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
+# TODO clean up logging between hooks_utils and this file
 
 
 def update_db_with_objectname(conn, iid, objectname):
@@ -34,10 +30,10 @@ def update_db_with_objectname(conn, iid, objectname):
         cur.execute(
             "UPDATE invitations SET object_name = %s WHERE id = %s", (objectname, iid))
         if cur.rowcount != 1:
-            raise(psycopg2.DataError)
+            raise psycopg2.DataError
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
-        raise(exception)
+        raise exception
 
 
 def gather_params(dbdata, data):
@@ -88,17 +84,16 @@ def argo_submit(params):
 
 
 # Todo: refactor, this is pretty long and ugly.
-def main():
+def run():
     logging.basicConfig(level=os.getenv('LOGLEVEL', 'INFO'))
     # Silence the overly verbose service bus lib:
     logging.getLogger("uamqp").setLevel(logging.WARNING)
 
-    hook_name = os.path.basename(__file__)
-    logging.info(f'hook running as {hook_name}')
+    logging.info('Running post-finish hook')
     # parse json on stdin into this structure.
     try:
         input_data = sys.stdin
-        tusd_data = read_tusd_event(step=hook_name, input_data=input_data)
+        tusd_data = read_tusd_event(step='post-finish', input_data=input_data, logger=logging)
     except Exception as exception:
         logging.error(exception)
         exit(JSONERROR)
@@ -119,8 +114,8 @@ def main():
         logging.error(f"Could not find invitation_id in JSON: {iid}")
         exit(UNKNOWNIID)
 
-    connection = my_connect(create_db_access(os.getenv('DBSTRING')))
-    metadata = get_metadata(connection, iid)
+    connection = my_connect(create_db_access(os.getenv('DBSTRING'), logger=logging), logger=logging)
+    metadata = get_metadata(connection, iid, logger=logging)
     if not metadata:
         logging.error(
             f"Failed to fetch metadata for invitation {iid} - no invitation?")
@@ -150,7 +145,7 @@ def main():
         logging.error("Error while updating database {exception}")
         exit(DBERROR)
 
-    if ((metadata) and ('uuid' in metadata)):
+    if metadata and ('uuid' in metadata):
         params = gather_params(metadata, tusd_data)
         argo_submit(params)
         my_disconnect(connection)
@@ -161,4 +156,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()

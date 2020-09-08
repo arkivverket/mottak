@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 import json
-import logging
 import psycopg2
 import psycopg2.extras
 import re
 
 from typing import TextIO
 
+from .error_codes import DBERROR
 
-def read_tusd_event(step: str, input_data: TextIO) -> dict:
+
+def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
     """ _ stdin and parse the JSON object. Step is given for error reporting.
     Returns a dict based on the JSON input given"""
     data = json.load(input_data)
@@ -18,12 +19,12 @@ def read_tusd_event(step: str, input_data: TextIO) -> dict:
         with open(f'/tmp/json-event-{step}.json', 'w') as event_file:
             json.dump(data, event_file, sort_keys=True, indent=4)
     except Exception as exception:
-        logging.error(f'Error while dumping JSON: {exception}')
+        logger.error(f'Error while dumping JSON: {exception}')
         # Not really a fatal error. We can continue.
     return data
 
 
-def create_db_access(dbstring: str) -> dict:
+def create_db_access(dbstring: str, logger) -> dict:
     """Create a psycopg2 compatible object from the connection string.
     The string is from PHP and we reuse it here
     """
@@ -33,12 +34,12 @@ def create_db_access(dbstring: str) -> dict:
     # Validate dbstring:
     for key in ['user', 'password', 'host', 'dbname']:
         if key not in d.keys():
-            logging.error('%s not found in DBSTRING' % key)
+            logger.error('%s not found in DBSTRING' % key)
             raise ValueError
     return d
 
 
-def my_connect(conn_info):
+def my_connect(conn_info: dict, logger):
     try:
         connection = psycopg2.connect(user=conn_info['user'],
                                       host=conn_info['host'],
@@ -49,13 +50,13 @@ def my_connect(conn_info):
                                       sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
                                       connect_timeout=10)
     except (Exception, psycopg2.Error) as error:
-        logging.error(f"Error while connecting to PostgreSQL: {error}")
+        logger.error(f"Error while connecting to PostgreSQL: {error}")
         raise(error)
     finally:
         return connection
 
 
-def get_metadata(conn, invitation_id):
+def get_metadata(conn, invitation_id: str, logger):
     """ Fetch metadata about an invitation from the database using the invitation id as key """
     try:
         dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -66,7 +67,7 @@ def get_metadata(conn, invitation_id):
         rec = dict_cursor.fetchall()
         print(rec)
     except psycopg2.Error as exception:
-        logging.error(f'Database error: {exception}')
+        logger.error(f'Database error: {exception}')
         exit(DBERROR)
 
     if len(rec) == 0:

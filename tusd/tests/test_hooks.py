@@ -1,6 +1,7 @@
 import pytest
 import psycopg2.errors
 import io
+import logging
 
 from hooks.implementations.hooks_utils import *
 from hooks.implementations.post_finish import get_metadata, update_db_with_objectname, gather_params
@@ -31,27 +32,27 @@ invitation_dict = {'id': 2,
 
 def test_create_db_access():
     info_str = 'pgsql::/user=test_user;password=test_password;host=test_host;dbname=test_dbname'
-    generated_dict = create_db_access(info_str)
+    generated_dict = create_db_access(info_str, logging)
     assert(generated_dict == db_dict)
 
 
 def test_db_connect(mocker):
     # pylint: disable=no-member
     mocker.patch('psycopg2.connect')
-    conn = my_connect(db_dict)
+    conn = my_connect(db_dict, logging)
     assert conn
     psycopg2.connect.assert_called_once()
 
 
 def test_read_tusd_pre_event(mocker):
-    ret = read_tusd_event('foo', io.StringIO(pre_event))
+    ret = read_tusd_event('foo', io.StringIO(pre_event), logging)
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["MetaData"]["invitation_id"] == str(2))
 
 
 def test_read_tusd_post_event(mocker):
-    ret = read_tusd_event('bar', io.StringIO(post_event))
+    ret = read_tusd_event('bar', io.StringIO(post_event), logging)
     assert(ret["Upload"]["MetaData"]["fileName"] ==
            "df53d1d8-39bf-4fea-a741-58d472664ce2.tar")
     assert(ret["Upload"]["Storage"]["Key"] ==
@@ -61,7 +62,7 @@ def test_read_tusd_post_event(mocker):
 def test_read_tusd_garbage(mocker):
     ret = None
     with pytest.raises(json.decoder.JSONDecodeError):
-        ret = read_tusd_event('foo', io.StringIO(' '))
+        ret = read_tusd_event('foo', io.StringIO(' '), logging)
     assert(ret is None)
 
 
@@ -80,7 +81,7 @@ def test_get_metadata1(mocker):
     mock_cur.fetchall.return_value = mock_metadata
 
     # mock_connection.return_value.cursor.return_value.fetch_all.return_value = mock_metadata
-    ret_metadata = get_metadata(mock_con, 2)
+    ret_metadata = get_metadata(mock_con, 2, logging)
     assert ret_metadata
     assert(ret_metadata['invitation.id'] == 2)
 

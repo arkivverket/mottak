@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-from hooks.implementations.post_finish import main
+from implementations.post_finish import run
 
 
 if __name__ == '__main__':
-    main()
+    run()
 

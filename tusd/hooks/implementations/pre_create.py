@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
-# TODO clean up logging between hooks_utils and this file
-# TODO Remove unused imports
-# TODO Split hooks_utils into more files (ie db_utils)
-
 import os                               # for getenv
 import sys
 import logging
 
-
-from hooks.implementations.hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from hooks.implementations.error_codes import *
-
+from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
+from .error_codes import *
 
 try:
     from dotenv import load_dotenv
@@ -21,20 +15,20 @@ except:
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
+# TODO clean up logging between hooks_utils and this file
 
 
 # Todo: refactor, this is pretty long and ugly.
-def main():
+def run():
     logging.basicConfig(level=os.getenv('LOGLEVEL', 'INFO'))
     # Silence the overly verbose service bus lib:
     logging.getLogger("uamqp").setLevel(logging.WARNING)
 
-    hook_name = os.path.basename(__file__)
-    logging.info(f'hook running as {hook_name}')
+    logging.info('Running pre-create hook')
     # parse json on stdin into this structure.
     try:
         input_data = sys.stdin
-        tusd_data = read_tusd_event(step=hook_name, input_data=input_data)
+        tusd_data = read_tusd_event(step='pre-create', input_data=input_data, logger=logging)
     except Exception as exception:
         logging.error(exception)
         exit(JSONERROR)
@@ -55,8 +49,8 @@ def main():
         logging.error(f"Could not find invitation_id in JSON: {iid}")
         exit(UNKNOWNIID)
 
-    connection = my_connect(create_db_access(os.getenv('DBSTRING')))
-    metadata = get_metadata(connection, iid)
+    connection = my_connect(create_db_access(os.getenv('DBSTRING'), logger=logging), logger=logging)
+    metadata = get_metadata(connection, iid, logger=logging)
     my_disconnect(connection)
     if not metadata:
         logging.error(
@@ -71,7 +65,7 @@ def main():
         exit(UNKNOWNIID)
 
     # This is the pre-create hook. The only concern here is to validate the UUID
-    if (uuid == metadata['uuid']):
+    if uuid == metadata['uuid']:
         logging.info('Invitation ID verified.')
         exit(0)
     else:
@@ -81,6 +75,5 @@ def main():
         exit(UUIDERROR)
 
 
-
 if __name__ == "__main__":
-    main()
+    run()
