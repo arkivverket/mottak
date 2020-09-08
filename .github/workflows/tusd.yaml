@@ -36,3 +36,8 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1
+      with:
+        tags: latest
+        push: false
