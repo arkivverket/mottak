@@ -23,6 +23,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install poetry
+        pip install flake8
     - name: Install dependencies
       run: |
         poetry install
