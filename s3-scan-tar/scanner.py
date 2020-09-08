@@ -7,9 +7,9 @@ import sys
 import logging
 import io
 import tarfile
+from typing import Any
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 import pyclamd
-from typing import Any
 
 try:
     from dotenv import load_dotenv
