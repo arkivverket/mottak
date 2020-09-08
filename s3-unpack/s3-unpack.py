@@ -48,7 +48,7 @@ def unpack_tar(object_name, target_container):
     except Exception as e:
         logging.error(f'Failed to open stream to object: {bucket} / {filename}')
         logging.error(f'Error: {e}')
-        exit(TAR_ERROR)
+        sys.exit(TAR_ERROR)
     for member in tfi:
         # If it is a directory or if a slash is the last char (root node?)
         if member.isdir() or member.name[-1] == '/':
@@ -76,7 +76,7 @@ def create_target(container_name):
         return container
     except Exception as e:
         logging.error(f'While creating container {container_name}: {e}')
-        raise(e)
+        raise e
 
 
 def get_SHA256(handle: BufferedReader):
