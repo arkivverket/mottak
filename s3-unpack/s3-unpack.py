@@ -97,7 +97,7 @@ def create_target(container_name):
         raise e
 
 
-def get_sha256(handle: BufferedReader):
+def get_sha256(handle):
     """
     Get SHA256 hash of the file, directly in memory
     """
@@ -123,6 +123,7 @@ def main():
     target_container = create_target(target_container_name)
     # target_container = storage.get_container(target_container_name)
     unpack_tar(target_container)
+
 
 if __name__ == "__main__":
     main()
