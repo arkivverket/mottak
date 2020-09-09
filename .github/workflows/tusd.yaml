@@ -39,5 +39,6 @@ jobs:
       run: |
         poetry run pytest
     - name: Build docker image
-      run: docker build . --file Dockerfile --tag deleteme:0.0.1
+      run: | 
+        docker build . --file Dockerfile --tag deleteme:0.0.1
         
