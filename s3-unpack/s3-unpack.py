@@ -15,16 +15,27 @@ try:
 except:
     print("Failed to load dotenv file. Assuming production")
 
-# Global variables
-storage = ArkivverketObjectStorage()
-
 # Constants
 LOG_PATH = '/tmp/unpack.log'
 ZERO_GENERATION = '0'
 METS_FILENAME = "dias-mets.xml"
+
 TAR_ERROR = 10
 UPLOAD_ERROR = 11
 OBJECTSTORE_ERROR = 12
+
+# Environment variables
+MANDATORY_ENV_VARS = ['BUCKET', 'OBJECT', 'UUID']
+for var in MANDATORY_ENV_VARS:
+    if var not in os.environ:
+        raise EnvironmentError(f"Failed because {var} is not set in .env")
+
+bucket = os.getenv('BUCKET')
+filename = os.getenv('OBJECT')
+uuid = os.getenv('UUID')
+
+# Global variables
+storage = ArkivverketObjectStorage()
 
 def create_file(name, handle, target_container):
     logging.debug(f"Creating {name} in {target_container}")
@@ -35,7 +46,7 @@ def create_file(name, handle, target_container):
         sys.exit(UPLOAD_ERROR)
 
 
-def unpack_tar(filename, bucket, target_container):
+def unpack_tar(target_container):
     try:
         obj = storage.download_stream(bucket, filename)
         file_stream = MakeIterIntoFile(obj)
@@ -62,7 +73,7 @@ def unpack_tar(filename, bucket, target_container):
             logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
             continue
         logging.info(f'Unpacking {member.name} of size {member.size}')
-        create_file(name=member.name, handle=handle, target_container= target_container)
+        create_file(name=member.name, handle=handle, target_container=target_container)
 
 
 def create_target(container_name):
@@ -96,16 +107,11 @@ def main():
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info(f'{__file__} version {__version__} running')
 
-    # Load env. variables
-    bucket = os.getenv('BUCKET')
-    filename = os.getenv('OBJECT')
-    uuid = os.getenv('UUID')
-    target_container = f'{uuid}-{ZERO_GENERATION}'
-
-    logging.info(f"Unpacking {filename} into container {target_container}")
-    target = create_target(target_container)
-    # target = storage.get_container(target_container)
-    unpack_tar(filename, bucket, target)
+    target_container_name = f'{uuid}-{ZERO_GENERATION}'
+    logging.info(f"Unpacking {filename} into container {target_container_name}")
+    target_container = create_target(target_container_name)
+    # target_container = storage.get_container(target_container_name)
+    unpack_tar(target_container)
 
 if __name__ == "__main__":
     main()
