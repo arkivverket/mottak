@@ -38,7 +38,7 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
     def write(self, s) -> int:
         raise NotImplementedError("write() not supported")
 
-    def read(self, read_length: Any) -> bytes:
+    def read(self, read_length: int) -> bytes:
         if self.maxsize:
             if not read_length:
                 # no lenght given, not sure we if can read this without going over the limit
