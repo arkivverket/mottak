@@ -8,7 +8,7 @@ import logging
 from azure.servicebus import QueueClient, Message
 
 from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from .error_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR
+from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR,OK
 
 try:
     from dotenv import load_dotenv
@@ -43,10 +43,10 @@ def gather_params(dbdata, data):
         'UUID': dbdata['uuid'],
         'OBJECT': data['Upload']['Storage']['Key'],
         'CHECKSUM': dbdata['checksum'],
-        'ARCHIEVE_TYPE': dbdata['type'],
+        'ARCHIVE_TYPE': dbdata['type'],
         'NAME': dbdata['name'],
         'EMAIL': dbdata['email'],
-        'INVITATIONID': dbdata['id']
+        'INVITATION_ID': dbdata['id']
     }
     return params
 
@@ -133,7 +133,7 @@ def run():
         filename = tusd_data['Upload']['Storage']['Key']
         logging.debug(f"File name (in objectstore) is {filename}")
     except:
-        logging.error("Could not key/filename in JSON. Dumping JSON:")
+        logging.error("Could not find key/filename in JSON. Dumping JSON:")
         logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
         exit(JSONERROR)
 
@@ -149,7 +149,7 @@ def run():
         params = gather_params(metadata, tusd_data)
         argo_submit(params)
         my_disconnect(connection)
-        exit(0)
+        exit(OK)
     else:
         logging.error("Unknown UUID:" + uuid)
         exit(UUIDERROR)
