@@ -5,7 +5,6 @@ import logging
 import hashlib
 import tarfile
 
-from io import BufferedReader
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from _version import __version__
 
@@ -37,6 +36,7 @@ uuid = os.getenv('UUID')
 # Global variables
 storage = ArkivverketObjectStorage()
 
+
 def create_file(name, handle, target_container):
     logging.debug(f"Creating {name} in {target_container}")
     try:
@@ -46,17 +46,28 @@ def create_file(name, handle, target_container):
         sys.exit(UPLOAD_ERROR)
 
 
-def unpack_tar(target_container):
+def stream_tar(stream):
+    """ Takes an stream and created both a tarfile object
+    as well as a TarfileIterator using the stream """
+    if stream is None:
+        logging.error("Could not open file.")
+        raise Exception('Could not get object handle')
     try:
-        obj = storage.download_stream(bucket, filename)
-        file_stream = MakeIterIntoFile(obj)
-        tf = tarfile.open(fileobj=file_stream, mode='r|')
-        tfi = TarfileIterator(tf)
-    except Exception as e:
-        logging.error(f'Failed to open stream to object: {bucket} / {filename}')
-        logging.error(f'Error: {e}')
-        sys.exit(TAR_ERROR)
-    for member in tfi:
+        t_f = tarfile.open(fileobj=stream, mode='r|')
+        tar_iterator = TarfileIterator(t_f)
+    except Exception as exception:
+        logging.error(f'Failed to open stream to object {stream}')
+        logging.error(f'Error: {exception}')
+        raise exception
+    return tar_iterator, t_f
+
+
+def unpack_tar(target_container):
+    obj = storage.download_stream(bucket, filename)
+    file_stream = MakeIterIntoFile(obj)
+    tar_iterator, tar_file = stream_tar(file_stream)
+
+    for member in tar_iterator:
         # If it is a directory or if a slash is the last char (root node?)
         if member.isdir() or member.name[-1] == '/':
             # Handle is none - likely a directory.
@@ -66,7 +77,7 @@ def unpack_tar(target_container):
         elif not member.isfile():
             logging.warning(f"Content {member.name} has not been unpacked because it is not a regular type of file")
             continue
-        handle = tf.extractfile(member)
+        handle = tar_file.extractfile(member)
         # If member is the mets file, calculate sha256 checksum and log it
         if member.name.endswith(METS_FILENAME):
             checksum = get_sha256(handle)
