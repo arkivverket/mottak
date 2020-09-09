@@ -4,7 +4,7 @@ import sys
 import logging
 
 from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from .error_codes import JSONERROR, USAGEERROR, UNKNOWNIID, UUIDERROR
+from .return_codes import JSONERROR, USAGEERROR, UNKNOWNIID, UUIDERROR, OK, UNKNOWNUUID
 
 try:
     from dotenv import load_dotenv
@@ -62,12 +62,12 @@ def run():
     except Exception as exception:
         logging.error(
             f'Error while looking up uuid from invition ({iid}) from DB: {exception}')
-        exit(UNKNOWNIID)
+        exit(UNKNOWNUUID)
 
     # This is the pre-create hook. The only concern here is to validate the UUID
     if uuid == metadata['uuid']:
         logging.info('Invitation ID verified.')
-        exit(0)
+        exit(OK)
     else:
         logging.error(
             f'UUID mismatch (from DB:{metadata["uuid"]} - from tusd: {uuid}')

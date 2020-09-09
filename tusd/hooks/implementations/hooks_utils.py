@@ -6,7 +6,7 @@ import re
 
 from typing import TextIO
 
-from .error_codes import DBERROR
+from .return_codes import DBERROR
 
 
 def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:

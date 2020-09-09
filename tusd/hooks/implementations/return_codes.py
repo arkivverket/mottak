@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Return codes.
+OK = 0
 UUIDERROR = 1    # invalid UUID
 DBERROR = 10     #
 JSONERROR = 11   # JSON parsing
