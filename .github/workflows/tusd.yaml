@@ -1,9 +1,11 @@
 on:
   push:
     paths:
-    - 'tusd/**'
+      - 'tusd/**'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'tusd/**'
    
 jobs:
   build:
