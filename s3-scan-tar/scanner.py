@@ -7,7 +7,7 @@ import sys
 import logging
 import io
 import tarfile
-from typing import Any
+from collections import namedtuple
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 import pyclamd
 
@@ -20,8 +20,9 @@ except ModuleNotFoundError:
 
 from _version import __version__
 
-# Exit values
+MEGABYTES = 1024 ** 2
 
+# Exit values
 CLAMAVERROR = 10
 
 
@@ -53,13 +54,13 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
 
     def read_flush(self):
         """ Read and discard the rest of the file. """
-        while len(self.filehandle.read(1024 ** 2)) > 0:  # read big chunks...
+        while len(self.filehandle.read(MEGABYTES)) > 0:  # read big chunks...
             pass
 
     def tell(self):
         return self.filehandle.tell()
 
-    def seek(self, pos: Any, **kwargs) -> int:
+    def seek(self, pos: int, **kwargs) -> int:
         raise io.UnsupportedOperation
 
 
@@ -92,7 +93,7 @@ def stream_tar(stream):
 
 def scan_archive(tar_file, clamd_socket, limit) -> (int, int, int):
     """ Takes a tar_file typically a cloud storage object) and scans
-    it. Returns the tuple (clean, virus, skipped)"""
+    it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
     tar_stream, tar_file = stream_tar(tar_file)
     for member in tar_stream:
@@ -106,17 +107,22 @@ def scan_archive(tar_file, clamd_socket, limit) -> (int, int, int):
             logging.info(f'Scanning {member.name}...')
             result = clamd_socket.scan_stream(handle)
 
+            # No virus found
             if result is None:
-                logging.info(f'clean - {member.name}')
-                clean += 1
+                # but the scan was not completed.
+                if handle.restricted:
+                    logging.warning(
+                        'Scan was restricted by size limit. Scan incomplete.')
+                    skipped += 1
+                else:
+                    # the scan WAS completed
+                    logging.info(f'clean - {member.name}')
+                    clean += 1
             else:
                 logging.warning(
                     f'Virus found! {result["stream"][1]} in {member.name}')
                 virus += 1
-            if handle.restricted:
-                logging.warning(
-                    'Scan was restricted by size limit. Scan incomplete.')
-                skipped += 1
+
         except ConnectionResetError:
             logging.error(
                 'clamd reset the connection. Increase max scan size for clamd.')
@@ -128,7 +134,9 @@ def scan_archive(tar_file, clamd_socket, limit) -> (int, int, int):
             logging.error(f"Failed to scan {member.name}")
             logging.error(f'Error: {exception}')
             raise exception
-    return clean, virus, skipped
+    logging.debug(f'clean: {clean}, virus: {virus}, skipped: {skipped}')
+    ret = namedtuple("scan", ["clean", "virus", "skipped"])
+    return ret(clean, virus, skipped)
 
 
 def main():
@@ -141,7 +149,7 @@ def main():
     bucket = os.getenv('BUCKET')
     filename = os.getenv('OBJECT')
     # Get the max file size for clamd. Default is 1023 MiB
-    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * 1024 ** 2
+    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES
 
     logging.info(f'Intializing scan on {bucket}/{filename} with scan limit {scan_limit} MiB')
 
@@ -164,12 +172,12 @@ def main():
         logging.error("Could not connect to clamd socket")
         logging.error(exception)
         sys.exit(CLAMAVERROR)
-    (clean, virus, skipped) = scan_archive(
+    scan_ret = scan_archive(
         file_stream, clamd_socket, scan_limit)
 
-    logging.info(f"{clean} files scanned and found clean")
-    logging.info(f"{virus} viruses found")
-    logging.info(f"{skipped} files skipped")
+    logging.info(f"{scan_ret.clean} files scanned and found clean")
+    logging.info(f"{scan_ret.virus} viruses found")
+    logging.info(f"{scan_ret.skipped} files skipped")
     logging.info("Archive scanned - exiting")
 
 

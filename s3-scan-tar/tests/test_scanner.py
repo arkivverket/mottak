@@ -7,14 +7,19 @@
 import io
 import tarfile
 import logging
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
-from pytest import raises
+import pytest
+
 import scanner
 
 BIN_DATA60 = b'012345678901234567890123456789012345678901234567890123456789'
-BIN_DATA10 = b'0123456789'
 VIRUS = b'VIRUS'
+
+@pytest.fixture(scope="session", autouse=True)
+def _enable_logging():
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)s %(message)s')
 
 
 def _generate_tarfile() -> io.BytesIO:
@@ -25,6 +30,7 @@ def _generate_tarfile() -> io.BytesIO:
      file_2 : 180 bytes
      file_3 : 240 bytes
      file_4 : 300 bytes
+     ..
      file_9: 600 bytes
      virus.exe : 5 bytes - contains b'VIRUS'
 
@@ -53,22 +59,26 @@ def _generate_tarfile() -> io.BytesIO:
 
 def test_binary_size_limit0():
     """ The the BinaryFileLimitedOnSize class"""
-    fh_base = io.BytesIO(BIN_DATA60 * 10)  # Create a 600 bytes long file.
-    fh_limited = scanner.BinaryFileLimitedOnSize(fh_base, maxsize=300)
+    SHORT_READ = 10
+    LONG_READ = 300
+    CHUNKS = 10
 
-    chunk = fh_limited.read(10)
-    assert chunk == BIN_DATA10
+    fh_base = io.BytesIO(BIN_DATA60 * CHUNKS)  # Create a 600 bytes long file.
+    fh_limited = scanner.BinaryFileLimitedOnSize(fh_base, maxsize=LONG_READ)
+
+    chunk = fh_limited.read(SHORT_READ)
+    assert chunk == BIN_DATA60[:SHORT_READ]
     assert fh_limited.restricted is False
-    assert fh_limited.tell() == 10
+    assert fh_limited.tell() == SHORT_READ
 
     # Do a bigger read to trigger the restriction...
-    chunk = fh_limited.read(300)
+    chunk = fh_limited.read(LONG_READ)
     assert chunk == b''
     assert fh_limited.restricted is True
-    assert fh_limited.tell() == 600
+    assert fh_limited.tell() == len(BIN_DATA60) * CHUNKS
 
     # Seeks throws UnsupportedOperation
-    with raises(io.UnsupportedOperation):
+    with pytest.raises(io.UnsupportedOperation):
         fh_limited.seek(0)
 
 
@@ -97,18 +107,44 @@ def _scan_stream(handle):
         return {'stream': 'fakevirus'}
     return None
 
+def _scan_stream_reset(handle):
+    """ Helper for the mock that mocks the .scanstream method from pyclamd.
+     This one will raise a ConnectionResetError if we go past out limit. Mimicks a
+     misconfigured clamd. """
+    content = b''
+    while buffer := handle.read(60):
+        content = content + buffer
+        if len(content) + 60 > 300:
+            raise ConnectionResetError("Boom!")
+    if content == VIRUS:
+        return {'stream': 'fakevirus'}
+    return None
+
+
 
 def test_scan_archive():
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s')
     """ Tests the scanning of a archive via a filehandle that contains a tar"""
     fh = _generate_tarfile()
-    magic_socket = MagicMock()
+    magic_socket = Mock()
     magic_socket.scan_stream = _scan_stream
+    # Set the restriction to 301 bytes.
+    # This should make the 60,120,180,240 and VIRUS pass
+    # 300, 360, 420, 480, 540, 600 should be skipped.
+    ret = scanner.scan_archive(fh, magic_socket, 301)
+    assert ret.clean == 4
+    assert ret.virus == 1
+    assert ret.skipped == 6
+
+
+def test_scan_archive_reset():
+    """ Tests the scanning of a archive via a filehandle that contains a tar. Trigges resets from clamd."""
+    fh = _generate_tarfile()
+    magic_socket = Mock()
+    magic_socket.scan_stream = _scan_stream_reset
     # Set the restriction to 300 bytes.
     # This should make the 60,120,180,240 and VIRUS pass
     # 300, 360, 420, 480, 540, 600 should be skipped.
-    clean, virus, skipped = scanner.scan_archive(fh, magic_socket, 301)
-    assert clean == 10
-    assert virus == 1
-    assert skipped == 6
+    ret = scanner.scan_archive(fh, magic_socket, 500000)
+    assert ret.clean == 4
+    assert ret.virus == 1
+    assert ret.skipped == 6
