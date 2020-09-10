@@ -19,7 +19,7 @@ except:
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
-# TODO clean up logging between hooks_utils and this file
+# Todo: clean up logging between hooks_utils and this file
 
 
 def update_db_with_objectname(conn, iid, objectname):
