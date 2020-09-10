@@ -1,9 +1,11 @@
 on:
   push:
     paths:
-    - 'tusd/**'
+      - 'tusd/**'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'tusd/**'
    
 jobs:
   build:
@@ -36,3 +38,7 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
+    - name: Build docker image
+      run: | 
+        docker build . --file Dockerfile --tag deleteme:0.0.1
+        

@@ -1,5 +1,7 @@
 # tusd
 
+Documentation: https://github.com/tus/tusd
+
 tusd handles incomming data from the upload client. You need to have one more more instances running and typically you'll have this open to the internet.
 
 The uploader is invoked with an URL. This is a JSON object that is base64 encoded. It contains an URL pointing at tusd as well as some other data about the upload.
