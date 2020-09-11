@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "mottak-arkiv-service"
+version = "0.1.0"
+description = "Container for running the backend service for mottak-arkiv application."
+authors = ["Mårten Elmgren <elmgren@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.61.1"
+uvicorn = "^0.11.8"
+#py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
+
+
+alembic = "^1.4.2"
+[tool.poetry.dev-dependencies]
+pylint = "^2.4.4"
+python-dotenv = "^0.14.0"
+autopep8 = "^1.5.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
