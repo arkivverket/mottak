@@ -38,52 +38,52 @@ def upgrade():
     op.create_index(op.f('ix_arkivuttrekk_status'), 'arkivuttrekk', ['status'], unique=False)
     op.create_table('invitasjon',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkiv_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('Sent', 'Feilet', name='status_type'), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Enum('Sent', 'Feilet', name='invitasjon_status_type'), nullable=False),
     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
+    sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('arkiv_id'),
+    sa.UniqueConstraint('arkivuttrekk_id'),
     sa.UniqueConstraint('id')
     )
     op.create_table('lokasjon',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkiv_id', sa.Integer(), nullable=False),
-    sa.Column('kontainer', sa.String(), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+    sa.Column('objecktlager', sa.String(), nullable=False),
     sa.Column('generasjon', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
+    sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('arkiv_id', 'generasjon', name='arkiv_id_generasjon_uc'),
+    sa.UniqueConstraint('arkivuttrekk_id', 'generasjon', name='arkivuttrekk_id_generasjon_uc'),
     sa.UniqueConstraint('id')
     )
     op.create_table('metadatafil',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkiv_id', sa.Integer(), nullable=False),
-    sa.Column('type', sa.Enum('xml/mets', name='metadatatype'), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+    sa.Column('type', sa.Enum('xml/mets', name='metadata_type_type'), nullable=False),
     sa.Column('innhold', sa.Text(), nullable=False),
     sa.Column('filnavn', sa.String(), nullable=False),
     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
+    sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('arkiv_id'),
+    sa.UniqueConstraint('arkivuttrekk_id'),
     sa.UniqueConstraint('id')
     )
     op.create_table('overforingspakke',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkiv_id', sa.Integer(), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
     sa.Column('navn', sa.String(), nullable=False),
     sa.Column('storrelse', sa.BigInteger(), nullable=False),
-    sa.Column('status', sa.Enum('OK', 'Avbrutt', 'Feilet', name='status_type'), nullable=False),
-    sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
+    sa.Column('status', sa.Enum('OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type'), nullable=False),
+    sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('arkiv_id'),
+    sa.UniqueConstraint('arkivuttrekk_id'),
     sa.UniqueConstraint('id')
     )
     op.create_table('tester',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkiv_id', sa.Integer(), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
     sa.Column('epost', sa.String(), nullable=False),
-    sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
+    sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('id')
     )
@@ -103,8 +103,9 @@ def downgrade():
 
     op.execute('drop type arkivuttrekk_status_type')
     op.execute('drop type arkivvuttrekk_type_type')
-    op.execute('drop type status_type')
-    op.execute('drop type metadatatype')
+    op.execute('drop type overforingspakke_status_type')
+    op.execute('drop type metadata_type_type')
+    op.execute('drop type invitasjon_status_type')
 
     # Drop enum types on downgrade.
     # ### end Alembic commands ###
