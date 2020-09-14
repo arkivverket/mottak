@@ -1,9 +1,19 @@
+import os
+import sys
+import logging
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+    print("dotenv loaded")
+except ModuleNotFoundError:
+    print("Failed to load dotenv file. Assuming production")
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -19,18 +29,32 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 
 # When creating a migration import all the classes and point target_metadata to Base:
-#import os, sys
-#sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
-#from app.db.schemas.mottak import Arkivuttrekk, Invitasjon, Lokasjon, Metadatafil, Overforingspakke, Tester
-#from app.db.baseclass import Base
-#target_metadata = Base.metadata
+# import os, sys
+# sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
+# from app.db.schemas.mottak import Arkivuttrekk, Invitasjon, Lokasjon, Metadatafil, Overforingspakke, Tester
+# from app.db.baseclass import Base
+# target_metadata = Base.metadata
 # Default:
 target_metadata = None
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+def get_url():
+    try:
+        return "%s://%s:%s@%s/%s" % (
+                os.environ["DB_DRIVER"],
+                os.environ["DB_USER"],
+                os.environ["DB_PASSWORD"],
+                os.environ["DB_HOST"],
+                os.environ["DB_NAME"],
+            )
+    except KeyError as exception:
+        logging.error(f"Environment variable not set {exception}")
+        sys.exit(1)
 
 
 def run_migrations_offline():
@@ -45,7 +69,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -64,10 +88,12 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        url=get_url()
     )
 
     with connectable.connect() as connection:
