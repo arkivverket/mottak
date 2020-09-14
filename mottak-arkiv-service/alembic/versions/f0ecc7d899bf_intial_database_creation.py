@@ -25,7 +25,7 @@ def upgrade():
     sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type'), nullable=False),
     sa.Column('tittel', sa.String(), nullable=False),
     sa.Column('beskrivelse', sa.String(), nullable=False),
-    sa.Column('sjekksum', sa.String(length=64), nullable=False),
+    sa.Column('sjekksum_sha256', sa.String(length=64), nullable=False),
     sa.Column('avgiver_navn', sa.String(), nullable=False),
     sa.Column('avgiver_epost', sa.String(), nullable=False),
     sa.Column('koordinator_epost', sa.String(), nullable=False),

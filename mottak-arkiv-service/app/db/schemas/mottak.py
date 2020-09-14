@@ -14,7 +14,7 @@ class Arkivuttrekk(Base):
     type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True), nullable=False)
     tittel = Column(String(), nullable=False)
     beskrivelse = Column(String(), nullable=False)
-    sjekksum = Column(String(length=64), nullable=False)
+    sjekksum_sha256 = Column(String(length=64), nullable=False)
     avgiver_navn = Column(String(), nullable=False)
     avgiver_epost = Column(String(), nullable=False)
     koordinator_epost = Column(String(), nullable=False)
