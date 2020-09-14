@@ -21,11 +21,11 @@ class Arkivuttrekk(Base):
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
     endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)
 
-    invitasjoner = relationship('Arkivuttrekk', backref='arkivuttrekk')
-    lokasjoner = relationship('Arkivuttrekk', backref='arkivuttrekk')
-    metadatafiler = relationship('Arkivuttrekk', backref='arkivuttrekk')
-    overforingspakker = relationship('Arkivuttrekk', backref='arkivuttrekk')
-    testere = relationship('Arkivuttrekk', backref='arkivuttrekk')
+    invitasjoner = relationship('Invitasjon', backref='arkivuttrekk')
+    lokasjoner = relationship('Lokasjon', backref='arkivuttrekk')
+    metadatafiler = relationship('Metadatafil', backref='arkivuttrekk')
+    overforingspakker = relationship('Overforingspakke', backref='arkivuttrekk')
+    testere = relationship('Tester', backref='arkivuttrekk')
 
 
 class Invitasjon(Base):
