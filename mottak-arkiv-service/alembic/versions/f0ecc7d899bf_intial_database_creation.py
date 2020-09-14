@@ -1,8 +1,8 @@
 """Intial database creation
 
-Revision ID: e357ec7f4036
-Revises: 
-Create Date: 2020-09-14 10:55:18.502592
+Revision ID: f0ecc7d899bf
+Revises:
+Create Date: 2020-09-14 11:59:40.128185
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'e357ec7f4036'
+revision = 'f0ecc7d899bf'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,8 +21,8 @@ def upgrade():
     op.create_table('arkivuttrekk',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('obj_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('status', sa.Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring'), nullable=False),
-    sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem'), nullable=True),
+    sa.Column('status', sa.Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type'), nullable=False),
+    sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type'), nullable=True),
     sa.Column('tittel', sa.String(), nullable=False),
     sa.Column('beskrivelse', sa.String(), nullable=False),
     sa.Column('sjekksum', sa.String(length=64), nullable=False),
@@ -39,7 +39,7 @@ def upgrade():
     op.create_table('invitasjon',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('arkiv_id', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('Sent', 'Feilet'), nullable=False),
+    sa.Column('status', sa.Enum('Sent', 'Feilet', name='status_type'), nullable=False),
     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
@@ -59,7 +59,7 @@ def upgrade():
     op.create_table('metadatafil',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('arkiv_id', sa.Integer(), nullable=False),
-    sa.Column('type', sa.Enum('xml/mets'), nullable=False),
+    sa.Column('type', sa.Enum('xml/mets', name='metadatatype'), nullable=False),
     sa.Column('innhold', sa.Text(), nullable=False),
     sa.Column('filnavn', sa.String(), nullable=False),
     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
@@ -73,7 +73,7 @@ def upgrade():
     sa.Column('arkiv_id', sa.Integer(), nullable=False),
     sa.Column('navn', sa.String(), nullable=False),
     sa.Column('storrelse', sa.BigInteger(), nullable=False),
-    sa.Column('status', sa.Enum('OK', 'Avbrutt', 'Feilet'), nullable=False),
+    sa.Column('status', sa.Enum('OK', 'Avbrutt', 'Feilet', name='status_type'), nullable=False),
     sa.ForeignKeyConstraint(['arkiv_id'], ['arkivuttrekk.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('arkiv_id'),
@@ -100,4 +100,11 @@ def downgrade():
     op.drop_index(op.f('ix_arkivuttrekk_status'), table_name='arkivuttrekk')
     op.drop_index(op.f('ix_arkivuttrekk_obj_id'), table_name='arkivuttrekk')
     op.drop_table('arkivuttrekk')
+
+    op.execute('drop type arkivuttrekk_status_type')
+    op.execute('drop type arkivvuttrekk_type_type')
+    op.execute('drop type status_type')
+    op.execute('drop type metadatatype')
+
+    # Drop enum types on downgrade.
     # ### end Alembic commands ###

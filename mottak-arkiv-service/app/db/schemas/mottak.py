@@ -10,8 +10,8 @@ class Arkivuttrekk(Base):
     """This is the class that represents an archive that is being processed in mottak."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     obj_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
-    status = Column(Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring'), nullable=False, index=True)
-    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem'))
+    status = Column(Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
+    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True))
     tittel = Column(String(), nullable=False)
     beskrivelse = Column(String(), nullable=False)
     sjekksum = Column(String(length=64), nullable=False)
@@ -35,7 +35,7 @@ class Invitasjon(Base):
     """
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkiv_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
-    status = Column(Enum('Sent', 'Feilet'), nullable=False)
+    status = Column(Enum('Sent', 'Feilet', name='status_type', create_type=True), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
 
 
@@ -60,7 +60,7 @@ class Metadatafil(Base):
     archive. If we move away from METS we should change the ENUM field to support other file types."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkiv_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
-    type = Column(Enum('xml/mets'), nullable=False, unique=False)
+    type = Column(Enum('xml/mets', name='metadatatype', create_type=True), nullable=False, unique=False)
     innhold = Column(Text(), nullable=False)
     filnavn = Column(String(), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
@@ -73,7 +73,7 @@ class Overforingspakke(Base):
     arkiv_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
     navn = Column(String(), nullable=False)
     storrelse = Column(BigInteger(), nullable=False)
-    status = Column(Enum('OK', 'Avbrutt', 'Feilet'), nullable=False)
+    status = Column(Enum('OK', 'Avbrutt', 'Feilet', name='status_type', create_type=True), nullable=False)
 
 
 class Tester(Base):
