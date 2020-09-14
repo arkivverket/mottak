@@ -1,6 +1,4 @@
 ### Mottak-arkiv-service
-Service for
-
 
 ### Databaseskjema
 Koden under kan brukes på: https://dbdiagram.io/
