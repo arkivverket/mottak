@@ -17,7 +17,14 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+
+# When creating a migration import all the classes and point target_metadata to Base:
+import os, sys
+sys.path.insert(0, os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
+from app.db.schemas.mottak import Arkivuttrekk, Invitasjon, Lokasjon, Metadatafil, Overforingspakke, Tester
+from app.db.baseclass import Base
+target_metadata = Base.metadata
+# target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
