@@ -29,7 +29,7 @@ class Arkivuttrekk(Base):
 
 
 class Invitasjon(Base):
-    """Am invitation. When we send an invitation to upload we create such an object and connect it to an archive.
+    """An invitation. When we send an invitation to upload we create such an object and connect it to an archive.
     Not sure if we should create more than one if we send out several invitations.
     Perhaps it should contain a reference to the actual invitation being sent.
     """
