@@ -4,8 +4,7 @@ import pathlib
 import logging
 import requests
 
-BLOB_SAS_TOKEN = 'sp=r&st=2020-09-15T06:00:00Z&se=2020-09-15T14:04:04Z&sip=84.209.175.165&spr=https&sv=2019-12-12&sr=b&sig=cMFXw9Tr6gV0A1q7lJs7wl%2FbxFFdpk3jlBpA8Yd7VhM%3D'
-BLOB_SAS_URL = 'https://mottakmvp.blob.core.windows.net/mottak/9ac53268505260cbc78e195693e2335e?sp=r&st=2020-09-15T06:00:00Z&se=2020-09-15T14:04:04Z&sip=84.209.175.165&spr=https&sv=2019-12-12&sr=b&sig=cMFXw9Tr6gV0A1q7lJs7wl%2FbxFFdpk3jlBpA8Yd7VhM%3D'
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -34,9 +33,11 @@ def download_and_unpack_azcopy(platform: Platform):
     filename = resp.url.split('/')[-1]
     open(filename, 'wb').write(resp.content)
     if filename.endswith('.zip'):
-        os.system('unzip -j {}'.format(filename))
+        os.system('unzip -j {}'.format(filename))  # Unpacks in current folder
+        # os.system('unzip {}'.format(filename))
     elif filename.endswith('.tar.gz'):
-        os.system('tar --strip-components=1 -zxvf {}'.format(filename))
+        os.system('tar --strip-components=1 -zxvf {}'.format(filename))  # Unpacks in current folder
+        # os.system('tar -zxvf {}'.format(filename))
     os.system('rm {}'.format(filename))
 
 
@@ -51,7 +52,7 @@ def run(sas_url: str):
     if not finds_azcopy():
         logging.info("azcopy not found")
         download_and_unpack_azcopy(platform)
-    download_blob(sas_url)
+    # download_blob(sas_url)
 
 
 if __name__ == '__main__':
