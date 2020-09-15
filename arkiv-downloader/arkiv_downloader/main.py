@@ -4,7 +4,6 @@ import pathlib
 import logging
 import requests
 
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -42,7 +41,7 @@ def download_and_unpack_azcopy(platform: Platform):
 
 
 def download_blob(sas_url: str):
-    azcopy_command = './azcopy cp "{}" "local_file.tar"'.format(sas_url)
+    azcopy_command = './azcopy cp "{}" "local_file.tar" --recursive'.format(sas_url)
     print('Running: {}'.format(azcopy_command))
     os.system(azcopy_command)
 
@@ -52,7 +51,7 @@ def run(sas_url: str):
     if not finds_azcopy():
         logging.info("azcopy not found")
         download_and_unpack_azcopy(platform)
-    # download_blob(sas_url)
+    download_blob(sas_url)
 
 
 if __name__ == '__main__':
