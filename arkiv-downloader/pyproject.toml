@@ -7,7 +7,6 @@ authors = ["Kristoffer Waløen <kriwal@arkivverket.no>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 requests = "^2.24.0"
-nuitka = "^0.6.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

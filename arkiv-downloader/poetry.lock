@@ -63,14 +63,6 @@ python-versions = ">=3.5"
 version = "8.5.0"
 
 [[package]]
-category = "main"
-description = "Python compiler with full language support and CPython compatibility"
-name = "nuitka"
-optional = false
-python-versions = "*"
-version = "0.6.8.4"
-
-[[package]]
 category = "dev"
 description = "Core utilities for Python packages"
 name = "packaging"
@@ -179,7 +171,7 @@ python-versions = "*"
 version = "0.2.5"
 
 [metadata]
-content-hash = "e86c4c8a40130194b016c1f5a0249a294acfda33a0d68cad712f3430a75160c1"
+content-hash = "eceeddf0580a29e7b9505b3c808cf30a3814091c9405404bd133d07e5a3ce0c9"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -211,9 +203,6 @@ idna = [
 more-itertools = [
     {file = "more-itertools-8.5.0.tar.gz", hash = "sha256:6f83822ae94818eae2612063a5101a7311e68ae8002005b5e05f03fd74a86a20"},
     {file = "more_itertools-8.5.0-py3-none-any.whl", hash = "sha256:9b30f12df9393f0d28af9210ff8efe48d10c94f73e5daf886f10c4b0b0b4f03c"},
-]
-nuitka = [
-    {file = "Nuitka-0.6.8.4.tar.gz", hash = "sha256:487917779f6c8e4d91ea670d7a268c16402534b96b9cdba44b87d11d3fabde4d"},
 ]
 packaging = [
     {file = "packaging-20.4-py2.py3-none-any.whl", hash = "sha256:998416ba6962ae7fbd6596850b80e17859a5753ba17c32284f67bfff33784181"},
