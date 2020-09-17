@@ -16,4 +16,4 @@ WORKDIR /app
 
 RUN poetry install --no-dev
 
-CMD ["python", "arkiv_downloader/main.py"]
+CMD ["poetry", "run", "python", "arkiv_downloader/main.py"]

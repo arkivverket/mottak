@@ -1,26 +1,83 @@
 import os
-import sys
-import pathlib
 import logging
-import requests
+import subprocess
+from uuid import uuid1, UUID
 
-BLOB_SAS_TOKEN = 'sp=r&st=2020-09-15T06:00:00Z&se=2020-09-15T14:04:04Z&sip=84.209.175.165&spr=https&sv=2019-12-12&sr=b&sig=cMFXw9Tr6gV0A1q7lJs7wl%2FbxFFdpk3jlBpA8Yd7VhM%3D'
-BLOB_SAS_URL = 'https://mottakmvp.blob.core.windows.net/mottak/9ac53268505260cbc78e195693e2335e?sp=r&st=2020-09-15T06:00:00Z&se=2020-09-15T14:04:04Z&sip=84.209.175.165&spr=https&sv=2019-12-12&sr=b&sig=cMFXw9Tr6gV0A1q7lJs7wl%2FbxFFdpk3jlBpA8Yd7VhM%3D'
+from azure.servicebus import QueueClient, Message
+
+from arkiv_downloader.models.dto import TransferStatus, ArkivuttrekkTransferInfo, ArkivuttrekkTransferStatus
+
 
 logging.basicConfig(level=logging.INFO)
+
+
+def create_queue_client(queue_name: str) -> QueueClient:
+    return QueueClient.from_connection_string('Endpoint=sb://kriwal-test.servicebus.windows.net/;SharedAccessKeyName=kriwal-test;SharedAccessKey=sclUX6IPZP5aUi64xKae+oxo2J8JVzRZIXe8uH+1qOk=', queue_name)
+
+
+def send_message_to_queue(message: str, client: QueueClient):
+    msg = Message(message)
+    client.send(msg)
+
+
+def get_message_from_queue(client: QueueClient) -> ArkivuttrekkTransferInfo:
+    with client.get_receiver() as receiver:
+        message = receiver.next()
+        message_str = str(message)
+        print(f'Got message {message_str}')
+        arkivuttrekk = ArkivuttrekkTransferInfo.from_string(message_str)
+        message.complete()
+        return arkivuttrekk
 
 
 def download_blob(sas_url: str):
     azcopy_command = './azcopy/azcopy cp "{}" "local_file.tar" --recursive'.format(sas_url)
     print('Running: {}'.format(azcopy_command))
+    subprocess.check_output(
+        azcopy_command,
+        stderr=subprocess.STDOUT,
+        shell=True
+    )
     os.system(azcopy_command)
 
 
-def run(sas_url: str):
-    download_blob(sas_url)
+def send_status_message(obj_id: UUID, status: TransferStatus, client: QueueClient):
+    status_obj = ArkivuttrekkTransferStatus(obj_id, status)
+    message = Message(status_obj.as_json_str())
+    client.send(message)
+
+
+def run(queue_client_downloader: QueueClient, queue_client_status: QueueClient):
+    while True:
+        arkivuttrekk = get_message_from_queue(queue_client_downloader)
+        send_status_message(arkivuttrekk.obj_id, TransferStatus.TRANSFERING, queue_client_status)
+        download_blob(arkivuttrekk.blob_sas_url)
+        send_status_message(arkivuttrekk.obj_id, TransferStatus.FINISHED, queue_client_status)
+        break
+
+
+def mock_input(client: QueueClient):
+    a = ArkivuttrekkTransferInfo(uuid1(), BLOB_SAS_URL)
+    m = Message(a.as_json_str())
+    client.send(m)
+
+
+def mock_get_status(queue_client_status: QueueClient):
+    with queue_client_status.get_receiver() as receiver:
+        for i in [1, 2]:
+            print(i)
+            message = receiver.next()
+            message_str = str(message)
+            print(f'Got message {message_str}')
+            message.complete()
 
 
 if __name__ == '__main__':
-    # sas_url_arg = sys.argv[1]
-    sas_url_arg = BLOB_SAS_URL
-    run(sas_url_arg)
+    _queue_client_downloader = create_queue_client('downloader')
+    _queue_client_status = create_queue_client('status')
+
+    mock_input(_queue_client_downloader)
+
+    run(_queue_client_downloader, _queue_client_status)
+
+    mock_get_status(_queue_client_status)
