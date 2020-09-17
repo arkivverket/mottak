@@ -1,5 +1,5 @@
 """ SAS Generator service. Runs on Azure. Generates SAS tokens which are used whenever we
-wanna exportan container somehow. Called by the dashboard when the downloader
+wanna export an container somehow. Called by the dashboard when the downloader
 needs a SAS token."""
 
 from datetime import datetime, timedelta
