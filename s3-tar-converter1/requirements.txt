@@ -1,2 +1,0 @@
-python-dotenv==0.10.3
-cryptography==2.8
