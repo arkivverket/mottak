@@ -2,17 +2,21 @@ import os
 import logging
 import subprocess
 from uuid import uuid1, UUID
+from dotenv import load_dotenv
 
 from azure.servicebus import QueueClient, Message
 
 from arkiv_downloader.models.dto import TransferStatus, ArkivuttrekkTransferInfo, ArkivuttrekkTransferStatus
 
+load_dotenv()
+BLOB_SAS_URL = os.getenv('BLOB_SAS_URL')
+QUEUE_CLIENT_STRING = os.getenv('QUEUE_CLIENT_STRING')
 
 logging.basicConfig(level=logging.INFO)
 
 
 def create_queue_client(queue_name: str) -> QueueClient:
-    return QueueClient.from_connection_string('Endpoint=sb://kriwal-test.servicebus.windows.net/;SharedAccessKeyName=kriwal-test;SharedAccessKey=sclUX6IPZP5aUi64xKae+oxo2J8JVzRZIXe8uH+1qOk=', queue_name)
+    return QueueClient.from_connection_string(QUEUE_CLIENT_STRING, queue_name)
 
 
 def send_message_to_queue(message: str, client: QueueClient):

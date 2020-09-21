@@ -7,6 +7,7 @@ authors = ["Kristoffer Waløen <kriwal@arkivverket.no>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 azure-servicebus = "^0.50.3"
+python-dotenv = "^0.14.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
