@@ -13,7 +13,7 @@ from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_412_PRECONDITI
 # Azure Blob Storage
 from azure.core.exceptions import ResourceNotFoundError, ServiceRequestError
 from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob import AccountSasPermissions, generate_container_sas
+from azure.storage.blob import generate_container_sas, ContainerSasPermissions
 
 # Model
 from app.model.dto import SASRequest
@@ -89,7 +89,7 @@ async def create_sas(container: str, duration_hours: int = 1) -> str:
         client.account_name,
         container_name=container,
         account_key=client.credential.account_key,
-        permission=AccountSasPermissions(read=True),
+        permission=ContainerSasPermissions(read=True),
         expiry=datetime.utcnow() + timedelta(hours=duration_hours)
     )
     return sas_token
