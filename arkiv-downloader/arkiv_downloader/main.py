@@ -2,17 +2,25 @@ import os
 import logging
 import subprocess
 from uuid import uuid1, UUID
-from dotenv import load_dotenv
 
 from azure.servicebus import QueueClient, Message
 
 from arkiv_downloader.models.dto import TransferStatus, ArkivuttrekkTransferInfo, ArkivuttrekkTransferStatus
 
-load_dotenv()
+try:
+    # Importing .env file if it exists
+    import dotenv
+    dotenv.load_dotenv()
+    del dotenv
+except ImportError:
+    pass
+
+
 BLOB_SAS_URL = os.getenv('BLOB_SAS_URL')
 QUEUE_CLIENT_STRING = os.getenv('QUEUE_CLIENT_STRING')
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger('uamqp').setLevel(logging.WARNING)  # Reducing noise in the logs from overly verbose logger
 
 
 def create_queue_client(queue_name: str) -> QueueClient:
@@ -35,14 +43,18 @@ def get_message_from_queue(client: QueueClient) -> ArkivuttrekkTransferInfo:
 
 
 def download_blob(sas_url: str):
-    azcopy_command = './azcopy/azcopy cp "{}" "local_file.tar" --recursive'.format(sas_url)
+    azcopy_command = ['./azcopy/azcopy', 'cp', f'{sas_url}', 'local_file.tar', '--recursive']
     print('Running: {}'.format(azcopy_command))
-    subprocess.check_output(
-        azcopy_command,
-        stderr=subprocess.STDOUT,
-        shell=True
-    )
-    os.system(azcopy_command)
+    try:
+        response = subprocess.check_output(
+            azcopy_command,
+            stderr=subprocess.STDOUT,
+            # shell=True,
+        ).decode('utf-8')
+        print(response)
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed to run azcopy: {e.output.decode('utf-8')}")
+    # os.system(azcopy_command)
 
 
 def send_status_message(obj_id: UUID, status: TransferStatus, client: QueueClient):
