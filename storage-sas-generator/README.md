@@ -10,4 +10,9 @@ To run locally on your development machine:
 ```shell script
 uvicorn app.main:app --reload
 ```
+
+To test using httpie:
+```
+http POST localhost:8000/generate_sas container=mottak duration_hours=3
+```
 Use the docker image in production.

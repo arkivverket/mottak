@@ -8,17 +8,17 @@ import logging
 
 # FastAPI and Starlette:
 from fastapi import FastAPI, HTTPException
-
-# Azure Blob Storage
-from azure.core.exceptions import ResourceNotFoundError
-from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob import AccountSasPermissions, generate_container_sas
-from azure.storage.blob._generated.models import StorageErrorException
-
-# Model
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_412_PRECONDITION_FAILED
 
+# Azure Blob Storage
+from azure.core.exceptions import ResourceNotFoundError, ServiceRequestError
+from azure.storage.blob.aio import BlobServiceClient
+from azure.storage.blob import AccountSasPermissions, generate_container_sas
+
+# Model
 from app.model.dto import SASRequest
+from app.model.global_state import GlobalState
+from .constants import *
 
 try:
     from dotenv import load_dotenv
@@ -31,20 +31,35 @@ except ModuleNotFoundError:
 
 app = FastAPI()
 
-STATUS_OK = 0
-STATUS_ERROR = 1
+global_state = GlobalState(status_code=STATUS_INITIALIZING,
+                           status_message='Initializing',
+                           azure_client=None)
 
 runtime_config = {
     'status': STATUS_ERROR
 }
 
 
-async def get_service_url(account):
+async def register_status(status_code: int, message: str) -> None:
+    """
+    Register a status internally. Used for the health check.
+
+    Parameters:
+          status_code: int, constant
+          message: str - description of the state
+
+          Returns None.
+    """
+    global_state.status_code = status_code
+    global_state.status_message = message
+
+
+async def get_service_url(account: str) -> str:
     """ Returns the URL of the blob storage service"""
     return f"https://{account}.blob.core.windows.net"
 
 
-async def validate_container(client, container: str) -> bool:
+async def validate_container(client: BlobServiceClient, container: str) -> None:
     """ This makes sure that the given container exists and we have access to it.
     Will raise an error which is caught further out. """
     container_client = client.get_container_client(container)
@@ -101,25 +116,27 @@ async def startup_event():
     logging.info(f'Connected to Azure Blob Service version {blob_service_client.api_version}')
     # This forces some talk on the wire to verify that we can talk to the Azure API.
     runtime_config["client"] = blob_service_client
-
+    logging.info('Probing storage layer.')
     try:
         await blob_service_client.get_account_information()
-        runtime_config["status"] = STATUS_OK
-    except StorageErrorException as exception:
-        runtime_config["status"] = STATUS_ERROR
+        await register_status(STATUS_OK, 'OK')
+    except ServiceRequestError as exception:
+        await register_status(STATUS_ERROR, exception)
         logging.error(f"Something went wrong when talking to Azure: {exception}")
 
 
 @app.get("/healthz")
 async def health_check():
     """ Health check.
-    Pings the Azure blob service.
+    Pings the Azure blob service. Used by kubernetes.
     """
-    status = runtime_config["status"]
+    status = global_state.status_code
+    message = global_state.status_message
     if status != STATUS_OK:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Service is experiencing failure")
+                            detail=f"Service is experiencing failure: {message}")
     return {"status": "Hunky dory"}
+
 
 @app.post("/generate_sas")
 async def generate_sas(dto: SASRequest):
@@ -133,3 +150,9 @@ async def generate_sas(dto: SASRequest):
     except ResourceNotFoundError as exception:
         raise HTTPException(status_code=HTTP_412_PRECONDITION_FAILED,
                             detail="The specified container does not exist") from exception
+
+
+if __name__ == '__main__':
+    import uvicorn
+
+    uvicorn.run("main:app", reload=True)
