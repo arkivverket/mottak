@@ -20,7 +20,7 @@ def get_url():
         sys.exit(1)
 
 
-def Session():
+def get_session():
     engine = create_engine(get_url(), echo=True)
     session_class = sessionmaker()
     session_class.configure(bind=engine)
