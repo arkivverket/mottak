@@ -38,13 +38,13 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
-#    - uses: azure/docker-login@v1
-#      with:
-#        login-server: arkivverket.azurecr.io
-#        username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
-#        password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
-#
-#    - run: |
-#        docker build . -t arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
-#        docker push arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
+    - uses: azure/docker-login@v1
+      with:
+        login-server: arkivverket.azurecr.io
+        username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
+
+    - run: |
+        docker build . -t arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
+        docker push arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
 
