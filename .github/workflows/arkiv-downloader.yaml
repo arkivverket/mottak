@@ -21,14 +21,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8
+
     - name: Install poetry and flake8
       run: |
         python -m pip install --upgrade pip
         pip install poetry
         pip install flake8
+
     - name: Install dependencies
       run: |
         poetry install
+
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
@@ -38,13 +41,15 @@ jobs:
     - name: Test with pytest
       run: |
         poetry run pytest
+
     - uses: azure/docker-login@v1
+    - name: Build and push docker image
       with:
         login-server: arkivverket.azurecr.io
         username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
         password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
-
-    - run: |
+      if: github.ref == 'refs/heads/master'
+      run: |
         docker build . -t arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
         docker push arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
 
