@@ -8,7 +8,7 @@ Env variables needed:
 
 
 ## Running locally
-Run
+- Download azcopy and put under [root/arkiv_downloader/azcopy](arkiv_downloader/azcopy)
 - Run `poetry install`
 - Create a `.env` file in [root folder](.) containing env variables
 - Run `python arkiv_downloader/main.py`

@@ -2,7 +2,9 @@ from __future__ import annotations
 import json
 from uuid import UUID
 from enum import Enum
+import logging
 from datetime import datetime
+from typing import Optional
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -14,21 +16,25 @@ class UUIDEncoder(json.JSONEncoder):
 
 
 class TransferStatus(Enum):
-    RECEIVED = 1
-    TRANSFERING = 2
+    STARTING_TRANSFER = 1
     FINISHED = 3
     FAILED = 4
 
 
 class ArkivuttrekkTransferInfo:
-    def __init__(self, obj_id: UUID, blob_sas_url: str):
+    def __init__(self, obj_id: UUID, container_sas_url: str):
         self.obj_id = obj_id
-        self.blob_sas_url = blob_sas_url
+        self.container_sas_url = container_sas_url
 
     @staticmethod
-    def from_string(json_string: str) -> ArkivuttrekkTransferInfo:
-        json_message = json.loads(json_string)
-        return ArkivuttrekkTransferInfo(UUID(json_message['obj_id']), json_message['blob_sas_url'])
+    def from_string(json_string: str) -> Optional[ArkivuttrekkTransferInfo]:
+        try:
+            json_message = json.loads(json_string)
+            json_message['obj_id'] = UUID(json_message['obj_id'])
+            return ArkivuttrekkTransferInfo(**json_message)
+        except (ValueError, KeyError, TypeError) as e:
+            logging.error(f'Failed to parse message {json_string}', e)
+            return None
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder)
@@ -40,5 +46,5 @@ class ArkivuttrekkTransferStatus:
         self.status = status
         self.statusCreatedTime = datetime.now()
 
-    def as_json_str(self):
+    def as_json_str(self) -> str:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
