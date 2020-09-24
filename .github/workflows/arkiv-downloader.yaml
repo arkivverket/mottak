@@ -42,13 +42,13 @@ jobs:
       run: |
         poetry run pytest
 
+    if: github.ref == 'refs/heads/master'
     - uses: azure/docker-login@v1
     - name: Build and push docker image
       with:
         login-server: arkivverket.azurecr.io
         username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
         password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
-      if: github.ref == 'refs/heads/master'
       run: |
         docker build . -t arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
         docker push arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
