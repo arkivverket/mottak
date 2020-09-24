@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from typing import List
+from uuid import UUID
 from fastapi import FastAPI, Depends, status
 from sqlalchemy.orm import Session
 from app.db import get_session, repository
@@ -25,10 +26,22 @@ def get_db():
         db.close()
 
 
-
-@app.get("/health")
+# TODO Implementere helsesjekk av applikasjonen
+@app.get("/health",
+         status_code=status.HTTP_200_OK,
+         tags=["health"],
+         summary="Helsesjekk av applikasjonen")
 async def health_check():
-    return True, "Seems healthy"
+    return "Seems healthy"
+
+
+@app.get("/arkiv/{uuid}",
+         status_code=status.HTTP_200_OK,
+         response_model=ArkivuttrekkOut,
+         tags=["arkivuttrekk"],
+         summary="Hent arkivuttrekk basert på objekt id(UUID)")
+async def get_archive(uuid: UUID,  db: Session = Depends(get_db)):
+    return repository.get_arkivuttrekk(db, uuid)
 
 
 @app.get("/arkiver",
