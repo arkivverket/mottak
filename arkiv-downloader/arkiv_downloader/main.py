@@ -16,7 +16,7 @@ try:
 except ImportError:
     pass
 
-
+# TODO Remove this env variable when ready. This will be a part of incoming message things are more ready.
 BLOB_SAS_URL = os.getenv('BLOB_SAS_URL')
 QUEUE_CLIENT_STRING = os.getenv('QUEUE_CLIENT_STRING')
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')

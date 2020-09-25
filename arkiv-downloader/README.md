@@ -1,7 +1,7 @@
 # Arkiv-downloader
 Application meant to run on-prem for downloading arkivuttrekk from Azure Blob Storage to
 on-prem storage location. It collects download messages from azure service bus queue containing a SAS token/url.
-It then uses azcopy and the sas token/url to download the arkivuttrekk to a local loacation.
+It then uses azcopy and the sas token/url to download the arkivuttrekk to a local location.
 Download location will be `STORAGE_LOCATION/<azure blob container name>`.
 Status reports are back to mottak-arkiv-service through another service bus queue.
 

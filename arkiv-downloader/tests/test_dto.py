@@ -29,7 +29,7 @@ def test_ArkivuttrekkTransferStatus_obj_id_ok():
     status = TransferStatus.STARTING_TRANSFER
     a = ArkivuttrekkTransferStatus(uuid, status)
     assert uuid == a.obj_id, 'ID should be identical'
-    assert status == a.status, 'Status should ne identical'
+    assert status == a.status, 'Status should be identical'
 
 
 def test_ArkivuttrekkTransferStatus_as_json_str():

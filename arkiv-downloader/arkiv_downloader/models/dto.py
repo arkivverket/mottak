@@ -16,9 +16,9 @@ class UUIDEncoder(json.JSONEncoder):
 
 
 class TransferStatus(Enum):
-    STARTING_TRANSFER = 1
-    FINISHED = 3
-    FAILED = 4
+    STARTING_TRANSFER = 'Starting transfer'
+    FINISHED = 'Finished'
+    FAILED = 'Failed'
 
 
 class ArkivuttrekkTransferInfo:
