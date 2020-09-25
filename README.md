@@ -2,7 +2,7 @@
 
 Prototype application for recieving archives and processing them so they can later be put into storage.
 
-The application allow someone to upload a [DIAS](https://www.arkivverket.no/forvaltning-og-utvikling/regelverk-og-standarder/dias-prosjektet-digital-arkivpakkestruktur)-encapsulated archieve into an objectstore. 
+The application allow someone to upload a [DIAS](https://www.arkivverket.no/forvaltning-og-utvikling/regelverk-og-standarder/dias-prosjektet-digital-arkivpakkestruktur)-encapsulated archieve into an objectstore.
 
 ## Containers running in k8s
 
@@ -10,7 +10,7 @@ The following containers are to be scheduled as regular containers that would be
 
  - invitation-deployment
    - PHP container, written by freost. It runs the invitation UI. It gives an overview over the current archives being processed and can trigger actions.
- 
+
  - tusd-deployment
     - tusd container. It runs tusd which is the backend component of the uploader. Upon successful upload it notifies a message queue that a new archive is ready for processing.
 
@@ -28,10 +28,6 @@ The following containers are to be scheduled as regular containers that would be
 
  - argo-controller
    - the k8s controller for Argo
-
-
-
-
 
 
 ## Workflow outline
@@ -61,21 +57,6 @@ The idea is that once we decide to send an archive into preservation we invoke t
 This container step starts off by creating a Shared Access Signature (SAS) for the archive it wants to export. Then this is sent to preservation and recived by the kicker running there. This copies the archive to preservation and deletes it from the source.
 
 
-
-## Documentent conversion (PoC code)
-
-There are two PoC steps that have not been activated in the workflow. Those are the converter steps. These can take
-a tar file and convert certain files using Openoffice in headless mode. They work the following way:
- - s3-tar-converter1
-   - is given a tar file 
-   - scan the tar file for files that should be converted and copies these to a new objectstore
- - s3-tar-converter2
-   - runs OO headless on the archives and converts the files
-
-If these are to be plugged in the following changes are needed:
- - s3-tar-converter1 should be rewritten to read from a unpacked archive in a separate objectstore
- - s3-tar-converter2 should get functionality to create a new incremental archive with separate metadata
-
 ## Requirements
  - docker containers for each component.
  - Kubernetes with Argo for workflow processing
@@ -99,10 +80,10 @@ Note that most of this should happen more or less automatically by Ansible and H
  - Set up an ingress controller (I used nginx installed though Helm), make the TLS certs available to it
  - Get mailgun credentials so you can get outbound mail
  - allocate API key for the log archive service
- 
+
 At this point everything should work.
 
-## Secrets used 
+## Secrets used
 
 We assume the following secrets are in your vault.
 
@@ -137,33 +118,3 @@ You can view the Argo UI by setting up a kube proxy:
 kubectl -n argo port-forward deployment/argo-ui 8001:8001
 
 Then visit http://localhost:8001/ to view the UI.
-
-
-## Deploying manually with Helm
-
-To deploy the mottak Helm Charts with Helm _manually_ (work in progress), do the following:
-
-* Make sure that your kubectl context points to the cluster you want to deploy to.
-
-* Check what is already there with the command:
-
-    helm ls -aA
-    
-* Find out which deploy-time parameters you need to set for each chart. Put these in a file called `values.yaml`.
-
-E.g.:
-
-```
-invitation:
-  mailgun_domain: ...
-  upload_url: ...
-
-tusd:
-  other stuff
-
-...
-```
-
-* Run the helm command against the cluster:
-
-    helm upgrade --install --namespace mottak --wait mottak.mottak path/to/mottak/toplevel/helm/chart --values values.yaml
