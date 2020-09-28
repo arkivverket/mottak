@@ -43,22 +43,24 @@ jobs:
         poetry run pytest
 
   build-and-push-docker-image:
- 
+
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: 'arkiv-downloader'
     needs: test
     if: github.ref == 'refs/heads/master'
-    
-    steps:    
+
+    steps:
+      - uses: actions/checkout@v2
+
       - name: Build and push docker image
         uses: azure/docker-login@v1
         with:
           login-server: arkivverket.azurecr.io
           username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
           password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
-          
+
       - run: |
           docker build . -t arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
           docker push arkivverket.azurecr.io/av-mottak/arkiv-downloader:${{ github.sha }}
