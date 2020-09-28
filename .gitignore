@@ -15,3 +15,4 @@ eggs/
 *.egg-info/
 .installed.cfg
 *.egg
+arkiv-downloader/arkiv_downloader/azcopy/*
