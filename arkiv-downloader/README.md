@@ -11,7 +11,7 @@ Env variables needed:
 
 
 ## Running locally
-- Download azcopy and put under [root/arkiv_downloader/azcopy](arkiv_downloader/azcopy)
+- Download [azcopy](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10) and put under [root/arkiv_downloader/azcopy](arkiv_downloader/azcopy)
 - Run `poetry install`
 - Create a `.env` file in [root folder](.) containing env variables
 - Run `python arkiv_downloader/main.py`
