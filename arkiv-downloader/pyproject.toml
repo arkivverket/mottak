@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "arkiv-downloader"
+version = "0.1.0"
+description = ""
+authors = ["Kristoffer Waløen <kriwal@arkivverket.no>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+azure-servicebus = "^0.50.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+python-dotenv = "^0.14.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
