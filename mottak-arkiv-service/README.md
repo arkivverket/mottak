@@ -22,7 +22,8 @@ The values given here are examples. Please adjust to your local database.
 - Run `poetry install`
 - Create a `.env` file in [root folder](.) containing env variables
 - Initiate the database by running `alembic upgrade head`
-- Run `uvicorn app/main:app --reload`
+- cd into `app`
+- Run `uvicorn main:app --reload`
 
 ### Swagger
 local = http://localhost:8000/docs
