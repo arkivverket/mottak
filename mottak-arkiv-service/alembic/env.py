@@ -1,8 +1,10 @@
+import os
+import sys
+import logging
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
-from app.db.database import get_url
 
 try:
     from dotenv import load_dotenv
@@ -10,6 +12,20 @@ try:
     print("dotenv loaded")
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
+
+
+def get_url():
+    try:
+        return "%s://%s:%s@%s/%s" % (
+            os.environ["DB_DRIVER"],
+            os.environ["DB_USER"],
+            os.environ["DB_PASSWORD"],
+            os.environ["DB_HOST"],
+            os.environ["DB_NAME"],
+        )
+    except KeyError as exception:
+        logging.error(f"Environment variable not set {exception}")
+        sys.exit(1)
 
 
 # this is the Alembic Config object, which provides
