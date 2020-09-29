@@ -3,10 +3,10 @@ env:
 
 on:
   push:
+    branches: [ master ]
     paths:
       - 'mottak-arkiv-service/**'
   pull_request:
-    branches: [ master ]
     paths:
       - 'mottak-arkiv-service/**'
 
