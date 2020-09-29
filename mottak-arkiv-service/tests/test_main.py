@@ -14,7 +14,7 @@ def test_health_check():
 
 
 def test_get_archive():
-    response = client.get("/arkiv/2d105035-5900-43fe-ab4d-74d102866fe6")
+    response = client.get("/arkiv/1")
     assert response.status_code == status.HTTP_200_OK
 
 
