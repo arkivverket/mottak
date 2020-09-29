@@ -34,15 +34,7 @@ class ArkivuttrekkBase(BaseModel):
     koordinator_epost: str = None
 
 
-class ArkivuttrekkIn(ArkivuttrekkBase):
-    """"
-    This version of Arkivuttrekk has been approved by personal of role coordinator.
-    This object will be persisted in database
-    """
-    koordinator_epost: str = None
-
-
-class ArkivuttrekkOut(ArkivuttrekkIn):
+class Arkivuttrekk(ArkivuttrekkBase):
     """
     This version of Arkivuttrekk has been persisted in and returned from the database.
     It contains fields generated in the database.

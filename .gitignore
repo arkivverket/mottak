@@ -9,3 +9,10 @@ k8s/patches.yaml
 gcs.json
 venv/
 .idea/
+develop-eggs/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+arkiv-downloader/arkiv_downloader/azcopy/*

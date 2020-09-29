@@ -4,11 +4,15 @@ from typing import List
 from uuid import UUID
 from fastapi import FastAPI, Depends, status
 from sqlalchemy.orm import Session
-from app.db import get_session, repository
-from app.dto.Arkivuttrekk import ArkivuttrekkOut
+from app.db.database import get_session
+from app.db.repository import get_all_arkivuttrekk
+from app.dto.Arkivuttrekk import Arkivuttrekk
 
-from dotenv import load_dotenv
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ModuleNotFoundError:
+    pass
 
 app = FastAPI(
     title="Mottak-arkiv-service",
@@ -46,10 +50,10 @@ async def get_archive(uuid: UUID,  db: Session = Depends(get_db)):
 
 @app.get("/arkiver",
          status_code=status.HTTP_200_OK,
-         response_model=List[ArkivuttrekkOut],
+         response_model=List[Arkivuttrekk],
          tags=["arkivuttrekk"],
          summary="Hent alle arkivuttrekk")
 def get_archives(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
-    return repository.get_all_arkivuttrekk(db, skip, limit)
+    return get_all_arkivuttrekk(db, skip, limit)
 
 

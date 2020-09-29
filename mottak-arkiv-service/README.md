@@ -1,71 +1,28 @@
-### Mottak-arkiv-service
+## Mottak-arkiv-service
 
-### Databaseskjema
-Koden under kan brukes på: https://dbdiagram.io/
-```
-//// -- LEVEL 1
-//// -- Tables and References
+Application responsible for serving the application mottak-arkiv-web with viewing data and orchestrating the process of storing digital archives.
 
-// Creating tables
-Table arkivuttrekk as a {
-    id int [pk, increment] // auto-increment
-    objId uuid
-    status enum
-    arkivtype enum
-    tittel varchar
-    metadataFil int
-    avgiverNavn varchar
-    avgiverEpost varchar
-    avgiverOrganisasjon varchar
-    koordinator varchar
-    opprettetDato timestamp
-    endretDato timestamp
-  }
+### Application flow
+- The user(coordinator) sends in an XML file created by Arkade5 containing metadata about the archive to be uploaded.
+- The application will parse the XML file and return a partially filled out form.
+- The user will be able to change and add information to the form before committing the data to the application.
+- Once the data has been persisted, an email will be sent out to the archive uploader, inviting them to upload the archive.
+- The archive is uploaded to an agreed upon object storage
 
-Table metadata_fil {
-    id int [pk]
-    type varchar
-    filnavn varchar
-    data text
-    opplastetDato timestamp
- }
-
- Table invitasjon {
-    id int
-    arkivId int
-    status varchar
- }
-
- Table tester {
-    id int
-    arkivId int
-    epost varchar
- }
-
- Table arkiv_overforingspakke {
-    id int
-    arkivuttrekkId int
-    navn varchar
-    storrelse int
-    status enum
- }
+### Environment variables needed
+The values given here are examples. Please adjust to your local database.
+- DB_DRIVER : `postgresql`
+- DB_USER : `postgres`
+- DB_PASSWORD : `""`
+- DB_HOST : `localhost`
+- DB_NAME : `postgres`
 
 
- Table lokasjon {
-   id int
-   arkivuttrekkId int
-   kontainer varchar
-   generasjon int
- }
+### Running locally
+- Run `poetry install`
+- Create a `.env` file in [root folder](.) containing env variables
+- Initiate the database by running `alembic upgrade head`
+- Run `uvicorn app.main:app --reload`
 
-
-// Creating references
-// You can also define relaionship separately
-// > many-to-one; < one-to-many; - one-to-one
-Ref: a.metadataFil - metadata_fil.id
-Ref: a.id - invitasjon.arkivId
-Ref: a.id - tester.arkivId
-Ref: arkivuttrekk.id - arkiv_overforingspakke.arkivuttrekkId
-Ref: arkivuttrekk.id - lokasjon.arkivuttrekkId
-//----------------------------------------------//
-```
+### Swagger
+local = http://localhost:8000/docs
