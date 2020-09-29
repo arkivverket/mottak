@@ -1,3 +1,6 @@
+env:
+  SERVICE_NAME: 'mottak-arkiv-service'
+
 on:
   push:
     paths:
