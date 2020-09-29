@@ -4,7 +4,7 @@ from typing import List
 from fastapi import FastAPI, Depends, status
 from sqlalchemy.orm import Session
 from app.db.database import get_session
-from app.db.repository import get_all_arkivuttrekk
+from app.db.repository import get_arkivuttrekk, get_all_arkivuttrekk
 from app.dto.Arkivuttrekk import Arkivuttrekk
 
 try:
@@ -29,10 +29,22 @@ def get_db():
         db.close()
 
 
-
-@app.get("/health")
+# TODO Implementere helsesjekk av applikasjonen
+@app.get("/health",
+         status_code=status.HTTP_200_OK,
+         tags=["health"],
+         summary="Helsesjekk av applikasjonen")
 async def health_check():
-    return True, "Seems healthy"
+    return "Seems healthy"
+
+
+@app.get("/arkiv/{id}",
+         status_code=status.HTTP_200_OK,
+         response_model=Arkivuttrekk,
+         tags=["arkivuttrekk"],
+         summary="Hent arkivuttrekk basert på id")
+async def get_archive(id: int,  db: Session = Depends(get_db)):
+    return get_arkivuttrekk(db, id)
 
 
 @app.get("/arkiver",
