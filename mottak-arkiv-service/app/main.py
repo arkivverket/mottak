@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import FastAPI, Depends, status
 from sqlalchemy.orm import Session
 from app.db.database import get_session
-from app.db.repository import get_all_arkivuttrekk
+from app.db.repository import get_arkivuttrekk, get_all_arkivuttrekk
 from app.dto.Arkivuttrekk import Arkivuttrekk
 
 try:
@@ -41,11 +41,11 @@ async def health_check():
 
 @app.get("/arkiv/{uuid}",
          status_code=status.HTTP_200_OK,
-         response_model=ArkivuttrekkOut,
+         response_model=Arkivuttrekk,
          tags=["arkivuttrekk"],
          summary="Hent arkivuttrekk basert på objekt id(UUID)")
 async def get_archive(uuid: UUID,  db: Session = Depends(get_db)):
-    return repository.get_arkivuttrekk(db, uuid)
+    return get_arkivuttrekk(db, uuid)
 
 
 @app.get("/arkiver",
