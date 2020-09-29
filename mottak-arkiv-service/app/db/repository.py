@@ -1,4 +1,3 @@
-from uuid import UUID
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from app.db.schemas.mottak import Arkivuttrekk
