@@ -10,7 +10,7 @@ class Arkivuttrekk(Base):
     """This is the class that represents an archive that is being processed in mottak."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     obj_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
-    status = Column(Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
+    status = Column(Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
     type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True), nullable=False)
     tittel = Column(String(), nullable=False)
     beskrivelse = Column(String(), nullable=False)
@@ -46,7 +46,7 @@ class Lokasjon(Base):
     """
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
-    objecktlager = Column(String(), nullable=False, unique=False)
+    objektlager = Column(String(), nullable=False, unique=False)
     generasjon = Column(Integer(), nullable=False, unique=False)
 
     # add a constraint so arkiv.id + generasjon is unique
