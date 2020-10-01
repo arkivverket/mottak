@@ -8,6 +8,7 @@ authors = ["Mårten Elmgren <elmgren@gmail.com>"]
 python = "^3.8"
 fastapi = "^0.61.1"
 uvicorn = "^0.12.0"
+python-multipart = "^0.0.5"
 alembic = "^1.4.2"
 psycopg2 = "^2.8.6"
 
