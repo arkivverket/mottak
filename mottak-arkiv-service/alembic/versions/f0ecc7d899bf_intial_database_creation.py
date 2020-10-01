@@ -58,7 +58,7 @@ def upgrade():
     )
     op.create_table('metadatafil',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+    sa.Column('arkivuttrekk_id', sa.Integer(), nullable=True),
     sa.Column('type', sa.Enum('xml/mets', name='metadata_type_type'), nullable=False),
     sa.Column('innhold', sa.Text(), nullable=False),
     sa.Column('filnavn', sa.String(), nullable=False),

@@ -60,7 +60,7 @@ class Metadatafil(Base):
     """The metadata file which contains the METS file which is used as a basis for the
     archive. If we move away from METS we should change the ENUM field to support other file types."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
-    arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
+    arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=True, unique=True)
     type = Column(Enum('xml/mets', name='metadata_type_type', create_type=True), nullable=False, unique=False)
     innhold = Column(Text(), nullable=False)
     filnavn = Column(String(), nullable=False)
