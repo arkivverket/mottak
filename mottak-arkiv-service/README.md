@@ -1,6 +1,6 @@
 ## Mottak-arkiv-service
 
-Application responsible for serving the application mottak-arkiv-web with viewing data and orchestrating the process of storing digital archives.
+Application responsible for serving the application mottak-arkiv-web with viewing data and orchestrating the process of storing digital archives
 
 ### Application flow
 - The user(coordinator) sends in an XML file created by Arkade5 containing metadata about the archive to be uploaded.
