@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-
 from typing import List
-from fastapi import FastAPI, Depends, status, File, UploadFile
-from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends, Request, status, File, UploadFile
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session, exc
 from app.db.database import get_session
 from app.db.repository import get_arkivuttrekk, get_all_arkivuttrekk, create_metadatafil
 from app.dto.Arkivuttrekk import Arkivuttrekk
@@ -30,6 +31,15 @@ def get_db():
         db.close()
 
 
+@app.exception_handler(exc.NoResultFound)
+async def sqlalchemy_exception_handler(request: Request, exception: exc.NoResultFound):
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content=jsonable_encoder(
+            {"message": f"Could not find element with id {request.path_params['id']}", "exception": exception})
+    )
+
+
 # TODO Implementere helsesjekk av applikasjonen
 @app.get("/health",
          status_code=status.HTTP_200_OK,
@@ -51,7 +61,7 @@ async def upload_metadatafil(file: UploadFile = File(...), db: Session = Depends
     return create_metadatafil(db, metadatafil)
 
 
-@app.get("/arkiv/{id}",
+@app.get("/arkivuttrekk/{id}",
          status_code=status.HTTP_200_OK,
          response_model=Arkivuttrekk,
          tags=["arkivuttrekk"],
@@ -60,7 +70,7 @@ async def get_archive(id: int,  db: Session = Depends(get_db)):
     return get_arkivuttrekk(db, id)
 
 
-@app.get("/arkiver",
+@app.get("/arkivuttrekk",
          status_code=status.HTTP_200_OK,
          response_model=List[Arkivuttrekk],
          tags=["arkivuttrekk"],
