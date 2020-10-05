@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.db.database import get_session
 from app.db.repository import get_arkivuttrekk, get_all_arkivuttrekk, create_metadatafil
 from app.dto.Arkivuttrekk import Arkivuttrekk
-from app.dto.Metadatafil import BaseMetadatafil
+from app.dto.Metadatafil import BaseMetadatafil, Metadatafil
 
 try:
     from dotenv import load_dotenv
@@ -41,12 +41,12 @@ async def health_check():
 
 @app.post("/metadatafil",
           status_code=status.HTTP_201_CREATED,
-          response_model=int,
+          response_model=Metadatafil,
           tags=["metadata"],
           summary="Laste opp en metadatafil")
 async def upload_metadatafil(file: UploadFile = File(...), db: Session = Depends(get_db)):
     # Read file content (XML) as utf-8 and remove newlines
-    xmlstring = file.file.read().decode('utf-8').replace('\n', '')
+    xmlstring = file.file.read().decode('utf-8').replace('\r\n', '')
     metadatafil = BaseMetadatafil(file.filename, file.content_type, xmlstring)
     return create_metadatafil(db, metadatafil)
 
