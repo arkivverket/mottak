@@ -50,7 +50,7 @@ jobs:
       run:
         working-directory: 'arkiv-downloader'
     needs: test
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/develop'
 
     steps:
       - uses: actions/checkout@v2
