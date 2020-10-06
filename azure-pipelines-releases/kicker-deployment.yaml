@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kriwal-test-deployment
+  labels:
+    app: kriwal-test-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kriwal-test
+  template:
+    metadata:
+      labels:
+        app: kriwal-test
+    spec:
+      containers:
+        - name: nginx
+          image: arkivverket.azurecr.io/av-mottak/kriwal-test:v1
+          ports:
+            - containerPort: 80
