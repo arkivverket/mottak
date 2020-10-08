@@ -16,5 +16,10 @@ pool:
 steps:
   - script: |
       echo Hello world
-
     displayName: 'Command Line Script'
+
+  - task: HelmDeploy@0
+    displayName: Helm template
+    inputs:
+      command: template
+      arguments: --values "values-dev.yaml" --output-dir k8s/output/dev k8s/
