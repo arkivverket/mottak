@@ -1,10 +1,7 @@
 # Explicitly set none for repositry trigger
-trigger:
-  - none
-
 resources:
   containers:
-    - container: av-mottak/kriwal-test
+    - container: test
       type: ACR
       azureSubscription: kriwal-test1
       resourceGroup: meta
