@@ -117,7 +117,7 @@ description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 name = "h11"
 optional = false
 python-versions = "*"
-version = "0.10.0"
+version = "0.11.0"
 
 [[package]]
 category = "dev"
@@ -295,7 +295,7 @@ description = "pytest: simple powerful testing with Python"
 name = "pytest"
 optional = false
 python-versions = ">=3.5"
-version = "6.1.0"
+version = "6.1.1"
 
 [package.dependencies]
 atomicwrites = ">=1.0"
@@ -310,6 +310,20 @@ toml = "*"
 [package.extras]
 checkqa_mypy = ["mypy (0.780)"]
 testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "requests", "xmlschema"]
+
+[[package]]
+category = "dev"
+description = "Thin-wrapper around the mock package for easier use with pytest"
+name = "pytest-mock"
+optional = false
+python-versions = ">=3.5"
+version = "3.3.1"
+
+[package.dependencies]
+pytest = ">=5.0"
+
+[package.extras]
+dev = ["pre-commit", "tox", "pytest-asyncio"]
 
 [[package]]
 category = "main"
@@ -466,7 +480,7 @@ python-versions = "*"
 version = "1.12.1"
 
 [metadata]
-content-hash = "3d3b4a6d9bdf8d375c84be8506ae8dc21ad210a8c14e8b89fa761e77805cbdbc"
+content-hash = "89c55132b24924417f9755a0ebca347e575f2d5f9cd68167f558112f66077e02"
 lock-version = "1.0"
 python-versions = "^3.8"
 
@@ -511,8 +525,8 @@ fastapi = [
     {file = "fastapi-0.61.1.tar.gz", hash = "sha256:61ed73b4304413a2ea618d1b95ea866ee386e0e62dd8659c4f5059286f4a39c2"},
 ]
 h11 = [
-    {file = "h11-0.10.0-py2.py3-none-any.whl", hash = "sha256:9eecfbafc980976dbff26a01dd3487644dd5d00f8038584451fc64a660f7c502"},
-    {file = "h11-0.10.0.tar.gz", hash = "sha256:311dc5478c2568cc07262e0381cdfc5b9c6ba19775905736c87e81ae6662b9fd"},
+    {file = "h11-0.11.0-py2.py3-none-any.whl", hash = "sha256:ab6c335e1b6ef34b205d5ca3e228c9299cc7218b049819ec84a388c2525e5d87"},
+    {file = "h11-0.11.0.tar.gz", hash = "sha256:3c6c61d69c6f13d41f1b80ab0322f1872702a3ba26e12aa864c928f6a43fbaab"},
 ]
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
@@ -689,8 +703,12 @@ pyparsing = [
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pytest = [
-    {file = "pytest-6.1.0-py3-none-any.whl", hash = "sha256:1cd09785c0a50f9af72220dd12aa78cfa49cbffc356c61eab009ca189e018a33"},
-    {file = "pytest-6.1.0.tar.gz", hash = "sha256:d010e24666435b39a4cf48740b039885642b6c273a3f77be3e7e03554d2806b7"},
+    {file = "pytest-6.1.1-py3-none-any.whl", hash = "sha256:7a8190790c17d79a11f847fba0b004ee9a8122582ebff4729a082c109e81a4c9"},
+    {file = "pytest-6.1.1.tar.gz", hash = "sha256:8f593023c1a0f916110285b6efd7f99db07d59546e3d8c36fc60e2ab05d3be92"},
+]
+pytest-mock = [
+    {file = "pytest-mock-3.3.1.tar.gz", hash = "sha256:a4d6d37329e4a893e77d9ffa89e838dd2b45d5dc099984cf03c703ac8411bb82"},
+    {file = "pytest_mock-3.3.1-py3-none-any.whl", hash = "sha256:024e405ad382646318c4281948aadf6fe1135632bea9cc67366ea0c4098ef5f2"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
