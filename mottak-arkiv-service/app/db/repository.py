@@ -2,21 +2,21 @@ from typing import List
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
-from app.db.schemas.mottak import Arkivuttrekk, Metadatafil
-from app.dto.Metadatafil import BaseMetadatafil
+
+from app.db.dbo.mottak import Arkivuttrekk as Arkivuttrekk_DBO, Metadatafil as Metadatafil_DBO
+from app.services.domain.metadatafil import Metadatafil
 
 
-def get_arkivuttrekk(db: Session, arkivuttrekk_id: int) -> Arkivuttrekk:
-    return db.query(Arkivuttrekk).get(arkivuttrekk_id)
-
-
-def get_all_arkivuttrekk(db: Session, skip: int = 0, limit: int = 10) -> List[Arkivuttrekk]:
-    return db.query(Arkivuttrekk) \
-        .order_by(desc(Arkivuttrekk.opprettet)).offset(skip).limit(limit).all()
-
-
-def create_metadatafil(db: Session, base_metadatafil: BaseMetadatafil) -> Metadatafil:
-    db_metadatafil = Metadatafil(**base_metadatafil.dict())
-    db.add(db_metadatafil)
+def metadatafil_create(db: Session, metadatfil: Metadatafil) -> Metadatafil_DBO:
+    dbo = Metadatafil_DBO(**vars(metadatfil))
+    db.add(dbo)
     db.commit()
-    return db_metadatafil
+    return dbo
+
+
+def arkivuttrekk_get_all(db: Session, skip: int, limit: int) -> List[Arkivuttrekk_DBO]:
+    return db.query(Arkivuttrekk_DBO).order_by(desc(Arkivuttrekk_DBO.endret)).offset(skip).limit(limit).all()
+
+
+def arkivuttrekk_get_by_id(db: Session, arkivuttrekk_id: int) -> Arkivuttrekk_DBO:
+    return db.query(Arkivuttrekk_DBO).get(arkivuttrekk_id)

@@ -3,15 +3,17 @@ from sqlalchemy import func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from app.db.baseclass import Base
+from app.db.dbo.baseclass import Base
 
 
 class Arkivuttrekk(Base):
     """This is the class that represents an archive that is being processed in mottak."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     obj_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
-    status = Column(Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
-    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True), nullable=False)
+    status = Column(Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring',
+                         name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
+    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True),
+                  nullable=False)
     tittel = Column(String(), nullable=False)
     beskrivelse = Column(String(), nullable=False)
     sjekksum_sha256 = Column(String(length=64), nullable=False)
@@ -74,7 +76,8 @@ class Overforingspakke(Base):
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
     navn = Column(String(), nullable=False)
     storrelse = Column(BigInteger(), nullable=False)
-    status = Column(Enum('OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type', create_type=True), nullable=False)
+    status = Column(Enum('OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type', create_type=True),
+                    nullable=False)
 
 
 class Tester(Base):
