@@ -18,7 +18,7 @@ def get_by_id(id: int, db: Session = Depends(get_db_session)):
     return get_arkivuttrekk_get_by_id(id, db)
 
 
-@router.get("/",
+@router.get("",
             status_code=status.HTTP_200_OK,
             response_model=List[Arkivuttrekk],
             summary="Hent alle arkivuttrekk")

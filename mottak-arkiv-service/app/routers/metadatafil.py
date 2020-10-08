@@ -8,7 +8,7 @@ from app.services.routerservice import post_upload_metadatafil
 router = APIRouter()
 
 
-@router.post("/",
+@router.post("",
              status_code=status.HTTP_201_CREATED,
              response_model=Metadatafil,
              summary="Laste opp en metadatafil")
