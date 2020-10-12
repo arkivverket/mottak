@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "storage-sas-generator"
+version = "0.1.0"
+description = ""
+authors = ["Per Buer <per.buer@gmail.com>"]
+license = "Apache-2.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.61.1"
+azure-servicebus = "^0.50.3"
+uvicorn = "^0.11.8"
+azure-storage-blob = "^12.5.0"
+aiohttp = "^3.6.2"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.6.0"
+pytest = "^6.0.2"
+python-dotenv = "^0.14.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

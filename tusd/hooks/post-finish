@@ -1,1 +1,8 @@
-pre-create
+#!/usr/bin/env python3
+
+from implementations.post_finish import run
+
+
+if __name__ == '__main__':
+    run()
+

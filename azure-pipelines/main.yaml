@@ -125,15 +125,6 @@ stages:
               appName: 'kicker'
               containerRepo: ${{ variables.containerRepo }}
               containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
-
-      - job: BuildExporter
-        displayName: Build exporter (ships archives to other services)
-        steps:
-          - template: build.yaml
-            parameters:
-              appName: 'exporter'
-              containerRepo: ${{ variables.containerRepo }}
-              containerRegServiceConn: ${{ variables.dockerRegistryServiceConnection }}
   
   - stage: Package
     displayName: Package Mottak as Helm Chart
