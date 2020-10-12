@@ -1,39 +1,30 @@
-import React, { useState } from 'react'
-import { Button } from '@material-ui/core'
-import { getHeapCodeStatistics } from 'v8'
+import React from 'react'
+import { Route, Switch } from 'react-router-dom'
+import Routes, { RouteType } from './routes/Routes'
+import { Container, Paper } from '@material-ui/core'
+import styled from 'styled-components'
 
+const StyledContainer = styled(Container)`
+   margin: ${props => props.theme.spacing.lg} 0;
+`
 
-type Props = {
-	title: string
-}
+// type Props = {
+// 	children: JSX.Element | JSX.Element[]
+// }
 
-const WorkArea: React.FC<Props> = ({
-	title
-}) => {
-	const [data, setData] = useState('Ingen data ennå')
-
-	const updateData = () => {
-		const getData = async () => {
-			try {
-				const response = await fetch('http://lego.arkivverket.local/bakom/public/api/index.php/metadata/municipalities')
-
-				const json = await response.json()
-				// console.log(json);
-				setData(JSON.stringify(json))
-			} catch (error) {
-				setData('Feil ved lasting av data')
-			}
-		}
-
-		console.log('clicked')
-		getData()
-	}
-
+const WorkArea: React.FC = ():JSX.Element => {
 	return (
-		<div>
-			<Button onClick={updateData} color="primary">{title}</Button>
-			<div>{data}</div>
-		</div>
+		<StyledContainer maxWidth='lg'>
+			<Paper elevation={2} style={{ padding: '2rem' }}>
+				<Switch>
+					{Routes.map((route: RouteType) => (
+						<Route exact path={route.path} key={route.path}>
+							<route.component />
+						</Route>
+					))}
+				</Switch>
+			</Paper>
+		</StyledContainer>
 	)
 }
 
