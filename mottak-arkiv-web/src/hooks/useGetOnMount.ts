@@ -1,5 +1,6 @@
 import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
-import { useEffect, useReducer, useRef } from 'react'
+import { useEffect, useReducer } from 'react'
+import axiosAPI from '../request'
 
 type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR' };
 
@@ -37,28 +38,35 @@ const useGetOnMount = <T>(
 	url: string,
 	params: AxiosRequestConfig | undefined = undefined ): State<T> => {
 
-	const componentIsMounted = useRef(true)
-
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
 		loading: false,
 		error: false,
 		data: null,
 	})
 
+	const source = axios.CancelToken.source()
+
 	useEffect(() => {
 		const performRequest = async () => {
 			dispatch({ type: 'PENDING' })
 			try {
-				const axiosPromise: AxiosPromise<T> = axios(url, params)
+				const axiosPromise: AxiosPromise<T> = axiosAPI.get(url, {
+					params: {
+						params
+					},
+					cancelToken: source.token
+				})
 				const result = await axiosPromise
-				componentIsMounted.current && dispatch({ type: 'SUCCESS', payload: result.data })
+				dispatch({ type: 'SUCCESS', payload: result.data })
 			} catch (error) {
-				componentIsMounted.current && dispatch({ type: 'ERROR' })
+				if (!axios.isCancel(error)) {
+					dispatch({ type: 'ERROR' })
+				}
 			}
 		}
 		performRequest()
 		return () => {
-			componentIsMounted.current = false
+			source.cancel()
 		}
 	}, [url, params])
 
