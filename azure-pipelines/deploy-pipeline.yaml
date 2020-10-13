@@ -1,6 +1,5 @@
 # Explicitly set none for repositry trigger
-trigger:
-  - none
+trigger: none
 
 resources:
   containers:
@@ -10,7 +9,10 @@ resources:
       resourceGroup: meta
       registry: arkivverket
       repository: av-mottak/kriwal-test
-      trigger: true
+      trigger:
+        tags:
+          include:
+            - 0.*
 
 pool:
   vmImage: 'ubuntu-latest'
