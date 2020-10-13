@@ -2,7 +2,8 @@ import re
 
 from fastapi import UploadFile
 
-from domain.models.metadatafil import MetadataType, Metadatafil
+from app.domain.models.metadatafil import MetadataType, Metadatafil, ParsedMetadatafil
+from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
 
 
 def content_type2metadata_type(content_type):
@@ -35,3 +36,16 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
     return Metadatafil(filnavn=file.filename,
                        type=content_type2metadata_type(file.content_type),
                        innhold=get_file_content(file))
+
+
+def map_parsed2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
+    dto = ParsedMetadatafil_DTO(
+        tittel=domain.tittel,
+        endret=domain.endret,
+        kontaktperson=domain.kontaktperson,
+        arkivtype=domain.arkivtype,
+        objekt_id=domain.objekt_id,
+        storrelse=domain.storrelse,
+        tidsspenn=domain.tidsspenn,
+        saksnummer=domain.saksnummer)
+    return dto
