@@ -12,6 +12,14 @@ interface State<T> {
     data: T | null;
 }
 
+type RequestType = {
+	url: any,
+	method?: Method,
+	headers?: AxiosRequestConfig['headers'],
+	data?: AxiosRequestConfig['data'],
+	params?: AxiosRequestConfig['params']
+}
+
 const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 	switch (action.type) {
 		case 'PENDING':
@@ -47,12 +55,12 @@ const useRequest = <T>() => {
 	})
 
 	//TODO: baseurl
-	const performRequest = async(
-		url: string,
-		method: Method = 'GET',
-		headers: AxiosRequestConfig['headers'] = null,
-		data: AxiosRequestConfig['data'] = null,
-		params: AxiosRequestConfig['params'] = null ) => {
+	const performRequest = async({
+		url,
+		method = 'GET',
+		headers = null,
+		data = null,
+		params = null }: RequestType ) => {
 
 		const source = axios.CancelToken.source()
 
