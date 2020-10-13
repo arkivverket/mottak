@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
@@ -15,6 +15,9 @@ router = APIRouter()
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
 async def get_by_id(id: int, db: Session = Depends(get_db_session)):
+    result = get_arkivuttrekk_get_by_id(id, db)
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
     return get_arkivuttrekk_get_by_id(id, db)
 
 

@@ -20,17 +20,6 @@ app = FastAPI(
 )
 
 
-# TODO Fix Exception handler
-# Exception handlers
-@app.exception_handler(exc.NoResultFound)
-def sqlalchemy_exception_handler(request: Request, exception: exc.NoResultFound):
-    return JSONResponse(
-        status_code=status.HTTP_404_NOT_FOUND,
-        content=jsonable_encoder(
-            {"message": f"Could not find element with id {request.path_params['id']}", "exception": exception})
-    )
-
-
 # TODO Implementere helsesjekk av applikasjonen
 @app.get("/health",
          status_code=status.HTTP_200_OK,
