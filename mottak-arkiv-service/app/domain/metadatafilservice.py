@@ -1,9 +1,8 @@
 import re
-
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.database.repository import arkivuttrekk_get_by_id, arkivuttrekk_get_all, metadatafil_create
+from app.database.repository import metadatafil_create
 from app.domain.models.metadatafil import Metadatafil
 
 
@@ -31,11 +30,3 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
 def post_upload_metadatafil(file: UploadFile, db: Session):
     metadatafil = metadatafil_mapper(file)
     return metadatafil_create(db, metadatafil)
-
-
-def get_arkivuttrekk_get_by_id(arkivuttrekk_id: int, db: Session):
-    return arkivuttrekk_get_by_id(db, arkivuttrekk_id)
-
-
-def get_arkivuttrekk_get_all(db: Session, skip: int, limit: int):
-    return arkivuttrekk_get_all(db, skip, limit)

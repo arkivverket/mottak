@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.router_dependencies import get_db_session
-from app.domain.routerservice import post_upload_metadatafil
+from app.domain.metadatafilservice import post_upload_metadatafil
 
 router = APIRouter()
 
