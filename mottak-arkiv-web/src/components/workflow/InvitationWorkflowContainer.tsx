@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
 import WorkflowStepper from './WorkflowStepper'
+import FileUpload, { sendFile } from '../FileUpload'
+import QualityCheck from '../QualityCheck'
 
 export type ContextType = ({
 	metsFile: File | null,
@@ -26,8 +28,8 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 			number: 0,
 			label: 'Last opp fil',
 			buttonLabel: 'Last opp',
-			action: () => console.warn('send form'),
-			component: <div>fil</div>
+			action: metsFile ? sendFile : null,
+			component: <FileUpload />
 		},
 		{
 			number: 1,
