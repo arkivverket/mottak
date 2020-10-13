@@ -1,0 +1,23 @@
+# Explicitly set none for repositry trigger
+trigger:
+  - none
+
+resources:
+  containers:
+    - container: test
+      type: ACR
+      azureSubscription: kriwal-test1
+      resourceGroup: meta
+      registry: arkivverket
+      repository: av-mottak/kriwal-test
+      trigger: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+steps:
+  - script: |
+      echo Hello world
+      echo $(resources.container.sampleapp.tag)
+    displayName: 'Command Line Script'
