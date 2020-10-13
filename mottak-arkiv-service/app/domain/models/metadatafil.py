@@ -14,18 +14,21 @@ class Metadatafil:
     type = MetadataType
     innhold = str
     opprettet: str
+    endret: str
 
     def __init__(self,
-                 id: int = None,
-                 filnavn: str = None,
-                 type: str = None,
-                 innhold: str = None,
-                 opprettet: str = None):
+                 id=None,
+                 filnavn=None,
+                 type=None,
+                 innhold=None,
+                 opprettet=None,
+                 endret=None):
         self.id = id
         self.filnavn = filnavn
         self.type = type
         self.innhold = innhold
         self.opprettet = opprettet
+        self.endret = endret
 
 
 class ParsedMetadatafil:
@@ -41,13 +44,20 @@ class ParsedMetadatafil:
     tidsspenn: str
     saksnummer: str
 
-    def __init__(self):
-        self.tittel = "Tittel  (ARCHIVIST - ORGANIZATION + LABEL)"
-        self.endret = "Sist endret (tidspunkt for siste handling på pakken)"
-        self.kontaktperson = "Kontaktperson (Navn (e-post) SUBMITTER - INDIVIDUAL)"
-        self.arkivtype = "Arkivtype"
-        self.objekt_id = "UUID"
-        self.storrelse = "Størrelse (METS FILE ID SIZE)"
-        self.tidsspenn = "(STARTDATE + ENDDATE)"
-        self.saksnummer = "(SUBMISSION AGREEMENT)"
-
+    def __init__(self,
+                 tittel=None,
+                 endret=None,
+                 kontaktperson=None,
+                 arkivtype=None,
+                 objekt_id=None,
+                 storrelse=None,
+                 tidsspenn=None,
+                 saksnummer=None):
+        self.tittel = tittel
+        self.endret = endret
+        self.kontaktperson = kontaktperson
+        self.arkivtype = arkivtype
+        self.objekt_id = objekt_id
+        self.storrelse = storrelse
+        self.tidsspenn = tidsspenn
+        self.saksnummer = saksnummer

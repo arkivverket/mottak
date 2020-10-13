@@ -14,6 +14,7 @@ class Metadatafil(Base):
     innhold = Column(Text(), nullable=False)
     filnavn = Column(String(), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
+    endret = Column(DateTime(), server_default=func.now(), nullable=False)
 
     # Backrefs. These create virtual columns on the other side of the relation.
     arkivuttrekk = relationship('Arkivuttrekk', backref='metadatafil')
