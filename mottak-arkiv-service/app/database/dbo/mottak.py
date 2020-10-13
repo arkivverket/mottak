@@ -3,7 +3,7 @@ from sqlalchemy import func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from app.db.dbo.baseclass import Base
+from app.database.dbo.baseclass import Base
 
 
 class Arkivuttrekk(Base):
