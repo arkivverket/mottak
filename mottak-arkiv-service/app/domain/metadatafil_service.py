@@ -40,11 +40,11 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
         get_file_content(file))
 
 
-def post_upload_metadatafil(file: UploadFile, db: Session):
+def upload_metadatafil(file: UploadFile, db: Session):
     metadatafil = metadatafil_mapper(file)
     return metadatafil_create(db, metadatafil)
 
 
-def get_metadatafil_get_content(id: int, db: Session) -> str:
+def get_content(id: int, db: Session) -> str:
     metadatafil = metadatafil_get_by_id(db, id)
     return metadatafil.innhold
