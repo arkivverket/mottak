@@ -8,7 +8,7 @@ RESOURCE_GROUP="av-plattform-$ENV-rg"
 OUTPUT_FOLDER="k8s/output/$ENV"
 
 ## Auth against cluster
-az aks get-credentials --name "$CLUSTER_NAME" --resource-group "$RESOURCE_GROUP"
+#az aks get-credentials --name "$CLUSTER_NAME" --resource-group "$RESOURCE_GROUP"
 
 ## Build yaml files
 helm template --values "values-$ENV.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
