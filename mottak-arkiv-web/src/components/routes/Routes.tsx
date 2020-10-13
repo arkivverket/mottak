@@ -28,7 +28,7 @@ const Routes: RouteType[] = [
 	{
 		path: '/upload',
 		sidebarName: 'Lat opp fil',
-		component: ALL
+		component: InvitationWorkflowContainer
 	},
 ]
 
