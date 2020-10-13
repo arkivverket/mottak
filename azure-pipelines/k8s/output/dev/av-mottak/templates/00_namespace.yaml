@@ -1,0 +1,9 @@
+---
+# Source: av-mottak/templates/00_namespace.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: av-mottak-dev
+  labels:
+    produkt: av-mottak-dev
+    #azure-key-vault-env-injection: enabled
