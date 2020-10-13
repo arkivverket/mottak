@@ -32,7 +32,7 @@ steps:
     displayName: 'Command Line Script'
 
   - script: |
-      cd kicker
+      cd azure-pipelines
       ls
       ENV='dev'
       OUTPUT_FOLDER="k8s/output/$ENV"
