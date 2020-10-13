@@ -6,6 +6,19 @@ from sqlalchemy.orm import relationship
 from app.database.dbo.baseclass import Base
 
 
+class Metadatafil(Base):
+    """The metadata file which contains the METS file which is used as a basis for the
+    archive. If we move away from METS we should change the ENUM field to support other file types."""
+    id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
+    type = Column(Enum('xml/mets', name='metadata_type_type', create_type=True), nullable=False, unique=False)
+    innhold = Column(Text(), nullable=False)
+    filnavn = Column(String(), nullable=False)
+    opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
+
+    # Backrefs. These create virtual columns on the other side of the relation.
+    arkivuttrekk = relationship('Arkivuttrekk', backref='metadatafil')
+
+
 class Arkivuttrekk(Base):
     """This is the class that represents an archive that is being processed in mottak."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
@@ -20,13 +33,13 @@ class Arkivuttrekk(Base):
     avgiver_navn = Column(String(), nullable=False)
     avgiver_epost = Column(String(), nullable=False)
     koordinator_epost = Column(String(), nullable=False)
+    metadatafil_id = Column(Integer(), ForeignKey('metadatafil.id'), nullable=False, unique=True)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
     endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)
 
     # Backrefs. These create virtual columns on the other side of the relation.
     invitasjoner = relationship('Invitasjon', backref='arkivuttrekk')
     lokasjoner = relationship('Lokasjon', backref='arkivuttrekk')
-    metadatafiler = relationship('Metadatafil', backref='arkivuttrekk')
     overforingspakker = relationship('Overforingspakke', backref='arkivuttrekk')
     testere = relationship('Tester', backref='arkivuttrekk')
 
@@ -56,17 +69,6 @@ class Lokasjon(Base):
     __table_args__ = (
         UniqueConstraint('arkivuttrekk_id', 'generasjon', name='arkivuttrekk_id_generasjon_uc'),
     )
-
-
-class Metadatafil(Base):
-    """The metadata file which contains the METS file which is used as a basis for the
-    archive. If we move away from METS we should change the ENUM field to support other file types."""
-    id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
-    arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=True, unique=True)
-    type = Column(Enum('xml/mets', name='metadata_type_type', create_type=True), nullable=False, unique=False)
-    innhold = Column(Text(), nullable=False)
-    filnavn = Column(String(), nullable=False)
-    opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
 
 
 class Overforingspakke(Base):

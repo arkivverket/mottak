@@ -19,7 +19,6 @@ class Metadatafil:
     Domain class to contain a Metadatafil while it exists in the service layer
     """
     id: int
-    arkivuttrekk_id: int
     filnavn: str
     type = MetadataType
     innhold = str
@@ -27,7 +26,6 @@ class Metadatafil:
 
     def __init__(self, filnavn: str, content_type: str, innhold: str):
         self.id = None
-        self.arkivuttrekk_id = None
         self.filnavn = filnavn
         self.type = content_type2metadata_type(content_type)
         self.innhold = innhold

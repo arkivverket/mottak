@@ -32,6 +32,7 @@ class ArkivuttrekkBase(BaseModel):
     avgiver_navn: str = None
     avgiver_epost: str = None
     koordinator_epost: str = None
+    metadatafil_id: int = None
 
 
 class Arkivuttrekk(ArkivuttrekkBase):

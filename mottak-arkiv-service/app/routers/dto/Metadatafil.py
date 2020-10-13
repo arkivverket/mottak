@@ -11,7 +11,6 @@ class Metadatafil(BaseModel):
     Contains the METS file which is used as a basis for the archive.
     """
     id: int
-    arkivuttrekk_id: int = None
     filnavn: str
     type: MetadataType
     innhold: str
