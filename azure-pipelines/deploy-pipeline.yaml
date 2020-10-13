@@ -29,12 +29,11 @@ steps:
       echo $(resources.container.kicker.digest)
       echo $(resources.container.kicker.URI)
       echo $(resources.container.kicker.location)
-      helm version
-      ls
     displayName: 'Command Line Script'
 
   - script: |
       cd kicker
+      ls
       ENV='dev'
       OUTPUT_FOLDER="k8s/output/$ENV"
       helm template --values "values-$ENV.yaml" --set AV_MOTTAK_KICKER_CONTAINER=$(resources.container.kicker.repository):$(resources.container.kicker.tag) --output-dir "$OUTPUT_FOLDER" k8s/
