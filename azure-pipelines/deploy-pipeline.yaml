@@ -10,8 +10,7 @@ resources:          # types: pipelines | repositories | containers | builds | pa
       registry: arkivverket # registry for container images
       repository: "av-mottak/kriwal-test" # name of the container image repository in ACR
       trigger: # Triggers are not enabled by default and need to be set explicitly
-        tags:
-        - latest
+        tags: true
 
 
 pool:
