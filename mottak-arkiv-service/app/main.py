@@ -9,7 +9,6 @@ from app.routers import arkivuttrekk, metadatafil
 
 try:
     from dotenv import load_dotenv
-
     load_dotenv()
 except ModuleNotFoundError:
     pass
@@ -37,7 +36,7 @@ def sqlalchemy_exception_handler(request: Request, exception: exc.NoResultFound)
          status_code=status.HTTP_200_OK,
          tags=["health"],
          summary="Helsesjekk av applikasjonen")
-def health_check():
+async def health_check():
     return "Seems healthy"
 
 

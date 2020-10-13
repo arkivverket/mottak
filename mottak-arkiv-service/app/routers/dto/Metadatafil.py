@@ -1,14 +1,8 @@
 from datetime import datetime
-from enum import Enum
 
 from pydantic import BaseModel
 
-
-class MetadataType(str, Enum):
-    """
-    If we move away from METS we should change the ENUM field to support other file types.
-    """
-    XML_METS = 'xml/mets'
+from services.domain.metadatafil import MetadataType
 
 
 class Metadatafil(BaseModel):

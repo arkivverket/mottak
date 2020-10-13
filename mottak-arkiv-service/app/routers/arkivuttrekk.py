@@ -14,7 +14,7 @@ router = APIRouter()
             status_code=status.HTTP_200_OK,
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
-def get_by_id(id: int, db: Session = Depends(get_db_session)):
+async def get_by_id(id: int, db: Session = Depends(get_db_session)):
     return get_arkivuttrekk_get_by_id(id, db)
 
 
