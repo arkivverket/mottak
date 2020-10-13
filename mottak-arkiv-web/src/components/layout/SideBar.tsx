@@ -5,35 +5,68 @@ import {
 	ListItemText,
 	MenuList,
 	MenuItem,
+	Theme,
 	Toolbar,
 } from '@material-ui/core'
-import styled from 'styled-components'
+import clsx from 'clsx'
+import { makeStyles } from '@material-ui/core/styles'
 import { LayoutContext } from './Layout'
 
 import Routes, { RouteType } from '../routes/Routes'
 
-const StyledMenuItem = styled(MenuItem)`
-  &&& {
-    padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.xl};
-  }
-`
-const StyledDrawer = styled(Drawer)`
-    position: 'relative';
-    width: 240;
-    `
+type StyleProps = {
+    drawerWidth: number | undefined
+}
+
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
+	toolbarIcon: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		padding: '0 8px',
+		...theme.mixins.toolbar,
+	},
+	drawer: props => ({
+		width: props.drawerWidth,
+		flexShrink: 0,
+	}),
+	drawerPaper: props => ({
+		whiteSpace: 'nowrap',
+		width: props.drawerWidth,
+	}),
+	drawerPaperClose: {
+		overflowX: 'hidden',
+		transition: theme.transitions.create('width', {
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
+		}),
+		width: theme.spacing(7),
+		[theme.breakpoints.up('sm')]: {
+			width: theme.spacing(9),
+		},
+	},
+	menu: {
+		color: theme.palette.primary.main,
+	}
+}))
 
 const SideBar: React.FC = (): JSX.Element => {
-	const { toggleDrawer, isOpen } = useContext(LayoutContext)
+	const { toggleDrawer, isOpen, drawerWidth } = useContext(LayoutContext)
+	const classes = useStyles({ drawerWidth })
+
 	const location = useLocation()
 
 	const activeRoute = (routeName: string) => location?.pathname === routeName
 
 	return (
-		<StyledDrawer
+		<Drawer
 			variant='persistent'
 			anchor='left'
 			open={isOpen}
-			onClose={toggleDrawer}
+			className={classes.drawer}
+			classes={{
+				paper: clsx(classes.drawerPaper),
+			}}
 		>
 			<Toolbar />
 			<div
@@ -42,18 +75,21 @@ const SideBar: React.FC = (): JSX.Element => {
 				onKeyDown={toggleDrawer}
 			>
 				<MenuList>
-					{Routes.map((route: RouteType, key) => {
-						return (
-							<NavLink to={route.path} style={{ textDecoration: 'none' }} key={key}>
-								<StyledMenuItem selected={activeRoute(route.path)}>
-									<ListItemText primary={route.sidebarName} />
-								</StyledMenuItem>
-							</NavLink>
-						)
-					})}
+					{Routes.map((route: RouteType, key) => (
+						<NavLink
+							to={route.path}
+							style={{ textDecoration: 'none' }}
+							key={key}
+							className={classes.menu}
+						>
+							<MenuItem selected={activeRoute(route.path)}>
+								<ListItemText primary={route.sidebarName} />
+							</MenuItem>
+						</NavLink>
+					))}
 				</MenuList>
 			</div>
-		</StyledDrawer>
+		</Drawer>
 	)
 }
 

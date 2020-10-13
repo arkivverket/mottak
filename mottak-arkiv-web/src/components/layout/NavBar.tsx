@@ -3,37 +3,50 @@ import {
 	AppBar,
 	Icon,
 	IconButton,
+	Theme,
 	Toolbar,
 	Typography,
 } from '@material-ui/core'
-import styled from 'styled-components'
+import clsx from 'clsx'
+import { makeStyles } from '@material-ui/core/styles'
+
 import { LayoutContext } from './Layout'
 
-const StyledAppBar = styled(AppBar)`
-	&& {
-		color: ${props => props.theme.colors.white};
-		background-color: ${props => props.theme.colors.black};
-		z-index: 1400;
-	}
-`
+interface StyleProps {
+    drawerWidth: number | undefined
+}
 
-const StyledToolBar = styled(Toolbar)`
-    background-color: ${props => props.theme.colors.black};
-`
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
+	toolbar: {
+		paddingRight: 24, // keep right padding when drawer closed
+	},
+	appBar: {
+		backgroundColor: theme.palette.primary.main,
+		zIndex: theme.zIndex.drawer + 1,
+	  },
+	  menuButtonHidden: {
+		display: 'none',
+	  },
+}))
 
 const NavBar: React.FC = (): JSX.Element => {
-	const { toggleDrawer, isOpen } = useContext(LayoutContext)
+	const { toggleDrawer, isOpen, drawerWidth } = useContext(LayoutContext)
+	const classes = useStyles({ drawerWidth })
 
 	return (
-		<StyledAppBar position='relative'>
-			<StyledToolBar>
+		<AppBar
+			position='absolute'
+			className={classes.appBar}
+		>
+			<Toolbar className={classes.toolbar}>
 				{!isOpen ? (
 					<IconButton
-						edge='start'
-						color='inherit'
-						aria-label='open drawer'
+						edge="start"
+						color="inherit"
+						aria-label="open drawer"
 						onClick={toggleDrawer}
-					>
+						className={clsx(classes.menuButton, isOpen && classes.menuButtonHidden)}
+				  >
 						<Icon>menu</Icon>
 					</IconButton>
 				) : (
@@ -49,8 +62,8 @@ const NavBar: React.FC = (): JSX.Element => {
 				<Typography variant='h6'>
                     Mottak
 				</Typography>
-			</StyledToolBar>
-		</StyledAppBar>
+			</Toolbar>
+		</AppBar>
 	)
 }
 

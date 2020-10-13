@@ -1,9 +1,9 @@
 import React from 'react'
 
-const NotFound: React.FC = () => (
+const IkkeFunnet: React.FC = (): JSX.Element => (
 	<div>
 		<h1>404</h1>
 	</div>
 )
 
-export default NotFound
+export default IkkeFunnet
