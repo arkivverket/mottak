@@ -30,6 +30,7 @@ steps:
       echo $(resources.container.kicker.URI)
       echo $(resources.container.kicker.location)
       helm version
+      ls
     displayName: 'Command Line Script'
 
   - script: |
