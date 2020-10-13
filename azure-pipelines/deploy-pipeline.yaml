@@ -11,8 +11,7 @@ resources:          # types: pipelines | repositories | containers | builds | pa
       repository: "av-mottak/kriwal-test" # name of the container image repository in ACR
       trigger:
         tags:
-          include: []
-          exclude: []
+          include: [*]
 
 
 pool:
