@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, UploadFile, File
+from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 
 from app.domain.metadatafil_service import upload_metadatafil, get_content
@@ -21,4 +21,6 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
              response_model=str,
              summary="Henter ut innehold(XML) fra en metadatafil")
 async def router_get_content(id: int, db: Session = Depends(get_db_session)):
-    return get_content(id, db)
+    result = get_content(id, db)
+    if not result:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id}")
