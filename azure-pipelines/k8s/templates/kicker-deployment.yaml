@@ -16,7 +16,7 @@ spec:
         run: kicker-app
     spec:
       containers:
-        - image: {{ required "Missing value container image" .Values.AV_MOTTAK_KICKER_CONTAINER }}
+        - image: arkivverket.azurecr.io/{{ required "Missing value container image" .Values.AV_MOTTAK_KICKER_CONTAINER }}
           imagePullPolicy: Always
           name: kicker-container
           env:
