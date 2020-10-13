@@ -8,11 +8,11 @@ resources:
       azureSubscription: kriwal-test1
       resourceGroup: meta
       registry: arkivverket
-      repository: av-mottak/kriwal-test
+      repository: "av-mottak/kriwal-test"
       trigger:
         tags:
           include:
-            - 0.*
+            - 0*
 
 pool:
   vmImage: 'ubuntu-latest'
