@@ -8,6 +8,7 @@ authors = ["Mårten Elmgren <elmgren@gmail.com>"]
 python = "^3.8"
 fastapi = "^0.61.1"
 uvicorn = "^0.12.0"
+python-multipart = "^0.0.5"
 alembic = "^1.4.2"
 psycopg2 = "^2.8.6"
 
@@ -19,6 +20,7 @@ sqlalchemy_schemadisplay = "^1.3"
 psycopg2-binary = "^2.8.6"
 pytest = "^6.1.0"
 requests = "^2.23.0"
+pytest-mock = "^3.3.1"
 
 [build-system]
 requires = ["poetry>=0.12"]
