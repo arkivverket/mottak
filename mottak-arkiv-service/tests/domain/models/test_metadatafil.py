@@ -32,7 +32,6 @@ def test_metadatafil__success():
     """
     expected_dict = {
         'id': None,
-        'arkivuttrekk_id': None,
         'filnavn': 'filnavn_test',
         'type': MetadataType.XML_METS,
         'innhold': 'innhold_test',

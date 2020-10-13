@@ -2,7 +2,7 @@ import pytest
 from fastapi import UploadFile
 
 from app.domain.models.metadatafil import Metadatafil
-from app.domain.routerservice import get_file_content, metadatafil_mapper
+from app.domain.metadatafilservice import get_file_content, metadatafil_mapper
 from app.utils import get_project_root
 
 
