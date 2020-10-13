@@ -1,7 +1,8 @@
-from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
 from enum import Enum
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class ArkivuttrekkStatus(str, Enum):
@@ -20,8 +21,7 @@ class ArkivuttrekkType(str, Enum):
 
 class ArkivuttrekkBase(BaseModel):
     """
-    This version of Arkivuttrekk is created by parsing the metadatafile.
-    All initial (parsed) information must be approved by personal of role coordinator.
+    Used as the input parameter in POST "/arkivuttrekk/"
     """
     obj_id: UUID = None
     status: ArkivuttrekkStatus = None
@@ -32,12 +32,12 @@ class ArkivuttrekkBase(BaseModel):
     avgiver_navn: str = None
     avgiver_epost: str = None
     koordinator_epost: str = None
+    metadatafil_id: int = None
 
 
 class Arkivuttrekk(ArkivuttrekkBase):
     """
-    This version of Arkivuttrekk has been persisted in and returned from the database.
-    It contains fields generated in the database.
+    Used as the response model for all kinds of arkivuttrekk.
     """
     id: int
     opprettet: datetime
