@@ -2,7 +2,10 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from app.database.repository import metadatafil_create, metadatafil_get_by_id
-from routers.mappers.metadafil import metadatafil_mapper
+from database.mappers.metadatafil import map_dbo2model
+from domain.models.metadatafil import ParsedMetadatafil
+from domain.xmlparser import get_parsedmetadatafil
+from routers.mappers.metadafil import metadatafil_mapper, map_parsed2dto
 
 
 def upload_metadatafil(file: UploadFile, db: Session):
@@ -11,8 +14,18 @@ def upload_metadatafil(file: UploadFile, db: Session):
 
 
 def get_content(id: int, db: Session) -> str:
-    metadatafil = metadatafil_get_by_id(db, id)
-    if not metadatafil:
+    dbo = metadatafil_get_by_id(db, id)
+    if not dbo:
         return None
     else:
-        return metadatafil.innhold
+        return dbo.innhold
+
+
+def get_parsed_content(id: int, db: Session) -> ParsedMetadatafil:
+    dbo = metadatafil_get_by_id(db, id)
+    if not dbo:
+        return None
+    else:
+        domain_model = map_dbo2model(dbo)
+        domain_parsed = get_parsedmetadatafil(domain_model)
+        return map_parsed2dto(domain_parsed)
