@@ -10,7 +10,7 @@ resources:          # types: pipelines | repositories | containers | builds | pa
       repository: "av-mottak/kriwal-test" # name of the container image repository in ACR
       trigger: # Triggers are not enabled by default and need to be set explicitly
         tags:
-          include: latest  # image tags to consider the trigger events, optional; defaults to any new tag
+        - latest
 
 
 pool:
