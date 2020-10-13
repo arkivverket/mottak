@@ -4,7 +4,7 @@ trigger:
 
 resources:
   containers:
-    - container: test
+    - container: kriwal-test
       type: ACR
       azureSubscription: kriwal-test1
       resourceGroup: meta
