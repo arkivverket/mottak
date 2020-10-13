@@ -3,9 +3,9 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.domain.arkivuttrekk_service import get_arkivuttrekk_get_by_id, get_arkivuttrekk_get_all
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.router_dependencies import get_db_session
-from app.domain.arkivuttrekkservice import get_arkivuttrekk_get_by_id, get_arkivuttrekk_get_all
 
 router = APIRouter()
 
