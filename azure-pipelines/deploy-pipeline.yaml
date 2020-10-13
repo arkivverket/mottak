@@ -1,5 +1,6 @@
 # Explicitly set none for repositry trigger
 trigger: none
+
 resources:          # types: pipelines | repositories | containers | builds | packages
   containers:
     - container: kriwalTest # identifier for the container resource
