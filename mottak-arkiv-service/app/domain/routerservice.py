@@ -4,7 +4,7 @@ from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
 from app.database.repository import arkivuttrekk_get_by_id, arkivuttrekk_get_all, metadatafil_create
-from app.services.domain.metadatafil import Metadatafil
+from app.domain.models.metadatafil import Metadatafil
 
 
 def get_file_content(file: UploadFile):

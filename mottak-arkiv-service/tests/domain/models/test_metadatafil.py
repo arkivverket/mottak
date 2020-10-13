@@ -1,6 +1,6 @@
 import pytest
 
-from app.services.domain.metadatafil import content_type2metadata_type, MetadataType, Metadatafil
+from app.domain.models.metadatafil import content_type2metadata_type, MetadataType, Metadatafil
 
 
 def test_content_type2metadata_type__success():

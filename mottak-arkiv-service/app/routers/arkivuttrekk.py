@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.router_dependencies import get_db_session
-from app.services.routerservice import get_arkivuttrekk_get_by_id, get_arkivuttrekk_get_all
+from app.domain.routerservice import get_arkivuttrekk_get_by_id, get_arkivuttrekk_get_all
 
 router = APIRouter()
 
