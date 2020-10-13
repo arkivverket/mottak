@@ -8,7 +8,7 @@ export type RouteType = {
 	component: any,
 }
 
-const Test: React.FC = () => {
+const All: React.FC = () => {
 	return (
 		<h1>Alle</h1>
 	)
@@ -18,17 +18,17 @@ const Routes: RouteType[] = [
 	{
 		path: '/',
 		sidebarName: 'Oversikt',
-		component: Test
+		component: Overview
 	},
 	{
 		path: '/complete',
 		sidebarName: 'Se alle',
-		component: Test
+		component: All
 	},
 	{
 		path: '/upload',
 		sidebarName: 'Lat opp fil',
-		component: Test
+		component: ALL
 	},
 ]
 
