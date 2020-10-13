@@ -23,4 +23,10 @@ steps:
   - script: |
       echo Hello world
       echo $(resources.container.kriwalTest.tag)
+      echo $(resources.container.kriwalTest.type)
+      echo $(resources.container.kriwalTest.registry)
+      echo $(resources.container.kriwalTest.repository)
+      echo $(resources.container.kriwalTest.digest)
+      echo $(resources.container.kriwalTest.URI)
+      echo $(resources.container.kriwalTest.location)
     displayName: 'Command Line Script'
