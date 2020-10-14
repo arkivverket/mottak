@@ -20,7 +20,7 @@ pool:
 
 
 steps:
-    - script: |
+  - script: |
       cd azure-pipelines
       ENV='dev'
       OUTPUT_FOLDER="k8s/output/$ENV"
