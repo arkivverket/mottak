@@ -1,6 +1,6 @@
+import logging
 import os
 import sys
-import logging
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
