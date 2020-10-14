@@ -18,7 +18,7 @@ spec:
         run: kicker-app
     spec:
       containers:
-        - image: arkivverket.azurecr.io/av-mottak/kicker
+        - image: arkivverket.azurecr.io/av-mottak/kicker:a3554de11a330acc63d70b13a6b3cb62ca8bb43d
           imagePullPolicy: Always
           name: kicker-container
           env:

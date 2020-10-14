@@ -6,6 +6,5 @@ TENANT_ID_KEYVAULT: test-id
 
 
 ## KICKER
-AV_MOTTAK_KICKER_CONTAINER: av-mottak/kicker
+AV_MOTTAK_KICKER_CONTAINER: av-mottak/kicker:a3554de11a330acc63d70b13a6b3cb62ca8bb43d
 AV_MOTTAK_KICKER_ENDPOINT: av-mottak-dev-sb-endpoint-argo-kicker
-
