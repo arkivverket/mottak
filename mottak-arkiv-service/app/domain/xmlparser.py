@@ -24,17 +24,12 @@ def recursive_ns(elem: ET.Element, ns: dict) -> dict:
 
 
 def get_all_namespaces(root: ET.Element) -> dict:
-    ns = recursive_ns(root, {})
-    return ns
-
-
-# TODO Find out if mets is the only possible valid value for namespace, if so use this function
-def get_namespaces() -> dict:
     """
     Method that returns a dictionary containing the namespaces used
     when parsing an METS XML.
     """
-    return {'mets': 'http://www.loc.gov/METS/'}
+    ns = recursive_ns(root, {})
+    return ns
 
 
 # TODO Error handling of missing XML nodes, applies to all functions below
@@ -83,7 +78,7 @@ def get_arkivtype(root: ET.Element, ns: dict) -> str:
                        if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
         return arkivtype
     except IndexError:
-        return None
+        return 'None'
 
 
 def get_objekt_id(root: ET.Element):
@@ -114,15 +109,15 @@ def get_tidsspenn(root: ET.Element, ns: dict) -> str:
     return f"{startdate} -- {enddate}"
 
 
-def get_saksnummer(root: ET.Element, ns: dict) -> str:
-    # Saksnummer: SUBMISSSION AGREEMENT
+def get_avtalenummer(root: ET.Element, ns: dict) -> str:
+    # Avtalenummer: SUBMISSSION AGREEMENT
     try:
         altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-        saksnummer = [alt for alt in altRecordIDs
+        avtalenummer = [alt for alt in altRecordIDs
                      if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
-        return saksnummer
+        return avtalenummer
     except IndexError:
-        return None
+        return 'None'
 
 
 def get_parsedmetadatafil(metadatafil: Metadatafil) -> ParsedMetadatafil:
@@ -142,7 +137,7 @@ def get_parsedmetadatafil(metadatafil: Metadatafil) -> ParsedMetadatafil:
         objekt_id=get_objekt_id(root),
         storrelse=get_storrelse(root, ns),
         tidsspenn=get_tidsspenn(root, ns),
-        saksnummer=get_saksnummer(root, ns)
+        avtalenummer=get_avtalenummer(root, ns)
     )
 
     return parsed
