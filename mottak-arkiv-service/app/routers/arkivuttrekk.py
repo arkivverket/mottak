@@ -3,11 +3,19 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.domain.arkivuttrekk_service import get_by_id, get_all
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk
+from app.domain.arkivuttrekk_service import get_by_id, get_all, create
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.router_dependencies import get_db_session
 
 router = APIRouter()
+
+
+@router.post("",
+             status_code=status.HTTP_201_CREATED,
+             response_model=Arkivuttrekk,
+             summary="Lagre et arkivuttrekk ut fra redigerbare felter")
+def create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
+    return create(arkivuttrekk, db)
 
 
 @router.get("/{id}",
