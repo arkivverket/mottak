@@ -31,7 +31,7 @@ def upgrade():
     op.create_table('arkivuttrekk',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('obj_id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('status', sa.Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type'), nullable=False),
+    sa.Column('status', sa.Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring', name='arkivuttrekk_status_type'), nullable=False),
     sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type'), nullable=False),
     sa.Column('tittel', sa.String(), nullable=False),
     sa.Column('beskrivelse', sa.String(), nullable=False),
