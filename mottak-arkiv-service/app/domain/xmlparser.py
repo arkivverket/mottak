@@ -85,14 +85,30 @@ def get_objekt_id(root: ET.Element):
     return root.get('OBJID')
 
 
-# TODO - kan det være flere filgrupper? Flere filer som skal summeres i en gruppe?
+def format_size(size_bytes, unit="MB"):
+    """
+    Method that converts integers to common size units.
+    Default unit is MB
+    """
+    convert = {
+        "B": 1,
+        "KB": 10**3,
+        "MB": 10**6,
+        "GB": 10**9,
+        "TB": 10**12,
+    }
+
+    converted_size = size_bytes / convert[unit]
+    return f"{converted_size} {unit}"
+
+
 def get_storrelse(root: ET.Element, ns: dict) -> str:
     # Størrelse: (METS FILE ID SIZE)
     files = root.findall('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
     total_size = 0
     for file in files:
         total_size += int(file.get('SIZE'))
-    return str(total_size)
+    return format_size(total_size)
 
 
 def get_tidsspenn(root: ET.Element, ns: dict) -> str:
