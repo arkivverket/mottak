@@ -6,7 +6,11 @@ from app.domain.models.metadatafil import MetadataType, Metadatafil, ParsedMetad
 from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
 
 
-def content_type2metadata_type(content_type):
+def content_type2metadata_type(content_type: str):
+    """
+    Method that converts the field "content_type" in FastAPI's UploadFile object
+    to a MetadataType Enum value.
+    """
     # FastAPI's UploadFile returns 'text/xml' as content type.
     # Consider parsing the XML for the METS value instead.
     if content_type == 'text/xml':
@@ -16,7 +20,7 @@ def content_type2metadata_type(content_type):
 
 
 def get_file_content(file: UploadFile):
-    """"
+    """
     Method that extract the XML from the content of the file,
     the xml may be prettyprinted XML, which can be difficult to deal with,
     we therefore turn prettyprinted XMLs into a spaceless string version
@@ -38,7 +42,10 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
                        innhold=get_file_content(file))
 
 
-def map_parsed2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
+def map_parsed_domain2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
+    """
+    Method that converts a domain object of type ParsedMetadatfil into a DTO of type ParsedMetadatafil.
+    """
     dto = ParsedMetadatafil_DTO(
         tittel=domain.tittel,
         endret=domain.endret,
@@ -47,5 +54,5 @@ def map_parsed2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
         objekt_id=domain.objekt_id,
         storrelse=domain.storrelse,
         tidsspenn=domain.tidsspenn,
-        saksnummer=domain.saksnummer)
+        avtalenummer=domain.avtalenummer)
     return dto

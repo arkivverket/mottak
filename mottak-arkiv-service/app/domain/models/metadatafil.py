@@ -42,7 +42,7 @@ class ParsedMetadatafil:
     objekt_id: str
     storrelse: str
     tidsspenn: str
-    saksnummer: str
+    avtalenummer: str
 
     def __init__(self,
                  tittel=None,
@@ -52,7 +52,7 @@ class ParsedMetadatafil:
                  objekt_id=None,
                  storrelse=None,
                  tidsspenn=None,
-                 saksnummer=None):
+                 avtalenummer=None):
         self.tittel = tittel
         self.endret = endret
         self.kontaktperson = kontaktperson
@@ -60,4 +60,4 @@ class ParsedMetadatafil:
         self.objekt_id = objekt_id
         self.storrelse = storrelse
         self.tidsspenn = tidsspenn
-        self.saksnummer = saksnummer
+        self.avtalenummer = avtalenummer

@@ -33,4 +33,4 @@ class ParsedMetadatafil(BaseModel):
     objekt_id: str
     storrelse: str
     tidsspenn: str
-    saksnummer: str
+    avtalenummer: str
