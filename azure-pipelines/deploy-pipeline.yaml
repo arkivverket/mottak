@@ -42,6 +42,6 @@ steps:
   - task: KubernetesManifest@0
     inputs:
       action: 'deploy'
-      kubernetesServiceConnection: 'kriwal-test'
+      kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
       namespace: 'av-mottak-dev'
       manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/kicker-deployment.yaml'
