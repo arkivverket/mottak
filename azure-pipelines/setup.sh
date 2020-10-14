@@ -13,7 +13,7 @@ NAMESPACE="av-mottak-$ENV"
 
 ## Auth against cluster
 echo
-echo "Setting up aks credentials"
+echo "Setting up aks credentials for cluster $CLUSTER_NAME in resource group $RESOURCE_GROUP"
 az aks get-credentials --name "$CLUSTER_NAME" --resource-group "$RESOURCE_GROUP"
 
 # Installing argo workflows in namespace
