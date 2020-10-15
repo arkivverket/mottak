@@ -1,3 +1,4 @@
+from datetime import datetime
 from enum import Enum
 
 
@@ -13,8 +14,8 @@ class Metadatafil:
     filnavn: str
     type = MetadataType
     innhold = str
-    opprettet: str
-    endret: str
+    opprettet: datetime
+    endret: datetime
 
     def __init__(self,
                  id=None,
