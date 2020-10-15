@@ -18,15 +18,15 @@ class Metadatafil:
     endret: datetime
 
     def __init__(self,
-                 id=None,
+                 id_=None,
                  filnavn=None,
-                 type=None,
+                 type_=None,
                  innhold=None,
                  opprettet=None,
                  endret=None):
-        self.id = id
+        self.id = id_
         self.filnavn = filnavn
-        self.type = type
+        self.type = type_
         self.innhold = innhold
         self.opprettet = opprettet
         self.endret = endret

@@ -26,8 +26,8 @@ def test_map_dbo2model(t_dbo):
     THEN    check that the returned domain object Metadatafil is correct
     """
     expected = Metadatafil(
-        id=1,
-        type='xml/mets',
+        id_=1,
+        type_='xml/mets',
         innhold='innhold',
         filnavn='filnavn',
         opprettet=datetime.fromisoformat('2020-10-13 00:00:00'),

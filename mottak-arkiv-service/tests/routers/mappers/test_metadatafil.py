@@ -49,7 +49,7 @@ def test_metadatafil_mapper(testfile, t_content):
     """
     expected = Metadatafil(
         filnavn="df53d1d8-39bf-4fea-a741-58d472664ce2.xml",
-        type=MetadataType.XML_METS,
+        type_=MetadataType.XML_METS,
         innhold=t_content)
     actual = metadatafil_mapper(testfile)
     assert vars(actual) == vars(expected)

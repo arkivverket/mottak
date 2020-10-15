@@ -38,5 +38,5 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
     Method that map an UploadFile file to a Metadatafil domain object.
     """
     return Metadatafil(filnavn=file.filename,
-                       type=content_type2metadata_type(file.content_type),
+                       type_=content_type2metadata_type(file.content_type),
                        innhold=get_file_content(file))

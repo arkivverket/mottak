@@ -4,9 +4,9 @@ from app.database.dbo.mottak import Metadatafil as Metadatafil_DBO
 
 def map_dbo2model(dbo: Metadatafil_DBO) -> Metadatafil:
     return Metadatafil(
-        id=dbo.id,
+        id_=dbo.id,
         filnavn=dbo.filnavn,
-        type=dbo.type,
+        type_=dbo.type,
         innhold=dbo.innhold,
         opprettet=dbo.opprettet,
         endret=dbo.endret
