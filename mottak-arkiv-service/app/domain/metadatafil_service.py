@@ -6,7 +6,7 @@ from app.database.repository import metadatafil_create, metadatafil_get_by_id
 from app.domain.models.metadatafil import ParsedMetadatafil
 from app.domain.xmlparser import get_parsedmetadatafil
 from app.routers.mappers.metadafil import metadatafil_mapper, map_parsed_domain2dto
-from exceptions import MetadatafilNotFound
+from app.exceptions import MetadatafilNotFound
 
 
 def upload_metadatafil(file: UploadFile, db: Session):

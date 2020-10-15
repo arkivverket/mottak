@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.domain.arkivuttrekk_service import get_by_id, get_all, create
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.router_dependencies import get_db_session
-from exceptions import MetadatafilNotFound, ArkivuttrekkNotFound, MetadatafilMissingInnhold
+from app.exceptions import MetadatafilNotFound, ArkivuttrekkNotFound, MetadatafilMissingInnhold
 
 router = APIRouter()
 
