@@ -14,10 +14,10 @@ router = APIRouter()
             status_code=status.HTTP_200_OK,
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
-async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
-    result = get_by_id(id, db)
+async def router_get_by_id(id_: int, db: Session = Depends(get_db_session)):
+    result = get_by_id(id_, db)
     if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id_}")
     return result
 
 

@@ -13,16 +13,16 @@ def upload_metadatafil(file: UploadFile, db: Session):
     return metadatafil_create(db, metadatafil)
 
 
-def get_content(id: int, db: Session) -> str:
-    dbo = metadatafil_get_by_id(db, id)
+def get_content(id_: int, db: Session) -> str:
+    dbo = metadatafil_get_by_id(db, id_)
     if not dbo:
         return None
     else:
         return dbo.innhold
 
 
-def get_parsed_content(id: int, db: Session) -> ParsedMetadatafil:
-    dbo = metadatafil_get_by_id(db, id)
+def get_parsed_content(id_: int, db: Session) -> ParsedMetadatafil:
+    dbo = metadatafil_get_by_id(db, id_)
     if not dbo:
         return None
     else:
