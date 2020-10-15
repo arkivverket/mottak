@@ -1,11 +1,12 @@
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 import pytest
 
 from app.domain.metadatafil_service import metadatafil_mapper
 from app.domain.models.metadatafil import ParsedMetadatafil, Metadatafil
-from app.domain.xmlparser import get_parsedmetadatafil, get_all_namespaces, get_title, \
-    get_kontaktperson, get_arkivtype, get_storrelse, get_tidsspenn, get_avtalenummer, format_size
+from app.domain.xmlparser import get_parsedmetadatafil, _get_all_namespaces, _get_title, \
+    _get_kontaktperson, _get_arkivtype, _get_storrelse, _get_tidsspenn, _get_avtalenummer, _format_size
 
 
 @pytest.fixture
@@ -33,31 +34,30 @@ def _ns():
 def _metadatfil(testfile) -> Metadatafil:
     metadatafil = metadatafil_mapper(testfile)
     metadatafil.id = 1
-    metadatafil.arkivuttrekk_id = 1
-    metadatafil.opprettet = '2020-10-10 00:00:00'
-    metadatafil.endret = '2020-10-10 00:00:00'
+    metadatafil.opprettet = datetime.fromisoformat('2020-10-10 00:00:00')
+    metadatafil.endret = datetime.fromisoformat('2020-10-10 00:00:00')
     return metadatafil
 
 
 def test_get_all_namespaces(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file
-    WHEN    calling the method get_namespaces()
+    WHEN    calling the method _get_namespaces()
     THEN    check that the returned dictionary is correct
     """
     exepected = _ns
-    actual = get_all_namespaces(_root)
+    actual = _get_all_namespaces(_root)
     assert actual == exepected
 
 
 def test_get_title_success(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_title()
+    WHEN    calling the method _get_title()
     THEN    check that the returned string is correct
     """
     expected = "The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234"
-    actual = get_title(_root, _ns)
+    actual = _get_title(_root, _ns)
     assert actual == expected
 
 
@@ -65,22 +65,22 @@ def test_get_title_failure(_root_errors, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file with missing title values
             and a dictionary with the mets namespace
-    WHEN    calling the method get_title()
+    WHEN    calling the method _get_title()
     THEN    check that the returned string is correct
     """
     expected = "None -- None"
-    actual = get_title(_root_errors, _ns)
+    actual = _get_title(_root_errors, _ns)
     assert actual == expected
 
 
 def test_get_kontaktperson(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_kontaktperson()
+    WHEN    calling the method _get_kontaktperson()
     THEN    check that the returned string is correct
     """
     execpected = "Lewis Caroll (lewis@caroll.net)"
-    actual = get_kontaktperson(_root, _ns)
+    actual = _get_kontaktperson(_root, _ns)
     assert actual == execpected
 
 
@@ -88,33 +88,33 @@ def test_get_kontaktperson_failure(_root_errors, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file with missing contact person values
             and a dictionary with the mets namespace
-    WHEN    calling the method get_kontaktperson()
+    WHEN    calling the method _get_kontaktperson()
     THEN    check that the returned string is correct
     """
     expected = "None (None)"
-    actual = get_kontaktperson(_root_errors, _ns)
+    actual = _get_kontaktperson(_root_errors, _ns)
     assert actual == expected
 
 
 def test_get_arkivtype_success(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_arkivtype()
+    WHEN    calling the method _get_arkivtype()
     THEN    check that the returned string is correct
     """
     execpected = "Noark 5 - Sakarkiv"
-    actual = get_arkivtype(_root, _ns)
+    actual = _get_arkivtype(_root, _ns)
     assert actual == execpected
 
 
 def test_get_arkivtype_failure(_root_errors, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_arkivtype()
+    WHEN    calling the method _get_arkivtype()
     THEN    check that the returned string is None
     """
     execpected = "None"
-    actual = get_arkivtype(_root_errors, _ns)
+    actual = _get_arkivtype(_root_errors, _ns)
     assert actual == execpected
 
 
@@ -124,10 +124,10 @@ def test_get_arkivtype_failure(_root_errors, _ns):
 def test_format_size_to_MB(test_input, expected):
     """
     GIVEN   a tuple of test_input, expected output
-    WHEN    calling the method format_size()
+    WHEN    calling the method _format_size()
     THEN    check that the format conversion is correct
     """
-    actual = format_size(test_input)
+    actual = _format_size(test_input)
     assert actual == expected
 
 
@@ -137,56 +137,56 @@ def test_format_size_to_MB(test_input, expected):
 def test_format_size_fix_value_to_units(test_input, expected):
     """
     GIVEN   a fixed value of 1 000 000 000 bytes and a list of changing conversion units
-    WHEN    calling the method format_size()
+    WHEN    calling the method _format_size()
     THEN    check that the expected conversion is correct
     """
     size = 10 ** 9
-    actual = format_size(size, test_input)
+    actual = _format_size(size, test_input)
     assert actual == expected
 
 
 def test_get_storrelse_success(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_storrelse()
+    WHEN    calling the method _get_storrelse()
     THEN    check that the returned string is correct
     """
     execpected = "0.44032 MB"
-    actual = get_storrelse(_root, _ns)
+    actual = _get_storrelse(_root, _ns)
     assert actual == execpected
 
 
 def test_get_tidsspenn_success(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_tidsspenn()
+    WHEN    calling the method _get_tidsspenn()
     THEN    check that the returned string is correct
     """
     execpected = "1863-01-01 -- 1864-12-31"
-    actual = get_tidsspenn(_root, _ns)
+    actual = _get_tidsspenn(_root, _ns)
     assert actual == execpected
 
 
 def test_get_avtalenummer_success(_root, _ns):
     """
     GIVEN   a XML root Element of an METS/XML file and a dictionary with the mets namespace
-    WHEN    calling the method get_avtalenummer()
+    WHEN    calling the method _get_avtalenummer()
     THEN    check that the returned string is correct
     """
     execpected = "01/12345"
-    actual = get_avtalenummer(_root, _ns)
+    actual = _get_avtalenummer(_root, _ns)
     assert actual == execpected
 
 
 def test_get_parsedmetadatfil(_metadatfil):
     """
     GIVEN   a metadatafil where the content is an METS/XML file
-    WHEN    calling the method get_parsedmetadatafil()
+    WHEN    calling the method _get_parsedmetadatafil()
     THEN    check that the returned ParsedMetadafil object is correct
     """
     expected = ParsedMetadatafil(
         tittel="The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234",
-        endret="2020-10-10 00:00:00",
+        endret=datetime.fromisoformat("2020-10-10 00:00:00"),
         kontaktperson="Lewis Caroll (lewis@caroll.net)",
         arkivtype="Noark 5 - Sakarkiv",
         objekt_id="UUID:df53d1d8-39bf-4fea-a741-58d472664ce2",
