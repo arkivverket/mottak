@@ -6,7 +6,7 @@ from app.domain.models.metadatafil import ParsedMetadatafil as Parsed_DTO
 
 
 @pytest.fixture
-def t_parsed_model():
+def _parsed_model():
     return ParsedMetadatafil(
         tittel='tittel',
         endret='endret',
@@ -19,7 +19,7 @@ def t_parsed_model():
     )
 
 
-def test_map_parsed_domain2dto(t_parsed_model):
+def test_map_parsed_domain2dto(_parsed_model):
     """
     GIVEN   a domain object of type ParsedMetadafil
     WHEN    calling the method map_parsed_domain2dto
@@ -35,5 +35,5 @@ def test_map_parsed_domain2dto(t_parsed_model):
         tidsspenn='tidsspenn',
         avtalenummer='avtalenummer'
     )
-    actual = map_parsed_domain2dto(t_parsed_model)
+    actual = map_parsed_domain2dto(_parsed_model)
     assert vars(actual) == vars(expected)

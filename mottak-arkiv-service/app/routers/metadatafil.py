@@ -17,9 +17,9 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
 
 
 @router.get("/{id}/content",
-             status_code=status.HTTP_200_OK,
-             response_model=str,
-             summary="Henter ut innehold(XML) fra en metadatafil")
+            status_code=status.HTTP_200_OK,
+            response_model=str,
+            summary="Henter ut innehold(XML) fra en metadatafil")
 async def router_get_content(id_: int, db: Session = Depends(get_db_session)):
     result = get_content(id_, db)
     if result is None:

@@ -8,7 +8,7 @@ from app.domain.models.metadatafil import Metadatafil
 
 
 @pytest.fixture
-def t_dbo():
+def _dbo():
     return Metadatafil_DBO(
         id=1,
         type='xml/mets',
@@ -19,7 +19,7 @@ def t_dbo():
     )
 
 
-def test_map_dbo2model(t_dbo):
+def test_map_dbo2model(_dbo):
     """"
     GIVEN   a database object of type Metadatafil
     WHEN    calling the method map_dbo2model
@@ -34,6 +34,6 @@ def test_map_dbo2model(t_dbo):
         endret=datetime.fromisoformat('2020-10-14 00:00:00'),
     )
 
-    actual = map_dbo2model(t_dbo)
+    actual = map_dbo2model(_dbo)
 
     assert vars(actual) == vars(expected)

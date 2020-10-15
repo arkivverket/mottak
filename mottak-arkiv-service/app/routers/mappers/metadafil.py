@@ -6,7 +6,7 @@ from app.domain.models.metadatafil import MetadataType, Metadatafil, ParsedMetad
 from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
 
 
-def content_type2metadata_type(content_type: str):
+def _content_type2metadata_type(content_type: str) -> MetadataType:
     """
     Method that converts the field "content_type" in FastAPI's UploadFile object
     to a MetadataType Enum value.
@@ -19,7 +19,7 @@ def content_type2metadata_type(content_type: str):
         raise ValueError(f"Content type {content_type} is not a valid type")
 
 
-def get_file_content(file: UploadFile):
+def _get_file_content(file: UploadFile) -> str:
     """
     Method that extract the XML from the content of the file,
     the xml may be prettyprinted XML, which can be difficult to deal with,
@@ -38,5 +38,5 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
     Method that map an UploadFile file to a Metadatafil domain object.
     """
     return Metadatafil(filnavn=file.filename,
-                       type_=content_type2metadata_type(file.content_type),
-                       innhold=get_file_content(file))
+                       type_=_content_type2metadata_type(file.content_type),
+                       innhold=_get_file_content(file))
