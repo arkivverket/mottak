@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.domain.arkivuttrekk_service import get_by_id, get_all, create
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.router_dependencies import get_db_session
+from exceptions import MetadatafilNotFound, ArkivuttrekkNotFound
 
 router = APIRouter()
 
@@ -15,7 +16,10 @@ router = APIRouter()
              response_model=Arkivuttrekk,
              summary="Lagre et arkivuttrekk ut fra redigerbare felter")
 def create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
-    return create(arkivuttrekk, db)
+    try:
+        return create(arkivuttrekk, db)
+    except MetadatafilNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
 @router.get("/{id}",
@@ -23,10 +27,10 @@ def create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(ge
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
 async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
-    result = get_by_id(id, db)
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
-    return result
+    try:
+        return get_by_id(id, db)
+    except ArkivuttrekkNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
 @router.get("",
