@@ -1,38 +1,29 @@
-from datetime import datetime
-from enum import Enum
+from datetime import datetime, date
 from uuid import UUID
 
 from pydantic import BaseModel
 
-
-class ArkivuttrekkStatus(str, Enum):
-    UNDER_OPPRETTING = 'Under oppretting'
-    INVITERT = "Invitert"
-    UNDER_BEHANDLING = "Under behandling"
-    AVVIST = "Avvist"
-    SENT_TIL_BEVARING = "Sent til bevaring"
-
-
-class ArkivuttrekkType(str, Enum):
-    NOARK3 = "Noark3"
-    NOARK5 = "Noark5"
-    FAGSYSTEM = "Fagsystem"
+from domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
 
 
 class ArkivuttrekkBase(BaseModel):
     """
     Used as the input parameter in POST "/arkivuttrekk/"
+    and the response model for GET "/metadatafile/{id}/parsed
     """
     obj_id: UUID = None
     status: ArkivuttrekkStatus = None
     type: ArkivuttrekkType = None
     tittel: str = None
-    beskrivelse: str = None
     sjekksum_sha256: str = None
     avgiver_navn: str = None
     avgiver_epost: str = None
     koordinator_epost: str = None
     metadatafil_id: int = None
+    arkiv_startdato: date = None
+    arkiv_sluttdato: date = None
+    storrelse: float
+    avtalenummer: str
 
 
 class Arkivuttrekk(ArkivuttrekkBase):

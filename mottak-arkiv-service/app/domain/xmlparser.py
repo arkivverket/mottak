@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-from app.domain.models.metadatafil import Metadatafil, ParsedMetadatafil
+from app.domain.models.Metadatafil import Metadatafil, ParsedMetadatafil
 
 
 def _recursive_ns(elem: ET.Element, ns: dict) -> dict:
@@ -70,6 +70,8 @@ def _get_kontaktperson(root: ET.Element, ns: dict) -> str:
     return f"{name} ({email})"
 
 
+# TODO Finn ut om arkiv type ser ut som her eller som i ArkivuttrekkType Enum.verdier
+# "Noark 5 - Sakarkiv" --> "Noark5"
 def _get_arkivtype(root: ET.Element, ns: dict) -> str:
     # Arkivtype: DELIVERYSPECIFICATION
     try:

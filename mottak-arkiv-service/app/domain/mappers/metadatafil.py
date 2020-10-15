@@ -1,4 +1,4 @@
-from app.domain.models.metadatafil import ParsedMetadatafil
+from app.domain.models.Metadatafil import ParsedMetadatafil
 from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
 
 

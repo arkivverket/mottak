@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.domain.models.metadatafil import MetadataType
+from app.domain.models.Metadatafil import MetadataType
 
 
 class Metadatafil(BaseModel):
@@ -20,7 +20,7 @@ class Metadatafil(BaseModel):
     class Config:
         orm_mode = True
 
-
+# TODO DELETE CLASS
 class ParsedMetadatafil(BaseModel):
     """
     Used as the response model for the parsed content of a Metadatafil
@@ -31,6 +31,6 @@ class ParsedMetadatafil(BaseModel):
     kontaktperson: str
     arkivtype: str
     objekt_id: str
-    storrelse: str
+    storrelse: float
     tidsspenn: str
     avtalenummer: str

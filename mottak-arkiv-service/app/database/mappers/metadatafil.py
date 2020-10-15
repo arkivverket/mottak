@@ -1,4 +1,4 @@
-from app.domain.models.metadatafil import Metadatafil
+from app.domain.models.Metadatafil import Metadatafil
 from app.database.dbo.mottak import Metadatafil as Metadatafil_DBO
 
 

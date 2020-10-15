@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database.repository import metadatafil_create, metadatafil_get_by_id
 from app.database.mappers.metadatafil import map_dbo2model
-from app.domain.models.metadatafil import ParsedMetadatafil
+from app.domain.models.Metadatafil import ParsedMetadatafil
 from app.domain.xmlparser import get_parsedmetadatafil
 from app.routers.mappers.metadafil import metadatafil_mapper
 from app.domain.mappers.metadatafil import map_parsed_domain2dto

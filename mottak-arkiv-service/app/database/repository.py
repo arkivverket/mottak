@@ -4,7 +4,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.database.dbo.mottak import Arkivuttrekk as Arkivuttrekk_DBO, Metadatafil as Metadatafil_DBO
-from app.domain.models.metadatafil import Metadatafil
+from app.domain.models.Metadatafil import Metadatafil
 
 
 def metadatafil_create(db: Session, metadatfil: Metadatafil) -> Metadatafil_DBO:
