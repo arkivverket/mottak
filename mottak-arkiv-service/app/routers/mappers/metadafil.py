@@ -40,19 +40,3 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
     return Metadatafil(filnavn=file.filename,
                        type=content_type2metadata_type(file.content_type),
                        innhold=get_file_content(file))
-
-
-def map_parsed_domain2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
-    """
-    Method that converts a domain object of type ParsedMetadatfil into a DTO of type ParsedMetadatafil.
-    """
-    dto = ParsedMetadatafil_DTO(
-        tittel=domain.tittel,
-        endret=domain.endret,
-        kontaktperson=domain.kontaktperson,
-        arkivtype=domain.arkivtype,
-        objekt_id=domain.objekt_id,
-        storrelse=domain.storrelse,
-        tidsspenn=domain.tidsspenn,
-        avtalenummer=domain.avtalenummer)
-    return dto

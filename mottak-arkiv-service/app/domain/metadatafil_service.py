@@ -5,7 +5,8 @@ from app.database.repository import metadatafil_create, metadatafil_get_by_id
 from app.database.mappers.metadatafil import map_dbo2model
 from app.domain.models.metadatafil import ParsedMetadatafil
 from app.domain.xmlparser import get_parsedmetadatafil
-from app.routers.mappers.metadafil import metadatafil_mapper, map_parsed_domain2dto
+from app.routers.mappers.metadafil import metadatafil_mapper
+from app.domain.mappers.metadatafil import map_parsed_domain2dto
 
 
 def upload_metadatafil(file: UploadFile, db: Session):
@@ -15,10 +16,7 @@ def upload_metadatafil(file: UploadFile, db: Session):
 
 def get_content(id_: int, db: Session) -> str:
     dbo = metadatafil_get_by_id(db, id_)
-    if not dbo:
-        return None
-    else:
-        return dbo.innhold
+    return dbo.innhold if dbo else None
 
 
 def get_parsed_content(id_: int, db: Session) -> ParsedMetadatafil:
