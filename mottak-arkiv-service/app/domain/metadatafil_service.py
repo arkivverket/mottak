@@ -1,12 +1,11 @@
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
-from app.database.repository import metadatafil_create, metadatafil_get_by_id
 from app.database.mappers.metadatafil import map_dbo2model
+from app.database.repository import metadatafil_create, metadatafil_get_by_id
 from app.domain.models.metadatafil import ParsedMetadatafil
 from app.domain.xmlparser import get_parsedmetadatafil
 from app.routers.mappers.metadafil import metadatafil_mapper, map_parsed_domain2dto
-from database.dbo.mottak import Metadatafil
 from exceptions import MetadatafilNotFound
 
 
@@ -15,7 +14,7 @@ def upload_metadatafil(file: UploadFile, db: Session):
     return metadatafil_create(db, metadatafil)
 
 
-def get_dbo_by_id(db: Session, id: int) -> Metadatafil:
+def get_dbo_by_id(db: Session, id: int):
     dbo = metadatafil_get_by_id(db, id)
     if not dbo:
         raise MetadatafilNotFound(id)

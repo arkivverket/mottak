@@ -5,7 +5,7 @@ import pytest
 from app.domain.metadatafil_service import metadatafil_mapper
 from app.domain.models.metadatafil import ParsedMetadatafil, Metadatafil
 from app.domain.xmlparser import get_parsedmetadatafil, get_all_namespaces, get_title, \
-    get_kontaktperson, get_arkivtype, get_storrelse, get_tidsspenn, get_avtalenummer, format_size
+    get_kontaktperson, get_arkivtype, get_storrelse, get_tidsspenn, get_avtalenummer, format_size, get_checksum
 
 
 @pytest.fixture
@@ -194,8 +194,16 @@ def test_get_parsedmetadatfil(t_metadatfil):
         tidsspenn="1863-01-01 -- 1864-12-31",
         avtalenummer="01/12345"
     )
-
     actual = get_parsedmetadatafil(t_metadatfil)
-
     assert vars(actual) == vars(expected)
 
+
+def test_get_checksum(t_innhold):
+    """
+    GIVEN   the content of a metadatafil, i.e. a string of a METS/XML file
+    WHEN    calling the method get_checksum()
+    THEN    check that the returned string contains the checksum
+    """
+    expected = '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a'
+    actual = get_checksum(t_innhold)
+    assert actual == expected

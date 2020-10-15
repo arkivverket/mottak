@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.domain.arkivuttrekk_service import get_by_id, get_all, create
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.router_dependencies import get_db_session
-from exceptions import MetadatafilNotFound, ArkivuttrekkNotFound
+from exceptions import MetadatafilNotFound, ArkivuttrekkNotFound, MetadatafilMissingInnhold
 
 router = APIRouter()
 
@@ -18,7 +18,7 @@ router = APIRouter()
 def create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
     try:
         return create(arkivuttrekk, db)
-    except MetadatafilNotFound as err:
+    except MetadatafilNotFound or MetadatafilMissingInnhold as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 

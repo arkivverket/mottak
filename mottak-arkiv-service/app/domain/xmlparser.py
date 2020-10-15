@@ -75,7 +75,7 @@ def get_arkivtype(root: ET.Element, ns: dict) -> str:
     try:
         altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
         arkivtype = [alt for alt in altRecordIDs
-                       if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
+                     if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
         return arkivtype
     except IndexError:
         return 'None'
@@ -92,10 +92,10 @@ def format_size(size_bytes, unit="MB"):
     """
     convert = {
         "B": 1,
-        "KB": 10**3,
-        "MB": 10**6,
-        "GB": 10**9,
-        "TB": 10**12,
+        "KB": 10 ** 3,
+        "MB": 10 ** 6,
+        "GB": 10 ** 9,
+        "TB": 10 ** 12,
     }
 
     converted_size = size_bytes / convert[unit]
@@ -130,7 +130,7 @@ def get_avtalenummer(root: ET.Element, ns: dict) -> str:
     try:
         altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
         avtalenummer = [alt for alt in altRecordIDs
-                     if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
+                        if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
         return avtalenummer
     except IndexError:
         return 'None'
@@ -155,5 +155,15 @@ def get_parsedmetadatafil(metadatafil: Metadatafil) -> ParsedMetadatafil:
         tidsspenn=get_tidsspenn(root, ns),
         avtalenummer=get_avtalenummer(root, ns)
     )
-
     return parsed
+
+
+def get_checksum(innhold: str) -> str:
+    """
+    Method that returns the checksum contained in the XML document
+    """
+    root = ET.fromstring(innhold)
+    ns = get_all_namespaces(root)
+
+    files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
+    return files.get('CHECKSUM')

@@ -18,6 +18,23 @@ class MetadatafilNotFound(Exception):
         return self.message
 
 
+class MetadatafilMissingInnhold(Exception):
+    """
+       Exception raised when metadatafil doesn't include content
+
+       Attributes:
+           message -- explanation of the error
+       """
+
+    def __init__(self, id: int, message="Mangler innhold i metadatafil med id="):
+        self.id = id
+        self.message = message + str(id)
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
 class ArkivuttrekkNotFound(Exception):
     """
     Exception raised when arkivuttrekk doesn't exist in database
