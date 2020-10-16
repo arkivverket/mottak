@@ -18,7 +18,7 @@ a user with enough permissions.
 
 Then follow these steps:
 - Open [setup.py](setup.sh) and edit the ENV variable.
-- Make sure you have values-<env>.yaml with correct values (see [values-dev.yaml](values-dev.yaml))
+- Make sure you have values-<env>.yaml with correct values (see [values-dev.yaml](values/dev/values-dev.yaml))
 - Run `zsh setup.sh`
 
 #### Adding pipeline to Azure DevOps
