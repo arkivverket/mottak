@@ -7,7 +7,7 @@ def map_domain2dto_base(domain: Arkivuttrekk) -> ArkivuttrekkBase:
     Method that converts a domain object of type Arkivuttrekk into a DTO of type ArkivuttrekkBase.
     """
     dto = ArkivuttrekkBase(
-        obj_id= domain.obj_id,
+        obj_id=domain.obj_id,
         status=domain.status,
         type=domain.type,
         tittel=domain.tittel,

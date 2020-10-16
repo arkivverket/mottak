@@ -1,12 +1,13 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime, date
+from uuid import UUID
 
 import pytest
 
 from app.domain.metadatafil_service import metadatafil_mapper
 from app.domain.models.Metadatafil import Metadatafil
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
-from app.domain.xmlparser import create_arkivuttrekk_from_parsed_content, _get_all_namespaces, _get_title, \
+from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold, _get_all_namespaces, _get_title, \
     _get_arkivtype, _get_storrelse, _get_avtalenummer, _get_objekt_id, \
     _str2ArkivuttrekkType, _get_checksum, _get_avgiver_navn, _get_avgiver_epost, _get_arkiv_startdato, \
     _get_arkiv_sluttdato, _convert_2_megabytes
@@ -59,7 +60,7 @@ def test__get_objekt_id(_root):
     WHEN    calling the method _get_objekt_id()
     THEN    check that the returned UUID is correct
     """
-    expected = "UUID:df53d1d8-39bf-4fea-a741-58d472664ce2"
+    expected = UUID("df53d1d8-39bf-4fea-a741-58d472664ce2")
     actual = _get_objekt_id(_root)
     assert actual == expected
 
@@ -214,14 +215,14 @@ def test_get_avtalenummer_success(_root, _ns):
     assert actual == execpected
 
 
-def test_get_parsedmetadatfil(_metadatfil):
+def test_create_arkivuttrekk_from_parsed_innhold(_innhold):
     """
-    GIVEN   a metadatafil where the content is an METS/XML file
-    WHEN    calling the method create_arkivuttrekk_from_parsed_content()
+    GIVEN   the content(XML) of a METS/XML file
+    WHEN    calling the method create_arkivuttrekk_from_parsed_innhold()
     THEN    check that the returned Arkivuttrekk domain object is correct
     """
     expected = Arkivuttrekk(
-        obj_id="UUID:df53d1d8-39bf-4fea-a741-58d472664ce2",
+        obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.UNDER_OPPRETTING,
         type_=ArkivuttrekkType.NOARK5,
         tittel="The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234",
@@ -234,5 +235,6 @@ def test_get_parsedmetadatfil(_metadatfil):
         storrelse=0.44032,
         avtalenummer="01/12345"
     )
-    actual = create_arkivuttrekk_from_parsed_content(_metadatfil)
+    metadatafil_id = 1
+    actual = create_arkivuttrekk_from_parsed_innhold(metadatafil_id, _innhold)
     assert vars(actual) == vars(expected)

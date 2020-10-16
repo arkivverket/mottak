@@ -1,8 +1,9 @@
 from datetime import date
+from uuid import UUID
 
 import pytest
 
-from app.domain.mappers.metadatafil import map_domain2dto_base
+from app.domain.mappers.arkivuttrekk import map_domain2dto_base
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
 from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 
@@ -10,7 +11,7 @@ from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 @pytest.fixture
 def _arkivuttrekk():
     return Arkivuttrekk(
-        obj_id="aa3835f4-514e-488f-b928-28d552d2d4d8",
+        obj_id=UUID('aa3835f4-514e-488f-b928-28d552d2d4d8'),
         status=ArkivuttrekkStatus.UNDER_OPPRETTING,
         type_=ArkivuttrekkType.NOARK5,
         tittel="tittel",
@@ -26,7 +27,7 @@ def _arkivuttrekk():
     )
 
 
-def test_map_parsed_domain2dto(_arkivuttrekk):
+def test_map_domain2dto_base(_arkivuttrekk):
     """
     GIVEN   a domain object of type Arkivuttrekk
     WHEN    calling the method map_domain2dto_base

@@ -2,7 +2,6 @@ import xml.etree.ElementTree as ET
 from datetime import date
 from uuid import UUID
 
-from app.domain.models.Metadatafil import Metadatafil
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
 
 
@@ -37,7 +36,8 @@ def _get_all_namespaces(root: ET.Element) -> dict:
 
 # TODO Error handling of missing XML nodes, applies to all functions below
 def _get_objekt_id(root: ET.Element) -> UUID:
-    return root.get('OBJID')
+    uuid_str = root.get('OBJID')
+    return UUID(uuid_str[5:])
 
 
 def _str2ArkivuttrekkType(arkivuttrekk_str: str) -> ArkivuttrekkType:
@@ -160,12 +160,12 @@ def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
         return 'None'
 
 
-def create_arkivuttrekk_from_parsed_content(metadatafil: Metadatafil) -> Arkivuttrekk:
+def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -> Arkivuttrekk:
     """
     Method that parse the content (innhold) of a metadatfil
     and returns a domain object of type Arkivuttrekk.
     """
-    root = ET.fromstring(metadatafil.innhold)
+    root = ET.fromstring(innhold)
     ns = _get_all_namespaces(root)
 
     arkivuttrekk = Arkivuttrekk(
@@ -176,7 +176,7 @@ def create_arkivuttrekk_from_parsed_content(metadatafil: Metadatafil) -> Arkivut
         sjekksum_sha256=_get_checksum(root, ns),
         avgiver_navn=_get_avgiver_navn(root, ns),
         avgiver_epost=_get_avgiver_epost(root, ns),
-        metadatafil_id=metadatafil.id,
+        metadatafil_id=metadatafil_id,
         arkiv_startdato=_get_arkiv_startdato(root, ns),
         arkiv_sluttdato=_get_arkiv_sluttdato(root, ns),
         storrelse=_get_storrelse(root, ns),

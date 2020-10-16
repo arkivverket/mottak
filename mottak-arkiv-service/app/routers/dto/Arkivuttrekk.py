@@ -11,17 +11,17 @@ class ArkivuttrekkBase(BaseModel):
     Used as the input parameter in POST "/arkivuttrekk/"
     and the response model for GET "/metadatafile/{id}/parsed
     """
-    obj_id: UUID = None
-    status: ArkivuttrekkStatus = None
-    type: ArkivuttrekkType = None
-    tittel: str = None
-    sjekksum_sha256: str = None
-    avgiver_navn: str = None
-    avgiver_epost: str = None
+    obj_id: UUID
+    status: ArkivuttrekkStatus
+    type: ArkivuttrekkType
+    tittel: str
+    sjekksum_sha256: str
+    avgiver_navn: str
+    avgiver_epost: str
     koordinator_epost: str = None
-    metadatafil_id: int = None
-    arkiv_startdato: date = None
-    arkiv_sluttdato: date = None
+    metadatafil_id: int
+    arkiv_startdato: date
+    arkiv_sluttdato: date
     storrelse: float
     avtalenummer: str
 
