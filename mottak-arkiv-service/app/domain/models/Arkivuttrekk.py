@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from enum import Enum
 from uuid import UUID
 
@@ -35,6 +35,8 @@ class Arkivuttrekk:
     arkiv_sluttdato: date
     storrelse: float
     avtalenummer: str
+    opprettet: datetime
+    endret: datetime
 
     def __init__(self,
                  id_=None,
@@ -50,7 +52,9 @@ class Arkivuttrekk:
                  arkiv_startdato=None,
                  arkiv_sluttdato=None,
                  storrelse=None,
-                 avtalenummer=None):
+                 avtalenummer=None,
+                 opprettet=None,
+                 endret=None):
         self.id = id_
         self.obj_id = obj_id
         self.status = status
@@ -65,3 +69,5 @@ class Arkivuttrekk:
         self.arkiv_sluttdato = arkiv_sluttdato
         self.storrelse = storrelse
         self.avtalenummer = avtalenummer
+        self.opprettet = opprettet
+        self.endret = endret
