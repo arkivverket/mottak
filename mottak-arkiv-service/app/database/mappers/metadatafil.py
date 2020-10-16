@@ -9,5 +9,4 @@ def map_dbo2model(dbo: Metadatafil_DBO) -> Metadatafil:
         type_=dbo.type,
         innhold=dbo.innhold,
         opprettet=dbo.opprettet,
-        endret=dbo.endret
     )

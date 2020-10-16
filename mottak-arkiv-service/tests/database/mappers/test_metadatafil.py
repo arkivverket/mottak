@@ -15,7 +15,6 @@ def _dbo():
         innhold='innhold',
         filnavn='filnavn',
         opprettet=datetime.fromisoformat('2020-10-13 00:00:00'),
-        endret=datetime.fromisoformat('2020-10-14 00:00:00'),
     )
 
 
@@ -31,7 +30,6 @@ def test_map_dbo2model(_dbo):
         innhold='innhold',
         filnavn='filnavn',
         opprettet=datetime.fromisoformat('2020-10-13 00:00:00'),
-        endret=datetime.fromisoformat('2020-10-14 00:00:00'),
     )
 
     actual = map_dbo2model(_dbo)

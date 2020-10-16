@@ -39,6 +39,5 @@ def testfile_metadatfil(testfile_content) -> Metadatafil:
         filnavn="df53d1d8-39bf-4fea-a741-58d472664ce2.xml",
         type_=MetadataType.XML_METS,
         innhold=testfile_content,
-        opprettet=datetime.fromisoformat('2020-02-02 00:00:00'),
-        endret=datetime.fromisoformat("2020-10-10 00:00:00")
+        opprettet=datetime.fromisoformat('2020-02-02 00:00:00')
     )

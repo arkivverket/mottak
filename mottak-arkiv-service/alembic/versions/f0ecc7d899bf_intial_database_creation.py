@@ -24,7 +24,6 @@ def upgrade():
                     sa.Column('innhold', sa.Text(), nullable=False),
                     sa.Column('filnavn', sa.String(), nullable=False),
                     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-                    sa.Column('endret', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('id')
                     )

@@ -15,7 +15,6 @@ class Metadatafil(BaseModel):
     type: MetadataType
     innhold: str
     opprettet: datetime
-    endret: datetime
 
     class Config:
         orm_mode = True
