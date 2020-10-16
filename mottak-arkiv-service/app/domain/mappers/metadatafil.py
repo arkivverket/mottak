@@ -1,18 +1,24 @@
-from app.domain.models.Metadatafil import ParsedMetadatafil
-from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
+from app.domain.models.Arkivuttrekk import Arkivuttrekk
+from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 
 
-def map_parsed_domain2dto(domain: ParsedMetadatafil) -> ParsedMetadatafil_DTO:
+def map_domain2dto_base(domain: Arkivuttrekk) -> ArkivuttrekkBase:
     """
-    Method that converts a domain object of type ParsedMetadatfil into a DTO of type ParsedMetadatafil.
+    Method that converts a domain object of type Arkivuttrekk into a DTO of type ArkivuttrekkBase.
     """
-    dto = ParsedMetadatafil_DTO(
+    dto = ArkivuttrekkBase(
+        obj_id= domain.obj_id,
+        status=domain.status,
+        type=domain.type,
         tittel=domain.tittel,
-        endret=domain.endret,
-        kontaktperson=domain.kontaktperson,
-        arkivtype=domain.arkivtype,
-        objekt_id=domain.objekt_id,
+        sjekksum_sha256=domain.sjekksum_sha256,
+        avgiver_navn=domain.avgiver_navn,
+        avgiver_epost=domain.avgiver_epost,
+        koordinator_epost=domain.koordinator_epost,
+        metadatafil_id=domain.metadatafil_id,
+        arkiv_startdato=domain.arkiv_startdato,
+        arkiv_sluttdato=domain.arkiv_sluttdato,
         storrelse=domain.storrelse,
-        tidsspenn=domain.tidsspenn,
-        avtalenummer=domain.avtalenummer)
+        avtalenummer=domain.avtalenummer
+    )
     return dto

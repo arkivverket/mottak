@@ -1,39 +1,51 @@
+from datetime import date
+
 import pytest
 
-from app.domain.models.metadatafil import ParsedMetadatafil
-from app.domain.mappers.metadatafil import map_parsed_domain2dto
-from app.domain.models.metadatafil import ParsedMetadatafil as Parsed_DTO
+from app.domain.mappers.metadatafil import map_domain2dto_base
+from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 
 
 @pytest.fixture
-def _parsed_model():
-    return ParsedMetadatafil(
-        tittel='tittel',
-        endret='endret',
-        kontaktperson='kontaktperson',
-        arkivtype='arkivtype',
-        objekt_id='obekt_id',
-        storrelse='størrelse',
-        tidsspenn='tidsspenn',
-        avtalenummer='avtalenummer'
+def _arkivuttrekk():
+    return Arkivuttrekk(
+        obj_id="aa3835f4-514e-488f-b928-28d552d2d4d8",
+        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        type_=ArkivuttrekkType.NOARK5,
+        tittel="tittel",
+        sjekksum_sha256="sjekksum_sha256",
+        avgiver_navn="avgiver_navn",
+        avgiver_epost="avgiver_epost",
+        koordinator_epost="koordinator_epost",
+        metadatafil_id=1,
+        arkiv_startdato=date.fromisoformat("1891-05-03"),
+        arkiv_sluttdato=date.fromisoformat("1921-12-16"),
+        storrelse=15.8,
+        avtalenummer="avtalenummer"
     )
 
 
-def test_map_parsed_domain2dto(_parsed_model):
+def test_map_parsed_domain2dto(_arkivuttrekk):
     """
-    GIVEN   a domain object of type ParsedMetadafil
-    WHEN    calling the method map_parsed_domain2dto
-    THEN    check that the returned ParsedMetadatafil DTO object is correct
+    GIVEN   a domain object of type Arkivuttrekk
+    WHEN    calling the method map_domain2dto_base
+    THEN    check that the returned ArkivuttrekkBase DTO object is correct
     """
-    expected = Parsed_DTO(
-        tittel='tittel',
-        endret='endret',
-        kontaktperson='kontaktperson',
-        arkivtype='arkivtype',
-        objekt_id='obekt_id',
-        storrelse='størrelse',
-        tidsspenn='tidsspenn',
-        avtalenummer='avtalenummer'
+    expected = ArkivuttrekkBase(
+        obj_id="aa3835f4-514e-488f-b928-28d552d2d4d8",
+        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        type=ArkivuttrekkType.NOARK5,
+        tittel="tittel",
+        sjekksum_sha256="sjekksum_sha256",
+        avgiver_navn="avgiver_navn",
+        avgiver_epost="avgiver_epost",
+        koordinator_epost="koordinator_epost",
+        metadatafil_id=1,
+        arkiv_startdato=date.fromisoformat("1891-05-03"),
+        arkiv_sluttdato=date.fromisoformat("1921-12-16"),
+        storrelse=15.8,
+        avtalenummer="avtalenummer"
     )
-    actual = map_parsed_domain2dto(_parsed_model)
+    actual = map_domain2dto_base(_arkivuttrekk)
     assert vars(actual) == vars(expected)

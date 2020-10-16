@@ -4,7 +4,7 @@ import pytest
 
 from app.database.dbo.mottak import Metadatafil as Metadatafil_DBO
 from app.database.mappers.metadatafil import map_dbo2model
-from app.domain.models.metadatafil import Metadatafil
+from app.domain.models.Metadatafil import Metadatafil
 
 
 @pytest.fixture

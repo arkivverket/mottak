@@ -2,8 +2,7 @@ import re
 
 from fastapi import UploadFile
 
-from app.domain.models.Metadatafil import MetadataType, Metadatafil, ParsedMetadatafil
-from app.routers.dto.Metadatafil import ParsedMetadatafil as ParsedMetadatafil_DTO
+from app.domain.models.Metadatafil import MetadataType, Metadatafil
 
 
 def _content_type2metadata_type(content_type: str) -> MetadataType:

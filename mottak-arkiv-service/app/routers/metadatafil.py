@@ -2,8 +2,9 @@ from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException,
 from sqlalchemy.orm import Session
 
 from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
-from app.routers.dto.Metadatafil import Metadatafil, ParsedMetadatafil
+from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.router_dependencies import get_db_session
+from routers.dto.Arkivuttrekk import ArkivuttrekkBase
 
 router = APIRouter()
 
@@ -29,7 +30,7 @@ async def router_get_content(id_: int, db: Session = Depends(get_db_session)):
 
 @router.get("/{id}/parsed",
             status_code=status.HTTP_200_OK,
-            response_model=ParsedMetadatafil,
+            response_model=ArkivuttrekkBase,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
 async def router_get_parsed_content(id_: int, db: Session = Depends(get_db_session)):
     result = get_parsed_content(id_, db)

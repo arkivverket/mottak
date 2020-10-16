@@ -19,18 +19,3 @@ class Metadatafil(BaseModel):
 
     class Config:
         orm_mode = True
-
-# TODO DELETE CLASS
-class ParsedMetadatafil(BaseModel):
-    """
-    Used as the response model for the parsed content of a Metadatafil
-    which contains information used for uploading an archive.
-    """
-    tittel: str
-    endret: str
-    kontaktperson: str
-    arkivtype: str
-    objekt_id: str
-    storrelse: float
-    tidsspenn: str
-    avtalenummer: str

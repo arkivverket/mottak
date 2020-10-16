@@ -1,6 +1,6 @@
 import pytest
 
-from app.domain.models.metadatafil import Metadatafil, MetadataType
+from app.domain.models.Metadatafil import Metadatafil, MetadataType
 from app.routers.mappers.metadafil import _get_file_content, metadatafil_mapper, _content_type2metadata_type
 
 

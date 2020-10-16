@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
 
 
 class ArkivuttrekkBase(BaseModel):
