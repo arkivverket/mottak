@@ -23,16 +23,17 @@ variables:
 
 
 steps:
-  - script: |
-      cd azure-pipelines
-      pip3 install poetry
-      poetry --version
-    displayName: 'Install poetry'
+  # Use Python version (defaults to 3.x) and appends to path
+  - tasks: UsePythonVersion@0
 
   - script: |
+      python -m pip install -U pip
+      pip install poetry
       poetry install
-      poetry shell
-      python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value $(resources.container.kicker.tag)
+    displayName: 'Install software'
+
+  - script: |
+      poetry run python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value $(resources.container.kicker.tag)
     displayName: 'Update tag in values-container.yaml'
 
   - script: |
