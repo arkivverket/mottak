@@ -1,7 +1,6 @@
 # import asyncio
 from azure.servicebus import QueueClient, Message
 # from azure.servicebus import ServiceBusClient, Message
-from azure.servicebus.common.constants import ReceiveSettleMode
 
 import os
 import json
@@ -36,7 +35,7 @@ def send_batch():
     }
 
     queue_client = QueueClient.from_connection_string(
-        os.getenv('AZ_SB_CON_KICKER'), os.getenv('AZ_SB_QUEUE') )
+        os.getenv('AZ_SB_CON_KICKER'), os.getenv('AZ_SB_QUEUE'))
 
     with queue_client.get_sender() as sender:
         message = Message(json.dumps(message).encode('utf8'))
@@ -47,6 +46,7 @@ def send_batch():
         print('Sending message: ', message)
         ret = sender.send(message)
         print('Ret:', ret)
+
 
 if __name__ == '__main__':
     print('Sending messages....')

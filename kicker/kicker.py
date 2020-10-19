@@ -72,7 +72,7 @@ def runq():
         # Note: This is lazy.
         queue_client = QueueClient.from_connection_string(
             conn_str, queue)
-        logging.info(queue_client.get_properties()) # This tests if we're actually connected.
+        logging.info(queue_client.get_properties())  # This tests if we're actually connected.
     except ServiceBusError as exception:
         logging.error(f'Failed to connect or use queue "{queue}" using "{conn_str}"')
         logging.error(exception)
@@ -91,7 +91,6 @@ def runq():
                 logging.info(f'Got a message on the service bus: {msg}')
 
                 parsed = json.loads(msg)
-
 
                 # Here we actually look at the message and decide what to do with it.
                 if parsed["action"] == 'argo-submit':

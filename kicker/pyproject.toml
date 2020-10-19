@@ -8,6 +8,7 @@ authors = ["Per Buer <per.buer@gmail.com>"]
 python = "^3.7"
 azure-servicebus = "^0.50.2"
 requests = "^2.23.0"
+pytest = "^6.1.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"

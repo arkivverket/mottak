@@ -5,7 +5,7 @@
 
 # Expects the component/service to be in its own folder in root of repo, mottak/<component-name>
 # I.E: mottak/mottak-arkiv-service
-COMPONENT_NAMES=("mottak-arkiv-service" "arkiv-downloader" "tusd")
+COMPONENT_NAMES=("mottak-arkiv-service" "arkiv-downloader" "tusd" "kicker")
 
 # Templates
 COMPONENT_NAME_TEMPLATE='!COMPONENT_NAME!'
