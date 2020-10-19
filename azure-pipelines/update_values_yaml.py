@@ -5,7 +5,7 @@ import yaml
 from argparse import ArgumentParser
 
 
-def __read_yaml_file(filename: str) -> dict:
+def _read_yaml_file(filename: str) -> dict:
     """
     Reads a yaml files returns it as dict
     :param filename: The filename of a YAML file
@@ -15,7 +15,7 @@ def __read_yaml_file(filename: str) -> dict:
         return yaml.safe_load(file)
 
 
-def __replace_or_add_value(yaml_dict: dict, key: str, new_value: str):
+def _replace_or_add_value(yaml_dict: dict, key: str, new_value: str):
     """
     Updates a specific key value set, or adds if it doesn't already exist
     :param yaml_dict: A dict representation of a Yaml file
@@ -32,7 +32,7 @@ def __replace_or_add_value(yaml_dict: dict, key: str, new_value: str):
     print(yaml_dict)
 
 
-def __write_file(yaml_dict: dict, filename: str):
+def _write_file(yaml_dict: dict, filename: str):
     """
     Dumps a Yaml dict to file
     :param yaml_dict: The yaml dict to write to file
@@ -43,7 +43,7 @@ def __write_file(yaml_dict: dict, filename: str):
         print(data)
 
 
-def __setup_argparser() -> ArgumentParser:
+def _setup_argparser() -> ArgumentParser:
     """
     Sets up an arg parser for this app
     :return: an ArgumentParser
@@ -56,8 +56,9 @@ def __setup_argparser() -> ArgumentParser:
 
 
 if __name__ == '__main__':
-    parser = __setup_argparser()
+    parser = _setup_argparser()
     args = parser.parse_args()
-    yaml_dict = __read_yaml_file(args.file)
-    __replace_or_add_value(yaml_dict, args.key, args.value)
-    __write_file(yaml_dict, args.file)
+    print()
+    yaml_dict = _read_yaml_file(args.file)
+    _replace_or_add_value(yaml_dict, args.key, args.value)
+    _write_file(yaml_dict, args.file)

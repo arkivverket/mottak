@@ -24,14 +24,15 @@ variables:
 
 steps:
   - script: |
-      curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+      pip3 install poetry
     displayName: 'Install poetry'
 
   - script: |
       cd azure-pipelines
       poetry install
       poetry shell
-      python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value "$(resources.container.kicker.repository):$(resources.container.kicker.tag)"
+      python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value $(resources.container.kicker.tag)
+    displayName: 'Update tag in values-container.yaml'
 
   - script: |
       OUTPUT_FOLDER="k8s/output/$(env)"
