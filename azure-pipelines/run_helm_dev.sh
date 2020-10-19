@@ -13,5 +13,4 @@ OUTPUT_FOLDER="$2"
 
 
 ## Build yaml files
-helm template --values "values-$ENV.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
-#helm template --values "values-$ENV.yaml" --set AV_NAMESPACE=testingIt --output-dir "$OUTPUT_FOLDER" k8s/ # Test for replacing values
+helm template --values "values/$ENV/values.yaml" --output-dir "$OUTPUT_FOLDER" k8s/

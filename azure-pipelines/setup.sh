@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Sets up things i mottak namespace
+# Sets up initial set-up of mottak namespace
 
 # Change this to match current env.
 # Expects to find a values-<env>.yaml file in same folder as this script.

@@ -24,7 +24,7 @@ steps:
       cd azure-pipelines
       ENV='dev'
       OUTPUT_FOLDER="k8s/output/$ENV"
-      helm template --values "values-$ENV.yaml" --set AV_MOTTAK_KICKER_CONTAINER=$(resources.container.kicker.repository):$(resources.container.kicker.tag) --output-dir "$OUTPUT_FOLDER" k8s/
+      helm template --values "values/$ENV/values.yaml" --set AV_MOTTAK_KICKER_CONTAINER=$(resources.container.kicker.repository):$(resources.container.kicker.tag) --output-dir "$OUTPUT_FOLDER" k8s/
     displayName: 'Running helm template'
 
   - task: KubernetesManifest@0
