@@ -1,11 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import Routes, { RouteType } from './routes/Routes'
 import { Container, Paper, Theme } from '@material-ui/core'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 
+import Alert from './Alert'
 import { LayoutContext } from './layout/Layout'
+import { AlertContent } from '../types/sharedTypes'
 
 type StyleProps = {
     drawerWidth: number | undefined
@@ -36,27 +38,37 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
 	},
 }))
 
+export type ContextType = ({
+	setAlertContent: React.Dispatch<React.SetStateAction<AlertContent>>,
+})
+
+export const AlertContext = React.createContext<Partial<ContextType>>({})
+
 const WorkArea: React.FC = ():JSX.Element => {
+	const [alertContent, setAlertContent] = useState<AlertContent>({ msg: '', type: '' })
 	const { toggleDrawer, isOpen, drawerWidth } = useContext(LayoutContext)
 	const classes = useStyles({ drawerWidth })
 
 	return (
-		<main
-			className={clsx(classes.content, isOpen ? classes.contentPush : classes.contentShift)}
-		>
-			<div className={classes.appBarSpacer} />
-			<Container maxWidth='lg' className={classes.container}>
-				<Paper elevation={2} style={{ padding: '2rem' }}>
-					<Switch>
-						{Routes.map((route: RouteType) => (
-							<Route exact path={route.path} key={route.path}>
-								<route.component />
-							</Route>
-						))}
-					</Switch>
-				</Paper>
-			</Container>
-		</main>
+		<AlertContext.Provider value={{ setAlertContent }}>
+			<main
+				className={clsx(classes.content, isOpen ? classes.contentPush : classes.contentShift)}
+			>
+				<div className={classes.appBarSpacer} />
+				<Container maxWidth='lg' className={classes.container}>
+					<Paper elevation={2} style={{ padding: '2rem' }}>
+						<Switch>
+							{Routes.map((route: RouteType) => (
+								<Route exact path={route.path} key={route.path}>
+									<route.component />
+								</Route>
+							))}
+						</Switch>
+						<Alert msg={alertContent.msg} type={alertContent.type} />
+					</Paper>
+				</Container>
+			</main>
+		</AlertContext.Provider>
 	)
 }
 

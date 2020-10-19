@@ -3,6 +3,7 @@ import WorkflowStepper from './WorkflowStepper'
 import FileUpload from '../FileUpload'
 import QualityCheck from '../QualityCheck'
 import useRequest from '../../hooks/useRequest'
+import { AlertContext } from '../WorkArea'
 import { MetadataFil } from '../../types/sharedTypes'
 //import { boolean } from 'yargs'
 
@@ -30,6 +31,12 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 	const [metsFile, setMetsFile] = useState<Blob | string>('')
 	const [metadataId, setMetadataId] = useState<number | null>(null)
 	const [stepValid, setStepValid] = useState<boolean>(false)
+	const { setAlertContent } = useContext(AlertContext)
+
+	const showMissingMetsWarning = () => {
+		setAlertContent && setAlertContent({ msg: 'Du må velge en METS-fil før du kan laste den opp.', type: 'warning' })
+		setStepValid(false)
+	}
 
 	const {
 		data,
@@ -53,7 +60,7 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 			number: 0,
 			label: 'Last opp fil',
 			buttonLabel: 'Last opp',
-			action: metsFile ? sendFile : null,
+			action: metsFile ? sendFile : showMissingMetsWarning,
 			component: <FileUpload />
 		},
 		{
@@ -68,6 +75,7 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 	useEffect(() => {
 		if ( data ) {
 			setMetadataId(data.id)
+			setAlertContent && setAlertContent({ msg: `${data.filnavn} ble lastet opp.`, type: 'info' })
 			setStepValid(true)
 		}
 	}, [data])

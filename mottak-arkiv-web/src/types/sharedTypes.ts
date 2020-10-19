@@ -17,3 +17,9 @@ export type ParsedMetadataFil = ({
     tidsspenn: string,
     avtalenummer: string,
 })
+
+export type AlertContent = ({
+    msg?: string,
+    type?: 'success' | 'error' | 'warning' | 'info' | '',
+})
+
