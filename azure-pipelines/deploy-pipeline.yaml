@@ -22,16 +22,13 @@ variables:
   env: dev
 
 
-stages:
-  - stage: Deploy
+jobs:
+  - job: Deploy_kicker
     displayName: Deploy kicker
-    jobs:
-      - job: Deploy_kicker
-        displayName: Deploy kicker
-        steps:
-          - template: deploy.yaml
-            parameters:
-              env: $(env)
-              valuesContainerKey: AV_MOTTAK_KICKER_TAG # As found in values-containers.yaml
-              containerTag: $(resources.container.kicker.tag)
-              deploymentYamlName: kicker-deployment.yaml
+    steps:
+      - template: deploy.yaml
+        parameters:
+          env: $(env)
+          valuesContainerKey: AV_MOTTAK_KICKER_TAG # As found in values/<env>/values-containers.yaml
+          containerTag: $(resources.container.kicker.tag)
+          deploymentYamlName: kicker-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
