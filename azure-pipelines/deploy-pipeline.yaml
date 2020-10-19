@@ -27,6 +27,7 @@ steps:
   - task: UsePythonVersion@0
 
   - script: |
+      cd azure-pipelines
       python -m pip install -U pip
       pip install poetry
       poetry install
