@@ -18,13 +18,24 @@ resources:          # types: pipelines | repositories | containers | builds | pa
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  env: dev
+
 
 steps:
   - script: |
+      curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+    displayName: 'Install poetry'
+
+  - script: |
       cd azure-pipelines
-      ENV='dev'
-      OUTPUT_FOLDER="k8s/output/$ENV"
-      helm template --values "values/$ENV/values.yaml" --set AV_MOTTAK_KICKER_CONTAINER=$(resources.container.kicker.repository):$(resources.container.kicker.tag) --output-dir "$OUTPUT_FOLDER" k8s/
+      poetry install
+      poetry shell
+      python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value "$(resources.container.kicker.repository):$(resources.container.kicker.tag)"
+
+  - script: |
+      OUTPUT_FOLDER="k8s/output/$(env)"
+      helm template --values "values/$(env)/values.yaml" --values "values/$(env)/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
     displayName: 'Running helm template'
 
   - task: KubernetesManifest@0
