@@ -42,8 +42,6 @@ steps:
       manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
 
   - script: |
-#      git config user.email "mottak@arkivverket.no"
-#      git config user.name "Azure Devops"
       git add azure-pipelines/values/${{ parameters.env }}/values-containers.yaml
       git add azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}
       git commit -m "Deployed new ${{ parameters.deploymentYamlName }} to dev"
