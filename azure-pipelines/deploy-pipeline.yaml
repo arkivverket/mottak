@@ -26,7 +26,7 @@ stages:
   - stage: Deploy
     displayName: Deploy kicker
     jobs:
-      - job: Deploy kicker
+      - job: Deploy_kicker
         displayName: Deploy kicker
         steps:
           - template: deploy.yaml
