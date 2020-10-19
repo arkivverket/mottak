@@ -1,0 +1,35 @@
+# Explicitly set none for repository trigger
+trigger: none
+
+resources:          # types: pipelines | repositories | containers | builds | packages
+  containers:
+    - container: kicker # identifier for the container resource
+      type: ACR # type of the registry like ACR, GCR etc.
+      azureSubscription: arkivverket-meta-connection # Azure subscription (ARM service connection) for container registry;
+      resourceGroup: meta # resource group for your ACR
+      registry: arkivverket # registry for container images
+      repository: "av-mottak/kicker" # name of the container image repository in ACR
+      trigger:
+        tags:
+          include:
+          - "*"
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+steps:
+  - script: |
+      cd azure-pipelines
+      ENV='dev'
+      OUTPUT_FOLDER="k8s/output/$ENV"
+      helm template --values "values/$ENV/values.yaml" --set AV_MOTTAK_KICKER_CONTAINER=$(resources.container.kicker.repository):$(resources.container.kicker.tag) --output-dir "$OUTPUT_FOLDER" k8s/
+    displayName: 'Running helm template'
+
+  - task: KubernetesManifest@0
+    inputs:
+      action: 'deploy'
+      kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
+      namespace: 'av-mottak-dev'
+      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/kicker-deployment.yaml'
