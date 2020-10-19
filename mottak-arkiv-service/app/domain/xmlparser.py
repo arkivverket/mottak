@@ -58,8 +58,8 @@ def _str2ArkivuttrekkType(arkivuttrekk_str: str) -> ArkivuttrekkType:
 def _get_arkivtype(root: ET.Element, ns: dict) -> str:
     # Arkivtype: DELIVERYSPECIFICATION
     try:
-        altRecord_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-        arkivtype = [alt for alt in altRecord_ids
+        alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+        arkivtype = [alt for alt in alt_record_ids
                      if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
     except IndexError:
         return 'None'
@@ -114,19 +114,19 @@ def _get_avgiver_epost(root: ET.Element, ns: dict) -> str:
 
 
 def _get_arkiv_startdato(root: ET.Element, ns: dict) -> date:
-    altRecord_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-    for altRecord in altRecord_ids:
-        if altRecord.get('TYPE') == "STARTDATE":
-            date_ = altRecord.text
+    alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+    for alt_record in alt_record_ids:
+        if alt_record.get('TYPE') == "STARTDATE":
+            date_ = alt_record.text
             return date.fromisoformat(date_)
     return None
 
 
 def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> date:
-    altRecord_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-    for altRecord in altRecord_ids:
-        if altRecord.get('TYPE') == "ENDDATE":
-            date_ = altRecord.text
+    alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+    for alt_record in alt_record_ids:
+        if alt_record.get('TYPE') == "ENDDATE":
+            date_ = alt_record.text
             return date.fromisoformat(date_)
     return None
 
@@ -152,8 +152,8 @@ def _get_storrelse(root: ET.Element, ns: dict) -> float:
 def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
     # Avtalenummer: SUBMISSSION AGREEMENT
     try:
-        altRecord_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-        avtalenummer = [alt for alt in altRecord_ids
+        alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+        avtalenummer = [alt for alt in alt_record_ids
                         if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
         return avtalenummer
     except IndexError:
