@@ -45,6 +45,4 @@ steps:
       echo $(git status)
       git add azure-pipelines/values/${{ parameters.env }}/values-containers.yaml
       git add azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}
-      git commit -m "Deployed new ${{ parameters.deploymentYamlName }} to dev"
-      git push origin
     displayName: 'Updates git with correct version'
