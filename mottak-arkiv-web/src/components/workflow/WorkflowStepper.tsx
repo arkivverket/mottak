@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
 
 const WorkflowStepper: React.FC = (): JSX.Element => {
 	const [activeStep, setActiveStep] = React.useState(0)
-	const { steps } = useContext(WorkflowContext)
+	const { stepValid, setStepValid, steps } = useContext(WorkflowContext)
 
 	const classes = useStyles()
 	const sharedClasses = useSharedStyles()
@@ -39,10 +39,11 @@ const WorkflowStepper: React.FC = (): JSX.Element => {
 		if (!action) return
 		const updateStep = async () => {
 			await action()
-			setActiveStep(prevActiveStep => prevActiveStep + 1)
+			stepValid && setActiveStep(prevActiveStep => prevActiveStep + 1)
 		}
 		event.preventDefault()
 		updateStep()
+		setStepValid && setStepValid(false)
 	}
 
 	const handleCancel = ( event: React.MouseEvent<HTMLButtonElement, MouseEvent> ) => {

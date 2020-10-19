@@ -6,6 +6,8 @@ import QualityCheck from '../QualityCheck'
 export type ContextType = ({
 	metsFile: File | null,
 	setMetsFile: React.Dispatch<React.SetStateAction<File | null>>,
+	stepValid: boolean,
+	setStepValid: React.Dispatch<React.SetStateAction<boolean>>,
 	metadataId: number | null,
 	setMetadataId: React.Dispatch<React.SetStateAction<number | null>>,
 	steps: {
@@ -22,6 +24,7 @@ export const WorkflowContext = React.createContext<Partial<ContextType>>({})
 const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children }): JSX.Element => {
 	const [metsFile, setMetsFile] = React.useState<File | null>(null)
 	const [metadataId, setMetadataId] = React.useState<number | null>(null)
+	const [stepValid, setStepValid] = useState<boolean>(false)
 
 	const steps = [
 		{
@@ -40,9 +43,21 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 		},
 	]
 
+	useEffect(() => {
+		if ( data ) {
+			setMetadataId(data.id)
+			setStepValid(true)
+		}
+	}, [data])
+
+	useEffect(() => {
+		error && setAlertContent && setAlertContent({ msg: 'Det skjedde en feil under opplasting av filen.', type: 'error' })
+		setStepValid(false)
+	}, [error])
+
 	return (
-		<WorkflowContext.Provider value={{ metsFile, setMetsFile, metadataId, setMetadataId, steps }}>
-			<WorkflowStepper />
+		<WorkflowContext.Provider value={{ stepValid, setStepValid, metsFile, setMetsFile, metadataId, setMetadataId, steps }}>
+			<WorkflowStepper data-testid='stepper'/>
 		</WorkflowContext.Provider>
 	)
 }
