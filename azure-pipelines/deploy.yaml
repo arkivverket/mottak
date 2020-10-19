@@ -45,4 +45,5 @@ steps:
       echo $(git status)
       git add azure-pipelines/values/${{ parameters.env }}/values-containers.yaml
       git add azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}
+      echo $(git status)
     displayName: 'Updates git with correct version'
