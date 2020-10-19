@@ -1,8 +1,0 @@
-## VALUES
-AV_NAMESPACE: av-mottak-dev
-
-# CSI Driver Link
-TENANT_ID_KEYVAULT: test-id
-
-## KICKER
-AV_MOTTAK_KICKER_ENDPOINT: av-mottak-dev-sb-endpoint-argo-kicker

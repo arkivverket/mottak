@@ -22,7 +22,7 @@ echo "Installing argo in namespace: $NAMESPACE"
 kubectl apply -n "$NAMESPACE" -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/namespace-install.yaml
 
 
-# Build helm tmplates and apply to cluster
+# Build helm templates and apply to cluster
 OUTPUT_TEMPLATE_FOLDER="$OUTPUT_FOLDER/av-mottak/templates/"
 
 echo
