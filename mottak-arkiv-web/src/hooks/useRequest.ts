@@ -7,9 +7,9 @@ type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type:
 type Method = 'DELETE' | 'PATCH' | 'POST' | 'GET'
 
 interface State<T> {
-    loading: boolean;
-    error: boolean;
-    data: T | null;
+	data: T | null;
+	error: boolean;
+	loading: boolean;
 }
 
 type RequestType = {
@@ -49,9 +49,9 @@ const useRequest = <T>() => {
 	const componentIsMounted = useRef(true)
 
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
-		loading: false,
-		error: false,
 		data: null,
+		error: false,
+		loading: false,
 	})
 
 	//TODO: baseurl
@@ -81,7 +81,7 @@ const useRequest = <T>() => {
 				settings = {
 					...settings,
 					headers: { headers },
-					data: { data },
+					data: data,
 				}
 				break
 			}
