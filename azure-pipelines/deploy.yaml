@@ -13,10 +13,6 @@ parameters:
     type: string
 
 steps:
-  # To allow for using git commands later in the pipeline
-  - checkout: self
-    persistCredentials: true
-
   # Use Python version (defaults to 3.x) and appends to path
   - task: UsePythonVersion@0
 

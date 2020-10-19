@@ -26,6 +26,10 @@ jobs:
   - job: Deploy_kicker
     displayName: Deploy kicker
     steps:
+      # To allow for using git commands later in the pipeline
+      - checkout: self
+        persistCredentials: true
+
       - template: deploy.yaml
         parameters:
           env: $(env)
