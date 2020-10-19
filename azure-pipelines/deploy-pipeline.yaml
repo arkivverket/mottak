@@ -22,32 +22,16 @@ variables:
   env: dev
 
 
-steps:
-  # Use Python version (defaults to 3.x) and appends to path
-  - task: UsePythonVersion@0
-
-  - script: |
-      python -m pip install -U pip
-      pip install poetry
-      poetry install
-    displayName: 'Install software'
-    workingDirectory: azure-pipelines
-
-  - script: |
-      poetry run python update_values_yaml.py --file "values/$(env)/values-containers.yaml" --key AV_MOTTAK_KICKER_CONTAINER --value $(resources.container.kicker.tag)
-    displayName: 'Update tag in values-container.yaml'
-    workingDirectory: azure-pipelines
-
-
-  - script: |
-      OUTPUT_FOLDER="k8s/output/$(env)"
-      helm template --values "values/$(env)/values.yaml" --values "values/$(env)/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
-    displayName: 'Running helm template'
-    workingDirectory: azure-pipelines
-
-  - task: KubernetesManifest@0
-    inputs:
-      action: 'deploy'
-      kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
-      namespace: 'av-mottak-dev'
-      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/kicker-deployment.yaml'
+stages:
+  - stage: Deploy
+    displayName: Deploy kicker
+    jobs:
+      - job: Deploy kicker
+        displayName: Deploy kicker
+        steps:
+          - template: deploy.yaml
+            parameters:
+              env: $(env)
+              valuesContainerKey: AV_MOTTAK_KICKER_TAG # As found in values-containers.yaml
+              containerTag: $(resources.container.kicker.tag)
+              deploymentYamlName: kicker-deployment.yaml
