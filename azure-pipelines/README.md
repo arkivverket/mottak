@@ -4,7 +4,7 @@ including the helm scripts used for CD.
 
 ## Continious Deployment
 Pushing a new image to [arkivverket.azurecr.io](arkivverket.azurecr.io) will
-trigger the Azure DevOps pipeline [deploy-pipeline.yaml](deploy-pipeline.yaml)
+trigger the Azure DevOps pipeline [deploy-pipeline.yaml](pipelines/deploy-pipeline.yaml)
 (see containers supported in the pipeline file), and push the updated deployment
 yaml to the kubernetes cluster.
 
@@ -23,4 +23,4 @@ Then follow these steps:
 
 #### Adding pipeline to Azure DevOps
 Go to [https://dev.azure.com/arkivverket](https://dev.azure.com/arkivverket) and add the
-pipeline from GIT (connect to Github and select [deploy-pipeline.yaml](deploy-pipeline.yaml))
+pipeline from GIT (connect to Github and select [deploy-pipeline.yaml](pipelines/deploy-pipeline.yaml))
