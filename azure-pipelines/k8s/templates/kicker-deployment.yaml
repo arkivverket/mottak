@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-kicker-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  labels:
+    app: kicker-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: kicker-app
+  template:
+    metadata:
+      labels:
+        run: kicker-app
+    spec:
+      containers:
+        - image: 'arkivverket.azurecr.io/av-mottak/kicker:{{ required "Missing value container image" .Values.AV_MOTTAK_KICKER_TAG }}'
+          imagePullPolicy: Always
+          name: kicker-container
+          env:
+            - name: WORKFLOW
+              value: /opt/workflows/submit-archive.yaml
+            - name: AZ_SB_CON_KICKER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "Missing value NAMESPACE" .Values.AV_MOTTAK_KICKER_ENDPOINT }}
+                  key: {{ required "Missing value NAMESPACE" .Values.AV_MOTTAK_KICKER_ENDPOINT }}
+            - name: AZ_SB_QUEUE
+              value: "argo-workflow"

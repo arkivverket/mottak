@@ -1,60 +1,42 @@
 ---
 parameters:
-  - name: appName
+  - name: valuesContainerKey
     type: string
 
-  - name: helmPackageArtifactName
+  - name: containerTag
     type: string
 
-  - name: helmReleaseName
+  - name: env
     type: string
 
-  - name: clusterName
+  - name: deploymentYamlName
     type: string
-
-  - name: azureResourceGroup
-    type: string
-
-  - name: namespace
-    type: string
-
-  - name: helmParameters
-    type: string
-    default: ''
-
-  - name: helmVersion
-    type: string
-    default: '3.2.1'
 
 steps:
+  # Use Python version (defaults to 3.x) and appends to path
+  - task: UsePythonVersion@0
 
-  # Install Helm 3 on the agent (deploy machine)
-  - task: HelmInstaller@1
+  - script: |
+      python -m pip install -U pip
+      pip install poetry
+      poetry install
+    displayName: 'Install software'
+    workingDirectory: azure-pipelines
+
+  - script: |
+      poetry run python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}
+    displayName: 'Update tag in values-container.yaml'
+    workingDirectory: azure-pipelines
+
+  - script: |
+      OUTPUT_FOLDER="k8s/output/${{ parameters.env }}"
+      helm template --values "values/${{ parameters.env }}/values.yaml" --values "values/${{ parameters.env }}/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
+    displayName: 'Running helm template'
+    workingDirectory: azure-pipelines
+
+  - task: KubernetesManifest@0
     inputs:
-      helmVersionToInstall: ${{ parameters.helmVersion }}
-
-  # Get the artifact left by the build stage
-  - download: current
-    artifact: ${{ parameters.helmPackageArtifactName }}
-
-  # Get the version number from the tag
-  - bash: |
-      VERSION_FROMTAG=$(echo $BUILD_SOURCEBRANCHNAME | sed -E 's/^v([0-9]+(\.[0-9]+)*)$/\1/')
-      echo "##vso[task.setvariable variable=VersionFromTag]$VERSION_FROMTAG"
-
-  # Deploy the helm chart to the Kubernetes cluster
-  - task: HelmDeploy@0
-    displayName: Deploy ${{ parameters.appName }} to the Cluster ${{ parameters.clusterName }} with Helm
-    inputs:
-      command: upgrade
-      chartType: filepath
-      chartPath: $(Pipeline.Workspace)/${{ parameters.helmPackageArtifactName }}/${{ parameters.appName }}-$(VersionFromTag).tgz
-      chartName: ${{ parameters.appName }}
-      releaseName: ${{ parameters.helmReleaseName }}
-      install: true
-      arguments: --force
-      kubernetesCluster: ${{ parameters.clusterName }}
-      azureSubscriptionEndpoint: 'pipeline'
-      azureResourceGroup: ${{ parameters.azureResourceGroup }}
-      namespace: ${{ parameters.namespace }}
-      overrideValues: ${{ parameters.helmParameters }}
+      action: 'deploy'
+      kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
+      namespace: 'av-mottak-dev'
+      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
