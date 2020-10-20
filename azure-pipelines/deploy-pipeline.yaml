@@ -30,6 +30,7 @@ jobs:
       - checkout: self
         persistCredentials: true
 
+
       - template: deploy.yaml
         parameters:
           env: $(env)
