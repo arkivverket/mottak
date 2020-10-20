@@ -14,26 +14,28 @@ resources:          # types: pipelines | repositories | containers | builds | pa
           include:
           - "*"
 
+variables:
+  env: dev
+  jobName: deploy_kicker
+  displayName: Deploy kicker
+  valuesContainerKey: AV_MOTTAK_KICKER_TAG  # As found in values/<env>/values-containers.yaml
+  deploymentYamlName: kicker-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
+
 
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  env: dev
-
-
 jobs:
-  - job: Deploy_kicker
-    displayName: Deploy kicker
+  - job: $(jobName)
+    displayName: $(jobName)
     steps:
       # To allow for using git commands later in the pipeline
       - checkout: self
         persistCredentials: true
 
-
       - template: deploy.yaml
         parameters:
           env: $(env)
-          valuesContainerKey: AV_MOTTAK_KICKER_TAG # As found in values/<env>/values-containers.yaml
+          valuesContainerKey: $(valuesContainerKey)
           containerTag: $(resources.container.kicker.tag)
-          deploymentYamlName: kicker-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
+          deploymentYamlName: $(deploymentYamlName)

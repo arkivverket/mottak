@@ -46,5 +46,5 @@ steps:
       echo $(git branch)
       echo $(git checkout develop)
       echo $(git status)
-      echo $(git branch)      
+      echo $(git branch)
     displayName: 'Updates git with correct version'
