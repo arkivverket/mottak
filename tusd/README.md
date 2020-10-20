@@ -1,6 +1,6 @@
 # tusd
 
-Documentation: https://github.com/tus/tusd
+Documentation: [https://github.com/tus/tusd](https://github.com/tus/tusd)
 
 tusd handles incomming data from the upload client. You need to have one more more instances running and typically you'll have this open to the internet.
 
