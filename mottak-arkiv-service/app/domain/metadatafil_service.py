@@ -27,4 +27,5 @@ def get_parsed_content(id_: int, db: Session) -> ArkivuttrekkBase:
         return None
     else:
         metadatafil = map_dbo2model(metadatafil_dbo)
-        return metadatafil.as_arkivuttrekk_base()
+        arkivuttrekk = metadatafil.as_arkivuttrekk()
+        return ArkivuttrekkBase.from_domain(arkivuttrekk)

@@ -53,8 +53,7 @@ def _str2ArkivuttrekkType(arkivuttrekk_str: str) -> ArkivuttrekkType:
     return 'None'
 
 
-# TODO Finn ut om arkiv type ser ut som her eller som i ArkivuttrekkType Enum.verdier
-# "Noark 5 - Sakarkiv" --> "Noark5"
+# TODO Endre til annen node. ROLE=ARCHIVIST TYPE=OTHER OTHERTYPE=SOFTWARE?
 def _get_arkivtype(root: ET.Element, ns: dict) -> str:
     # Arkivtype: DELIVERYSPECIFICATION
     try:

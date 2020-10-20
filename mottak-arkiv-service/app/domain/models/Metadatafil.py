@@ -2,8 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
-from app.domain.mappers.arkivuttrekk import map_domain2dto_base
+from app.domain.models.Arkivuttrekk import Arkivuttrekk
 
 
 class MetadataType(str, Enum):
@@ -32,6 +31,5 @@ class Metadatafil:
         self.innhold = innhold
         self.opprettet = opprettet
 
-    def as_arkivuttrekk_base(self) -> ArkivuttrekkBase:
-        arkivuttrekk = create_arkivuttrekk_from_parsed_innhold(self.id, self.innhold)
-        return map_domain2dto_base(arkivuttrekk)
+    def as_arkivuttrekk(self) -> Arkivuttrekk:
+        return create_arkivuttrekk_from_parsed_innhold(self.id, self.innhold)
