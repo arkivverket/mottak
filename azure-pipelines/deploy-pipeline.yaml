@@ -26,8 +26,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 jobs:
-  - job: $(jobName)
-    displayName: $(jobName)
+  - job: ${{ jobName }}
+    displayName: ${{ displayName }}
     steps:
       # To allow for using git commands later in the pipeline
       - checkout: self
