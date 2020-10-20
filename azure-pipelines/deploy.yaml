@@ -46,6 +46,6 @@ steps:
       git add azure-pipelines/values/${{ parameters.env }}/values-containers.yaml
       git add azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}
       echo $(git status)
-      eche $(git branch)
+      echo $(git branch)
       echo $(git checkout)
     displayName: 'Updates git with correct version'
