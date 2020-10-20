@@ -15,6 +15,7 @@ class ArkivuttrekkType(str, Enum):
     NOARK3 = "Noark3"
     NOARK5 = "Noark5"
     FAGSYSTEM = "Fagsystem"
+    SIARD = "SIARD"
 
 
 class Arkivuttrekk:

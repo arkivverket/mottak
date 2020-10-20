@@ -25,7 +25,7 @@ class Arkivuttrekk(Base):
     obj_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
     status = Column(Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring',
                          name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
-    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type', create_type=True),
+    type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', "SIARD", name='arkivvuttrekk_type_type', create_type=True),
                   nullable=False)
     tittel = Column(String(), nullable=False)
     sjekksum_sha256 = Column(String(length=64), nullable=False)

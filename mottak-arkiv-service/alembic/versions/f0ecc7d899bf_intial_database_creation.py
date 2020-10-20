@@ -32,7 +32,7 @@ def upgrade():
                     sa.Column('obj_id', postgresql.UUID(as_uuid=True), nullable=False),
                     sa.Column('status', sa.Enum('Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring',
                                                 name='arkivuttrekk_status_type'), nullable=False),
-                    sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', name='arkivvuttrekk_type_type'),
+                    sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', "SIARD", name='arkivvuttrekk_type_type'),
                               nullable=False),
                     sa.Column('tittel', sa.String(), nullable=False),
                     sa.Column('sjekksum_sha256', sa.String(length=64), nullable=False),
