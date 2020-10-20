@@ -5,11 +5,11 @@ from uuid import UUID
 import pytest
 
 from app.domain.metadatafil_service import metadatafil_mapper
-from app.domain.models.Metadatafil import Metadatafil
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Metadatafil import Metadatafil
 from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold, _get_all_namespaces, _get_title, \
     _get_arkivtype, _get_storrelse, _get_avtalenummer, _get_objekt_id, \
-    _str2ArkivuttrekkType, _get_checksum, _get_avgiver_navn, _get_avgiver_epost, _get_arkiv_startdato, \
+    _str_2_arkivuttrekk_type, _get_checksum, _get_avgiver_navn, _get_avgiver_epost, _get_arkiv_startdato, \
     _get_arkiv_sluttdato, _convert_2_megabytes
 
 
@@ -69,14 +69,16 @@ def test__get_objekt_id(_root):
                          [("Noark 5 - Sakarkiv", ArkivuttrekkType.NOARK5),
                           ("Noark 3 - Sakarkiv", ArkivuttrekkType.NOARK3),
                           ("Fagsystem", ArkivuttrekkType.FAGSYSTEM),
-                          ("Feilaktig verdi som inneholder tallet 5", 'None')])
-def test__str2ArkivuttrekkType(_input, expected):
+                          ("SIARD-arkivuttrekk fra sak- arkivløsningen ePhorte fra Utdanningsdirektoratet 2004-2017.",
+                           ArkivuttrekkType.SIARD),
+                          ("Feilaktig verdi som inneholder tallet 5", '')])
+def test__str_2_arkivuttrekk_type(_input, expected):
     """
     GIVEN   a tuple of _input, expected output
-    WHEN    calling the method _str2ArkivuttrekkType()
+    WHEN    calling the method _str_2_arkivuttrekk_type()
     THEN    check that the conversion to Enum ArkivuttrekkType is correct
     """
-    actual = _str2ArkivuttrekkType(_input)
+    actual = _str_2_arkivuttrekk_type(_input)
     assert actual == expected
 
 
@@ -97,7 +99,7 @@ def test_get_arkivtype_failure(_root_errors, _ns):
     WHEN    calling the method _get_arkivtype()
     THEN    check that the returned string is None
     """
-    execpected = "None"
+    execpected = ""
     actual = _get_arkivtype(_root_errors, _ns)
     assert actual == execpected
 
@@ -120,7 +122,7 @@ def test__get_title_failure(_root_errors, _ns):
     WHEN    calling the method _get_title()
     THEN    check that the returned string is correct
     """
-    expected = "None -- None"
+    expected = ""
     actual = _get_title(_root_errors, _ns)
     assert actual == expected
 

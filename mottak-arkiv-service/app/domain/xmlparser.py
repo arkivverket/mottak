@@ -1,8 +1,11 @@
 import xml.etree.ElementTree as ET
 from datetime import date
+from typing import Union
 from uuid import UUID
 
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+
+NOT_PRESENT_RETURN_VALUE = ''
 
 
 def _recursive_ns(elem: ET.Element, ns: dict) -> dict:
@@ -34,13 +37,12 @@ def _get_all_namespaces(root: ET.Element) -> dict:
     return ns
 
 
-# TODO Error handling of missing XML nodes, applies to all functions below
 def _get_objekt_id(root: ET.Element) -> UUID:
     uuid_str = root.get('OBJID')
     return UUID(uuid_str[5:])
 
 
-def _str2ArkivuttrekkType(arkivuttrekk_str: str) -> ArkivuttrekkType:
+def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
     """
     Method that converts a str to a ArkivuttrekkType Enum value or returns a ValueError
     """
@@ -50,10 +52,11 @@ def _str2ArkivuttrekkType(arkivuttrekk_str: str) -> ArkivuttrekkType:
         return ArkivuttrekkType.NOARK3
     if "Fagsystem" in arkivuttrekk_str:
         return ArkivuttrekkType.FAGSYSTEM
-    return 'None'
+    if "SIARD" in arkivuttrekk_str:
+        return ArkivuttrekkType.SIARD
+    return NOT_PRESENT_RETURN_VALUE
 
 
-# TODO Endre til annen node. ROLE=ARCHIVIST TYPE=OTHER OTHERTYPE=SOFTWARE?
 def _get_arkivtype(root: ET.Element, ns: dict) -> str:
     # Arkivtype: DELIVERYSPECIFICATION
     try:
@@ -61,9 +64,9 @@ def _get_arkivtype(root: ET.Element, ns: dict) -> str:
         arkivtype = [alt for alt in alt_record_ids
                      if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
     except IndexError:
-        return 'None'
+        return NOT_PRESENT_RETURN_VALUE
     else:
-        return _str2ArkivuttrekkType(arkivtype)
+        return _str_2_arkivuttrekk_type(arkivtype)
 
 
 def _get_title(root: ET.Element, ns: dict) -> str:
@@ -75,15 +78,19 @@ def _get_title(root: ET.Element, ns: dict) -> str:
                  if ("ARCHIVIST" == agent.get('ROLE') and
                      "ORGANIZATION" == agent.get('TYPE'))].pop()
     except IndexError:
-        arch_org = None
+        arch_org = NOT_PRESENT_RETURN_VALUE
     else:
         arch_org = agent.findtext('mets:name', namespaces=ns)
-    return f'{arch_org} -- {label}'
+    if label or arch_org:
+        return f'{arch_org} -- {label}'
+    else:
+        return NOT_PRESENT_RETURN_VALUE
 
 
 def _get_checksum(root: ET.Element, ns: dict) -> str:
     files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
-    return files.get('CHECKSUM')
+    checksum = files.get('CHECKSUM')
+    return checksum if checksum else NOT_PRESENT_RETURN_VALUE
 
 
 def _get_avgiver_navn(root: ET.Element, ns: dict) -> str:
@@ -93,7 +100,7 @@ def _get_avgiver_navn(root: ET.Element, ns: dict) -> str:
                  if ("ARCHIVIST" == agent.get('ROLE') and
                      "INDIVIDUAL" == agent.get('TYPE'))].pop()
     except IndexError:
-        return 'None'
+        return NOT_PRESENT_RETURN_VALUE
     else:
         return agent.findtext('mets:name', namespaces=ns)
 
@@ -105,20 +112,20 @@ def _get_avgiver_epost(root: ET.Element, ns: dict) -> str:
                  if ("ARCHIVIST" == agent.get('ROLE') and
                      "INDIVIDUAL" == agent.get('TYPE'))].pop()
     except IndexError:
-        return 'None'
+        return NOT_PRESENT_RETURN_VALUE
     else:
         email_list = [note for note in agent.findall('mets:note', namespaces=ns)
                       if '@' in note.text]
-        return email_list.pop().text if email_list else 'None'
+        return email_list.pop().text if email_list else NOT_PRESENT_RETURN_VALUE
 
 
-def _get_arkiv_startdato(root: ET.Element, ns: dict) -> date:
+def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Union[date, str]:
     alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
     for alt_record in alt_record_ids:
         if alt_record.get('TYPE') == "STARTDATE":
             date_ = alt_record.text
             return date.fromisoformat(date_)
-    return None
+    return NOT_PRESENT_RETURN_VALUE
 
 
 def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> date:
@@ -156,7 +163,7 @@ def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
                         if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
         return avtalenummer
     except IndexError:
-        return 'None'
+        return NOT_PRESENT_RETURN_VALUE
 
 
 def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -> Arkivuttrekk:
