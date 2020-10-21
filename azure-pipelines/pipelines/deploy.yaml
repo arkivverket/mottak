@@ -47,5 +47,5 @@ steps:
       git add "azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}"
       git commit -m "Updates ${{ parameters.valuesContainerKey }} ${{ parameters.containerTag }}"
       echo $(git status)
-#      git push origin
+#      git push origin ## We will enable this at a later point when we have verified a bit more
     displayName: 'Updates git with correct version'
