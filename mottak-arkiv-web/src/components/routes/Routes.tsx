@@ -6,6 +6,7 @@ export type RouteType = {
 	path: string,
 	sidebarName: string,
 	component: any,
+	nav: boolean,
 }
 
 const All: React.FC = () => {
@@ -18,12 +19,20 @@ const Routes: RouteType[] = [
 	{
 		path: '/',
 		sidebarName: 'Oversikt',
-		component: Overview
+		component: Overview,
+		nav: true,
 	},
 	{
-		path: '/complete',
+		path: '/upload',
+		sidebarName: 'Last opp fil',
+		component: InvitationWorkflowContainer,
+		nav: true,
+	},
+	{
+		path: '/arkivutrekk',
 		sidebarName: 'Se alle',
-		component: All
+		component: All,
+		nav: true,
 	},
 	{
 		path: '/upload',

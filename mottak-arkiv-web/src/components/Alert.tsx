@@ -8,7 +8,6 @@ import {
 	Icon,
 } from '@material-ui/core'
 import { AlertContent } from '../types/sharedTypes'
-import { black } from 'material-ui/styles/colors'
 
 const useStyles = makeStyles(theme => ({
 	success: {
