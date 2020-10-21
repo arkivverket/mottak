@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import {
-	Button,
 	Stepper,
 	Step,
 	StepLabel,
@@ -9,7 +8,6 @@ import {
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { useSharedStyles } from '../../styles/sharedStyles'
 import { WorkflowContext } from './InvitationWorkflowContainer'
 
 const useStyles = makeStyles(theme => ({
@@ -23,27 +21,25 @@ const useStyles = makeStyles(theme => ({
 	}
 }))
 
+export type ContextType = ({
+	handleNext: () => void,
+	handleCancel: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+})
+
+export const StepperContext = React.createContext<Partial<ContextType>>({})
+
 const WorkflowStepper: React.FC = (): JSX.Element => {
 	const [activeStep, setActiveStep] = React.useState(0)
-	const { stepValid, setStepValid, steps } = useContext(WorkflowContext)
-
+	const { steps } = useContext(WorkflowContext)
 	const classes = useStyles()
-	const sharedClasses = useSharedStyles()
-
 	const history = useHistory()
 
 	const step = steps?.find(({ number }) => number === activeStep)
 
-	const handleNext = ( event: React.FormEvent<HTMLFormElement> ) => {
-		const action = steps && steps[activeStep]?.action
-		if (!action) return
-		const updateStep = async () => {
-			await action()
-			stepValid && setActiveStep(prevActiveStep => prevActiveStep + 1)
-		}
-		event.preventDefault()
-		updateStep()
-		setStepValid && setStepValid(false)
+	const handleNext = () => {
+		console.warn('handle next', activeStep);
+
+		setActiveStep(prevActiveStep => prevActiveStep + 1)
 	}
 
 	const handleCancel = ( event: React.MouseEvent<HTMLButtonElement, MouseEvent> ) => {
@@ -58,63 +54,29 @@ const WorkflowStepper: React.FC = (): JSX.Element => {
 	}, [activeStep])
 
 	return (
-		<Grid
-			container
-			direction='column'
-			justify='space-around'
-			alignItems='center'
-			spacing={5}
-		>
-			<Grid item>
-				<Stepper alternativeLabel activeStep={activeStep} style={{ width: '40vw' }}>
-					{steps?.map(step => (
-						<Step key={step.number}>
-							<StepLabel className={classes.root}>
-								{step.label}
-							</StepLabel>
-						</Step>
-					))}
-				</Stepper>
-			</Grid>
-			<Grid item>
-				{step?.component}
-			</Grid>
+		<StepperContext.Provider value={{ handleNext, handleCancel }}>
 			<Grid
 				container
-				item
-				justify='center'
+				direction='column'
+				justify='space-around'
+				alignItems='center'
 			>
-				<form onSubmit={handleNext} className={sharedClasses.styledForm}>
-					<Grid
-						container
-						item
-						alignItems='center'
-						justify='center'
-						spacing={2}
-					>
-						<Grid item>
-							<Button
-								variant='outlined'
-								type='button'
-								className={sharedClasses.buttonDA}
-								onClick={handleCancel}
-							>
-								Avbryt
-							</Button>
-						</Grid>
-						<Grid item>
-							<Button
-								variant='outlined'
-								type='submit'
-								className={sharedClasses.buttonDA}
-							>
-								{step?.buttonLabel}
-							</Button>
-						</Grid>
-					</Grid>
-				</form>
+				<Grid item>
+					<Stepper alternativeLabel activeStep={activeStep} style={{ width: '40vw' }}>
+						{steps?.map(step => (
+							<Step key={step.number}>
+								<StepLabel className={classes.root}>
+									{step.label}
+								</StepLabel>
+							</Step>
+						))}
+					</Stepper>
+				</Grid>
+				<Grid item>
+					{step?.component}
+				</Grid>
 			</Grid>
-		</Grid>
+		</StepperContext.Provider>
 	)
 }
 
