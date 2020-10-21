@@ -24,31 +24,9 @@ def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
     return data
 
 
-def create_db_access(dbstring: str, logger) -> dict:
-    """Create a psycopg2 compatible object from the connection string.
-    The string is from PHP and we reuse it here
-    """
-    mystr = dbstring[6:]
-    mystr = mystr.rstrip()
-    d = dict(re.findall(r'(\w+)=([^;]+);?', mystr))
-    # Validate dbstring:
-    for key in ['user', 'password', 'host', 'dbname']:
-        if key not in d.keys():
-            logger.error('%s not found in DBSTRING' % key)
-            raise ValueError
-    return d
-
-
-def my_connect(conn_info: dict, logger):
+def my_connect(dbstring: str, logger):
     try:
-        connection = psycopg2.connect(user=conn_info['user'],
-                                      host=conn_info['host'],
-                                      dbname=conn_info['dbname'],
-                                      password=conn_info['password'],
-                                      sslmode='require',
-                                      # Thank you azure (only needed outside Azure):
-                                      sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
-                                      connect_timeout=10)
+        connection = psycopg2.connect(dbstring)
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error while connecting to PostgreSQL: {error}")
         raise(error)
