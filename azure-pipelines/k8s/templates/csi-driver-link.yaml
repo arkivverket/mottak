@@ -15,10 +15,15 @@ spec:
     secretName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
-    - key: {{ required "Missing value NAMESPACE" .Values.AV_MOTTAK_KICKER_ENDPOINT }}
+    - key: mailgun-secret
+      objectName: mailgun-secret                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: mailgun-secret                     # name of the Kubernetes Secret object
+    type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+  - data:
+    - key: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
       objectName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
     secretName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
-    type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+    type: Opaque
   - data:
     - key: storageaccount-key
       objectName: storageaccount-key                        # name of the mounted content to sync. this could be the object name or the object alias
@@ -40,6 +45,10 @@ spec:
           objectVersion: ""
         - |
           objectName: storageaccount-key
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: mailgun-secret
           objectType: secret
           objectVersion: ""
     resourceGroup: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-rg"

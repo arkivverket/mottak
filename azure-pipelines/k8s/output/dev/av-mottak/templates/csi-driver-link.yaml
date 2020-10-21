@@ -17,10 +17,15 @@ spec:
     secretName: av-mottak-dev-dsn                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
+    - key: mailgun-secret
+      objectName: mailgun-secret                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: mailgun-secret                     # name of the Kubernetes Secret object
+    type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+  - data:
     - key: av-mottak-dev-sb-endpoint-argo-kicker
       objectName: av-mottak-dev-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
     secretName: av-mottak-dev-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
-    type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+    type: Opaque
   - data:
     - key: storageaccount-key
       objectName: storageaccount-key                        # name of the mounted content to sync. this could be the object name or the object alias
@@ -44,5 +49,9 @@ spec:
           objectName: storageaccount-key
           objectType: secret
           objectVersion: ""
+        - |
+          objectName: mailgun-secret
+          objectType: secret
+          objectVersion: ""
     resourceGroup: "av-mottak-dev-rg"
-    tenantId: "test-id"                    # the tenant ID of the KeyVault
+    tenantId: "testId"                    # the tenant ID of the KeyVault
