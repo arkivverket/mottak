@@ -24,9 +24,9 @@ def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
     return data
 
 
-def my_connect(connection_str: str, logger):
+def my_connect(dbstring: str, logger):
     try:
-        connection = psycopg2.connect(connection_str)
+        connection = psycopg2.connect(dbstring)
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error while connecting to PostgreSQL: {error}")
         raise(error)
