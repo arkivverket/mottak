@@ -7,7 +7,7 @@ import psycopg2.extras
 import logging
 from azure.servicebus import QueueClient, Message
 
-from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
+from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
 from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR,OK
 
 try:
@@ -114,7 +114,7 @@ def run():
         logging.error(f"Could not find invitation_id in JSON: {iid}")
         exit(UNKNOWNIID)
 
-    connection = my_connect(create_db_access(os.getenv('DBSTRING'), logger=logging), logger=logging)
+    connection = my_connect(os.getenv('DBSTRING'), logger=logging)
     metadata = get_metadata(connection, iid, logger=logging)
     if not metadata:
         logging.error(

@@ -4,7 +4,7 @@ import io
 import logging
 import json
 
-from hooks.implementations.hooks_utils import get_metadata, my_connect, create_db_access, read_tusd_event
+from hooks.implementations.hooks_utils import get_metadata, my_connect, read_tusd_event
 from hooks.implementations.post_finish import update_db_with_objectname, gather_params
 
 
@@ -28,12 +28,6 @@ invitation_dict = {'id': 2,
                    'archive': 'Statens Institutt for forbruksforskning (2003 - 2016) - 4152',
                    'type': 'noark5'
                    }
-
-
-def test_create_db_access():
-    info_str = 'pgsql::/user=test_user;password=test_password;host=test_host;dbname=test_dbname'
-    generated_dict = create_db_access(info_str, logging)
-    assert(generated_dict == db_dict)
 
 
 def test_db_connect(mocker):
