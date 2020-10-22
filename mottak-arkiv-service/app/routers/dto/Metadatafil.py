@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from app.domain.models.metadatafil import MetadataType
+from app.domain.models.Metadatafil import MetadataType
 
 
 class Metadatafil(BaseModel):

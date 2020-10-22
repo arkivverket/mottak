@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 from fastapi import FastAPI, status
-from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import exc
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from app.routers import arkivuttrekk, metadatafil
 
