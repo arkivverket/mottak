@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 
-def get_url():
+def _get_url():
     try:
         return "%s://%s:%s@%s/%s" % (
             os.environ["DB_DRIVER"],
@@ -21,7 +21,7 @@ def get_url():
 
 
 def get_session():
-    engine = create_engine(get_url(), echo=True)
+    engine = create_engine(_get_url(), echo=True)
     session_class = sessionmaker()
     session_class.configure(bind=engine)
     return session_class()
