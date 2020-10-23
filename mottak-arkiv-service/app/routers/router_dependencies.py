@@ -26,3 +26,12 @@ def get_mailgun_secret() -> str:
     """
     # TODO handle KeyError
     return os.environ['MAILGUN_SECRET']
+
+
+def get_tusd_url() -> str:
+    """
+    Gets env variable for public tusd url
+    :return: tusd public url
+    """
+    # TODO handle KeyError
+    return os.environ['TUSD_URL']

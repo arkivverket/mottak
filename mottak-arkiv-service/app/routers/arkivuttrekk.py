@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.domain.arkivuttrekk_service import get_by_id, get_all, create_invitasjon
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session,get_mailgun_domain, get_mailgun_secret
+from app.routers.router_dependencies import get_db_session,get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun_client import MailgunClient
 
 router = APIRouter()
@@ -36,7 +36,7 @@ async def router_get_all(db: Session = Depends(get_db_session), skip: int = 0, l
              response_model=Invitasjon,
              summary='Lager en invitasjon og sender den over epost')
 async def router_send_email(id_: int, db: Session = Depends(get_db_session)):
-    async with MailgunClient(get_mailgun_domain(), get_mailgun_secret()) as client:
+    async with MailgunClient(get_mailgun_domain(), get_mailgun_secret(), get_tusd_url()) as client:
         result = await create_invitasjon(id_, db, client)
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id_}")
