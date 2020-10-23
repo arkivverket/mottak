@@ -46,7 +46,7 @@ export const AlertContext = React.createContext<Partial<ContextType>>({})
 
 const WorkArea: React.FC = ():JSX.Element => {
 	const [alertContent, setAlertContent] = useState<AlertContent>({ msg: '', type: '' })
-	const { toggleDrawer, isOpen, drawerWidth } = useContext(LayoutContext)
+	const { isOpen, drawerWidth } = useContext(LayoutContext)
 	const classes = useStyles({ drawerWidth })
 
 	return (
