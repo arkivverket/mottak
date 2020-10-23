@@ -1,12 +1,10 @@
 from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException, Response
 from sqlalchemy.orm import Session
-import os
 
 from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
 from app.routers.dto.Metadatafil import Metadatafil
-from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret
+from app.routers.router_dependencies import get_db_session
 from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
-from app.connectors.mailgun_client import MailgunClient
 
 router = APIRouter()
 
@@ -39,13 +37,3 @@ async def router_get_parsed_content(id_: int, db: Session = Depends(get_db_sessi
     if result is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id_}")
     return result
-
-
-@router.get('/sendinvitation',
-            status_code=status.HTTP_200_OK,
-            response_model=str,
-            summary='Send out an email')
-async def router_send_email():
-    async with MailgunClient(get_mailgun_domain(), get_mailgun_secret()) as client:
-        resp = await client.send_invitaion()
-    return resp.text
