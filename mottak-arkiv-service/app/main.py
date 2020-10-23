@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from fastapi import FastAPI, status
-import uvicorn
 from app.routers import arkivuttrekk, metadatafil
 
 try:
@@ -34,5 +33,3 @@ app.include_router(
     prefix="/metadatafil",
     tags=['metadatafil'])
 # app.add_exception_handler(exc.NoResultFound, sqlalchemy_exception_handler)
-
-uvicorn.run(app)
