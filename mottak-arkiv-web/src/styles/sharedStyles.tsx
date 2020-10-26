@@ -19,5 +19,8 @@ export const useSharedStyles = makeStyles(theme => ({
 			backgroundColor: theme.palette.secondary.main,
 		}
 	},
+	fullWidth: {
+		width: '100%',
+	}
 }))
 

@@ -79,21 +79,22 @@ const FileUpload: React.FC = (): JSX.Element => {
 					spacing={3}
 					style={{ marginTop: '1rem' }}
 				>
-					<Grid item>
+					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
 							type='button'
-							className={sharedClasses.buttonDA}
+							className={sharedClasses.fullWidth}
 							onClick={handleCancel}
 						>
 						Avbryt
 						</Button>
 					</Grid>
-					<Grid item>
+					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
+							color="primary"
 							type='submit'
-							className={sharedClasses.buttonDA}
+							className={sharedClasses.fullWidth}
 						>
 						Kvalitetssjekk
 						</Button>
