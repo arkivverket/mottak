@@ -1,40 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
 	Button,
 	Grid,
 	TableBody,
-	TableCell,
-	TableRow,
 } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
+import { ArkivUttrekk } from '../types/sharedTypes'
 import { makeStyles } from '@material-ui/core/styles'
 import { useSharedStyles } from '../styles/sharedStyles'
 import useGetOnMount from '../hooks/useGetOnMount'
+import ArkivuttrekkRow from './ArkivuttrekkRow'
+import useRequest from '../hooks/useRequest'
 import useTable from '../hooks/useTable'
-
-type Props = {
-	title: string
-}
-
-//TODO: replace with real type once we have endpoint
-type Arkivuttrekk = {
-    tag_no: string,
-    id: number,
-}
 
 const useStyles = makeStyles(theme => ({
 	gridMargin: {
 		marginBottom: theme.spacing(3)
 	},
-	hoverRow: {
-		'&:hover': {
-			backgroundColor: theme.palette.primary
-		}
-	}
+	title: {
+		color: theme.palette.primary.main,
+	},
 }))
 
-const Overview: React.FC<Props> = ():JSX.Element => {
+const Overview: React.FC = ():JSX.Element => {
 	const columns = [
+		{
+			id: 'icon',
+			label: '',
+		},
 		{
 			id: 'tittel',
 			label: 'Tittel',
@@ -44,16 +37,30 @@ const Overview: React.FC<Props> = ():JSX.Element => {
 			label: 'Type',
 		},
 		{
-			id: 'beskrivelse',
-			label: 'Beskrivelse',
+			id: 'avgiver_navn',
+			label: 'Avgivers navn',
 		},
+		{
+			id: 'status',
+			label: 'Status',
+		}
 	]
 
 	//TODO: replace with real url once we have endpoint
-	const { data, loading, error } = useGetOnMount<Arkivuttrekk[]>('/tags')
-	const { TblContainer, TblHead } = useTable(columns)
+	//const { data, loading, error } = useGetOnMount<ArkivUttrekk[]>('/arkivuttrekk')
+	const { data, loading, error, performRequest } = useRequest<ArkivUttrekk[]>()
+
+	useEffect(() => {
+		performRequest({
+			url: '/arkivuttrekk',
+			method: 'GET',
+		})
+
+	}, [])
+
+
+	const { TblContainer, TblHead } = useTable(columns, handleTableChange)
 	const classes = useStyles()
-	const sharedClasses = useSharedStyles()
 	const history = useHistory()
 
 	function gotoInvite() {
@@ -69,10 +76,10 @@ const Overview: React.FC<Props> = ():JSX.Element => {
 				<Grid container item xs={12} sm={6} justify='flex-end'>
 					<Button
 						variant={'outlined'}
+						color='primary'
 						onClick={gotoInvite}
-						className={sharedClasses.buttonDA}
 					>
-                        Last opp ny
+                        Nytt arkivuttrekk
 					</Button>
 				</Grid>
 			</Grid>
