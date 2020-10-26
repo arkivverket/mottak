@@ -54,7 +54,6 @@ const useRequest = <T>() => {
 		loading: false,
 	})
 
-	//TODO: baseurl
 	const performRequest = async({
 		url,
 		method = 'GET',

@@ -7,8 +7,6 @@ import {
 import { useHistory } from 'react-router-dom'
 import { ArkivUttrekk } from '../types/sharedTypes'
 import { makeStyles } from '@material-ui/core/styles'
-import { useSharedStyles } from '../styles/sharedStyles'
-import useGetOnMount from '../hooks/useGetOnMount'
 import ArkivuttrekkRow from './ArkivuttrekkRow'
 import useRequest from '../hooks/useRequest'
 import useTable from '../hooks/useTable'
@@ -58,6 +56,12 @@ const Overview: React.FC = ():JSX.Element => {
 
 	}, [])
 
+	const handleTableChange = (skip: number, limit: number) => {
+		performRequest({
+			url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
+			method: 'GET',
+		})
+	}
 
 	const { TblContainer, TblHead } = useTable(columns, handleTableChange)
 	const classes = useStyles()

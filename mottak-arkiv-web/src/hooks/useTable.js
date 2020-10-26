@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
 	Table,
 	TableCell,
+	TableFooter,
 	TableHead,
 	TablePagination,
 	TableRow,
-	TableSortLabel,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -15,10 +15,39 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const useTable = columns => {
+const useTable = ( columns, handleTableChange ) => {
+	const [page, setPage] = useState(0)
+	const [rows, setRows] = useState(10)
+
+	const handleChangePage = (e, newPage) => {
+		setPage(newPage)
+		handleTableChange((newPage * rows), rows)
+	}
+
+	const handleChangeRows = (e) => {
+		const tmpRows = parseInt(e.target.value, 10)
+		setRows(tmpRows)
+		setPage(0)
+		handleTableChange(0, tmpRows)
+	}
+
 	const TblContainer = ({ children }) => (
 		<Table>
 			{children}
+			<TableFooter>
+				<TableRow>
+					<TablePagination
+						count={-1}
+						page={page}
+						rowsPerPage={rows}
+						onChangePage={handleChangePage}
+						onChangeRowsPerPage={handleChangeRows}
+						labelRowsPerPage={'Velg antall per side'}
+						labelDisplayedRows={({ from, to }) => (`${from}-${to} av totalt`)}
+						rowsPerPageOptions={[5, 10, 20, 50]}
+					/>
+				</TableRow>
+			</TableFooter>
 		</Table>
 	)
 
