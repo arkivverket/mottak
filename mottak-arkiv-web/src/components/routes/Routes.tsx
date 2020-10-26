@@ -1,4 +1,5 @@
 import React from 'react'
+import Details from '../Details'
 import Overview from '../Overview'
 import InvitationWorkflowContainer from '../workflow/InvitationWorkflowContainer'
 
@@ -35,9 +36,10 @@ const Routes: RouteType[] = [
 		nav: true,
 	},
 	{
-		path: '/upload',
-		sidebarName: 'Lat opp fil',
-		component: InvitationWorkflowContainer
+		path: '/arkivuttrekk/:id',
+		sidebarName: 'Se alle',
+		component: Details,
+		nav: false,
 	},
 ]
 
