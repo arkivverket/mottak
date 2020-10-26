@@ -86,18 +86,8 @@ const Overview: React.FC = ():JSX.Element => {
 			<TblContainer>
 				<TblHead />
 				<TableBody>
-					{data?.length && data.map((arkivUttrekk: Arkivuttrekk) => (
-						<TableRow key={arkivUttrekk.tag_no} className={classes.hoverRow}>
-							<TableCell component='th' scope='row'>
-								{arkivUttrekk.tag_no}
-							</TableCell>
-							<TableCell>
-								{arkivUttrekk.id}
-							</TableCell>
-							<TableCell>
-								{arkivUttrekk.tag_no}
-							</TableCell>
-						</TableRow>
+					{data?.length && data.map((arkivUttrekk: ArkivUttrekk) => (
+						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
 					))}
 				</TableBody>
 			</TblContainer>
