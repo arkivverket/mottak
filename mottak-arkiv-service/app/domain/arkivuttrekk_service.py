@@ -1,4 +1,5 @@
 import logging
+import uuid
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -6,7 +7,6 @@ from app.database.repository import arkivuttrekk_get_by_id, arkivuttrekk_get_all
 from app.database.dbo.mottak import Invitasjon
 from app.connectors.mailgun_client import MailgunClient
 from app.domain.models.Invitasjon import InvitasjonStatus
-
 
 
 def get_by_id(arkivuttrekk_id: int, db: Session):
@@ -21,9 +21,10 @@ async def create_invitasjon(arkivuttrekk_id: int, db: Session, mailgun_client: M
     arkivuttrekk = arkivuttrekk_get_by_id(db, arkivuttrekk_id)
     if not arkivuttrekk:
         return None
-    resp = await mailgun_client.send_invitaion([arkivuttrekk.avgiver_epost], 3)
+    invitasjon_uuid = uuid.uuid4()
+    resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id, invitasjon_uuid)
     if resp.status_code == 200:
-        return invitasjon_create(db, arkivuttrekk_id, InvitasjonStatus.SENT)
+        return invitasjon_create(db, arkivuttrekk_id, InvitasjonStatus.SENT, invitasjon_uuid)
     else:
         logging.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk_id} med {resp.status_code} {resp.text}")
-        return invitasjon_create(db, arkivuttrekk_id, InvitasjonStatus.FEILET)
+        return invitasjon_create(db, arkivuttrekk_id, InvitasjonStatus.FEILET, invitasjon_uuid)

@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, DateTime, Enum, BigInteger, Date, Float
 from sqlalchemy import func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -53,8 +54,9 @@ class Invitasjon(Base):
     Perhaps it should contain a reference to the actual invitation being sent.
     """
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
+    invitasjon_uuid = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
-    status = Column(Enum('Sent', 'Feilet', name='invitasjon_status_type', create_type=True), nullable=False)
+    status = Column(Enum('Bestilt', 'Sent', 'Feilet', name='invitasjon_status_type', create_type=True), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
 
 

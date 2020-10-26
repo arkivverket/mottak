@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
@@ -28,8 +29,9 @@ def arkivuttrekk_get_by_id(db: Session, id_: int) -> Arkivuttrekk_DBO:
     return db.query(Arkivuttrekk_DBO).get(id_)
 
 
-def invitasjon_create(db: Session, arkivuttrekk_id: int, status: InvitasjonStatus) -> Invitasjon_DBO:
-    dbo = Invitasjon_DBO(arkivuttrekk_id=arkivuttrekk_id, status=status)
+def invitasjon_create(db: Session, arkivuttrekk_id: int, status: InvitasjonStatus,
+                      invitasjon_uuid: UUID) -> Invitasjon_DBO:
+    dbo = Invitasjon_DBO(arkivuttrekk_id=arkivuttrekk_id, status=status, invitasjon_uuid=invitasjon_uuid)
     db.add(dbo)
     db.commit()
     return dbo
