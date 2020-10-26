@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Grid, TextField, Typography } from '@material-ui/core'
+import { Button, Grid, MenuItem, TextField, Typography } from '@material-ui/core'
+import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import MomentUtils from '@date-io/moment'
+
 import { ParsedMetadataFil } from '../types/sharedTypes'
 import { useSharedStyles } from '../styles/sharedStyles'
 import { WorkflowContext } from './workflow/InvitationWorkflowContainer'
@@ -7,6 +10,7 @@ import { StepperContext } from './workflow/WorkflowStepper'
 import { AlertContext } from './WorkArea'
 import useGetOnMount from '../hooks/useGetOnMount'
 import useRequest from '../hooks/useRequest'
+import { number } from 'yargs'
 
 const QualityCheck: React.FC = ():JSX.Element => {
 	const { handleNext, handleCancel } = useContext(StepperContext)
@@ -20,20 +24,34 @@ const QualityCheck: React.FC = ():JSX.Element => {
 
 	const initalvalues = {
 		tittel: '',
-		endret: '',
-		kontaktperson: '',
-		arkivtype: '',
-		objekt_id: '',
+		obj_id: '',
+		status: '',
+		type: '',
+		sjekksum_sha256: '',
+		avgiver_navn: '',
+		avgiver_epost: '',
+		koordinator_epost: '',
+		metadatafil_id: number,
+		arkiv_startdato: null,
+		arkiv_sluttdato: null,
 		storrelse: '',
-		tidsspenn: '',
 		avtalenummer: '',
 	}
+
+	const validation = {
+		tittel: {
+			hasError: false,
+			errorMsg: 'Tittel er påkrevd.',
+			validator: (tittel: string) => tittel !== null && tittel != ''
+		},
+	}
+
+	const archiveTypes = ['Noark3', 'Noark5', 'Fagsystem']
+	const statusTypes = ['Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sendt til bevaring']
 
 	const [values, setValues] = useState<ParsedMetadataFil>(initalvalues)
 
 	const handleSubmit = ( event: React.FormEvent) => {
-		console.warn('postvalues');
-
 		if (event) {
 			event.preventDefault()
 		}
@@ -46,6 +64,10 @@ const QualityCheck: React.FC = ():JSX.Element => {
 
 	const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.persist()
+		setValues(values => ({ ...values, [event.target.name]: event.target.value }))
+	}
+
+	const handleDateChange = (event: any | null) => {
 		setValues(values => ({ ...values, [event.target.name]: event.target.value }))
 	}
 
@@ -66,92 +88,171 @@ const QualityCheck: React.FC = ():JSX.Element => {
 	}, [errorAU])
 
 	return (
-		<form style={{ margin: '0 2rem 2rem 2rem' }} onSubmit={handleSubmit}>
-			<Typography variant='h6' gutterBottom>
-				Registrerte verdier
-			</Typography>
-			<Grid container spacing={4}>
-				<Grid item xs={12}>
-					<TextField
-						required
-						id='tittel'
-						name='tittel'
-						label='Tittel'
-						value={values.tittel}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='endret'
-						name='endret'
-						label='Endret'
-						value={values.endret}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						required
-						id='kontaktperson'
-						name='kontaktperson'
-						label='Kontaktperson'
-						value={values.kontaktperson}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='arkivtype'
-						name='arkivtype'
-						label='Arkivtype'
-						value={values.arkivtype}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='objekt_id'
-						name='objekt_id'
-						label='Objektid'
-						value={values.objekt_id}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='storrelse'
-						name='storrelse'
-						label='Størrelse'
-						value={values.storrelse}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='tidsspenn'
-						name='tidsspenn'
-						label='Tidsspenn'
-						value={values.tidsspenn}
-						onChange={handleValueChange}
-						fullWidth
-					/>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<TextField
-						id='avtalenummer'
-						name='avtalenummer'
-						label='Avtalenummer'
-						value={values.avtalenummer}
-						onChange={handleValueChange}
-						fullWidth
-					/>
+		<MuiPickersUtilsProvider utils={MomentUtils}>
+			<form style={{ margin: '2rem' }} onSubmit={handleSubmit}>
+				<Typography variant='h6' style={{ marginBottom: '1.5rem' }}>
+					Registrerte verdier
+				</Typography>
+				<Grid container spacing={4}>
+					<Grid item xs={12}>
+						<TextField
+							id='tittel'
+							name='tittel'
+							label='Tittel'
+							value={values.tittel}
+							onChange={handleValueChange}
+							fullWidth
+							helperText={error ? 'Tittel må være fylt ut.' : ''}
+							error={values.tittel === null || values.tittel === ''}
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id='obj_id'
+							name='obj_id'
+							label='Objektid'
+							value={values.obj_id}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							select
+							id='status'
+							name='status'
+							label='Status'
+							value={values.status}
+							onChange={handleValueChange}
+							fullWidth
+						>
+						 		{statusTypes.map(option => (
+								<MenuItem key={option} value={option}>
+									{option}
+								</MenuItem>
+							))}
+		 		 			</TextField>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							select
+							id='type'
+							name='type'
+							label='Arkivtype'
+							value={values.type}
+							onChange={handleValueChange}
+							fullWidth
+						>
+						 		{archiveTypes.map(option => (
+								<MenuItem key={option} value={option}>
+									{option}
+								</MenuItem>
+							))}
+		 		 			</TextField>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id='sjekksum_sha256'
+							name='sjekksum_sha256'
+							label='Sjekksum'
+							value={values.sjekksum_sha256}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id='avgiver_navn'
+							name='avgiver_navn'
+							label='Avgivers navn'
+							value={values.avgiver_navn}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							required
+							type='email'
+							id='avgiver_epost'
+							name='avgiver_epost'
+							label='Avgivers epost'
+							value={values.avgiver_epost}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							required
+							type='email'
+							id='koordinator_epost'
+							name='koordinator_epost'
+							label={'Koordinators epost'}
+							value={values.koordinator_epost}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<KeyboardDatePicker
+							disableToolbar
+							variant='inline'
+							autoOk
+							emptyLabel={''}
+							format='YYYY-MM-DD'
+							id='arkiv_startdato'
+							label='Arkiv startdato'
+							value={values.arkiv_startdato}
+							//onChange={event => handleDateChange(event, row)}
+							onChange={(date, value) => {
+								handleDateChange({ 'target': { 'name': 'arkiv_startdato', 'value': value } })
+							}}
+							KeyboardButtonProps={{
+								'aria-label': 'bytt dato',
+							}}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<KeyboardDatePicker
+							disableToolbar
+							variant='inline'
+							autoOk
+							emptyLabel={''}
+							format='YYYY-MM-DD'
+							id='arkiv_sluttdato'
+							label='Arkiv sluttdato'
+							value={values.arkiv_sluttdato}
+							onChange={(date, value) => {
+								handleDateChange({ 'target': { name: 'arkiv_sluttdato', value } })
+							}}
+							KeyboardButtonProps={{
+								'aria-label': 'bytt dato',
+							}}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id='storrelse'
+							name='storrelse'
+							label='Størrelse'
+							value={values.storrelse}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<TextField
+							id='avtalenummer'
+							name='avtalenummer'
+							label='Avtalenummer'
+							value={values.avtalenummer}
+							onChange={handleValueChange}
+							fullWidth
+						/>
+					</Grid>
 				</Grid>
 				<Grid
 					container
@@ -159,29 +260,33 @@ const QualityCheck: React.FC = ():JSX.Element => {
 					alignItems='center'
 					justify='center'
 					spacing={2}
+					style={{ margin: '2rem auto' }}
+					xs={12}
+					sm={6}
 				>
-					<Grid item>
+					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
 							type='button'
-							className={sharedClasses.buttonDA}
+							color='primary'
+							className={sharedClasses.fullWidth}
 							onClick={handleCancel}
 						>
 							Avbryt
 						</Button>
 					</Grid>
-					<Grid item>
+					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
 							type='submit'
-							className={sharedClasses.buttonDA}
+							className={sharedClasses.fullWidth}
 						>
 							Godkjenn data
 						</Button>
 					</Grid>
 				</Grid>
-			</Grid>
-		</form>
+			</form>
+		</MuiPickersUtilsProvider>
 	)
 }
 
