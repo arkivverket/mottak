@@ -1,15 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
 	Button,
 	Grid,
-	TableBody,
 } from '@material-ui/core'
+import ArkivuttrekkTable from './ArkivuttrekkTable'
 import { useHistory } from 'react-router-dom'
-import { ArkivUttrekk } from '../types/sharedTypes'
 import { makeStyles } from '@material-ui/core/styles'
-import ArkivuttrekkRow from './ArkivuttrekkRow'
-import useRequest from '../hooks/useRequest'
-import useTable from '../hooks/useTable'
 
 const useStyles = makeStyles(theme => ({
 	gridMargin: {
@@ -20,50 +16,10 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
+/**
+ * Display arkivuttrekk as table data, and initializing adding new arkivuttrekk workflow .
+ */
 const Overview: React.FC = ():JSX.Element => {
-	const columns = [
-		{
-			id: 'icon',
-			label: '',
-		},
-		{
-			id: 'tittel',
-			label: 'Tittel',
-		},
-		{
-			id: 'type',
-			label: 'Type',
-		},
-		{
-			id: 'avgiver_navn',
-			label: 'Avgivers navn',
-		},
-		{
-			id: 'status',
-			label: 'Status',
-		}
-	]
-
-	//TODO: replace with real url once we have endpoint
-	//const { data, loading, error } = useGetOnMount<ArkivUttrekk[]>('/arkivuttrekk')
-	const { data, loading, error, performRequest } = useRequest<ArkivUttrekk[]>()
-
-	useEffect(() => {
-		performRequest({
-			url: '/arkivuttrekk',
-			method: 'GET',
-		})
-
-	}, [])
-
-	const handleTableChange = (skip: number, limit: number) => {
-		performRequest({
-			url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
-			method: 'GET',
-		})
-	}
-
-	const { TblContainer, TblHead } = useTable(columns, handleTableChange)
 	const classes = useStyles()
 	const history = useHistory()
 
@@ -87,14 +43,7 @@ const Overview: React.FC = ():JSX.Element => {
 					</Button>
 				</Grid>
 			</Grid>
-			<TblContainer>
-				<TblHead />
-				<TableBody>
-					{data?.length && data.map((arkivUttrekk: ArkivUttrekk) => (
-						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
-					))}
-				</TableBody>
-			</TblContainer>
+			<ArkivuttrekkTable />
 		</>
 	)
 }
