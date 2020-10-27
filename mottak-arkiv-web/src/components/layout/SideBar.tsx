@@ -19,13 +19,6 @@ type StyleProps = {
 }
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
-	toolbarIcon: {
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'flex-end',
-		padding: '0 8px',
-		...theme.mixins.toolbar,
-	},
 	drawer: props => ({
 		width: props.drawerWidth,
 		flexShrink: 0,
@@ -34,17 +27,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
 		whiteSpace: 'nowrap',
 		width: props.drawerWidth,
 	}),
-	drawerPaperClose: {
-		overflowX: 'hidden',
-		transition: theme.transitions.create('width', {
-			easing: theme.transitions.easing.sharp,
-			duration: theme.transitions.duration.leavingScreen,
-		}),
-		width: theme.spacing(7),
-		[theme.breakpoints.up('sm')]: {
-			width: theme.spacing(9),
-		},
-	},
 	menu: {
 		color: theme.palette.primary.main,
 	}
@@ -62,6 +44,7 @@ const SideBar: React.FC = (): JSX.Element => {
 		<Drawer
 			variant='persistent'
 			anchor='left'
+			PaperProps={{ elevation: 2 }}
 			open={isOpen}
 			className={classes.drawer}
 			classes={{
@@ -76,14 +59,16 @@ const SideBar: React.FC = (): JSX.Element => {
 			>
 				<MenuList>
 					{Routes.map((route: RouteType, key) => (
+						route.nav &&
 						<NavLink
 							to={route.path}
 							style={{ textDecoration: 'none' }}
 							key={key}
 							className={classes.menu}
+							data-testid={route.name}
 						>
 							<MenuItem selected={activeRoute(route.path)}>
-								<ListItemText primary={route.sidebarName} />
+								<ListItemText primary={route.name} />
 							</MenuItem>
 						</NavLink>
 					))}
