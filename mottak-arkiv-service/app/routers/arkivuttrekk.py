@@ -8,7 +8,7 @@ from app.domain.models.Invitasjon import InvitasjonStatus
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session,get_mailgun_domain, get_mailgun_secret, get_tusd_url
-from app.connectors.mailgun_client import MailgunClient
+from app.connectors.mailgun.mailgun_client import MailgunClient
 
 router = APIRouter()
 

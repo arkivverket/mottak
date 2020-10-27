@@ -5,7 +5,7 @@ from typing import Optional
 
 from app.database.repository import arkivuttrekk_get_by_id, arkivuttrekk_get_all, invitasjon_create
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk
-from app.connectors.mailgun_client import MailgunClient
+from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain.models.Invitasjon import InvitasjonStatus
 
 

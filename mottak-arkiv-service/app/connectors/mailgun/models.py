@@ -1,7 +1,7 @@
 import json
 import base64
-from typing import List
 from uuid import UUID
+from typing import List
 
 
 class InvitasjonMelding:
@@ -15,7 +15,21 @@ class InvitasjonMelding:
 
     def as_base64_url(self):
         json_str = json.dumps(self.__dict__)
-        print(json_str)
         json_bytes = json_str.encode('utf-8')
         base64_str = str(base64.b64encode(json_bytes), 'utf-8')
         return self.__url_prefix + base64_str
+
+
+class MailgunEmail:
+
+    __subject = "Invitasjon til opplasting av Arkivuttrekk"
+
+    def __init__(self, mailgun_domain: str, to: List[str], upload_url: str):
+        self.__from = f'Mottak <donotreply@{mailgun_domain}>'
+        self.__to = to
+        self.__text = f'Opplastingslink for arkivuttrekk: {upload_url}'
+        self.__html = f'Opplastingslink for arkivuttrekk: <a href={upload_url}>{upload_url}</a>'
+
+    def as_data(self):
+        return {'from': self.__from, 'to': self.__to, 'subject': self.__subject, 'text': self.__text,
+                'html': self.__html}
