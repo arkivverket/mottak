@@ -44,6 +44,9 @@ export type ContextType = ({
 
 export const AlertContext = React.createContext<Partial<ContextType>>({})
 
+/**
+ * Hold workarea routing and app alert state
+ */
 const WorkArea: React.FC = ():JSX.Element => {
 	const [alertContent, setAlertContent] = useState<AlertContent>({ msg: '', type: '' })
 	const { isOpen, drawerWidth } = useContext(LayoutContext)

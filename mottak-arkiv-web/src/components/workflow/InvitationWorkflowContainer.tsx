@@ -16,6 +16,9 @@ export type ContextType = ({
 
 export const WorkflowContext = React.createContext<Partial<ContextType>>({})
 
+/**
+ * Provide context for stepper-workflow
+ */
 const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children }): JSX.Element => {
 	const [metadataId, setMetadataId] = useState<number | null>(null)
 
@@ -34,7 +37,7 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 
 	return (
 		<WorkflowContext.Provider value={{ metadataId, setMetadataId, steps }}>
-			<WorkflowStepper data-testid='stepper'/>
+			<WorkflowStepper />
 		</WorkflowContext.Provider>
 	)
 }

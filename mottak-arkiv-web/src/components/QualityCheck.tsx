@@ -12,6 +12,9 @@ import useGetOnMount from '../hooks/useGetOnMount'
 import useRequest from '../hooks/useRequest'
 import { number } from 'yargs'
 
+/**
+ * Step component for displaying parsed metadata file for user edit and approval.
+ */
 const QualityCheck: React.FC = ():JSX.Element => {
 	const { handleNext, handleCancel } = useContext(StepperContext)
 	const { metadataId } = useContext(WorkflowContext)

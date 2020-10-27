@@ -15,8 +15,10 @@ export const useSharedStyles = makeStyles(theme => ({
 	buttonDA: {
 		backgroundColor: 'white',
 		color: theme.palette.primary.dark,
-		'&:hover': {
-			backgroundColor: theme.palette.secondary.main,
+		root: {
+			'&:hover': {
+				backgroundColor: theme.palette.secondary.main,
+			}
 		}
 	},
 	fullWidth: {

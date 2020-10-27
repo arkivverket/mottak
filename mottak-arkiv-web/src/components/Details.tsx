@@ -8,7 +8,6 @@ import {
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
 import { ArkivUttrekk } from '../types/sharedTypes'
-import { useSharedStyles } from '../styles/sharedStyles'
 
 import useGetOnMount from '../hooks/useGetOnMount'
 
@@ -20,7 +19,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Details: React.FC = ():JSX.Element => {
-	const sharedClasses = useSharedStyles()
 	const classes = useStyles()
 
 	const { id } = useParams<{id: string}>()

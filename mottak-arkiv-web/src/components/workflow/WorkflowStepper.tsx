@@ -28,6 +28,9 @@ export type ContextType = ({
 
 export const StepperContext = React.createContext<Partial<ContextType>>({})
 
+/**
+ * Handle and display step-labels and current step in workflow.
+ */
 const WorkflowStepper: React.FC = (): JSX.Element => {
 	const [activeStep, setActiveStep] = React.useState(0)
 	const { steps } = useContext(WorkflowContext)
@@ -62,7 +65,12 @@ const WorkflowStepper: React.FC = (): JSX.Element => {
 				alignItems='center'
 			>
 				<Grid item>
-					<Stepper alternativeLabel activeStep={activeStep} style={{ width: '40vw' }}>
+					<Stepper
+						alternativeLabel
+						activeStep={activeStep}
+						style={{ width: '40vw' }}
+						data-testid='stepper'
+					>
 						{steps?.map(step => (
 							<Step key={step.number}>
 								<StepLabel className={classes.root}>

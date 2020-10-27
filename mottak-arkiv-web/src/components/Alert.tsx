@@ -35,14 +35,17 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-
+/**
+ * Display alert msg.
+ *
+ * @param {string}  msg Message to display to the user
+ * @param {string}  type type og alert; 'success', 'info', 'error' or 'warning'
+ */
 const Alert: React.FC<AlertContent> = ({ msg, type }): JSX.Element => {
 	const [open, setOpen] = React.useState(false)
 	const classes = useStyles()
 
 	useEffect(() => {
-		console.warn('msg', msg)
-
 		msg && setOpen(true)
 	}, [msg])
 

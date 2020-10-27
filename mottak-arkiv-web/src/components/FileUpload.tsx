@@ -9,6 +9,9 @@ import { WorkflowContext } from './workflow/InvitationWorkflowContainer'
 import { useSharedStyles } from '../styles/sharedStyles'
 import useRequest from '../hooks/useRequest'
 
+/**
+ * Step component for uploading the metadata file.
+ */
 const FileUpload: React.FC = (): JSX.Element => {
 	const sharedClasses = useSharedStyles()
 	const { setAlertContent } = useContext(AlertContext)

@@ -12,16 +12,16 @@ import {
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { ArkivUttrekk } from '../types/sharedTypes'
-import { ThemeConsumer } from 'styled-components'
 
 const useStyles = makeStyles(theme => ({
+	root: {
+		'&:hover': {
+			color: theme.palette.primary.main,
+			backgroundColor: theme.palette.secondary.light,
+		}
+	},
 	gridMargin: {
 		marginBottom: theme.spacing(3)
-	},
-	hoverRow: {
-		'&:hover': {
-			backgroundColor: theme.palette.primary
-		}
 	},
 	label: {
 		color: theme.palette.primary.main,
@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
+/**
+ * Display single arkivuttrekk as a toggle-row.
+ */
 const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrekk }):JSX.Element => {
 	const [isOpen, setIsOpen] = useState(false)
 	const classes = useStyles()
@@ -39,7 +42,7 @@ const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrek
 
 	return (
 		<>
-			<TableRow key={arkivUttrekk.id} className={classes.hoverRow}>
+			<TableRow key={arkivUttrekk.id} className={classes.root}>
 				<TableCell>
 					<IconButton aria-label="expand row" size="small" onClick={toggle}>
 						<Icon>{isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</Icon>
