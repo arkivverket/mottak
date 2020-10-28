@@ -30,8 +30,8 @@ def arkivuttrekk_get_by_id(db: Session, id_: int) -> Arkivuttrekk_DBO:
 
 
 def invitasjon_create(db: Session, arkivuttrekk_id: int, avgiver_epost: str, status: InvitasjonStatus,
-                      invitasjon_uuid: UUID) -> Invitasjon_DBO:
-    dbo = Invitasjon_DBO(arkivuttrekk_id=arkivuttrekk_id, status=status, invitasjon_uuid=invitasjon_uuid,
+                      invitasjon_ekstern_id: UUID) -> Invitasjon_DBO:
+    dbo = Invitasjon_DBO(arkivuttrekk_id=arkivuttrekk_id, status=status, ekstern_id=invitasjon_ekstern_id,
                          avgiver_epost=avgiver_epost)
     db.add(dbo)
     db.commit()

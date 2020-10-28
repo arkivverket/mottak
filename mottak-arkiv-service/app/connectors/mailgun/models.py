@@ -10,11 +10,11 @@ class InvitasjonMelding:
     """
     __url_prefix = 'dpldr://'
 
-    def __init__(self, arkivuttrekk_obj_id: UUID, upload_url: str, invitasjon_uuid: UUID, upload_type: str = 'tar'):
+    def __init__(self, arkivuttrekk_obj_id: UUID, upload_url: str, invitasjon_ekstern_id: UUID, upload_type: str = 'tar'):
         self.reference = str(arkivuttrekk_obj_id)
         self.upload_url = upload_url
         self.upload_type = upload_type
-        self.meta = {'invitasjon_uuid': str(invitasjon_uuid)}
+        self.meta = {'invitasjon_ekstern_id': str(invitasjon_ekstern_id)}
 
     def as_base64_url(self) -> str:
         """

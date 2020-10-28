@@ -14,8 +14,8 @@ class MailgunClient(AsyncClient):
         self.domain = domain
         self.tusd_url = tusd_url
 
-    async def send_invitasjon(self, to: List[str], arkivuttrekk_obj_id: UUID, invitasjon_uuid: UUID):
-        message = InvitasjonMelding(arkivuttrekk_obj_id, self.tusd_url, invitasjon_uuid)
+    async def send_invitasjon(self, to: List[str], arkivuttrekk_obj_id: UUID, invitasjon_ekstern_id: UUID):
+        message = InvitasjonMelding(arkivuttrekk_obj_id, self.tusd_url, invitasjon_ekstern_id)
         email = MailgunEmail(self.domain, to, message.as_base64_url())
         auth = BasicAuth('api', self.secret)
         resp = await self.post(self.url, auth=auth, data=email.as_data())

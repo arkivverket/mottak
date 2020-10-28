@@ -25,12 +25,13 @@ async def create_invitasjon(arkivuttrekk_id: int, db: Session, mailgun_client: M
 
 
 async def _send_invitasjon(arkivuttrekk: Arkivuttrekk, db: Session, mailgun_client: MailgunClient):
-    invitasjon_uuid = uuid.uuid4()
-    resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id, invitasjon_uuid)
+    invitasjon_ekstern_id = uuid.uuid4()
+    resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id, invitasjon_ekstern_id)
     if resp.status_code == 200:
+        # TODO Update status of arkivuttrekk and save it to database when MOL-122 is done
         return invitasjon_create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, InvitasjonStatus.SENT,
-                                 invitasjon_uuid)
+                                 invitasjon_ekstern_id)
     else:
         logging.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk.id} med {resp.status_code} {resp.text}")
         return invitasjon_create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, InvitasjonStatus.FEILET,
-                                 invitasjon_uuid)
+                                 invitasjon_ekstern_id)
