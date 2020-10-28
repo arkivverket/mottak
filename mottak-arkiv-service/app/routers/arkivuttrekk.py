@@ -17,10 +17,10 @@ router = APIRouter()
             status_code=status.HTTP_200_OK,
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
-async def router_get_by_id(id_: int, db: Session = Depends(get_db_session)):
-    result = get_by_id(id_, db)
+async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
+    result = get_by_id(id, db)
     if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id_}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
     return result
 
 
@@ -32,15 +32,15 @@ async def router_get_all(db: Session = Depends(get_db_session), skip: int = 0, l
     return get_all(db, skip, limit)
 
 
-@router.post('/{id_}/invitasjon',
+@router.post('/{id}/invitasjon',
              status_code=status.HTTP_200_OK,
              response_model=Invitasjon,
              summary='Lager en invitasjon og sender den over epost')
-async def router_send_email(id_: int, db: Session = Depends(get_db_session)):
+async def router_send_email(id: int, db: Session = Depends(get_db_session)):
     async with MailgunClient(get_mailgun_domain(), get_mailgun_secret(), get_tusd_url()) as client:
-        result = await create_invitasjon(id_, db, client)
+        result = await create_invitasjon(id, db, client)
         if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id_}")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
         elif result.status == InvitasjonStatus.FEILET:
             raise HTTPException(status_code=status.HTTP_424_FAILED_DEPENDENCY, detail=f'Utsending av invitasjon feilet, venligst prøv igjen senere')
         else:

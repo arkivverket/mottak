@@ -21,10 +21,10 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
             status_code=status.HTTP_200_OK,
             response_model=str,
             summary="Henter ut innehold(XML) fra en metadatafil")
-async def router_get_content(id_: int, db: Session = Depends(get_db_session)):
-    result = Response(content=get_content(id_, db), media_type="application/xml")
+async def router_get_content(id: int, db: Session = Depends(get_db_session)):
+    result = Response(content=get_content(id, db), media_type="application/xml")
     if result is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id_}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id}")
     return result
 
 
@@ -32,8 +32,8 @@ async def router_get_content(id_: int, db: Session = Depends(get_db_session)):
             status_code=status.HTTP_200_OK,
             response_model=ArkivuttrekkBase,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
-async def router_get_parsed_content(id_: int, db: Session = Depends(get_db_session)):
-    result = get_parsed_content(id_, db)
+async def router_get_parsed_content(id: int, db: Session = Depends(get_db_session)):
+    result = get_parsed_content(id, db)
     if result is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id_}")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id}")
     return result
