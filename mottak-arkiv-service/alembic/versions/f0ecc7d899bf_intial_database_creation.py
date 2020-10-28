@@ -55,13 +55,15 @@ def upgrade():
     op.create_index(op.f('ix_arkivuttrekk_status'), 'arkivuttrekk', ['status'], unique=False)
     op.create_table('invitasjon',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+                    sa.Column('ekstern_id', postgresql.UUID(as_uuid=True), nullable=False, index=True),
                     sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
                     sa.Column('status', sa.Enum('Sent', 'Feilet', name='invitasjon_status_type'), nullable=False),
+                    sa.Column('avgiver_epost', sa.String(), nullable=False),
                     sa.Column('opprettet', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
                     sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
                     sa.PrimaryKeyConstraint('id'),
-                    sa.UniqueConstraint('arkivuttrekk_id'),
-                    sa.UniqueConstraint('id')
+                    sa.UniqueConstraint('id'),
+                    sa.UniqueConstraint('ekstern_id')
                     )
     op.create_table('lokasjon',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
