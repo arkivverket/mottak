@@ -25,7 +25,7 @@ class MailgunEmail:
     __subject = "Invitasjon til opplasting av Arkivuttrekk"
 
     def __init__(self, mailgun_domain: str, to: List[str], upload_url: str):
-        self.__from = f'Mottak <donotreply@{mailgun_domain}>'
+        self.__from = f'Mottak Arkivverket <donotreply@{mailgun_domain}>'
         self.__to = to
         self.__text = f'Opplastingslink for arkivuttrekk: {upload_url}'
         self.__html = f'Opplastingslink for arkivuttrekk: <a href={upload_url}>{upload_url}</a>'
