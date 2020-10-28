@@ -16,6 +16,9 @@ The values given here are examples. Please adjust to your local database.
 - DB_PASSWORD : `""`
 - DB_HOST : `localhost`
 - DB_NAME : `postgres`
+- MAILGUN_DOMAIN: `<some_id>.mailgun.org`
+- MAILGUN_SECRET: `<secret used for auth againt mailgun>`
+- TUSD_URL: `<public url to tusd>`
 
 
 ### Running locally
