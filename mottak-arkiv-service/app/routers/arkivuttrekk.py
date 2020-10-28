@@ -7,7 +7,7 @@ from app.domain.arkivuttrekk_service import get_by_id, get_all, create_invitasjo
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session,get_mailgun_domain, get_mailgun_secret, get_tusd_url
+from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
 
 router = APIRouter()
@@ -42,6 +42,7 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
         if not result:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
         elif result.status == InvitasjonStatus.FEILET:
-            raise HTTPException(status_code=status.HTTP_424_FAILED_DEPENDENCY, detail=f'Utsending av invitasjon feilet, venligst prøv igjen senere')
+            raise HTTPException(status_code=status.HTTP_424_FAILED_DEPENDENCY,
+                                detail='Utsending av invitasjon feilet, venligst prøv igjen senere')
         else:
             return result
