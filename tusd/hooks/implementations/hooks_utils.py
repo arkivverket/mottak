@@ -29,19 +29,27 @@ def my_connect(dbstring: str, logger):
         connection = psycopg2.connect(dbstring)
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error while connecting to PostgreSQL: {error}")
-        raise(error)
+        raise (error)
     finally:
         return connection
 
 
-def get_metadata(conn, invitation_id: str, logger):
+def get_metadata(conn, invitasjon_ekstern_id: str, logger):
     """ Fetch metadata about an invitation from the database using the invitation id as key """
     try:
         dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        dict_cursor.execute('SELECT invitations.id, uuid, checksum, is_sensitive, name, email, type '
-                            'FROM invitations, archive_types '
-                            'WHERE archive_type_id=archive_types.id '
-                            'AND invitations.id=%s', (invitation_id))
+        dict_cursor.execute(
+            'SELECT i.id            AS id, '
+            'i.ekstern_id           AS uuid, '
+            'a.sjekksum_sha256      AS checksum, '
+            'false                  AS is_sensitive, '
+            'a.avgiver_navn         AS name, '
+            'a.avgiver_epost        AS email, '
+            'a.type                 AS type, '
+            'a.id                   AS arkivuttrekk_id, '
+            'a.storrelse            AS storrelse '
+            'FROM invitasjon i LEFT JOIN arkivuttrekk a ON i.arkivuttrekk_id = a.id '
+            'WHERE i.ekstern_id =%s', (invitasjon_ekstern_id))
         rec = dict_cursor.fetchall()
         print(rec)
     except psycopg2.Error as exception:
