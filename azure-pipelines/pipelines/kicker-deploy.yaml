@@ -37,5 +37,5 @@ jobs:
         parameters:
           env: $(env)
           valuesContainerKey: $(valuesContainerKey)
-          containerTag: $(resources.container.cont.tag)
+          containerTag: ${{ resources.container.cont.tag }}
           deploymentYamlName: $(deploymentYamlName)
