@@ -25,7 +25,7 @@ spec:
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value NAMESPACE" .Values.AV_MOTTAK_KICKER_ENDPOINT }}
-                  key: {{ required "Missing value NAMESPACE" .Values.AV_MOTTAK_KICKER_ENDPOINT }}
+                  name: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+                  key: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
             - name: AZ_SB_QUEUE
-              value: "argo-workflow"
+              value: {{ required "Missing value TUSD_KICKER_SERVICE_BUS_QUEUE" .Values.TUSD_KICKER_SERVICE_BUS_QUEUE }}

@@ -8,13 +8,16 @@ ENV="dev"
 
 OUTPUT_FOLDER="k8s/output/$ENV"
 CLUSTER_NAME="av-plattform-$ENV-aks"
-RESOURCE_GROUP="av-plattform-$ENV-rg"
+PLATFORM_RESOURCE_GROUP="av-plattform-$ENV-rg"
+MOTTAK_RESOURCE_GROUP="av-mottak-$ENV-rg"
 NAMESPACE="av-mottak-$ENV"
+STORAGE_ACCOUNT_NAME="avmottak${ENV}sacc"
+MOTTAK_VAULT_NAME="av-mottak-$ENV-vault"
 
 ## Auth against cluster
 echo
-echo "Setting up aks credentials for cluster $CLUSTER_NAME in resource group $RESOURCE_GROUP"
-az aks get-credentials --name "$CLUSTER_NAME" --resource-group "$RESOURCE_GROUP"
+echo "Setting up aks credentials for cluster $CLUSTER_NAME in resource group $PLATFORM_RESOURCE_GROUP"
+az aks get-credentials --name "$CLUSTER_NAME" --resource-group "$PLATFORM_RESOURCE_GROUP"
 
 # Installing argo workflows in namespace
 echo
@@ -34,3 +37,12 @@ echo "Running kubectl apply -f on setup yamls"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/csi-driver-link.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/mount_the_secrets.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/minio-deployment.yaml"
+
+
+#echo
+#echo "Setting up av-mottak-$ENV-rg"
+#az storage container create --name "tusd-target" --account-name $STORAGE_ACCOUNT_NAME --resource-group $MOTTAK_RESOURCE_GROUP
+
+#echo
+#echo "Setting up av-mottak-$ENV-vault"
+#az keyvault secret set --name "mailgun-secret" --vault-name "$MOTTAK_VAULT_NAME" --description "Secret for using mailgun API"

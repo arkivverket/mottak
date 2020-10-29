@@ -24,6 +24,7 @@ steps:
     workingDirectory: azure-pipelines
 
   - script: |
+      git checkout develop
       poetry run python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}
     displayName: 'Update tag in values-container.yaml'
     workingDirectory: azure-pipelines
@@ -40,3 +41,11 @@ steps:
       kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
       namespace: 'av-mottak-dev'
       manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
+
+  - script: |
+      git add "azure-pipelines/values/${{ parameters.env }}/values-containers.yaml"
+      git add "azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}"
+      git commit -m "Updates ${{ parameters.valuesContainerKey }} ${{ parameters.containerTag }}"
+      echo $(git status)
+#      git push origin ## We will enable this at a later point when we have verified a bit more
+    displayName: 'Updates git with correct version'
