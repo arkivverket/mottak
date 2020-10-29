@@ -53,7 +53,7 @@ spec:
                   name: mailgun-secret
                   key: mailgun-secret
             - name: MAILGUN_DOMAIN
-              value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+              value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:

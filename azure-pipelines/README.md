@@ -10,7 +10,7 @@ trigger the matching Azure DevOps pipeline in [pipelines](pipelines). Ie a new i
 
 ## Adding pipeline to Azure DevOps
 - Create a new deployment file <name>-deploy.yaml in [pipelines](pipelines), see [pipelines/kicker-deploy.yaml](pipelines/kicker-deploy.yaml).
-- If you copy paste an existing pipeline, you should only have to change `registry` under `resources.containers` and the `variables`
+- If you copy paste an existing pipeline, you should only have to change `repository` under `resources.containers` and the `variables`
 - Once it has been commited and merged to develop, go to [https://dev.azure.com/arkivverket](https://dev.azure.com/arkivverket) and add the
 pipeline from GIT.
 
