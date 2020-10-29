@@ -33,9 +33,9 @@ jobs:
       - checkout: self
         persistCredentials: true
 
-    - script: |
-        echo $(resources.container.cont.tag)
-      displayName: 'print container tag'
+      - script: |
+          echo $(resources.container.cont.tag)
+        displayName: 'print container tag'
 
       - template: deploy.yaml
         parameters:
