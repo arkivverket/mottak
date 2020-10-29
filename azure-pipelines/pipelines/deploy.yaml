@@ -25,6 +25,7 @@ steps:
 
   - script: |
       git checkout develop
+      echo "Running: python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}"
       poetry run python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}
     displayName: 'Update tag in values-container.yaml'
     workingDirectory: azure-pipelines
