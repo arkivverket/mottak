@@ -30,4 +30,4 @@ spec:
                   name: av-mottak-dev-sb-endpoint-argo-kicker
                   key: av-mottak-dev-sb-endpoint-argo-kicker
             - name: AZ_SB_QUEUE
-              value: "argo-workflow"
+              value: argo-workflow

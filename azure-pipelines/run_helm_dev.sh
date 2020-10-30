@@ -13,4 +13,4 @@ OUTPUT_FOLDER="$2"
 
 
 ## Build yaml files
-helm template --values "values/$ENV/values.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
+helm template --values "values/$ENV/values.yaml" --values "values/$ENV/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/

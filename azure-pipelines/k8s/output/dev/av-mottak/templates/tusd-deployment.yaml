@@ -1,0 +1,80 @@
+---
+# Source: av-mottak/templates/tusd-deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: av-mottak-dev-tusd-service
+  namespace: av-mottak-dev
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 1080
+  selector:
+    run:  tusd-app    # references the deployment
+---
+# Source: av-mottak/templates/tusd-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: av-mottak-dev-tusd-deployment
+  namespace: av-mottak-dev
+  labels:
+    app: tusd-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: tusd-app
+  template:
+    metadata:
+      labels:
+        run: tusd-app
+    spec:
+      containers:
+        - image: 'arkivverket.azurecr.io/av-mottak/tusd:c8a951e417c427e7ada6431332e3a9272619948a'
+          imagePullPolicy: Always
+          name: tusd-container
+          ports:
+            - containerPort: 1080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 1080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          env:
+            - name: DBSTRING
+              valueFrom:
+                secretKeyRef:
+                  name: av-mottak-dev-dsn
+                  key: av-mottak-dev-secret-dsn
+            - name: BUCKET
+              value: tusd-storage
+            - name: OBJECTSTORE
+              value: "azure"
+            - name: AZURE_ACCOUNT_NAME
+              value: avmottakdevsacc
+            - name: AZURE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-key
+                  key: storageaccount-key
+            - name: AWS_REGION
+              value: "eu-north-1" # Not used atm
+            - name: MAILGUN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mailgun-secret
+                  key: mailgun-secret
+            - name: MAILGUN_DOMAIN
+              value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+            - name: AZ_SB_CON_KICKER
+              valueFrom:
+                secretKeyRef:
+                  name: av-mottak-dev-sb-endpoint-argo-kicker
+                  key: av-mottak-dev-sb-endpoint-argo-kicker
+            - name: AZ_SB_QUEUE
+              value: argo-workflow
