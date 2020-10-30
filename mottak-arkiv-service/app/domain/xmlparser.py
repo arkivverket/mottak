@@ -1,9 +1,14 @@
 import xml.etree.ElementTree as ET
+from datetime import date
+from typing import Union
+from uuid import UUID
 
-from app.domain.models.metadatafil import Metadatafil, ParsedMetadatafil
+from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+
+NOT_PRESENT_RETURN_VALUE = ''
 
 
-def recursive_ns(elem: ET.Element, ns: dict) -> dict:
+def _recursive_ns(elem: ET.Element, ns: dict) -> dict:
     """
     Method that returns a dictionary containing the namespaces used
     when parsing an METS XML.
@@ -19,21 +24,52 @@ def recursive_ns(elem: ET.Element, ns: dict) -> dict:
 
     # Check children of elem and update with unique tag:uri
     for child in elem:
-        ns.update(recursive_ns(child, ns))
+        ns.update(_recursive_ns(child, ns))
     return ns
 
 
-def get_all_namespaces(root: ET.Element) -> dict:
+def _get_all_namespaces(root: ET.Element) -> dict:
     """
     Method that returns a dictionary containing the namespaces used
     when parsing an METS XML.
     """
-    ns = recursive_ns(root, {})
+    ns = _recursive_ns(root, {})
     return ns
 
 
-# TODO Error handling of missing XML nodes, applies to all functions below
-def get_title(root: ET.Element, ns: dict) -> str:
+def _get_objekt_id(root: ET.Element) -> UUID:
+    uuid_str = root.get('OBJID')
+    return UUID(uuid_str[5:])
+
+
+def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
+    """
+    Method that converts a str to a ArkivuttrekkType Enum value or returns a ValueError
+    """
+    if "Noark" in arkivuttrekk_str and "5" in arkivuttrekk_str:
+        return ArkivuttrekkType.NOARK5
+    if "Noark" in arkivuttrekk_str and "3" in arkivuttrekk_str:
+        return ArkivuttrekkType.NOARK3
+    if "Fagsystem" in arkivuttrekk_str:
+        return ArkivuttrekkType.FAGSYSTEM
+    if "SIARD" in arkivuttrekk_str:
+        return ArkivuttrekkType.SIARD
+    return NOT_PRESENT_RETURN_VALUE
+
+
+def _get_arkivtype(root: ET.Element, ns: dict) -> str:
+    # Arkivtype: DELIVERYSPECIFICATION
+    try:
+        alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+        arkivtype = [alt for alt in alt_record_ids
+                     if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
+    except IndexError:
+        return NOT_PRESENT_RETURN_VALUE
+    else:
+        return _str_2_arkivuttrekk_type(arkivtype)
+
+
+def _get_title(root: ET.Element, ns: dict) -> str:
     # Tittel = ARCHIVIST-ORGANIZATION + LABEL
     label = root.get('LABEL')
     try:
@@ -41,129 +77,127 @@ def get_title(root: ET.Element, ns: dict) -> str:
         agent = [agent for agent in agents
                  if ("ARCHIVIST" == agent.get('ROLE') and
                      "ORGANIZATION" == agent.get('TYPE'))].pop()
-        arch_org = agent.findtext('mets:name', namespaces=ns)
     except IndexError:
-        arch_org = None
+        arch_org = NOT_PRESENT_RETURN_VALUE
+    else:
+        arch_org = agent.findtext('mets:name', namespaces=ns)
+    if label or arch_org:
+        return f'{arch_org} -- {label}'
+    else:
+        return NOT_PRESENT_RETURN_VALUE
 
-    return f'{arch_org} -- {label}'
+
+def _get_checksum(root: ET.Element, ns: dict) -> str:
+    files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
+    checksum = files.get('CHECKSUM')
+    return checksum if checksum else NOT_PRESENT_RETURN_VALUE
 
 
-def get_kontaktperson(root: ET.Element, ns: dict) -> str:
-    # Kontaktperson: Navn (e-post) SUBMITTER - INDIVIDUAL
+def _get_avgiver_navn(root: ET.Element, ns: dict) -> str:
     try:
         agents = root.findall('mets:metsHdr/mets:agent', namespaces=ns)
         agent = [agent for agent in agents
                  if ("ARCHIVIST" == agent.get('ROLE') and
                      "INDIVIDUAL" == agent.get('TYPE'))].pop()
-        name = agent.findtext('mets:name', namespaces=ns)
-        # Note is not a unique element. We have to search for the note containing email address
+    except IndexError:
+        return NOT_PRESENT_RETURN_VALUE
+    else:
+        return agent.findtext('mets:name', namespaces=ns)
+
+
+def _get_avgiver_epost(root: ET.Element, ns: dict) -> str:
+    try:
+        agents = root.findall('mets:metsHdr/mets:agent', namespaces=ns)
+        agent = [agent for agent in agents
+                 if ("ARCHIVIST" == agent.get('ROLE') and
+                     "INDIVIDUAL" == agent.get('TYPE'))].pop()
+    except IndexError:
+        return NOT_PRESENT_RETURN_VALUE
+    else:
         email_list = [note for note in agent.findall('mets:note', namespaces=ns)
                       if '@' in note.text]
-        if email_list:
-            email = email_list.pop().text
-        else:
-            email = None
-    except IndexError:
-        name = None
-        email = None
-
-    return f"{name} ({email})"
+        return email_list.pop().text if email_list else NOT_PRESENT_RETURN_VALUE
 
 
-def get_arkivtype(root: ET.Element, ns: dict) -> str:
-    # Arkivtype: DELIVERYSPECIFICATION
-    try:
-        altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-        arkivtype = [alt for alt in altRecordIDs
-                     if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
-        return arkivtype
-    except IndexError:
-        return 'None'
+def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Union[date, str]:
+    alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+    for alt_record in alt_record_ids:
+        if alt_record.get('TYPE') == "STARTDATE":
+            date_ = alt_record.text
+            return date.fromisoformat(date_)
+    return NOT_PRESENT_RETURN_VALUE
 
 
-def get_objekt_id(root: ET.Element):
-    return root.get('OBJID')
+def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> date:
+    alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+    for alt_record in alt_record_ids:
+        if alt_record.get('TYPE') == "ENDDATE":
+            date_ = alt_record.text
+            return date.fromisoformat(date_)
+    return None
 
 
-def format_size(size_bytes, unit="MB"):
+def _convert_2_megabytes(size_bytes) -> float:
     """
-    Method that converts integers to common size units.
-    Default unit is MB
+    Method that converts bytes to MB
     """
-    convert = {
-        "B": 1,
-        "KB": 10 ** 3,
-        "MB": 10 ** 6,
-        "GB": 10 ** 9,
-        "TB": 10 ** 12,
-    }
-
-    converted_size = size_bytes / convert[unit]
-    return f"{converted_size} {unit}"
+    MB = 10 ** 6
+    converted_size = float(size_bytes / MB)
+    return converted_size
 
 
-def get_storrelse(root: ET.Element, ns: dict) -> str:
+def _get_storrelse(root: ET.Element, ns: dict) -> float:
     # Størrelse: (METS FILE ID SIZE)
     files = root.findall('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
-    total_size = 0
+    total_bytes = 0
     for file in files:
-        total_size += int(file.get('SIZE'))
-    return format_size(total_size)
+        total_bytes += int(file.get('SIZE'))
+    return _convert_2_megabytes(total_bytes)
 
 
-def get_tidsspenn(root: ET.Element, ns: dict) -> str:
-    # Tidsspenn: (STARTDATE + ENDDATE)
-    altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-    startdate = None
-    enddate = None
-    for record in altRecordIDs:
-        type = record.get('TYPE')
-        if type == "STARTDATE":
-            startdate = record.text
-        elif type == "ENDDATE":
-            enddate = record.text
-    return f"{startdate} -- {enddate}"
-
-
-def get_avtalenummer(root: ET.Element, ns: dict) -> str:
+def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
     # Avtalenummer: SUBMISSSION AGREEMENT
     try:
-        altRecordIDs = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
-        avtalenummer = [alt for alt in altRecordIDs
+        alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
+        avtalenummer = [alt for alt in alt_record_ids
                         if "SUBMISSIONAGREEMENT" == alt.get('TYPE')].pop().text
         return avtalenummer
     except IndexError:
-        return 'None'
+        return NOT_PRESENT_RETURN_VALUE
 
 
-def get_parsedmetadatafil(metadatafil: Metadatafil) -> ParsedMetadatafil:
+def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -> Arkivuttrekk:
     """
     Method that parse the content (innhold) of a metadatfil
-    and returns a object of type ParsedMetadatafil
-    which contains information used for uploading an archive.
-    """
-    root = ET.fromstring(metadatafil.innhold)
-    ns = get_all_namespaces(root)
-
-    parsed = ParsedMetadatafil(
-        tittel=get_title(root, ns),
-        endret=metadatafil.endret,
-        kontaktperson=get_kontaktperson(root, ns),
-        arkivtype=get_arkivtype(root, ns),
-        objekt_id=get_objekt_id(root),
-        storrelse=get_storrelse(root, ns),
-        tidsspenn=get_tidsspenn(root, ns),
-        avtalenummer=get_avtalenummer(root, ns)
-    )
-    return parsed
-
-
-def get_checksum(innhold: str) -> str:
-    """
-    Method that returns the checksum contained in the XML document
+    and returns a domain object of type Arkivuttrekk.
     """
     root = ET.fromstring(innhold)
-    ns = get_all_namespaces(root)
+    ns = _get_all_namespaces(root)
 
-    files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
-    return files.get('CHECKSUM')
+    arkivuttrekk = Arkivuttrekk(
+        obj_id=_get_objekt_id(root),
+        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        type_=_get_arkivtype(root, ns),
+        tittel=_get_title(root, ns),
+        sjekksum_sha256=_get_checksum(root, ns),
+        avgiver_navn=_get_avgiver_navn(root, ns),
+        avgiver_epost=_get_avgiver_epost(root, ns),
+        metadatafil_id=metadatafil_id,
+        arkiv_startdato=_get_arkiv_startdato(root, ns),
+        arkiv_sluttdato=_get_arkiv_sluttdato(root, ns),
+        storrelse=_get_storrelse(root, ns),
+        avtalenummer=_get_avtalenummer(root, ns)
+    )
+    return arkivuttrekk
+
+
+# TODO Fjern?
+# def get_checksum(innhold: str) -> str:
+#     """
+#     Method that returns the checksum contained in the XML document
+#     """
+#     root = ET.fromstring(innhold)
+#     ns = get_all_namespaces(root)
+#
+#     files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
+#     return files.get('CHECKSUM')

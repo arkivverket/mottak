@@ -1,0 +1,37 @@
+---
+# Source: av-mottak/templates/minio-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: av-mottak-dev.minio-deployment
+  namespace: av-mottak-dev
+  labels:
+    app: minio-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: minio-app
+  template:
+    metadata:
+      labels:
+        run: minio-app
+    spec:
+      containers:
+        - image: minio/minio
+          args: ["gateway", "azure"]
+          name: minio-container
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          env:
+            - name: MINIO_AZURE_CHUNK_SIZE_MB
+              value: "0.25"
+            - name:  MINIO_ACCESS_KEY
+              value: "mottakmvp"
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-key
+                  key: storageaccount-key

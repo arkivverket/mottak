@@ -1,6 +1,6 @@
 # tusd
 
-Documentation: https://github.com/tus/tusd
+Documentation: [https://github.com/tus/tusd](https://github.com/tus/tusd)
 
 tusd handles incomming data from the upload client. You need to have one more more instances running and typically you'll have this open to the internet.
 
@@ -14,7 +14,7 @@ The dependency `psycopg2` requires that you have installed postgresql on mac:
 
 # What is needed to get this running
 
- * DBSTRING, PHP-like formatting, needed for running the hooks
+ * DBSTRING, URI formatting: `postgresql://[user[:password]@][netloc][:port][,...][/dbname][?param1=value1&...]`
  * BUCKET
  * Object-store specifics. See start.sh for details as well as the deployment YAML.
  * Azure service bus settings.

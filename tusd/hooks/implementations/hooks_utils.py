@@ -24,46 +24,32 @@ def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
     return data
 
 
-def create_db_access(dbstring: str, logger) -> dict:
-    """Create a psycopg2 compatible object from the connection string.
-    The string is from PHP and we reuse it here
-    """
-    mystr = dbstring[6:]
-    mystr = mystr.rstrip()
-    d = dict(re.findall(r'(\w+)=([^;]+);?', mystr))
-    # Validate dbstring:
-    for key in ['user', 'password', 'host', 'dbname']:
-        if key not in d.keys():
-            logger.error('%s not found in DBSTRING' % key)
-            raise ValueError
-    return d
-
-
-def my_connect(conn_info: dict, logger):
+def my_connect(dbstring: str, logger):
     try:
-        connection = psycopg2.connect(user=conn_info['user'],
-                                      host=conn_info['host'],
-                                      dbname=conn_info['dbname'],
-                                      password=conn_info['password'],
-                                      sslmode='require',
-                                      # Thank you azure (only needed outside Azure):
-                                      sslrootcert='BaltimoreCyberTrustRoot.crt.pem',
-                                      connect_timeout=10)
+        connection = psycopg2.connect(dbstring)
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error while connecting to PostgreSQL: {error}")
-        raise(error)
+        raise (error)
     finally:
         return connection
 
 
-def get_metadata(conn, invitation_id: str, logger):
+def get_metadata(conn, invitasjon_ekstern_id: str, logger):
     """ Fetch metadata about an invitation from the database using the invitation id as key """
     try:
         dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        dict_cursor.execute('SELECT invitations.id, uuid, checksum, is_sensitive, name, email, type '
-                            'FROM invitations, archive_types '
-                            'WHERE archive_type_id=archive_types.id '
-                            'AND invitations.id=%s', (invitation_id))
+        dict_cursor.execute(
+            'SELECT i.id            AS id, '
+            'i.ekstern_id           AS uuid, '
+            'a.sjekksum_sha256      AS checksum, '
+            'false                  AS is_sensitive, '
+            'a.avgiver_navn         AS name, '
+            'a.avgiver_epost        AS email, '
+            'a.type                 AS type, '
+            'a.id                   AS arkivuttrekk_id, '
+            'a.storrelse            AS storrelse '
+            'FROM invitasjon i LEFT JOIN arkivuttrekk a ON i.arkivuttrekk_id = a.id '
+            'WHERE i.ekstern_id =%s', (invitasjon_ekstern_id))
         rec = dict_cursor.fetchall()
         print(rec)
     except psycopg2.Error as exception:

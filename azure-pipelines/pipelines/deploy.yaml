@@ -1,0 +1,52 @@
+---
+parameters:
+  - name: valuesContainerKey
+    type: string
+
+  - name: containerTag
+    type: string
+
+  - name: env
+    type: string
+
+  - name: deploymentYamlName
+    type: string
+
+steps:
+  # Use Python version (defaults to 3.x) and appends to path
+  - task: UsePythonVersion@0
+
+  - script: |
+      python -m pip install -U pip
+      pip install poetry
+      poetry install
+    displayName: 'Install software'
+    workingDirectory: azure-pipelines
+
+  - script: |
+      git checkout develop
+      echo "Running: python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}"
+      poetry run python update_values_yaml.py --file "values/${{ parameters.env }}/values-containers.yaml" --key ${{ parameters.valuesContainerKey }} --value ${{ parameters.containerTag }}
+    displayName: 'Update tag in values-container.yaml'
+    workingDirectory: azure-pipelines
+
+  - script: |
+      OUTPUT_FOLDER="k8s/output/${{ parameters.env }}"
+      helm template --values "values/${{ parameters.env }}/values.yaml" --values "values/${{ parameters.env }}/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
+    displayName: 'Running helm template'
+    workingDirectory: azure-pipelines
+
+  - task: KubernetesManifest@0
+    inputs:
+      action: 'deploy'
+      kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
+      namespace: 'av-mottak-dev'
+      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
+
+  - script: |
+      git add "azure-pipelines/values/${{ parameters.env }}/values-containers.yaml"
+      git add "azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}"
+      git commit -m "Updates ${{ parameters.valuesContainerKey }} ${{ parameters.containerTag }}"
+      echo $(git status)
+#      git push origin ## We will enable this at a later point when we have verified a bit more
+    displayName: 'Updates git with correct version'

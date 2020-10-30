@@ -3,7 +3,7 @@ import os                               # for getenv
 import sys
 import logging
 
-from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
+from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
 from .return_codes import JSONERROR, USAGEERROR, UNKNOWNIID, UUIDERROR, OK, UNKNOWNUUID
 
 try:
@@ -42,26 +42,26 @@ def run():
         exit(USAGEERROR)
 
     try:
-        iid = tusd_data["Upload"]["MetaData"]["invitation_id"]
-        logging.info(f"Invitation ID from JSON: {iid}")
+        invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjon_ekstern_id"]
+        logging.info(f"Invitation ID from JSON: {invitasjon_ekstern_id}")
         # todo: Specify exception.
     except:
-        logging.error(f"Could not find invitation_id in JSON: {iid}")
+        logging.error(f"Could not find invitasjon_ekstern_id in JSON: {invitasjon_ekstern_id}")
         exit(UNKNOWNIID)
 
-    connection = my_connect(create_db_access(os.getenv('DBSTRING'), logger=logging), logger=logging)
-    metadata = get_metadata(connection, iid, logger=logging)
+    connection = my_connect(os.getenv('DBSTRING'), logger=logging)
+    metadata = get_metadata(connection, invitasjon_ekstern_id, logger=logging)
     my_disconnect(connection)
     if not metadata:
         logging.error(
-            f"Failed to fetch metadata for invitation {iid} - no invitation?")
+            f"Failed to fetch metadata for invitation {invitasjon_ekstern_id} - no invitation?")
         exit(UNKNOWNIID)
 
     try:
         uuid = metadata['uuid']
     except Exception as exception:
         logging.error(
-            f'Error while looking up uuid from invition ({iid}) from DB: {exception}')
+            f'Error while looking up uuid from invition ({invitasjon_ekstern_id}) from DB: {exception}')
         exit(UNKNOWNUUID)
 
     # This is the pre-create hook. The only concern here is to validate the UUID

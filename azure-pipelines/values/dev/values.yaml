@@ -1,0 +1,14 @@
+## VALUES
+AV_NAMESPACE: av-mottak-dev
+MOTTAK_STORAGE_ACCOUT_KEY: avmottakdevsacc
+TUSD_KICKER_SERVICE_BUS_QUEUE: argo-workflow
+AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT: av-mottak-dev-sb-endpoint-argo-kicker
+
+
+# CSI Driver Link
+TENANT_ID_KEYVAULT: testId
+
+
+## TUSD
+TUSD_DOWNLOAD_LOCATION_CONTAINER: tusd-storage
+MAILGUN_DOMAIN: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org

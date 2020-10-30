@@ -3,9 +3,8 @@ from sqlalchemy.orm import Session
 
 from app.database.mappers.metadatafil import map_dbo2model
 from app.database.repository import metadatafil_create, metadatafil_get_by_id
-from app.domain.models.metadatafil import ParsedMetadatafil
-from app.domain.xmlparser import get_parsedmetadatafil
-from app.routers.mappers.metadafil import metadatafil_mapper, map_parsed_domain2dto
+from app.routers.mappers.metadafil import metadatafil_mapper
+from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 from app.exceptions import MetadatafilNotFound
 
 
@@ -14,20 +13,25 @@ def upload_metadatafil(file: UploadFile, db: Session):
     return metadatafil_create(db, metadatafil)
 
 
-def get_dbo_by_id(db: Session, id: int):
-    dbo = metadatafil_get_by_id(db, id)
+# TODO fix exceptionhandling i router
+def _get_dbo_by_id(db: Session, id_: int):
+    dbo = metadatafil_get_by_id(db, id_)
     if not dbo:
-        raise MetadatafilNotFound(id)
+        raise MetadatafilNotFound(id_)
     return dbo
 
 
-def get_content(id: int, db: Session) -> str:
-    dbo = get_dbo_by_id(db, id)
+def get_content(id_: int, db: Session) -> str:
+    dbo = _get_dbo_by_id(db, id_)
     return dbo.innhold
 
 
-def get_parsed_content(id: int, db: Session) -> ParsedMetadatafil:
-    dbo = get_dbo_by_id(db, id)
-    domain_model = map_dbo2model(dbo)
-    domain_parsed = get_parsedmetadatafil(domain_model)
-    return map_parsed_domain2dto(domain_parsed)
+def get_parsed_content(id_: int, db: Session) -> ArkivuttrekkBase:
+    """
+    Method that retrieves an Metadatafil database object by the input id_
+    and parses its content for values used when initializing an object of type ArkivuttrekkBase.
+    """
+    metadatafil_dbo = _get_dbo_by_id(db, id_)
+    metadatafil = map_dbo2model(metadatafil_dbo)
+    arkivuttrekk = metadatafil.as_arkivuttrekk()
+    return ArkivuttrekkBase.from_domain(arkivuttrekk)

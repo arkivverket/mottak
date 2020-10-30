@@ -1,6 +1,6 @@
 # kicker
 
-This code is supposed to listen to the service bus is Azure and fire off the Argo client to initiate running the DAGs.
+Kicker listens to the service bus is Azure and fires off the Argo client to initiate running the DAGs.
 
 Supported DAGs:
  - submit-archive

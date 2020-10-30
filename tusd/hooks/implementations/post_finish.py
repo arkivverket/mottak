@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os                               # for getenv
+import os  # for getenv
 import sys
 import json
 import psycopg2
@@ -7,14 +7,16 @@ import psycopg2.extras
 import logging
 from azure.servicebus import QueueClient, Message
 
-from .hooks_utils import read_tusd_event, my_connect, create_db_access, get_metadata, my_disconnect
-from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR,OK
+from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
+from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR, OK
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except:
     print('dotenv not loaded')
+
 
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
@@ -22,13 +24,13 @@ except:
 # Todo: clean up logging between hooks_utils and this file
 
 
-def update_db_with_objectname(conn, iid, objectname):
+def update_db_with_objectname(conn, metadata: dict, objectname):
     """ Update the database with the name of the relevant object as it is named in the object store.
         We do this as tusd assigns a random name to each object """
     try:
         cur = conn.cursor()
-        cur.execute(
-            "UPDATE invitations SET object_name = %s WHERE id = %s", (objectname, iid))
+        cur.execute('insert into overforingspakke (arkivuttrekk_id, navn, storrelse, status) VALUES (%s, %s, %s, %s)',
+                    (metadata['arkivuttrekk_id'], objectname, metadata['storrelse'], 'OK'))
         if cur.rowcount != 1:
             raise psycopg2.DataError
     except psycopg2.Error as exception:
@@ -58,7 +60,6 @@ def get_sb_sender(conn_str, queue):
         return queue_client.get_sender()
     except Exception as exception:
         logging.error(f'Could not connect to Service Bus Queue: {exception}')
-        logging.error(f'Connection string: {conn_str}')   # Todo: Potential security issue here. Filter out parts of the string?
         logging.error(f'Queue: {queue}')
         exit(SBERROR)
 
@@ -107,25 +108,25 @@ def run():
         exit(USAGEERROR)
 
     try:
-        iid = tusd_data["Upload"]["MetaData"]["invitation_id"]
-        logging.info(f"Invitation ID from JSON: {iid}")
+        invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjon_ekstern_id"]
+        logging.info(f"Invitation ID from JSON: {invitasjon_ekstern_id}")
         # todo: Specify exception.
     except:
-        logging.error(f"Could not find invitation_id in JSON: {iid}")
+        logging.error(f"Could not find invitation_id in JSON: {invitasjon_ekstern_id}")
         exit(UNKNOWNIID)
 
-    connection = my_connect(create_db_access(os.getenv('DBSTRING'), logger=logging), logger=logging)
-    metadata = get_metadata(connection, iid, logger=logging)
+    connection = my_connect(os.getenv('DBSTRING'), logger=logging)
+    metadata = get_metadata(connection, invitasjon_ekstern_id, logger=logging)
     if not metadata:
         logging.error(
-            f"Failed to fetch metadata for invitation {iid} - no invitation?")
+            f"Failed to fetch metadata for invitation {invitasjon_ekstern_id} - no invitation?")
         exit(UNKNOWNIID)
 
     try:
         uuid = metadata['uuid']
     except Exception as exception:
         logging.error(
-            f'Error while looking up uuid from invition ({iid}) from DB: {exception}')
+            f'Error while looking up uuid from invition ({invitasjon_ekstern_id}) from DB: {exception}')
         exit(UNKNOWNIID)
 
     # Verify that we have a filename:
@@ -138,9 +139,9 @@ def run():
         exit(JSONERROR)
 
     try:
-        update_db_with_objectname(connection, iid, filename)
+        update_db_with_objectname(connection, metadata, filename)
         logging.debug(
-            f"Set object_name to {filename} for iid {iid} in database.")
+            f"Set object_name to {filename} for invitasjon_ekstern_id {invitasjon_ekstern_id} in database.")
     except Exception as exception:
         logging.error("Error while updating database {exception}")
         exit(DBERROR)

@@ -1,7 +1,7 @@
 # !TOP_COMMENT!
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
     paths:
       - '!COMPONENT_NAME!/**'
   pull_request:
