@@ -10,7 +10,7 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 1080
+      targetPort: 80
   selector:
     run:  storage-sas-generator-app    # references the deployment
 ---
@@ -33,9 +33,11 @@ spec:
         run: storage-sas-generator-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:latest'
+        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:kriwal'
           imagePullPolicy: Always
           name: storage-sas-generator
+          ports:
+            - containerPort: 80
           env:
             - name: AZURE_ACCOUNT_NAME
               value: avmottakdevsacc
