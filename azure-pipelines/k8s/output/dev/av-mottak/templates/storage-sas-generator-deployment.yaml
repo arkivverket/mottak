@@ -1,0 +1,46 @@
+---
+# Source: av-mottak/templates/storage-sas-generator-deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: av-mottak-dev-storage-sas-generator-service
+  namespace: av-mottak-dev
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 1080
+  selector:
+    run:  storage-sas-generator-app    # references the deployment
+---
+# Source: av-mottak/templates/storage-sas-generator-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: av-mottak-dev-storage-sas-generator-deployment
+  namespace: av-mottak-dev
+  labels:
+    app: storage-sas-generator-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: storage-sas-generator-app
+  template:
+    metadata:
+      labels:
+        run: storage-sas-generator-app
+    spec:
+      containers:
+        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:latest'
+          imagePullPolicy: Always
+          name: storage-sas-generator
+          env:
+            - name: AZURE_ACCOUNT_NAME
+              value: avmottakdevsacc
+            - name: AZURE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-key
+                  key: storageaccount-key
