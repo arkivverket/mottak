@@ -1,5 +1,3 @@
-
-
 class MetadatafilNotFound(Exception):
     """
     Exception raised when metadatafil doesn't exist in database
@@ -9,9 +7,9 @@ class MetadatafilNotFound(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, id: int, message="Fant ikke metadatafil med id="):
-        self.id = id
-        self.message = message + str(id)
+    def __init__(self, id_: int, message="Fant ikke metadatafil med id="):
+        self.id = id_
+        self.message = message + str(id_)
         super().__init__(self.message)
 
     def __str__(self):
@@ -26,9 +24,9 @@ class MetadatafilMissingInnhold(Exception):
            message -- explanation of the error
        """
 
-    def __init__(self, id: int, message="Mangler innhold i metadatafil med id="):
-        self.id = id
-        self.message = message + str(id)
+    def __init__(self, id_: int, message="Mangler innhold i metadatafil med id="):
+        self.id = id_
+        self.message = message + str(id_)
         super().__init__(self.message)
 
     def __str__(self):
@@ -44,9 +42,27 @@ class ArkivuttrekkNotFound(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, id: int, message="Fant ikke arkivuttrekk med id="):
-        self.id = id
-        self.message = message + str(id)
+    def __init__(self, id_: int, message="Fant ikke arkivuttrekk med id="):
+        self.id = id_
+        self.message = message + str(id_)
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class UnvalidContentType(Exception):
+    """
+    Exception raised when the content type of an FastAPI UploadFile object is not of a valid type.
+
+    Attributes:
+        content_type -- The unvalid content type
+        message -- explanation of the error
+    """
+
+    def __init__(self, content_type: str):
+        self.content_type = content_type
+        self.message = f"Content type {content_type} is not a valid type"
         super().__init__(self.message)
 
     def __str__(self):

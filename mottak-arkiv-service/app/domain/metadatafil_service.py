@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.database.mappers.metadatafil import map_dbo2model
 from app.database.repository import metadatafil_create, metadatafil_get_by_id
-from app.routers.mappers.metadafil import metadatafil_mapper
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 from app.exceptions import MetadatafilNotFound
+from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
+from app.routers.mappers.metadafil import metadatafil_mapper
 
 
 def upload_metadatafil(file: UploadFile, db: Session):
@@ -13,7 +13,6 @@ def upload_metadatafil(file: UploadFile, db: Session):
     return metadatafil_create(db, metadatafil)
 
 
-# TODO fix exceptionhandling i router
 def _get_dbo_by_id(db: Session, id_: int):
     dbo = metadatafil_get_by_id(db, id_)
     if not dbo:

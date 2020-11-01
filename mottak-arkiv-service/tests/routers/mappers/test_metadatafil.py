@@ -1,6 +1,7 @@
 import pytest
 
 from app.domain.models.Metadatafil import Metadatafil, MetadataType
+from app.exceptions import UnvalidContentType
 from app.routers.mappers.metadafil import _get_file_content, metadatafil_mapper, _content_type2metadata_type
 
 
@@ -21,7 +22,7 @@ def test__content_type2metadata_type__failure():
     WHEN    calling the method _content_type2metadata_type
     THEN    check that a ValueError Exception has been raised
     """
-    with pytest.raises(ValueError):
+    with pytest.raises(UnvalidContentType):
         _content_type2metadata_type('text')
 
 
