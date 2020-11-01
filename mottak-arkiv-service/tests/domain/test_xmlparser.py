@@ -241,13 +241,3 @@ def test_create_arkivuttrekk_from_parsed_innhold(_innhold):
     actual = create_arkivuttrekk_from_parsed_innhold(metadatafil_id, _innhold)
     assert vars(actual) == vars(expected)
 
-# TODO Find out if this method is needed
-# def test_get_checksum(t_innhold):
-#     """
-#     GIVEN   the content of a metadatafil, i.e. a string of a METS/XML file
-#     WHEN    calling the method get_checksum()
-#     THEN    check that the returned string contains the checksum
-#     """
-#     expected = '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a'
-#     actual = get_checksum(t_innhold)
-#     assert actual == expected

@@ -189,15 +189,3 @@ def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -
         avtalenummer=_get_avtalenummer(root, ns)
     )
     return arkivuttrekk
-
-
-# TODO Fjern?
-# def get_checksum(innhold: str) -> str:
-#     """
-#     Method that returns the checksum contained in the XML document
-#     """
-#     root = ET.fromstring(innhold)
-#     ns = get_all_namespaces(root)
-#
-#     files = root.find('mets:fileSec/mets:fileGrp/mets:file', namespaces=ns)
-#     return files.get('CHECKSUM')
