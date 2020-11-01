@@ -25,6 +25,23 @@ class ArkivuttrekkBase(BaseModel):
     storrelse: float
     avtalenummer: str
 
+    def to_domain(self) -> Arkivuttrekk_domain:
+        return Arkivuttrekk_domain(
+            obj_id=self.obj_id,
+            status=self.status,
+            type_=self.type,
+            tittel=self.tittel,
+            sjekksum_sha256=self.sjekksum_sha256,
+            avgiver_navn=self.avgiver_navn,
+            avgiver_epost=self.avgiver_epost,
+            koordinator_epost=self.koordinator_epost,
+            metadatafil_id=self.metadatafil_id,
+            arkiv_startdato=self.arkiv_startdato,
+            arkiv_sluttdato=self.arkiv_sluttdato,
+            storrelse=self.storrelse,
+            avtalenummer=self.avtalenummer,
+        )
+
     @staticmethod
     def from_domain(arkivuttrekk: Arkivuttrekk_domain):
         return ArkivuttrekkBase(
