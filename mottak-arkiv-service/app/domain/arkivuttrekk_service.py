@@ -28,10 +28,7 @@ def get_all(db: Session, skip: int, limit: int):
 
 
 async def create_invitasjon(arkivuttrekk_id: int, db: Session, mailgun_client: MailgunClient) -> Optional[Invitasjon]:
-    arkivuttrekk = arkivuttrekk_get_by_id(db, arkivuttrekk_id)
-    # TODO Fix exception
-    if not arkivuttrekk:
-        return None
+    arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     return await _send_invitasjon(arkivuttrekk, db, mailgun_client)
 
 
