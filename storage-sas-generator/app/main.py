@@ -18,7 +18,7 @@ from azure.storage.blob import generate_container_sas, ContainerSasPermissions
 # Model
 from app.model.dto import SASRequest
 from app.model.global_state import GlobalState
-from .constants import *  # pylint: disable=wildcard-import
+from app.constants import *  # pylint: disable=wildcard-import
 
 try:
     from dotenv import load_dotenv
@@ -103,8 +103,8 @@ async def startup_event():
     logging.basicConfig(level=logging.INFO)
     # Silence the somewhat verbose Azure libs...
     logging.getLogger("azure.core.pipeline.policies").setLevel(logging.WARNING)
-    account = os.getenv('AZURE_ACCOUNT')
-    key = os.getenv('AZURE_KEY')
+    account = os.getenv('AZURE_ACCOUNT_NAME')
+    key = os.getenv('AZURE_ACCOUNT_KEY')
     logging.info(f'Using storage account: "{account}"')
     if key:
         logging.info('Storage key is set')
