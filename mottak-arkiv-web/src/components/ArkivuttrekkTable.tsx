@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
+	CircularProgress,
 	TableBody,
 } from '@material-ui/core'
 import { ArkivUttrekk } from '../types/sharedTypes'
 import ArkivuttrekkRow from './ArkivuttrekkRow'
 import useRequest from '../hooks/useRequest'
 import useTable from '../hooks/useTable'
+import { AlertContext } from './WorkArea'
 
 
 /**
@@ -36,6 +38,11 @@ const ArkivuttrekkTable: React.FC = ():JSX.Element => {
 	]
 
 	const { data, loading, error, performRequest } = useRequest<ArkivUttrekk[]>()
+	const { setAlertContent } = useContext(AlertContext)
+
+	useEffect(() => {
+		error && setAlertContent && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under lasting av arkivuttrekk.', type: 'error' })
+	}, [error])
 
 	useEffect(() => {
 		performRequest({
@@ -54,14 +61,16 @@ const ArkivuttrekkTable: React.FC = ():JSX.Element => {
 	const { TblContainer, TblHead } = useTable(columns, handleTableChange)
 
 	return (
-		<TblContainer>
-			<TblHead />
-			<TableBody>
-				{data?.length && data.map((arkivUttrekk: ArkivUttrekk) => (
-					<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
-				))}
-			</TableBody>
-		</TblContainer>
+		loading ?
+			<CircularProgress /> :
+			<TblContainer>
+				<TblHead />
+				<TableBody>
+					{data?.length && data.map((arkivUttrekk: ArkivUttrekk) => (
+						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
+					))}
+				</TableBody>
+			</TblContainer>
 	)
 }
 
