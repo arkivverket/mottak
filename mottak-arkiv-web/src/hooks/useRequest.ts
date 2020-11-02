@@ -8,7 +8,7 @@ type Method = 'DELETE' | 'PATCH' | 'POST' | 'GET'
 
 interface State<T> {
 	data: T | null;
-	error: boolean;
+	error: any;
 	loading: boolean;
 }
 
@@ -39,7 +39,7 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 			return {
 				...state,
 				loading: false,
-				error: true,
+				error: action.payload,
 			}
 	}
 }

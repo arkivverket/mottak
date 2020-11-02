@@ -2,11 +2,11 @@ import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
 import { useEffect, useReducer } from 'react'
 import axiosAPI from '../request'
 
-type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR' };
+type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string };
 
 interface State<T> {
     loading: boolean;
-    error: boolean;
+    error: any;
     data: T | null;
 }
 
@@ -29,14 +29,15 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 			return {
 				...state,
 				loading: false,
-				error: true,
+				error: action.payload,
 			}
 	}
 }
 
 const useGetOnMount = <T>(
 	url: string,
-	params: AxiosRequestConfig | undefined = undefined ): State<T> => {
+	params?: any //AxiosRequestConfig | undefined = undefined
+	): State<T> => {
 
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
 		loading: false,
@@ -60,11 +61,12 @@ const useGetOnMount = <T>(
 				dispatch({ type: 'SUCCESS', payload: result.data })
 			} catch (error) {
 				if (!axios.isCancel(error)) {
-					dispatch({ type: 'ERROR' })
+					dispatch({ type: 'ERROR', payload: error })
 				}
 			}
 		}
 		performRequest()
+
 		return () => {
 			source.cancel()
 		}
