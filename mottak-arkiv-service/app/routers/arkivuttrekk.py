@@ -4,9 +4,9 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.connectors.mailgun.mailgun_client import MailgunClient
-from app.domain.arkivuttrekk_service import create_arkivuttrekk, get_by_id, get_all, create_invitasjon
+from app.domain.arkivuttrekk_service import create, get_by_id, get_all, create_invitasjon
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import MetadatafilNotFound, ArkivuttrekkNotFound, MetadatafilMissingInnhold
+from app.exceptions import MetadatafilNotFound, ArkivuttrekkNotFound
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
@@ -19,11 +19,7 @@ router = APIRouter()
              response_model=Arkivuttrekk,
              summary="Lagre et arkivuttrekk ut fra redigerbare felter")
 async def router_create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
-    try:
-        return create_arkivuttrekk(arkivuttrekk.to_domain(), db)
-    except MetadatafilNotFound as err:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
-
+    return create(arkivuttrekk.to_domain(), db)
 
 @router.get("/{id}",
             status_code=status.HTTP_200_OK,
