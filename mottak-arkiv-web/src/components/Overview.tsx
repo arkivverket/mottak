@@ -24,7 +24,7 @@ const Overview: React.FC = ():JSX.Element => {
 	const history = useHistory()
 
 	function gotoInvite() {
-		history.push('/upload')
+		history.push('/arkivuttrekk/invitation')
 	}
 
 	return (

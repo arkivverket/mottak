@@ -23,7 +23,7 @@ const Routes: RouteType[] = [
 		nav: true,
 	},
 	{
-		path: '/upload',
+		path: '/arkivuttrekk/invitation',
 		name: 'Last opp fil',
 		component: InvitationWorkflowContainer,
 		nav: true,
