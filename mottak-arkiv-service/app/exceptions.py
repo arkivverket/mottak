@@ -51,12 +51,12 @@ class ArkivuttrekkNotFound(Exception):
         return self.message
 
 
-class UnvalidContentType(Exception):
+class InvalidContentType(Exception):
     """
     Exception raised when the content type of an FastAPI UploadFile object is not of a valid type.
 
     Attributes:
-        content_type -- The unvalid content type
+        content_type -- The invalid content type
         message -- explanation of the error
     """
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException,
 from sqlalchemy.orm import Session
 
 from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
-from app.exceptions import MetadatafilNotFound, UnvalidContentType
+from app.exceptions import MetadatafilNotFound, InvalidContentType
 from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.router_dependencies import get_db_session
@@ -17,7 +17,7 @@ router = APIRouter()
 async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = Depends(get_db_session)):
     try:
         return upload_metadatafil(file, db)
-    except UnvalidContentType as err:
+    except InvalidContentType as err:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err)
 
 

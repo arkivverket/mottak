@@ -21,7 +21,7 @@ router = APIRouter()
 async def router_create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
     try:
         return create_arkivuttrekk(arkivuttrekk.to_domain(), db)
-    except MetadatafilNotFound or MetadatafilMissingInnhold as err:
+    except MetadatafilNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
