@@ -8,9 +8,9 @@ TO = ['kriwal@arkivverket.no']
 BASE64_URL = 'dpldr://eyJyZWZlcmVuY2UiOiAiMThkZGVkYjYtYThjOC00ZTI4LWIzNTUtZmM4MDJlMzlhNTg4IiwgInVwbG9hZF91cmwiOiAiaHR0cDovL3Rlc3Qubm8vIiwgInVwbG9hZF90eXBlIjogInRhciIsICJtZXRhIjogeyJpbnZpdGFzam9uX3V1aWQiOiAiZjM0NGEyODAtODQ0OS00ZjM5LWE3ZTktYzllMWI4NTg1MGE0In19'
 
 EXAMPLE_MELDING = {"reference": "18ddedb6-a8c8-4e28-b355-fc802e39a588",
-                   "upload_url": "http://test.no/",
-                   "upload_type": "tar",
-                   "meta": {"invitasjon_ekstern_id": "4480d16c-267d-4051-aaea-fd5384895b2b"}}
+                   "uploadUrl": "http://test.no/",
+                   "uploadType": "tar",
+                   "meta": {"invitasjonEksternId": "4480d16c-267d-4051-aaea-fd5384895b2b"}}
 
 EXAMPLE_EMAIL = {'from': f'Mottak Arkivverket <donotreply@{MAILGUN_DOMAIN}>',
                  'to': TO,
@@ -26,9 +26,9 @@ def test_invitasjon_melding_as_base64_url():
     THEN    verify that the correct base64 encoded url is returned
     """
     expected = _as_base64_url(EXAMPLE_MELDING)
-    melding = InvitasjonMelding(uuid.UUID(EXAMPLE_MELDING['reference']), EXAMPLE_MELDING['upload_url'],
-                                uuid.UUID(EXAMPLE_MELDING['meta']['invitasjon_ekstern_id']),
-                                EXAMPLE_MELDING['upload_type'])
+    melding = InvitasjonMelding(uuid.UUID(EXAMPLE_MELDING['reference']), EXAMPLE_MELDING['uploadUrl'],
+                                uuid.UUID(EXAMPLE_MELDING['meta']['invitasjonEksternId']),
+                                EXAMPLE_MELDING['uploadType'])
     assert expected == melding.as_base64_url()
 
 

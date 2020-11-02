@@ -42,7 +42,7 @@ def run():
         exit(USAGEERROR)
 
     try:
-        invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjon_ekstern_id"]
+        invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjonEksternId"]
         logging.info(f"Invitation ID from JSON: {invitasjon_ekstern_id}")
         # todo: Specify exception.
     except:
