@@ -38,6 +38,11 @@ const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children
 			label: 'Godkjenn verdier',
 			component: <QualityCheck />
 		},
+		{
+			number: 2,
+			label: 'Send invitasjon',
+			component: <SendInvitation />
+		},
 	]
 
 	return (

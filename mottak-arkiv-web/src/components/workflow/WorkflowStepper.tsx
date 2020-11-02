@@ -40,8 +40,6 @@ const WorkflowStepper: React.FC = (): JSX.Element => {
 	const step = steps?.find(({ number }) => number === activeStep)
 
 	const handleNext = () => {
-		console.warn('handle next', activeStep);
-
 		setActiveStep(prevActiveStep => prevActiveStep + 1)
 	}
 
@@ -68,7 +66,7 @@ const WorkflowStepper: React.FC = (): JSX.Element => {
 					<Stepper
 						alternativeLabel
 						activeStep={activeStep}
-						style={{ width: '40vw' }}
+						style={{ width: '50vw' }}
 						data-testid='stepper'
 					>
 						{steps?.map(step => (
