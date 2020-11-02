@@ -9,5 +9,6 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
     cd /app/ && \
     poetry install --no-root --no-dev
 
-ADD app /app
+ADD app /app/app
 
+EXPOSE 80
