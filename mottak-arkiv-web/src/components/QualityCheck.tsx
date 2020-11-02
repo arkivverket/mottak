@@ -10,7 +10,7 @@ import {
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
 
-import { ParsedMetadataFil } from '../types/sharedTypes'
+import { ArkivUttrekk, ParsedMetadataFil } from '../types/sharedTypes'
 import { useSharedStyles } from '../styles/sharedStyles'
 import { WorkflowContext } from './workflow/InvitationWorkflowContainer'
 import { StepperContext } from './workflow/WorkflowStepper'
@@ -86,15 +86,22 @@ const QualityCheck: React.FC = ():JSX.Element => {
 	}, [data])
 
 	useEffect(() => {
-		setAlertContent && error && setAlertContent({ msg: 'Det skjedde en feil under henting av metadata.', type: 'error' })
+		setAlertContent && error && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under henting av metadata.', type: 'error' })
 	}, [error])
 
 	useEffect(() => {
-		setAlertContent && dataAU && setAlertContent({ msg: 'Arkivuttrekk er opprettet.', type: 'info' })
+		if ( dataAU ) {
+			setArkivUttrekk && setArkivUttrekk(dataAU)
+			setAlertContent && dataAU && setAlertContent({ msg: 'Arkivuttrekk er opprettet.', type: 'info' })
+			handleNext && handleNext()
+		}
 	}, [dataAU])
 
 	useEffect(() => {
-		setAlertContent && errorAU && setAlertContent({ msg: 'Det skjedde en feil under oppretting av arkivuttrekk.', type: 'error' })
+		if ( errorAU ) {
+			setAlertContent && errorAU && setAlertContent({ msg: errorAU?.response?.data?.detail || 'Det skjedde en feil under oppretting av arkivuttrekk.', type: 'error' })
+			handleNext && handleNext() //TODO: remove this when endpoint is ready
+		}
 	}, [errorAU])
 
 	return (
