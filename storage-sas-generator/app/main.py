@@ -18,7 +18,7 @@ from azure.storage.blob import generate_container_sas, ContainerSasPermissions
 # Model
 from app.model.dto import SASRequest
 from app.model.global_state import GlobalState
-from .constants import *  # pylint: disable=wildcard-import
+from app.constants import *  # pylint: disable=wildcard-import
 
 try:
     from dotenv import load_dotenv
