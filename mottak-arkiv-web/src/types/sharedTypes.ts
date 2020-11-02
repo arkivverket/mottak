@@ -30,6 +30,13 @@ export type ArkivUttrekk = ( ParsedMetadataFil & {
     endret: Date,
 })
 
+export type Invitation = {
+    id: number,
+    arkivuttrekk_id: number,
+    status: 'Bestilt' | 'Sendt' | 'Feilet',
+    'opprettet': Date,
+  }
+
 export type AlertContent = ({
     msg?: string,
     type?: 'success' | 'error' | 'warning' | 'info' | '',
