@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Grid, MenuItem, TextField, Typography } from '@material-ui/core'
+import {
+	Button,
+	Grid,
+	MenuItem,
+	TextField,
+	CircularProgress,
+	Typography
+} from '@material-ui/core'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
 
@@ -96,167 +103,171 @@ const QualityCheck: React.FC = ():JSX.Element => {
 				<Typography variant='h6' style={{ marginBottom: '1.5rem' }}>
 					Registrerte verdier
 				</Typography>
-				<Grid container spacing={4}>
-					<Grid item xs={12}>
-						<TextField
-							id='tittel'
-							name='tittel'
-							label='Tittel'
-							value={values.tittel}
-							onChange={handleValueChange}
-							fullWidth
-							helperText={error ? 'Tittel må være fylt ut.' : ''}
-							error={values.tittel === null || values.tittel === ''}
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id='obj_id'
-							name='obj_id'
-							label='Objektid'
-							value={values.obj_id}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							select
-							id='status'
-							name='status'
-							label='Status'
-							value={values.status}
-							onChange={handleValueChange}
-							fullWidth
-						>
+				{loading ?
+					<CircularProgress /> :
+					<Grid container spacing={4}>
+						<Grid item xs={12}>
+							<TextField
+								id='tittel'
+								name='tittel'
+								label='Tittel'
+								value={values.tittel}
+								onChange={handleValueChange}
+								fullWidth
+								helperText={error ? 'Tittel må være fylt ut.' : ''}
+								error={values.tittel === null || values.tittel === ''}
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								id='obj_id'
+								name='obj_id'
+								label='Objektid'
+								value={values.obj_id}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								select
+								id='status'
+								name='status'
+								label='Status'
+								value={values.status}
+								onChange={handleValueChange}
+								fullWidth
+							>
 						 		{statusTypes.map(option => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
+									<MenuItem key={option} value={option}>
+										{option}
+									</MenuItem>
+								))}
 		 		 			</TextField>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							select
-							id='type'
-							name='type'
-							label='Arkivtype'
-							value={values.type}
-							onChange={handleValueChange}
-							fullWidth
-						>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								select
+								id='type'
+								name='type'
+								label='Arkivtype'
+								value={values.type}
+								onChange={handleValueChange}
+								fullWidth
+							>
 						 		{archiveTypes.map(option => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
+									<MenuItem key={option} value={option}>
+										{option}
+									</MenuItem>
+								))}
 		 		 			</TextField>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								id='sjekksum_sha256'
+								name='sjekksum_sha256'
+								label='Sjekksum'
+								value={values.sjekksum_sha256}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								id='avgiver_navn'
+								name='avgiver_navn'
+								label='Avgivers navn'
+								value={values.avgiver_navn}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								required
+								type='email'
+								id='avgiver_epost'
+								name='avgiver_epost'
+								label='Avgivers epost'
+								value={values.avgiver_epost}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								required
+								type='email'
+								id='koordinator_epost'
+								name='koordinator_epost'
+								label={'Koordinators epost'}
+								value={values.koordinator_epost}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<KeyboardDatePicker
+								disableToolbar
+								variant='inline'
+								autoOk
+								emptyLabel={''}
+								format='YYYY-MM-DD'
+								id='arkiv_startdato'
+								label='Arkiv startdato'
+								minDate={'1600-01-01'}
+								value={values.arkiv_startdato}
+								onChange={(date, value) => {
+									handleDateChange({ 'target': { 'name': 'arkiv_startdato', 'value': value } })
+								}}
+								KeyboardButtonProps={{
+									'aria-label': 'bytt dato',
+								}}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<KeyboardDatePicker
+								disableToolbar
+								variant='inline'
+								autoOk
+								emptyLabel={''}
+								format='YYYY-MM-DD'
+								id='arkiv_sluttdato'
+								label='Arkiv sluttdato'
+								minDate={'1600-01-01'}
+								value={values.arkiv_sluttdato}
+								onChange={(date, value) => {
+									handleDateChange({ 'target': { name: 'arkiv_sluttdato', value } })
+								}}
+								KeyboardButtonProps={{
+									'aria-label': 'bytt dato',
+								}}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								id='storrelse'
+								name='storrelse'
+								label='Størrelse'
+								value={values.storrelse}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<TextField
+								id='avtalenummer'
+								name='avtalenummer'
+								label='Avtalenummer'
+								value={values.avtalenummer}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
 					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id='sjekksum_sha256'
-							name='sjekksum_sha256'
-							label='Sjekksum'
-							value={values.sjekksum_sha256}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id='avgiver_navn'
-							name='avgiver_navn'
-							label='Avgivers navn'
-							value={values.avgiver_navn}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							required
-							type='email'
-							id='avgiver_epost'
-							name='avgiver_epost'
-							label='Avgivers epost'
-							value={values.avgiver_epost}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							required
-							type='email'
-							id='koordinator_epost'
-							name='koordinator_epost'
-							label={'Koordinators epost'}
-							value={values.koordinator_epost}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<KeyboardDatePicker
-							disableToolbar
-							variant='inline'
-							autoOk
-							emptyLabel={''}
-							format='YYYY-MM-DD'
-							id='arkiv_startdato'
-							label='Arkiv startdato'
-							value={values.arkiv_startdato}
-							//onChange={event => handleDateChange(event, row)}
-							onChange={(date, value) => {
-								handleDateChange({ 'target': { 'name': 'arkiv_startdato', 'value': value } })
-							}}
-							KeyboardButtonProps={{
-								'aria-label': 'bytt dato',
-							}}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<KeyboardDatePicker
-							disableToolbar
-							variant='inline'
-							autoOk
-							emptyLabel={''}
-							format='YYYY-MM-DD'
-							id='arkiv_sluttdato'
-							label='Arkiv sluttdato'
-							value={values.arkiv_sluttdato}
-							onChange={(date, value) => {
-								handleDateChange({ 'target': { name: 'arkiv_sluttdato', value } })
-							}}
-							KeyboardButtonProps={{
-								'aria-label': 'bytt dato',
-							}}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id='storrelse'
-							name='storrelse'
-							label='Størrelse'
-							value={values.storrelse}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<TextField
-							id='avtalenummer'
-							name='avtalenummer'
-							label='Avtalenummer'
-							value={values.avtalenummer}
-							onChange={handleValueChange}
-							fullWidth
-						/>
-					</Grid>
-				</Grid>
+				}
 				<Grid
 					container
 					item
@@ -283,8 +294,9 @@ const QualityCheck: React.FC = ():JSX.Element => {
 							variant='outlined'
 							type='submit'
 							className={sharedClasses.fullWidth}
+							disabled={loadingAU}
 						>
-							Godkjenn data
+							 {loadingAU ? <CircularProgress size={14} /> : 'Godkjenn data'}
 						</Button>
 					</Grid>
 				</Grid>
