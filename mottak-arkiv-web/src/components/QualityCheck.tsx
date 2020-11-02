@@ -17,20 +17,19 @@ import { StepperContext } from './workflow/WorkflowStepper'
 import { AlertContext } from './WorkArea'
 import useGetOnMount from '../hooks/useGetOnMount'
 import useRequest from '../hooks/useRequest'
-import { number } from 'yargs'
 
 /**
  * Step component for displaying parsed metadata file for user edit and approval.
  */
 const QualityCheck: React.FC = ():JSX.Element => {
 	const { handleNext, handleCancel } = useContext(StepperContext)
-	const { metadataId } = useContext(WorkflowContext)
+	const { metadataId, setArkivUttrekk } = useContext(WorkflowContext)
 	const { setAlertContent } = useContext(AlertContext)
 	const sharedClasses = useSharedStyles()
 
 	const { data, loading, error } = useGetOnMount<ParsedMetadataFil>(`/metadatafil/${metadataId}/parsed`)
 
-	const { data: dataAU, loading: loadingAU, error: errorAU, performRequest } = useRequest<ParsedMetadataFil>()
+	const { data: dataAU, loading: loadingAU, error: errorAU, performRequest } = useRequest<ArkivUttrekk>()
 
 	const initalvalues = {
 		tittel: '',
@@ -41,7 +40,7 @@ const QualityCheck: React.FC = ():JSX.Element => {
 		avgiver_navn: '',
 		avgiver_epost: '',
 		koordinator_epost: '',
-		metadatafil_id: number,
+		metadatafil_id: 0,
 		arkiv_startdato: null,
 		arkiv_sluttdato: null,
 		storrelse: '',
