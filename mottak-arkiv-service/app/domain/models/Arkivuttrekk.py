@@ -4,8 +4,7 @@ from uuid import UUID
 
 
 class ArkivuttrekkStatus(str, Enum):
-    UNDER_OPPRETTING = 'Under oppretting'
-    INVITERT = "Invitert"
+    OPPRETTET = 'Opprettet'
     UNDER_BEHANDLING = "Under behandling"
     AVVIST = "Avvist"
     SENT_TIL_BEVARING = "Sent til bevaring"
