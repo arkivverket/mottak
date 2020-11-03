@@ -3,7 +3,7 @@ import re
 from fastapi import UploadFile
 
 from app.domain.models.Metadatafil import MetadataType, Metadatafil
-from app.exceptions import UnvalidContentType
+from app.exceptions import InvalidContentType
 
 
 def _content_type2metadata_type(content_type: str) -> MetadataType:
@@ -16,7 +16,7 @@ def _content_type2metadata_type(content_type: str) -> MetadataType:
     if content_type == 'text/xml':
         return MetadataType.XML_METS
     else:
-        raise UnvalidContentType(content_type)
+        raise InvalidContentType(content_type)
 
 
 def _get_file_content(file: UploadFile) -> str:
