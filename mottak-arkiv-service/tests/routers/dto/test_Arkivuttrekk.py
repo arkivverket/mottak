@@ -12,7 +12,7 @@ def _arkivuttrekk(testfile_metadatfil) -> Arkivuttrekk:
     return Arkivuttrekk(
         id_=1,
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type_=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
@@ -33,7 +33,7 @@ def _arkivuttrekk(testfile_metadatfil) -> Arkivuttrekk:
 def _arkivuttrekk_base(testfile_metadatfil) -> ArkivuttrekkBase:
     return ArkivuttrekkBase(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
@@ -56,7 +56,7 @@ def test_to_domain(_arkivuttrekk_base):
     """
     expected = Arkivuttrekk(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type_=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
@@ -81,7 +81,7 @@ def test_init_from(_arkivuttrekk):
     """
     expected = ArkivuttrekkBase(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",

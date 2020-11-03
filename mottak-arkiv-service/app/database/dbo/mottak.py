@@ -24,7 +24,7 @@ class Arkivuttrekk(Base):
     """This is the class that represents an archive that is being processed in mottak."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     obj_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
-    status = Column(Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring',
+    status = Column(Enum('Oprettet', 'Under behandling', 'Avvist', 'Sent til bevaring',
                          name='arkivuttrekk_status_type', create_type=True), nullable=False, index=True)
     type = Column(Enum('Noark3', 'Noark5', 'Fagsystem', "SIARD", name='arkivvuttrekk_type_type', create_type=True),
                   nullable=False)
@@ -57,7 +57,7 @@ class Invitasjon(Base):
     ekstern_id = Column(UUID(as_uuid=True), nullable=False, index=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
     avgiver_epost = Column(String(), nullable=False)
-    status = Column(Enum('Bestilt', 'Sent', 'Feilet', name='invitasjon_status_type', create_type=True), nullable=False)
+    status = Column(Enum('Sent', 'Feilet', name='invitasjon_status_type', create_type=True), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
 
 

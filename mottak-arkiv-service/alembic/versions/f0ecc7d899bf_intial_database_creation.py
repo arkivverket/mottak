@@ -5,8 +5,8 @@ Revises:
 Create Date: 2020-09-14 11:59:40.128185
 
 """
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
@@ -30,7 +30,7 @@ def upgrade():
     op.create_table('arkivuttrekk',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('obj_id', postgresql.UUID(as_uuid=True), nullable=False),
-                    sa.Column('status', sa.Enum('Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sent til bevaring',
+                    sa.Column('status', sa.Enum('Opprettet', 'Under behandling', 'Avvist', 'Sent til bevaring',
                                                 name='arkivuttrekk_status_type'), nullable=False),
                     sa.Column('type', sa.Enum('Noark3', 'Noark5', 'Fagsystem', "SIARD", name='arkivvuttrekk_type_type'),
                               nullable=False),
