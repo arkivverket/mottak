@@ -1,0 +1,56 @@
+# !TOP_COMMENT!
+on:
+  push:
+    branches: [ develop ]
+    paths:
+      - '!COMPONENT_NAME!/**'
+  pull_request:
+    paths:
+      - '!COMPONENT_NAME!/**'
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: '!COMPONENT_NAME!'
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install yarn
+        run: |
+          yarn install
+
+      - name: Test with yarn
+        run: |
+          yarn test
+
+  build-and-push-docker-image:
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: '!COMPONENT_NAME!'
+    needs: test
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and push docker image
+        uses: azure/docker-login@v1
+        with:
+          login-server: arkivverket.azurecr.io
+          username: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_USERNAME }}
+          password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
+
+      - run: |
+          docker build . -t arkivverket.azurecr.io/av-mottak/!COMPONENT_NAME!:${{ github.sha }}
+          docker push arkivverket.azurecr.io/av-mottak/!COMPONENT_NAME!:${{ github.sha }}
+
