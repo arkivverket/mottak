@@ -2,9 +2,10 @@ from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException,
 from sqlalchemy.orm import Session
 
 from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
+from app.exceptions import MetadatafilNotFound, InvalidContentType
+from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.router_dependencies import get_db_session
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
 
 router = APIRouter()
 
@@ -14,7 +15,10 @@ router = APIRouter()
              response_model=Metadatafil,
              summary="Laste opp en metadatafil")
 async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = Depends(get_db_session)):
-    return upload_metadatafil(file, db)
+    try:
+        return upload_metadatafil(file, db)
+    except InvalidContentType as err:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err)
 
 
 @router.get("/{id}/content",
@@ -22,10 +26,10 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
             response_model=str,
             summary="Henter ut innehold(XML) fra en metadatafil")
 async def router_get_content(id: int, db: Session = Depends(get_db_session)):
-    result = Response(content=get_content(id, db), media_type="application/xml")
-    if result is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id}")
-    return result
+    try:
+        return Response(content=get_content(id, db), media_type="application/xml")
+    except MetadatafilNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
 @router.get("/{id}/parsed",
@@ -33,7 +37,7 @@ async def router_get_content(id: int, db: Session = Depends(get_db_session)):
             response_model=ArkivuttrekkBase,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
 async def router_get_parsed_content(id: int, db: Session = Depends(get_db_session)):
-    result = get_parsed_content(id, db)
-    if result is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Metadatafil med id={id}")
-    return result
+    try:
+        return get_parsed_content(id, db)
+    except MetadatafilNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)

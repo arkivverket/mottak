@@ -12,7 +12,7 @@ def test_as_arkivuttrekk(testfile_metadatfil):
     """
     expected = Arkivuttrekk(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type_=ArkivuttrekkType.NOARK5,
         tittel="The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",

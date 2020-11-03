@@ -176,7 +176,7 @@ def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -
 
     arkivuttrekk = Arkivuttrekk(
         obj_id=_get_objekt_id(root),
-        status=ArkivuttrekkStatus.UNDER_OPPRETTING,
+        status=ArkivuttrekkStatus.OPPRETTET,
         type_=_get_arkivtype(root, ns),
         tittel=_get_title(root, ns),
         sjekksum_sha256=_get_checksum(root, ns),

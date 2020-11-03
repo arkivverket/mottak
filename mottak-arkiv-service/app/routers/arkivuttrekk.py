@@ -3,14 +3,23 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.domain.arkivuttrekk_service import get_by_id, get_all, create_invitasjon
+from app.connectors.mailgun.mailgun_client import MailgunClient
+from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk
+from app.exceptions import ArkivuttrekkNotFound
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
-from app.connectors.mailgun.mailgun_client import MailgunClient
 
 router = APIRouter()
+
+
+@router.post("",
+             status_code=status.HTTP_201_CREATED,
+             response_model=Arkivuttrekk,
+             summary="Lagre et arkivuttrekk ut fra redigerbare felter")
+async def router_create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
+    return arkivuttrekk_service.create(arkivuttrekk.to_domain(), db)
 
 
 @router.get("/{id}",
@@ -18,10 +27,10 @@ router = APIRouter()
             response_model=Arkivuttrekk,
             summary="Hent arkivuttrekk basert på id")
 async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
-    result = get_by_id(id, db)
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
-    return result
+    try:
+        return arkivuttrekk_service.get_by_id(id, db)
+    except ArkivuttrekkNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
 @router.get("",
@@ -29,7 +38,7 @@ async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
             response_model=List[Arkivuttrekk],
             summary="Hent alle arkivuttrekk")
 async def router_get_all(db: Session = Depends(get_db_session), skip: int = 0, limit: int = 10):
-    return get_all(db, skip, limit)
+    return arkivuttrekk_service.get_all(db, skip, limit)
 
 
 @router.post('/{id}/invitasjon',
@@ -38,10 +47,11 @@ async def router_get_all(db: Session = Depends(get_db_session), skip: int = 0, l
              summary='Lager en invitasjon og sender den over epost')
 async def router_send_email(id: int, db: Session = Depends(get_db_session)):
     async with MailgunClient(get_mailgun_domain(), get_mailgun_secret(), get_tusd_url()) as client:
-        result = await create_invitasjon(id, db, client)
-        if not result:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Fant ikke Arkivuttrekk med id={id}")
-        elif result.status == InvitasjonStatus.FEILET:
+        try:
+            result = await arkivuttrekk_service.create_invitasjon(id, db, client)
+        except ArkivuttrekkNotFound as err:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+        if result.status == InvitasjonStatus.FEILET:
             raise HTTPException(status_code=status.HTTP_424_FAILED_DEPENDENCY,
                                 detail='Utsending av invitasjon feilet, venligst prøv igjen senere')
         else:
