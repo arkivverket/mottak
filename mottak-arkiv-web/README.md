@@ -17,5 +17,7 @@ The values given here are examples. Please adjust to your local API url.
 
 ### Building and running in a Docker container
 - Build the docker image `docker build -t mottak-arkiv-web:prod .`
-- Start the docker container at port 3080 `docker run --name mottak-arkiv-web -it -p 3080:80 -e API_BASEURL=http://api.elsewhere.local/api mottak-arkiv-web:prod`
-
+- Start the docker container at port 3080
+    - By specifying the API base URL on the command line: `docker run --name mottak-arkiv-web -it -p 3080:80 -e API_BASEURL=http://api.elsewhere.local/api mottak-arkiv-web:prod`
+    - By reading the API base URL from the environment variable API_BASEURL: `docker run --name mottak-arkiv-web -it -p 3080:80 -e API_BASEURL mottak-arkiv-web:prod`
+    - By reading the API base URL from an env file: `docker run --name mottak-arkiv-web -it -p 3080:80 --env-file myenvfile mottak-arkiv-web:prod`
