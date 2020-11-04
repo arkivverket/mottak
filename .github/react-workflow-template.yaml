@@ -15,13 +15,16 @@ jobs:
     defaults:
       run:
         working-directory: '!COMPONENT_NAME!'
+    strategy:
+      matrix:
+        node-version: [ 12.x, 14.x ]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '14.x'
+          node-version: ${{ matrix.node-version }}
 
       - name: Installing app dependencies
         run: |
@@ -33,6 +36,7 @@ jobs:
 
       - name: Test with yarn
         run: |
+          yarn
           yarn test
 
   build-and-push-docker-image:
