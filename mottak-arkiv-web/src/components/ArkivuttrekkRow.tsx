@@ -43,11 +43,6 @@ const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrek
 	return (
 		<>
 			<TableRow key={arkivUttrekk.id} className={classes.root}>
-				<TableCell>
-					<IconButton aria-label="expand row" size="small" onClick={toggle}>
-						<Icon>{isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</Icon>
-					</IconButton>
-				</TableCell>
 				<TableCell component='th' scope='row'>
 					<Link style={{ color: '#034c6b' }} to={`/arkivuttrekk/${arkivUttrekk.id}`}>{arkivUttrekk.tittel}</Link>
 				</TableCell>
@@ -60,11 +55,16 @@ const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrek
 				<TableCell>
 					{arkivUttrekk.status}
 				</TableCell>
+				<TableCell>
+					<IconButton aria-label="expand row" size="small" onClick={toggle}>
+						<Icon>{isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</Icon>
+					</IconButton>
+				</TableCell>
 			</TableRow>
 			<TableRow>
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 					<Collapse in={isOpen} timeout="auto" unmountOnExit>
-						<Box style={{ marginLeft: '4rem' }}>
+						<Box>
 							<List component='div'>
 								<ListItem>
 									<span className={classes.label}>Koordinators epost: </span>

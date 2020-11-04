@@ -13,12 +13,8 @@ import { AlertContext } from './WorkArea'
 /**
  * Get and display arkivuttrekk as table data.
  */
-const ArkivuttrekkTable: React.FC = ():JSX.Element => {
+const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = true }):JSX.Element => {
 	const columns = [
-		{
-			id: 'icon',
-			label: '',
-		},
 		{
 			id: 'tittel',
 			label: 'Tittel',
@@ -34,7 +30,11 @@ const ArkivuttrekkTable: React.FC = ():JSX.Element => {
 		{
 			id: 'status',
 			label: 'Status',
-		}
+		},
+		{
+			id: 'icon',
+			label: '',
+		},
 	]
 
 	const { data, loading, error, performRequest } = useRequest<ArkivUttrekk[]>()
