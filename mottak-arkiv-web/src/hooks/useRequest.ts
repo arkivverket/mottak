@@ -45,7 +45,6 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 }
 
 const useRequest = <T>() => {
-
 	const componentIsMounted = useRef(true)
 
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
@@ -60,7 +59,6 @@ const useRequest = <T>() => {
 		headers = null,
 		data = null,
 		params = null }: RequestType ) => {
-
 		const source = axios.CancelToken.source()
 
 		let settings = <{
@@ -80,7 +78,7 @@ const useRequest = <T>() => {
 				settings = {
 					...settings,
 					headers: { headers },
-					data: data,
+					data,
 				}
 				break
 			}

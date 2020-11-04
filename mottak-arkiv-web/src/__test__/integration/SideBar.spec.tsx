@@ -1,6 +1,6 @@
 import React from 'react'
-import { MemoryRouter, Route } from 'react-router'
-import { fireEvent, render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
+import { render } from '@testing-library/react'
 import Routes, { RouteType } from '../../components/routes/Routes'
 import SideBar from '../../components/layout/SideBar'
 import { LayoutContext } from '../../components/layout/Layout'
@@ -24,7 +24,6 @@ describe('<SideBar />', () => {
 			if (route.nav) {
 				const link = getByTestId(route.name)
 				expect(link).toBeInTheDocument()
-				//TODO: check route dynamic by content
 			} else {
 				const linkText = queryByText(route.name)
 				expect(linkText).not.toBeInTheDocument()

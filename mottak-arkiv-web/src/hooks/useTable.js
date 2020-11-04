@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 	},
 }))
 
-const useTable = ( columns, handleTableChange ) => {
+const useTable = ( columns, handleTableChange, pagination ) => {
 	const [page, setPage] = useState(0)
 	const [rows, setRows] = useState(10)
 
@@ -24,7 +24,7 @@ const useTable = ( columns, handleTableChange ) => {
 		handleTableChange((newPage * rows), rows)
 	}
 
-	const handleChangeRows = (e) => {
+	const handleChangeRows = e => {
 		const tmpRows = parseInt(e.target.value, 10)
 		setRows(tmpRows)
 		setPage(0)
@@ -34,6 +34,7 @@ const useTable = ( columns, handleTableChange ) => {
 	const TblContainer = ({ children }) => (
 		<Table>
 			{children}
+			{ pagination &&
 			<TableFooter>
 				<TableRow>
 					<TablePagination
@@ -48,10 +49,11 @@ const useTable = ( columns, handleTableChange ) => {
 					/>
 				</TableRow>
 			</TableFooter>
+			}
 		</Table>
 	)
 
-	const TblHead = props => {
+	const TblHead = () => {
 		const classes = useStyles()
 
 		return (

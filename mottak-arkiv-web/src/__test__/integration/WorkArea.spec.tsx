@@ -1,6 +1,6 @@
 import React from 'react'
 import { MemoryRouter, Route } from 'react-router'
-import { fireEvent, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 
 import Overview from '../../components/Overview'
 import InvitationWorkflowContainer from '../../components/workflow/InvitationWorkflowContainer'

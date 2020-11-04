@@ -6,8 +6,6 @@ import Overview from '../../components/Overview'
 import useRequest from '../../hooks/useRequest'
 
 import '@testing-library/jest-dom/extend-expect'
-import { rest } from 'msw'
-import { setupServer } from 'msw/node'
 
 jest.mock('../../hooks/useRequest.ts')
 
@@ -30,6 +28,7 @@ const arkivuttrekk = [{
 	avtalenummer: '1',
 }]
 
+//@ts-ignore
 useRequest.mockReturnValue({
 	data: arkivuttrekk,
 	loading: false,
@@ -38,14 +37,6 @@ useRequest.mockReturnValue({
 })
 
 describe('<Overview />', () => {
-	const server = setupServer(
-		rest.get('http://localhost:8000/arkivuttrekk', (req, res, ctx) => res(ctx.json(arkivuttrekk)))
-	)
-
-	// establish API mocking before all tests
-	beforeAll(() => server.listen())
-	afterEach(() => server.resetHandlers())
-	afterAll(() => server.close())
 
 	it('has button that will start add new AU workflow', () => {
 		const history = createMemoryHistory()

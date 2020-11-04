@@ -36,8 +36,8 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 
 const useGetOnMount = <T>(
 	url: string,
-	params?: any //AxiosRequestConfig | undefined = undefined
-	): State<T> => {
+	params?: AxiosRequestConfig | undefined
+): State<T> => {
 
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
 		loading: false,
