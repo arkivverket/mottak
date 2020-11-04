@@ -39,6 +39,9 @@ module.exports = {
 			"error"
 		],
 		"react-hooks/rules-of-hooks": "error",
+		"react/prop-types": "off",
+		"react-hooks/exhaustive-deps": "off",
+		"@typescript-eslint/ban-ts-comment": "off"
 	},
 	settings: {
 		react: {
