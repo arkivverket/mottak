@@ -1,17 +1,19 @@
-type MetadataType = 'Noark3'| 'Noark5' | 'Fagsystem'
+export type Status =  'Opprettet' | 'Under behandling' | 'Avvist' | 'Sendt til bevaring'
+
+export type ArchiveType = 'Noark3' | 'Noark5' | 'Fagsystem' | 'SIARD'
 
 export type MetadataFil = ({
     id: number,
     filnavn: string,
-    type: MetadataType,
+    type: 'xml/mets',
     innhold: string,
     opprettet: Date,
 })
 
 export type ParsedMetadataFil = ({
     obj_id: string,
-    status: string, //'Under oppretting' | 'Invitert' | 'Under behandling' | 'Avvist' | 'Sendt til bevaring', //TODO: maybe not part of api
-    type: string, //MetadataType,
+    status: Status,
+    type:  ArchiveType,
     tittel: string,
     sjekksum_sha256: string,
     avgiver_navn: string,
@@ -32,9 +34,11 @@ export type ArkivUttrekk = ( ParsedMetadataFil & {
 
 export type Invitation = {
     id: number,
+    ekstern_id: string,
     arkivuttrekk_id: number,
-    status: 'Bestilt' | 'Sendt' | 'Feilet',
-    'opprettet': Date,
+    status: 'Sendt' | 'Feilet',
+    avgiver_epost: string,
+    opprettet: Date,
   }
 
 export type AlertContent = ({
