@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react'
-import { Button, Grid, CircularProgress, Typography } from '@material-ui/core'
+import { Button, Grid, CircularProgress } from '@material-ui/core'
 
-import { Invitation } from '../types/sharedTypes'
-import { useSharedStyles } from '../styles/sharedStyles'
-import { WorkflowContext } from './workflow/InvitationWorkflowContainer'
-import { StepperContext } from './workflow/WorkflowStepper'
-import { AlertContext } from './WorkArea'
-import useRequest from '../hooks/useRequest'
+import { Invitation } from '../../types/sharedTypes'
+import { useSharedStyles } from '../../styles/sharedStyles'
+import { WorkflowContext } from './InvitationWorkflowContainer'
+import { StepperContext } from './WorkflowStepper'
+import { AlertContext } from '../WorkArea'
+import useRequest from '../../hooks/useRequest'
 
 /**
  * Step component for providing ui to send invitation.
@@ -24,18 +24,19 @@ const SendInvitation: React.FC = ():JSX.Element => {
 		if (event) {
 			event.preventDefault()
 		}
-		//TODO: update when endpoint is ready
-		//if (arkivUttrekk?.id) {
-		performRequest({
-			//url: `/arkivuttrekk/${arkivUttrekk.id}/invitasjon`,
-			url: '/arkivuttrekk/1/invitasjon',
-			method: 'POST',
-		})
-		//}
+		if (arkivUttrekk?.id) {
+			performRequest({
+				url: `/arkivuttrekk/${arkivUttrekk.id}/invitasjon`,
+				method: 'POST',
+			})
+		}
 	}
 
 	useEffect(() => {
-		setAlertContent && setAlertContent({ msg: `Invitasjon er sendt til ${arkivUttrekk?.avgiver_epost}`, type: 'info' })
+		if (data) {
+			setAlertContent && setAlertContent({ msg: `Invitasjon er sendt til ${arkivUttrekk?.avgiver_epost}`, type: 'info' })
+			handleNext && handleNext()
+		}
 	}, [data])
 
 	useEffect(() => {
@@ -45,9 +46,9 @@ const SendInvitation: React.FC = ():JSX.Element => {
 
 	return (
 		<form style={{ margin: '2rem' }} onSubmit={handleSubmit}>
-			<Typography variant='subtitle1' style={{ marginBottom: '1.5rem' }}>
+			<p style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
 				{`Send opplastings-invitasjon for arkivet ${arkivUttrekk?.tittel} til ${arkivUttrekk?.avgiver_epost}.`}
-			</Typography>
+			</p>
 			<Grid
 				container
 				item

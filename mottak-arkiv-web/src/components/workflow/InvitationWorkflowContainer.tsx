@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { ArkivUttrekk,  } from '../../types/sharedTypes'
 import WorkflowStepper from './WorkflowStepper'
-import FileUpload from '../FileUpload'
-import QualityCheck from '../QualityCheck'
-import SendInvitation from '../SendInvitation'
+import FileUpload from './FileUpload'
+import QualityCheck from './QualityCheck'
+import SendInvitation from './SendInvitation'
 
 
 export type ContextType = ({
@@ -23,7 +23,7 @@ export const WorkflowContext = React.createContext<Partial<ContextType>>({})
 /**
  * Provide context for stepper-workflow
  */
-const InvitationWorkflowContainer: React.FC<{ children: unknown }> = ({ children }): JSX.Element => {
+const InvitationWorkflowContainer: React.FC = (): JSX.Element => {
 	const [metadataId, setMetadataId] = useState<number | null>(null)
 	const [arkivUttrekk, setArkivUttrekk] = useState<ArkivUttrekk | null>(null)
 

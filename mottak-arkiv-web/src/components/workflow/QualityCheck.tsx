@@ -10,13 +10,23 @@ import {
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
 
-import { ArkivUttrekk, ParsedMetadataFil } from '../types/sharedTypes'
-import { useSharedStyles } from '../styles/sharedStyles'
-import { WorkflowContext } from './workflow/InvitationWorkflowContainer'
-import { StepperContext } from './workflow/WorkflowStepper'
-import { AlertContext } from './WorkArea'
-import useGetOnMount from '../hooks/useGetOnMount'
-import useRequest from '../hooks/useRequest'
+import { ArchiveType, ArkivUttrekk, ParsedMetadataFil, Status } from '../../types/sharedTypes'
+import { useSharedStyles } from '../../styles/sharedStyles'
+import { WorkflowContext } from './InvitationWorkflowContainer'
+import { StepperContext } from './WorkflowStepper'
+import { AlertContext } from '../WorkArea'
+import useGetOnMount from '../../hooks/useGetOnMount'
+import useRequest from '../../hooks/useRequest'
+
+export type Item = {
+	hasError: boolean,
+	errorMsg: string,
+	validator: (param: string) => boolean
+}
+
+export type ValidationType = {
+	[key: string]: Item
+}
 
 /**
  * Step component for displaying parsed metadata file for user edit and approval.
@@ -34,8 +44,8 @@ const QualityCheck: React.FC = ():JSX.Element => {
 	const initalvalues = {
 		tittel: '',
 		obj_id: '',
-		status: '',
-		type: '',
+		status: 'Opprettet' as Status,
+		type: 'Noark3' as ArchiveType,
 		sjekksum_sha256: '',
 		avgiver_navn: '',
 		avgiver_epost: '',
@@ -47,23 +57,62 @@ const QualityCheck: React.FC = ():JSX.Element => {
 		avtalenummer: '',
 	}
 
-	const validation = {
-		tittel: {
+	const emailRe = RegExp('.+@.+[.].+')
+	const archiveTypes = ['Noark3', 'Noark5', 'Fagsystem', 'SIARD']
+	const statusTypes = ['Opprettet', 'Under behandling', 'Avvist', 'Sendt til bevaring']
+
+	const initialValidation: ValidationType = {
+		'tittel': {
 			hasError: false,
 			errorMsg: 'Tittel er påkrevd.',
-			validator: (tittel: string) => tittel !== null && tittel != ''
+			validator: (tittel: string) => tittel !== null && tittel !== ''
+		},
+		'avgiver_epost': {
+			hasError: false,
+			errorMsg: 'Ugyldig epostadresse.',
+			validator: (email: string) => emailRe.test(email)
+		},
+		'koordinator_epost': {
+			hasError: false,
+			errorMsg: 'Du må angi en gyldig epostadresse.',
+			validator: (email: string) => email !== null && email !== '' && emailRe.test(email)
 		},
 	}
 
-	const archiveTypes = ['Noark3', 'Noark5', 'Fagsystem']
-	const statusTypes = ['Under oppretting', 'Invitert', 'Under behandling', 'Avvist', 'Sendt til bevaring']
-
 	const [values, setValues] = useState<ParsedMetadataFil>(initalvalues)
+	const [validation, setValidation] = useState<ValidationType>(initialValidation)
 
 	const handleSubmit = ( event: React.FormEvent) => {
 		if (event) {
 			event.preventDefault()
 		}
+
+		// Validation of required fields
+		const validTittel = validation['tittel'].validator(values?.tittel)
+		const validKoordEpost = validation['koordinator_epost'].validator(values?.koordinator_epost)
+
+		setValidation(prevState => {
+			return {
+				...prevState,
+				'tittel': {
+					...prevState['tittel'],
+					hasError: !validTittel
+				},
+			}
+		})
+
+		setValidation(prevState => {
+			return {
+				...prevState,
+				'koordinator_epost': {
+					...prevState['koordinator_epost'],
+					hasError: !validKoordEpost
+				}
+			}
+		})
+
+		if (!(validTittel && validKoordEpost)) return
+
 		performRequest({
 			url: '/arkivuttrekk',
 			method: 'POST',
@@ -73,6 +122,19 @@ const QualityCheck: React.FC = ():JSX.Element => {
 
 	const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.persist()
+
+		const isValid = validation[event.target.name].validator(event.target.value)
+
+		setValidation(prevState => {
+			return {
+				...prevState,
+				[event.target.name]: {
+					...prevState[event.target.name],
+					hasError: !isValid,
+				}
+			}
+		})
+
 		setValues(values => ({ ...values, [event.target.name]: event.target.value }))
 	}
 
@@ -99,18 +161,17 @@ const QualityCheck: React.FC = ():JSX.Element => {
 	useEffect(() => {
 		if ( errorAU ) {
 			setAlertContent && errorAU && setAlertContent({ msg: errorAU?.response?.data?.detail || 'Det skjedde en feil under oppretting av arkivuttrekk.', type: 'error' })
-			handleNext && handleNext() //TODO: remove this when endpoint is ready
 		}
 	}, [errorAU])
 
 	return (
 		<MuiPickersUtilsProvider utils={MomentUtils}>
-			<form style={{ margin: '2rem' }} onSubmit={handleSubmit}>
-				<Typography variant='h6' style={{ marginBottom: '1.5rem' }}>
+			{loading ?
+				<CircularProgress /> :
+				<form style={{ margin: '2rem' }} onSubmit={handleSubmit}>
+					<Typography variant='h6' style={{ marginBottom: '1.5rem' }}>
 					Registrerte verdier
-				</Typography>
-				{loading ?
-					<CircularProgress /> :
+					</Typography>
 					<Grid container spacing={4}>
 						<Grid item xs={12}>
 							<TextField
@@ -120,8 +181,8 @@ const QualityCheck: React.FC = ():JSX.Element => {
 								value={values.tittel}
 								onChange={handleValueChange}
 								fullWidth
-								helperText={error ? 'Tittel må være fylt ut.' : ''}
-								error={values.tittel === null || values.tittel === ''}
+								helperText={validation['tittel'].hasError ? validation['tittel'].errorMsg : ''}
+								error={validation['tittel'].hasError}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
@@ -190,7 +251,6 @@ const QualityCheck: React.FC = ():JSX.Element => {
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
-								required
 								type='email'
 								id='avgiver_epost'
 								name='avgiver_epost'
@@ -198,11 +258,12 @@ const QualityCheck: React.FC = ():JSX.Element => {
 								value={values.avgiver_epost}
 								onChange={handleValueChange}
 								fullWidth
+								helperText={validation['avgiver_epost'].hasError ? validation['avgiver_epost'].errorMsg : ''}
+								error={validation['avgiver_epost'].hasError}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
-								required
 								type='email'
 								id='koordinator_epost'
 								name='koordinator_epost'
@@ -210,6 +271,8 @@ const QualityCheck: React.FC = ():JSX.Element => {
 								value={values.koordinator_epost}
 								onChange={handleValueChange}
 								fullWidth
+								helperText={validation['koordinator_epost'].hasError ? validation['koordinator_epost'].errorMsg : ''}
+								error={validation['koordinator_epost'].hasError}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
@@ -273,40 +336,40 @@ const QualityCheck: React.FC = ():JSX.Element => {
 							/>
 						</Grid>
 					</Grid>
-				}
-				<Grid
-					container
-					item
-					alignItems='center'
-					justify='center'
-					spacing={2}
-					style={{ margin: '2rem auto' }}
-					xs={12}
-					sm={6}
-				>
-					<Grid item xs={12} sm={6}>
-						<Button
-							variant='outlined'
-							type='button'
-							color='primary'
-							className={sharedClasses.fullWidth}
-							onClick={handleCancel}
-						>
+					<Grid
+						container
+						item
+						alignItems='center'
+						justify='center'
+						spacing={2}
+						style={{ margin: '2rem auto' }}
+						xs={12}
+						sm={6}
+					>
+						<Grid item xs={12} sm={6}>
+							<Button
+								variant='outlined'
+								type='button'
+								color='primary'
+								className={sharedClasses.fullWidth}
+								onClick={handleCancel}
+							>
 							Avbryt
-						</Button>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<Button
-							variant='outlined'
-							type='submit'
-							className={sharedClasses.fullWidth}
-							disabled={loadingAU}
-						>
+							</Button>
+						</Grid>
+						<Grid item xs={12} sm={6}>
+							<Button
+								variant='outlined'
+								type='submit'
+								className={sharedClasses.fullWidth}
+								disabled={loadingAU}
+							>
 							 {loadingAU ? <CircularProgress size={14} /> : 'Godkjenn data'}
-						</Button>
+							</Button>
+						</Grid>
 					</Grid>
-				</Grid>
-			</form>
+				</form>
+			}
 		</MuiPickersUtilsProvider>
 	)
 }
