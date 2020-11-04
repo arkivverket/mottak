@@ -36,11 +36,11 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     invitasjon_ekstern_id = uuid.uuid4()
     resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id,
                                                 invitasjon_ekstern_id)
+
     if resp.status_code == 200:
-        # TODO Update status of arkivuttrekk and save it to database when MOL-122 is done. Create invitasjon in domain models?
-        return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, InvitasjonStatus.SENT,
-                                            invitasjon_ekstern_id)
+        status = InvitasjonStatus.SENT
     else:
         logging.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk.id} med {resp.status_code} {resp.text}")
-        return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, InvitasjonStatus.FEILET,
-                                            invitasjon_ekstern_id)
+        status = InvitasjonStatus.FEILET
+
+    return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
