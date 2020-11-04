@@ -63,7 +63,7 @@ const WorkArea: React.FC = ():JSX.Element => {
 						<Switch>
 							{Routes.map((route: RouteType) => (
 								<Route exact path={route.path} key={route.path}>
-									<route.component />
+									{route.component && <route.component />}
 								</Route>
 							))}
 						</Switch>

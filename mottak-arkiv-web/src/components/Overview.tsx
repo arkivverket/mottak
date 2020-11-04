@@ -29,8 +29,8 @@ const Overview: React.FC = ():JSX.Element => {
 
 	return (
 		<>
-			<Grid container xs={12} alignItems='center' className={classes.gridMargin}>
-				<Grid item xs={12} sm={6}>
+			<Grid container alignItems='center' justify='space-between' className={classes.gridMargin}>
+				<Grid item>
 					<h2>Arkivuttrekk</h2>
 				</Grid>
 				<Grid container item xs={12} sm={6} justify='flex-end'>

@@ -4,7 +4,7 @@ import NavBar from './NavBar'
 import SideBar from './SideBar'
 import WorkArea from '../WorkArea'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
 	root: {
 		display: 'flex',
 	},
