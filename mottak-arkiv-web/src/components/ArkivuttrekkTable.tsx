@@ -58,7 +58,7 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 		})
 	}
 
-	const { TblContainer, TblHead } = useTable(columns, handleTableChange)
+	const { TblContainer, TblHead } = useTable(columns, handleTableChange, pagination)
 
 	return (
 		loading ?

@@ -1,4 +1,4 @@
-import React from 'react'
+import AllArkivuttrekk from '../AllArkivuttrekk'
 import Details from '../Details'
 import Overview from '../Overview'
 import NotFound from '../NotFound'
@@ -10,10 +10,6 @@ export type RouteType = {
 	component: any,
 	nav: boolean,
 }
-
-const All: React.FC = () => (
-	<h1>Alle</h1>
-)
 
 const Routes: RouteType[] = [
 	{
@@ -30,8 +26,8 @@ const Routes: RouteType[] = [
 	},
 	{
 		path: '/arkivutrekk',
-		name: 'Se alle',
-		component: All,
+		name: 'Se alle arkivuttrekk',
+		component: AllArkivuttrekk,
 		nav: true,
 	},
 	{
