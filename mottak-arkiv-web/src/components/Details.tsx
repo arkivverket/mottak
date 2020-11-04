@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
 	Divider,
 	Grid,
@@ -6,10 +6,12 @@ import {
 	ListItem,
 	CircularProgress,
 	Typography } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
-import { ArkivUttrekk } from '../types/sharedTypes'
 
+import { AlertContext } from './WorkArea'
+import { ArkivUttrekk } from '../types/sharedTypes'
 import useGetOnMount from '../hooks/useGetOnMount'
 
 const useStyles = makeStyles(theme => ({
@@ -21,19 +23,28 @@ const useStyles = makeStyles(theme => ({
 
 const Details: React.FC = ():JSX.Element => {
 	const classes = useStyles()
+	const { setAlertContent } = useContext(AlertContext)
 
 	const { id } = useParams<{id: string}>()
 
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
+
+	useEffect(() => {
+		setAlertContent && error && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under henting av arkivuttrekk.', type: 'error' })
+	}, [error])
 
 	return (
 		<>
 			{loading ?
 				<CircularProgress /> :
 				<>
-					<Typography variant='h6' color='primary' gutterBottom>
-						{data?.tittel || 'Ingen tittel'}
-					</Typography><Divider />
+					<Grid container xs={12} alignItems='center' justify='space-between'>
+						<Typography variant='h6' color='primary' gutterBottom>
+							{data?.tittel || 'Ingen tittel'}
+						</Typography>
+						<Link style={{ color: '#034c6b' }} to={'/'}>Til oversikten</Link>
+					</Grid>
+					<Divider />
 					<List component='div'>
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
