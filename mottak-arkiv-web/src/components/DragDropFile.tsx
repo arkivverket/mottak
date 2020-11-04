@@ -71,7 +71,6 @@ const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
 				setAlertContent && setAlertContent({ msg: 'Du kan bare laste opp xml-filer.', type: 'warning' })
 				return
 			}
-			console.warn('files', files[0])
 			setSelectedFile(files[0])
 		}
 	}
@@ -103,7 +102,7 @@ const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
 				>
 					<Icon color='primary' fontSize='large'>{selectedFile ? 'description' : 'cloud_upload'}</Icon>
 					{selectedFile && <p>{selectedFile?.name}</p>}
-					<p>{`Klikk for å velge ${selectedFile && 'en ny '}fil eller dra filen hit.`}</p>
+					<p style={{ padding: `${!selectedFile ? '0 2rem' : '' }` }}>{`Klikk for å velge ${selectedFile && 'en ny '}fil eller dra filen hit.`}</p>
 				</Grid>
 				<input
 			   		ref={fileInputRef}
@@ -111,6 +110,7 @@ const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
 					id='button-file'
 					type='file'
 					onChange={handleFileChosen}
+					data-testid='fileUi'
 				/>
 			</div>
 		</div>
