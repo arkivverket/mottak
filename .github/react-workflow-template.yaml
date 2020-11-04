@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '14.x'
 
-      - name: Install yarn
+      - name: Installing app dependencies
         run: |
           yarn install
 
