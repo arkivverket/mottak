@@ -5,7 +5,7 @@ exports[`<NotFound /> matches snapshot 1`] = `
   <div>
     <div>
       <h1>
-        404
+        Siden finnes ikke (404)
       </h1>
     </div>
   </div>
