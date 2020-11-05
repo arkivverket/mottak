@@ -3,6 +3,7 @@ AV_NAMESPACE: av-mottak-dev
 MOTTAK_STORAGE_ACCOUT_KEY: avmottakdevsacc
 TUSD_KICKER_SERVICE_BUS_QUEUE: argo-workflow
 AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT: av-mottak-dev-sb-endpoint-argo-kicker
+AV_MOTTAK_DNS: mottak.plattform.arkivverket.dev
 
 
 # CSI Driver Link
