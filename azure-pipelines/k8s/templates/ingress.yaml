@@ -5,20 +5,22 @@ metadata:
   namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: av-mottak-dev-ClusterIssuer
+    cert-manager.io/cluster-issuer: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-clusterissuer
     cert-manager.io/acme-challenge-type: http01
-    appgw.ingress.kubernetes.io/backend-hostname: "tusd.mottak.plattform.arkivverket.dev"
+    appgw.ingress.kubernetes.io/backend-hostname: "{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}"
     appgw.ingress.kubernetes.io/connection-draining: "true"
     appgw.ingress.kubernetes.io/connection-draining-timeout: "30"
+    appgw.ingress.kubernetes.io/backend-path-prefix: "/"
 spec:
   tls:
     - hosts:
-        - tusd.mottak.plattform.arkivverket.dev
-      secretName: av-mottak-dev-cert
+        - {{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}
+      secretName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-cert
   rules:
-    - host: tusd.mottak.plattform.arkivverket.dev
+    - host: {{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}
       http:
         paths:
-          - backend:
+          - path: /tusd
+            backend:
               serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service
               servicePort: 80
