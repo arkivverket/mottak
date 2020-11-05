@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Small bash script that makes a copy of and replaces the "LANGUAGE"_COMPONENT_NAME_TEMPLATE string in the "language"-workflow-template.yaml file.
+# Small bash script that makes a copy of and replaces the <LANGUAGE>_COMPONENT_NAME_TEMPLATE string in the <language>-workflow-template.yaml file.
 # This is used for supporting similar Github Action workflows for multiple components in the mottak repo.
 
 # Expects the component/service to be in its own folder in root of repo, mottak/<component-name>
