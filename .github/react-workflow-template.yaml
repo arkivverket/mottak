@@ -36,7 +36,6 @@ jobs:
 
       - name: Test with yarn
         run: |
-          yarn
           yarn test
 
   build-and-push-docker-image:
