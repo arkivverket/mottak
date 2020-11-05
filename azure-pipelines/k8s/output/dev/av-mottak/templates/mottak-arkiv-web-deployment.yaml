@@ -1,0 +1,43 @@
+---
+# Source: av-mottak/templates/mottak-arkiv-web-deployment.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: av-mottak-dev-mottak-arkiv-web-service
+  namespace: av-mottak-dev
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    run:  mottak-arkiv-web-app    # references the deployment
+---
+# Source: av-mottak/templates/mottak-arkiv-web-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: av-mottak-dev-mottak-arkiv-web-deployment
+  namespace: av-mottak-dev
+  labels:
+    app: mottak-arkiv-web-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mottak-arkiv-web-app
+  template:
+    metadata:
+      labels:
+        run: mottak-arkiv-web-app
+    spec:
+      containers:
+        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-web:latest'
+          imagePullPolicy: Always
+          name: mottak-arkiv-web-container
+          ports:
+            - containerPort: 80
+          env:
+            - name: API_BASEURL
+              value: mottak.plattform.arkivverket.dev
