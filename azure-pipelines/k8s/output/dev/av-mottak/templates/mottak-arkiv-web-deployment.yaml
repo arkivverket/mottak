@@ -40,4 +40,4 @@ spec:
             - containerPort: 80
           env:
             - name: API_BASEURL
-              value: mottak.plattform.arkivverket.dev
+              value: https://mottak.plattform.arkivverket.dev/api

@@ -37,4 +37,4 @@ spec:
             - containerPort: 80
           env:
             - name: API_BASEURL
-              value: {{ required "Missing value API_BASEURL" .Values.AV_MOTTAK_DNS }}
+              value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/api
