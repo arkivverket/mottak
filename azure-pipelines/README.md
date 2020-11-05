@@ -2,7 +2,7 @@
 This folder contains the files needed for setting up mottak on a new cluster,
 including the helm scripts used for CD.
 
-## Continious Deployment
+## Continuous Deployment
 Pushing a new image/tag to one of the watched repositories at [arkivverket.azurecr.io](arkivverket.azurecr.io) will
 trigger the matching Azure DevOps pipeline in [pipelines](pipelines). Ie a new image to
 [av-mottak/kicker](arkivverket.azurecr.io/av-mottak/kicker) will trigger

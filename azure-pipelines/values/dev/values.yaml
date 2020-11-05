@@ -12,3 +12,7 @@ TENANT_ID_KEYVAULT: testId
 ## TUSD
 TUSD_DOWNLOAD_LOCATION_CONTAINER: tusd-storage
 MAILGUN_DOMAIN: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+
+
+## Mottak-arkiv-web
+MOTTAK_ARKIV_WEB_API_BASEURL: https://www.mottak.plattform.arkivverket.dev/api
