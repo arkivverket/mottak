@@ -123,18 +123,19 @@ const QualityCheck: React.FC = ():JSX.Element => {
 	const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.persist()
 
-		const isValid = validation[event.target.name].validator(event.target.value)
+		if (validation[event.target.name]) {
+			const isValid = validation[event.target.name].validator(event.target.value)
 
-		setValidation(prevState => {
-			return {
-				...prevState,
-				[event.target.name]: {
-					...prevState[event.target.name],
-					hasError: !isValid,
+			setValidation(prevState => {
+				return {
+					...prevState,
+					[event.target.name]: {
+						...prevState[event.target.name],
+						hasError: !isValid,
+					}
 				}
-			}
-		})
-
+			})
+		}
 		setValues(values => ({ ...values, [event.target.name]: event.target.value }))
 	}
 
