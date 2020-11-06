@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class InvitasjonStatus(str, Enum):
-    SENT = 'Sent'
+    SENDT = 'Sendt'
     FEILET = "Feilet"

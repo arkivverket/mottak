@@ -7,7 +7,7 @@ class ArkivuttrekkStatus(str, Enum):
     OPPRETTET = 'Opprettet'
     UNDER_BEHANDLING = "Under behandling"
     AVVIST = "Avvist"
-    SENT_TIL_BEVARING = "Sent til bevaring"
+    SENDT_TIL_BEVARING = "Sendt til bevaring"
 
 
 class ArkivuttrekkType(str, Enum):
