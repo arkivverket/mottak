@@ -97,7 +97,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>Avtalenummer:</div>
 							</Grid>
 							<Grid item xs={12} sm={6}>
-								<div>{data?.avgiver_epost}</div>
+								<div>{data?.avtalenummer}</div>
 							</Grid>
 						</ListItem>
 						<Divider light={true} variant='middle' />
