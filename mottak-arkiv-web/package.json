@@ -11,7 +11,8 @@
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
 		"react-router-dom": "^5.2.0",
-		"react-scripts": "3.4.3"
+		"react-scripts": "3.4.3",
+		"uuid": "^8.3.1"
 	},
 	"scripts": {
 		"start": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public/ && react-scripts start",
@@ -46,6 +47,7 @@
 		"@types/react-router-dom": "^5.1.5",
 		"@types/testing-library__jest-dom": "^5.9.2",
 		"@types/testing-library__react": "^10.2.0",
+		"@types/uuid": "^8.3.0",
 		"@typescript-eslint/eslint-plugin": "^4.1.0",
 		"@typescript-eslint/parser": "^4.1.0",
 		"eslint-plugin-react": "^7.20.6",

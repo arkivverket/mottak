@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import MomentUtils from '@date-io/moment'
+import { validate as uuidValidate } from 'uuid'
 
 import { ArchiveType, ArkivUttrekk, ParsedMetadataFil, Status } from '../../types/sharedTypes'
 import { useSharedStyles } from '../../styles/sharedStyles'
@@ -77,6 +78,11 @@ const QualityCheck: React.FC = ():JSX.Element => {
 			errorMsg: 'Du må angi en gyldig epostadresse.',
 			validator: (email: string) => email !== null && email !== '' && emailRe.test(email)
 		},
+		'obj_id': {
+			hasError: false,
+			errorMsg: 'Objektid må være en gyldig UUID.',
+			validator: (uuid: string) => uuidValidate(uuid)
+		},
 	}
 
 	const [values, setValues] = useState<ParsedMetadataFil>(initalvalues)
@@ -89,6 +95,7 @@ const QualityCheck: React.FC = ():JSX.Element => {
 
 		// Validation of required fields
 		const validTittel = validation['tittel'].validator(values?.tittel)
+		const validObjId = validation['obj_id'].validator(values?.obj_id)
 		const validKoordEpost = validation['koordinator_epost'].validator(values?.koordinator_epost)
 
 		setValidation(prevState => {
@@ -111,7 +118,7 @@ const QualityCheck: React.FC = ():JSX.Element => {
 			}
 		})
 
-		if (!(validTittel && validKoordEpost)) return
+		if (!(validTittel && validObjId && validKoordEpost)) return
 
 		performRequest({
 			url: '/arkivuttrekk',
@@ -194,6 +201,8 @@ const QualityCheck: React.FC = ():JSX.Element => {
 								value={values.obj_id}
 								onChange={handleValueChange}
 								fullWidth
+								helperText={validation['obj_id'].hasError ? validation['obj_id'].errorMsg : ''}
+								error={validation['obj_id'].hasError}
 							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
