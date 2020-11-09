@@ -15,7 +15,6 @@ app = FastAPI(
     version="0.1.0"
 )
 
-
 # TODO Implementere helsesjekk av applikasjonen
 @app.get("/health",
          status_code=status.HTTP_200_OK,

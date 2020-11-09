@@ -24,3 +24,8 @@ spec:
             backend:
               serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service
               servicePort: 80
+          - path: /mottak-arkiv-web
+            backend:
+              serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}--mottak-arkiv-web
+              servicePort: 80
+
