@@ -14,7 +14,6 @@ COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
-COPY .env .
 
 # Add bash
 RUN apk add --no-cache bash
