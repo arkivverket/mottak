@@ -14,36 +14,36 @@ module.exports = {
 	},
 	rules: {
 		// Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-		// e.g. "@typescript-eslint/explicit-function-return-type": "off",
-		"indent": [
-			"error",
-			"tab",
+		// e.g. '@typescript-eslint/explicit-function-return-type': 'off',
+		'indent': [
+			'error',
+			'tab',
 			{
-				"SwitchCase": 1,
-				"MemberExpression": "off"
+				'SwitchCase': 1,
+				'MemberExpression': 'off'
 			}
 		],
-		"linebreak-style": [
-			"error",
-			"unix"
+		'linebreak-style': [
+			'error',
+			'unix'
 		],
-		"quotes": [
-			"error",
-			"single"
+		'quotes': [
+			'error',
+			'single'
 		],
-		"semi": [
-			"error",
-			"never"
+		'semi': [
+			'error',
+			'never'
 		],
-		"no-trailing-spaces": [
-			"error"
+		'no-trailing-spaces': [
+			'error'
 		],
-		"react-hooks/rules-of-hooks": "error",
-		"react/prop-types": "off",
-		"react-hooks/exhaustive-deps": "off",
-		"@typescript-eslint/ban-ts-comment": "off",
-		"@typescript-eslint/no-explicit-any": "off",
-		"@typescript-eslint/explicit-module-boundary-types": "off"
+		'react-hooks/rules-of-hooks': 'error',
+		'react/prop-types': 'off',
+		'react-hooks/exhaustive-deps': 'off',
+		'@typescript-eslint/ban-ts-comment': 'off',
+		'@typescript-eslint/no-explicit-any': 'off',
+		'@typescript-eslint/explicit-module-boundary-types': 'off'
 
 	},
 	settings: {
@@ -51,4 +51,4 @@ module.exports = {
 			version: 'detect',  // Tells eslint-plugin-react to automatically detect the version of React to use
 		},
 	},
-};
+}

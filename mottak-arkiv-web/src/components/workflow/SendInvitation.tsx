@@ -56,8 +56,6 @@ const SendInvitation: React.FC = ():JSX.Element => {
 				justify='center'
 				spacing={2}
 				style={{ margin: '2rem auto' }}
-				xs={12}
-				sm={10}
 			>
 				<Grid item xs={12} sm={6}>
 					<Button

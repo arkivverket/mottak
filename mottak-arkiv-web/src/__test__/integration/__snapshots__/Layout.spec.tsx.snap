@@ -167,7 +167,7 @@ exports[`<Layout /> matches snapshot 1`] = `
                 </h2>
               </div>
               <div
-                class="MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-justify-xs-flex-end MuiGrid-grid-xs-12 MuiGrid-grid-sm-6"
+                class="MuiGrid-root MuiGrid-container MuiGrid-justify-xs-flex-end"
               >
                 <button
                   class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary"

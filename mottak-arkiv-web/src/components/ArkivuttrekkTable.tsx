@@ -2,6 +2,8 @@ import React, { useContext, useEffect } from 'react'
 import {
 	CircularProgress,
 	TableBody,
+	TableCell,
+	TableRow,
 } from '@material-ui/core'
 import { ArkivUttrekk } from '../types/sharedTypes'
 import ArkivuttrekkRow from './ArkivuttrekkRow'
@@ -66,9 +68,16 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 			<TblContainer>
 				<TblHead />
 				<TableBody>
-					{data?.length && data.map((arkivUttrekk: ArkivUttrekk) => (
-						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
-					))}
+					{data?.length ?
+						data.map((arkivUttrekk: ArkivUttrekk) => (
+							<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
+						)) :
+						<TableRow>
+							<TableCell>
+								Ingen arkivuttrekk
+							</TableCell>
+						</TableRow>
+					}
 				</TableBody>
 			</TblContainer>
 	)

@@ -33,7 +33,7 @@ const Overview: React.FC = ():JSX.Element => {
 				<Grid item>
 					<h2>Arkivuttrekk</h2>
 				</Grid>
-				<Grid container item xs={12} sm={6} justify='flex-end'>
+				<Grid container justify='flex-end'>
 					<Button
 						variant={'outlined'}
 						color='primary'

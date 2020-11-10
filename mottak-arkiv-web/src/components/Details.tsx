@@ -38,7 +38,7 @@ const Details: React.FC = ():JSX.Element => {
 			{loading ?
 				<CircularProgress /> :
 				<>
-					<Grid container xs={12} alignItems='center' justify='space-between'>
+					<Grid container alignItems='center' justify='space-between'>
 						<Typography variant='h6' color='primary' gutterBottom>
 							{data?.tittel || 'Ingen tittel'}
 						</Typography>

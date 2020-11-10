@@ -61,13 +61,12 @@ const useRequest = <T>() => {
 		params = null }: RequestType ) => {
 		const source = axios.CancelToken.source()
 
-		let settings = <{
+		let settings: {
 			method: Method,
 			headers?: AxiosRequestConfig['headers'],
 			data?: AxiosRequestConfig['data'],
 			params?: AxiosRequestConfig['params'],
-			cancelToken?: AxiosRequestConfig['cancelToken']}>{ method }
-
+			cancelToken?: AxiosRequestConfig['cancelToken']} = { method }
 
 		dispatch({ type: 'PENDING' })
 

@@ -261,7 +261,6 @@ const QualityCheck: React.FC = ():JSX.Element => {
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
-								type='email'
 								id='avgiver_epost'
 								name='avgiver_epost'
 								label='Avgivers epost'
@@ -274,11 +273,10 @@ const QualityCheck: React.FC = ():JSX.Element => {
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
-								type='email'
 								id='koordinator_epost'
 								name='koordinator_epost'
 								label={'Koordinators epost'}
-								value={values.koordinator_epost}
+								value={values.koordinator_epost ?? ''}
 								onChange={handleValueChange}
 								fullWidth
 								helperText={validation['koordinator_epost'].hasError ? validation['koordinator_epost'].errorMsg : ''}
