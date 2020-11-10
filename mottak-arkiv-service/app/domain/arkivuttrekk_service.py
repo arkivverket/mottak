@@ -38,7 +38,7 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
                                                 invitasjon_ekstern_id)
 
     if resp.status_code == 200:
-        status = InvitasjonStatus.SENT
+        status = InvitasjonStatus.SENDT
     else:
         logging.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk.id} med {resp.status_code} {resp.text}")
         status = InvitasjonStatus.FEILET

@@ -1,0 +1,213 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Layout /> matches snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="makeStyles-root-1"
+    >
+      <header
+        class="MuiPaper-root MuiAppBar-root MuiAppBar-positionAbsolute MuiAppBar-colorPrimary makeStyles-appBar-2 MuiPaper-elevation4"
+      >
+        <div
+          class="MuiToolbar-root MuiToolbar-regular MuiToolbar-gutters"
+        >
+          <button
+            aria-label="open drawer"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-edgeStart"
+            data-testid="toggle-btn"
+            tabindex="0"
+            type="button"
+          >
+            <span
+              class="MuiIconButton-label"
+            >
+              <span
+                aria-hidden="true"
+                class="material-icons MuiIcon-root"
+                data-testid="menu-toggle-icon"
+              >
+                menu
+              </span>
+            </span>
+            <span
+              class="MuiTouchRipple-root"
+            />
+          </button>
+          <h6
+            class="MuiTypography-root MuiTypography-h6"
+          >
+            Mottak
+          </h6>
+        </div>
+      </header>
+      <div
+        class="MuiDrawer-root MuiDrawer-docked makeStyles-drawer-3 makeStyles-drawer-6"
+      >
+        <div
+          class="MuiPaper-root MuiDrawer-paper makeStyles-drawerPaper-4 makeStyles-drawerPaper-7 MuiDrawer-paperAnchorLeft MuiDrawer-paperAnchorDockedLeft MuiPaper-elevation2"
+          style="visibility: hidden; webkit-transform: translateX(-0px); transform: translateX(-0px);"
+        >
+          <div
+            class="MuiToolbar-root MuiToolbar-regular MuiToolbar-gutters"
+          />
+          <div
+            role="presentation"
+          >
+            <ul
+              class="MuiList-root MuiList-padding"
+              role="menu"
+              tabindex="-1"
+            >
+              <a
+                aria-current="page"
+                class="makeStyles-menu-5 active"
+                data-testid="Oversikt"
+                href="/"
+                style="text-decoration: none;"
+                tabindex="0"
+              >
+                <li
+                  aria-disabled="false"
+                  class="MuiButtonBase-root MuiListItem-root MuiMenuItem-root Mui-selected MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button Mui-selected"
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  <div
+                    class="MuiListItemText-root"
+                  >
+                    <span
+                      class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                    >
+                      Oversikt
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root"
+                  />
+                </li>
+              </a>
+              <a
+                class="makeStyles-menu-5"
+                data-testid="Last opp fil"
+                href="/arkivuttrekk/invitation"
+                style="text-decoration: none;"
+              >
+                <li
+                  aria-disabled="false"
+                  class="MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  <div
+                    class="MuiListItemText-root"
+                  >
+                    <span
+                      class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                    >
+                      Last opp fil
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root"
+                  />
+                </li>
+              </a>
+              <a
+                class="makeStyles-menu-5"
+                data-testid="Se alle arkivuttrekk"
+                href="/arkivutrekk"
+                style="text-decoration: none;"
+              >
+                <li
+                  aria-disabled="false"
+                  class="MuiButtonBase-root MuiListItem-root MuiMenuItem-root MuiMenuItem-gutters MuiListItem-gutters MuiListItem-button"
+                  role="menuitem"
+                  tabindex="-1"
+                >
+                  <div
+                    class="MuiListItemText-root"
+                  >
+                    <span
+                      class="MuiTypography-root MuiListItemText-primary MuiTypography-body1 MuiTypography-displayBlock"
+                    >
+                      Se alle arkivuttrekk
+                    </span>
+                  </div>
+                  <span
+                    class="MuiTouchRipple-root"
+                  />
+                </li>
+              </a>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <main
+        class="makeStyles-content-10 makeStyles-contentShift-11 makeStyles-contentShift-13"
+      >
+        <div
+          class="makeStyles-appBarSpacer-8"
+        />
+        <div
+          class="MuiContainer-root makeStyles-container-9 MuiContainer-maxWidthLg"
+        >
+          <div
+            class="MuiPaper-root MuiPaper-elevation2 MuiPaper-rounded"
+            style="padding: 2rem;"
+          >
+            <div
+              class="MuiGrid-root makeStyles-gridMargin-14 MuiGrid-container MuiGrid-align-items-xs-center MuiGrid-justify-xs-space-between"
+            >
+              <div
+                class="MuiGrid-root MuiGrid-item"
+              >
+                <h2>
+                  Arkivuttrekk
+                </h2>
+              </div>
+              <div
+                class="MuiGrid-root MuiGrid-container MuiGrid-justify-xs-flex-end"
+              >
+                <button
+                  class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary"
+                  tabindex="0"
+                  type="button"
+                >
+                  <span
+                    class="MuiButton-label"
+                  >
+                    Nytt arkivuttrekk
+                  </span>
+                  <span
+                    class="MuiTouchRipple-root"
+                  />
+                </button>
+              </div>
+            </div>
+            <div
+              class="MuiCircularProgress-root MuiCircularProgress-colorPrimary MuiCircularProgress-indeterminate"
+              role="progressbar"
+              style="width: 40px; height: 40px;"
+            >
+              <svg
+                class="MuiCircularProgress-svg"
+                viewBox="22 22 44 44"
+              >
+                <circle
+                  class="MuiCircularProgress-circle MuiCircularProgress-circleIndeterminate"
+                  cx="44"
+                  cy="44"
+                  fill="none"
+                  r="20.2"
+                  stroke-width="3.6"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+`;
