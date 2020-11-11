@@ -21,6 +21,11 @@ metadata:
     app: mottak-arkiv-service-app
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # Should always be 1 to avoid race condition on db migration
+      maxUnavailable: 0
   selector:
     matchLabels:
       run: mottak-arkiv-service-app
@@ -51,3 +56,14 @@ spec:
               value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: TUSD_URL
               value: {{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd
+      initContainers:
+        - name: mottak-arkiv-service-db-migration
+          image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+          imagePullPolicy: Always
+          command: ["alembic", "upgrade", "head"]
+          env:
+            - name: DBSTRING
+              valueFrom:
+                secretKeyRef:
+                  name: av-mottak-dev-dsn
+                  key: av-mottak-dev-secret-dsn
