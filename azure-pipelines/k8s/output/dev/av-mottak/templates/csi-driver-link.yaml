@@ -54,4 +54,4 @@ spec:
           objectType: secret
           objectVersion: ""
     resourceGroup: "av-mottak-dev-rg"
-    tenantId: "testId"                    # the tenant ID of the KeyVault
+    tenantId: "99d3d298-60cf-4636-9772-4a191b6f0d94"                    # the tenant ID of the KeyVault

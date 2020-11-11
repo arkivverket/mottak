@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    run:  mottak-arkiv-service-app    # references the deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  labels:
+    app: mottak-arkiv-service-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: mottak-arkiv-service-app
+  template:
+    metadata:
+      labels:
+        run: mottak-arkiv-service-app
+    spec:
+      containers:
+        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+          imagePullPolicy: Always
+          name: mottak-arkiv-service-container
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: DBSTRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
+                  key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn
+            - name: MAILGUN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mailgun-secret
+                  key: mailgun-secret
+            - name: MAILGUN_DOMAIN
+              value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
+            - name: TUSD_URL
+              value: {{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd
