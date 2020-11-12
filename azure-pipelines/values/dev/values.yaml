@@ -7,7 +7,7 @@ AV_MOTTAK_DNS: mottak.plattform.arkivverket.dev
 
 
 # CSI Driver Link
-TENANT_ID_KEYVAULT: testId
+TENANT_ID_KEYVAULT: 99d3d298-60cf-4636-9772-4a191b6f0d94
 
 
 ## TUSD

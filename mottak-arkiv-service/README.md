@@ -11,11 +11,7 @@ Application responsible for serving the application mottak-arkiv-web with viewin
 
 ### Environment variables needed
 The values given here are examples. Please adjust to your local database.
-- DB_DRIVER : `postgresql`
-- DB_USER : `postgres`
-- DB_PASSWORD : `""`
-- DB_HOST : `localhost`
-- DB_NAME : `postgres`
+- DBSTRING: `postgresql://<username>:<password>@localhost:5432/postgres`
 - MAILGUN_DOMAIN: `<some_id>.mailgun.org`
 - MAILGUN_SECRET: `<secret used for auth againt mailgun>`
 - TUSD_URL: `<public url to tusd>`
