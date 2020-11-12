@@ -1,0 +1,104 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          imagePullPolicy: Always
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: configmap-volume
+            - mountPath: /mnt/{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx.auth
+              name: configmap-auth
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sleep","90"]
+      terminationGracePeriodSeconds: 101
+      volumes:
+        - name: configmap-volume
+          configMap:
+            name: website-nginx-cm
+        - name: configmap-auth
+          configMap:
+            name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-auth
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: website-nginx-cm
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+data:
+  default.conf: | # TODO, spør Michael om hjelp, kan man bruke helm variabel i denne?
+    server {
+        listen 80 default_server;
+
+        if ($http_x_forwarded_proto = "http") {
+                return 301 https://$host$request_uri;
+        }
+
+        auth_basic "Arkivverket restriced area";
+        auth_basic_user_file /mnt/av-mottak-dev-nginx.auth/auth;
+        root /usr/share/nginx/html;
+    }
+
+    server {
+        listen 8080;
+        root /usr/share/nginx/html;
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap # TODO: Burde ikke dette være en Secret?
+metadata:
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-auth
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+data:
+  auth: | # TODO - Spør Michael om hjelp
+    av:$apr1$8zPW4nYC$6YMcHLevStyNLYxey6Hza0
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  #annotations: # TODO, trenger vi annotations her?
+  labels:
+    app: nginx
+  name: nginx
+  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+  selector:
+    app: nginx
