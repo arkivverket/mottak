@@ -65,5 +65,5 @@ spec:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-dsn
-                  key: av-mottak-dev-secret-dsn
+                  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
+                  key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn
