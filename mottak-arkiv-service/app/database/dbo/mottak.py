@@ -87,6 +87,8 @@ class Overforingspakke(Base):
     storrelse = Column(BigInteger(), nullable=False)
     status = Column(Enum('Startet', 'OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type', create_type=True),
                     nullable=False)
+    opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
+    endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)
 
 
 class Tester(Base):
