@@ -9,7 +9,7 @@ from datetime import datetime
 from azure.servicebus import QueueClient, Message
 
 from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect, extract_size_in_bytes_from_hook, \
-    extract_filename_from_hook, extract_tusd_id_from_hook
+    extract_tusd_id_from_hook
 from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR, OK
 
 try:
