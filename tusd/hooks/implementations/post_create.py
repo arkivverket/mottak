@@ -25,6 +25,7 @@ def add_overforingspakke_to_db(conn, metadata: dict, tusd_data: dict):
             (metadata['arkivuttrekk_id'], tusd_id, filename, size, 'Startet'))
         if cur.rowcount != 1:
             raise psycopg2.DataError
+        conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
         raise exception

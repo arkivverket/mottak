@@ -38,8 +38,8 @@ def update_overforingspakke_in_db(conn, tusd_data: dict):
                     (object_size, 'OK', tusd_id))
         if cur.rowcount != 1:
             raise psycopg2.DataError
-        logging.debug(
-            f"Updated status to OK for tusd_id {tusd_id}")
+        logging.debug(f"Updated status to OK for tusd_id {tusd_id}")
+        conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
         raise exception

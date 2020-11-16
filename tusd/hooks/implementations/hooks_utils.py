@@ -67,8 +67,8 @@ def my_disconnect(conn):
     conn.close()
 
 
-def extract_filename_from_hook(tusd_data: dict):
-    # Verify that we have a filename:
+def extract_filename_from_hook(tusd_data: dict) -> str:
+    # Collect filename from hook json:
     try:
         return tusd_data['Upload']['Storage']['Key']
     except KeyError:
@@ -77,8 +77,8 @@ def extract_filename_from_hook(tusd_data: dict):
         exit(JSONERROR)
 
 
-def extract_size_in_bytes_from_hook(tusd_data: dict):
-    # Verify that we have a filename:
+def extract_size_in_bytes_from_hook(tusd_data: dict) -> int:
+    # Collect transferred bytes from hook json:
     try:
         return tusd_data['Upload']['Size']  # Total size of upload in bytes
     except KeyError:
@@ -88,7 +88,7 @@ def extract_size_in_bytes_from_hook(tusd_data: dict):
 
 
 def extract_tusd_id_from_hook(tusd_data: dict):
-    # Verify that we have a filename:
+    # Collect the tusd upload id from hook json:
     try:
         return tusd_data['Upload']['ID']  # Total size of upload in bytes
     except KeyError:
