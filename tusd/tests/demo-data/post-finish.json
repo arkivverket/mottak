@@ -1,1 +1,60 @@
-{"Upload": {"ID": "8ce0f19f7644ebfa4ec1cdda8803a2db+7dcc8ec2e93d03a0", "Size": 440320, "SizeIsDeferred": false, "Offset": 440320, "MetaData": {"fileName": "df53d1d8-39bf-4fea-a741-58d472664ce2.tar", "invitation_id": "2"}, "IsPartial": false, "IsFinal": false, "PartialUploads": null, "Storage": {"Bucket": "mottak", "Key": "8ce0f19f7644ebfa4ec1cdda8803a2db", "Type": "s3store"}}, "HTTPRequest": {"Method": "PATCH", "URI": "/files/8ce0f19f7644ebfa4ec1cdda8803a2db+7dcc8ec2e93d03a0", "RemoteAddr": "10.244.1.19:40844", "Header": {"Content-Length": ["440320"], "Content-Type": ["application/offset+octet-stream"], "Tus-Resumable": ["1.0.0"], "Upload-Offset": ["0"], "X-Forwarded-For": ["10.240.0.5"], "X-Forwarded-Host": ["tusd.mottak.arkivverket.dev"], "X-Forwarded-Port": ["443"], "X-Forwarded-Proto": ["https"], "X-Real-Ip": ["10.240.0.5"], "X-Request-Id": ["488b99eb9811a003d72b312f1790aa5d"], "X-Scheme": ["https"]}}}
+{
+  "Upload": {
+    "ID": "8ce0f19f7644ebfa4ec1cdda8803a2db+7dcc8ec2e93d03a0",
+    "Size": 440320,
+    "SizeIsDeferred": false,
+    "Offset": 440320,
+    "MetaData": {
+      "fileName": "df53d1d8-39bf-4fea-a741-58d472664ce2.tar",
+      "invitation_id": "2"
+    },
+    "IsPartial": false,
+    "IsFinal": false,
+    "PartialUploads": null,
+    "Storage": {
+      "Bucket": "mottak",
+      "Key": "8ce0f19f7644ebfa4ec1cdda8803a2db",
+      "Type": "s3store"
+    }
+  },
+  "HTTPRequest": {
+    "Method": "PATCH",
+    "URI": "/files/8ce0f19f7644ebfa4ec1cdda8803a2db+7dcc8ec2e93d03a0",
+    "RemoteAddr": "10.244.1.19:40844",
+    "Header": {
+      "Content-Length": [
+        "440320"
+      ],
+      "Content-Type": [
+        "application/offset+octet-stream"
+      ],
+      "Tus-Resumable": [
+        "1.0.0"
+      ],
+      "Upload-Offset": [
+        "0"
+      ],
+      "X-Forwarded-For": [
+        "10.240.0.5"
+      ],
+      "X-Forwarded-Host": [
+        "tusd.mottak.arkivverket.dev"
+      ],
+      "X-Forwarded-Port": [
+        "443"
+      ],
+      "X-Forwarded-Proto": [
+        "https"
+      ],
+      "X-Real-Ip": [
+        "10.240.0.5"
+      ],
+      "X-Request-Id": [
+        "488b99eb9811a003d72b312f1790aa5d"
+      ],
+      "X-Scheme": [
+        "https"
+      ]
+    }
+  }
+}

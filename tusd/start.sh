@@ -1,7 +1,7 @@
 #!/bin/bash
 # We only enable the hooks we have. This will reduce logging somewhat.
 # Consider hooking into post-terminate for logging.
-OPT_PARAMS="-hooks-enabled-events pre-create,post-finish"
+OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish"
 
 # Handle optional configuration from environment:
 if [ -n "$BASE_PATH" ]; then
@@ -39,7 +39,7 @@ if [ "$OBJECTSTORE" == "gcs" ]; then
 # handle Azure here if we're supporting it:
 elif [ "$OBJECTSTORE" == "azure" ]; then
     echo "Backend is Azure Blob Storage."
-    #  Use Azure BlockBlob Storage with this container name as a storage backend 
+    #  Use Azure BlockBlob Storage with this container name as a storage backend
     # (requires the AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY environment variable to be set)
 
     TUSD_PARAMS="-hooks-dir /srv/hooks -behind-proxy -azure-storage ${BUCKET}"
