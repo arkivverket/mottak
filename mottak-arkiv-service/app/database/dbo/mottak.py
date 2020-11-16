@@ -82,9 +82,10 @@ class Overforingspakke(Base):
     contains the tar file."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
+    tusd_id = Column(String(length=60), nullable=False, unique=True, index=True)
     navn = Column(String(), nullable=False)
     storrelse = Column(BigInteger(), nullable=False)
-    status = Column(Enum('OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type', create_type=True),
+    status = Column(Enum('Startet', 'OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type', create_type=True),
                     nullable=False)
 
 

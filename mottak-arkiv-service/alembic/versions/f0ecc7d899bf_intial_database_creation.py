@@ -78,13 +78,15 @@ def upgrade():
     op.create_table('overforingspakke',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+                    sa.Column('tusd_id', sa.String(length=60), nullable=False, index=True),
                     sa.Column('navn', sa.String(), nullable=False),
                     sa.Column('storrelse', sa.BigInteger(), nullable=False),
-                    sa.Column('status', sa.Enum('OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type'),
+                    sa.Column('status', sa.Enum('Startet', 'OK', 'Avbrutt', 'Feilet', name='overforingspakke_status_type'),
                               nullable=False),
                     sa.ForeignKeyConstraint(['arkivuttrekk_id'], ['arkivuttrekk.id'], ),
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('arkivuttrekk_id'),
+                    sa.UniqueConstraint('tusd_id'),
                     sa.UniqueConstraint('id')
                     )
     op.create_table('tester',
