@@ -59,7 +59,7 @@ metadata:
   name: website-nginx-cm
   namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
 data:
-  default.conf: | # TODO, spør Michael om hjelp, kan man bruke helm variabel i denne?
+  default.conf: |
     server {
         listen 80 default_server;
 
@@ -68,8 +68,15 @@ data:
         }
 
         auth_basic "Arkivverket restriced area";
-        auth_basic_user_file /mnt/av-mottak-dev-nginx.auth/auth;
+        auth_basic_user_file /mnt/{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx.auth/auth;
         root /usr/share/nginx/html;
+
+        location /mottak-arkiv-service {
+          proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-service;
+        }
+        location /mottak-arkiv-web {
+          proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-web-service;
+        }
     }
 
     server {
@@ -79,14 +86,13 @@ data:
 
 ---
 apiVersion: v1
-kind: ConfigMap # TODO: Burde ikke dette være en Secret?
+kind: ConfigMap
 metadata:
   name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-auth
   namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
 data:
-  auth: | # TODO - Spør Michael om hjelp
+  auth: |
     av:$apr1$8zPW4nYC$6YMcHLevStyNLYxey6Hza0
-
 ---
 apiVersion: v1
 kind: Service
