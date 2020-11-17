@@ -12,7 +12,7 @@ resources:          # types: pipelines | repositories | containers | builds | pa
       trigger:
         tags:
           include:
-          - "*"
+            - "*"
 
 variables:
   env: dev
