@@ -2,11 +2,11 @@
 import json
 import psycopg2
 import psycopg2.extras
-import re
+import logging
 
 from typing import TextIO
 
-from .return_codes import DBERROR
+from .return_codes import DBERROR, JSONERROR
 
 
 def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
@@ -21,6 +21,7 @@ def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
     except Exception as exception:
         logger.error(f'Error while dumping JSON: {exception}')
         # Not really a fatal error. We can continue.
+    logging.info(f'Got {step} data: {data}')
     return data
 
 
@@ -64,3 +65,33 @@ def get_metadata(conn, invitasjon_ekstern_id: str, logger):
 
 def my_disconnect(conn):
     conn.close()
+
+
+def extract_filename_from_hook(tusd_data: dict) -> str:
+    # Collect filename from hook json:
+    try:
+        return tusd_data['Upload']['Storage']['Key']
+    except KeyError:
+        logging.error("Could not find key/filename in JSON. Dumping JSON:")
+        logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
+        exit(JSONERROR)
+
+
+def extract_size_in_bytes_from_hook(tusd_data: dict) -> int:
+    # Collect transferred bytes from hook json:
+    try:
+        return tusd_data['Upload']['Size']  # Total size of upload in bytes
+    except KeyError:
+        logging.error("Could not find key/Size in JSON. Dumping JSON:")
+        logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
+        exit(JSONERROR)
+
+
+def extract_tusd_id_from_hook(tusd_data: dict):
+    # Collect the tusd upload id from hook json:
+    try:
+        return tusd_data['Upload']['ID']  # Total size of upload in bytes
+    except KeyError:
+        logging.error("Could not find key/Size in JSON. Dumping JSON:")
+        logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
+        exit(JSONERROR)

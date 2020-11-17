@@ -5,9 +5,12 @@ import json
 import psycopg2
 import psycopg2.extras
 import logging
+from datetime import datetime
 from azure.servicebus import QueueClient, Message
 
-from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
+from .status import OverforingspakkeStatus
+from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect, extract_size_in_bytes_from_hook, \
+    extract_tusd_id_from_hook
 from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR, OK
 
 try:
@@ -24,15 +27,21 @@ except:
 # Todo: clean up logging between hooks_utils and this file
 
 
-def update_db_with_objectname(conn, metadata: dict, objectname):
-    """ Update the database with the name of the relevant object as it is named in the object store.
+def update_overforingspakke_in_db(conn, tusd_data: dict):
+    """ Updates overforingspakke in mottak-arkiv-service db with size and filename
         We do this as tusd assigns a random name to each object """
+    object_size = extract_size_in_bytes_from_hook(tusd_data)
+    tusd_id = extract_tusd_id_from_hook(tusd_data)
     try:
         cur = conn.cursor()
-        cur.execute('insert into overforingspakke (arkivuttrekk_id, navn, storrelse, status) VALUES (%s, %s, %s, %s)',
-                    (metadata['arkivuttrekk_id'], objectname, metadata['storrelse'], 'OK'))
+        cur.execute('UPDATE overforingspakke '
+                    'SET storrelse = %s, status = %s, endret = %s '
+                    'WHERE tusd_id = %s',
+                    (object_size, OverforingspakkeStatus.OK, datetime.now(), tusd_id))
         if cur.rowcount != 1:
             raise psycopg2.DataError
+        logging.debug(f"Updated status to OK for tusd_id {tusd_id}")
+        conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
         raise exception
@@ -129,19 +138,8 @@ def run():
             f'Error while looking up uuid from invition ({invitasjon_ekstern_id}) from DB: {exception}')
         exit(UNKNOWNIID)
 
-    # Verify that we have a filename:
     try:
-        filename = tusd_data['Upload']['Storage']['Key']
-        logging.debug(f"File name (in objectstore) is {filename}")
-    except:
-        logging.error("Could not find key/filename in JSON. Dumping JSON:")
-        logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))
-        exit(JSONERROR)
-
-    try:
-        update_db_with_objectname(connection, metadata, filename)
-        logging.debug(
-            f"Set object_name to {filename} for invitasjon_ekstern_id {invitasjon_ekstern_id} in database.")
+        update_overforingspakke_in_db(connection, metadata, tusd_data)
     except Exception as exception:
         logging.error("Error while updating database {exception}")
         exit(DBERROR)
