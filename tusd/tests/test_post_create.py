@@ -19,14 +19,3 @@ def test_add_overforingspakke_to_db(mocker):
     mock_cur.rowcount = 1
     add_overforingspakke_to_db(mock_con, mock_metadata, json.loads(post_event))
     mock_cur.execute.assert_called_once()
-
-
-def test_add_overforingspakke_to_db_fail(mocker):
-    # result of psycopg2.connect(**connection_stuff)
-    mock_con = mocker.MagicMock()
-    # result of con.cursor(cursor_factory=DictCursor)
-    mock_cur = mock_con.cursor.return_value
-    mock_cur.rowcount = 0
-    with pytest.raises(psycopg2.DataError):
-        add_overforingspakke_to_db(mock_con, mock_metadata, json.loads(post_event))
-    mock_cur.execute.assert_called_once()

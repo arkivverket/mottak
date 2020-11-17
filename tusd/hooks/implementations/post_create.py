@@ -5,6 +5,7 @@ import psycopg2
 import psycopg2.extras
 
 from .return_codes import JSONERROR, OK
+from .status import OverforingspakkeStatus
 from .hooks_utils import read_tusd_event, my_connect, my_disconnect, extract_tusd_id_from_hook, \
     extract_filename_from_hook, extract_size_in_bytes_from_hook, get_metadata
 
@@ -23,7 +24,7 @@ def add_overforingspakke_to_db(conn, metadata: dict, tusd_data: dict):
         cur.execute(
             'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, navn, storrelse, status) '
             'VALUES (%s, %s, %s, %s, %s)',
-            (metadata['arkivuttrekk_id'], tusd_id, filename, size, 'Startet'))
+            (metadata['arkivuttrekk_id'], tusd_id, filename, size, OverforingspakkeStatus.STARTET))
         conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
