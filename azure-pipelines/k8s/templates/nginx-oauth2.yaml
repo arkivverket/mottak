@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-service
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-oauth2-service
   namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
 spec:
   type: ClusterIP
@@ -15,10 +15,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-deployment
+  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-oauth2
   namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
   labels:
-    run: nginx
+    app: nginx-oauth2
 spec:
   selector:
     matchLabels:

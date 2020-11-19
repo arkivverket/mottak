@@ -1,52 +1,5 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
-spec:
-  type: ClusterIP
-  ports:
-    - name: http
-      port: 80
-      targetPort: 80
-  selector:
-    run: nginx
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
-  labels:
-    run: nginx
-spec:
-  selector:
-    matchLabels:
-      run: nginx
-  replicas: 1 # tells deployment to run 1 pods matching the template
-  template:
-    metadata:
-      labels:
-        run: nginx
-    spec:
-      containers:
-        - image: nginx
-          imagePullPolicy: IfNotPresent
-          name: nginx
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx/conf.d
-              readOnly: true
-              name: default-conf
-      volumes:
-        - name: default-conf
-          configMap:
-            name: nginx-config
-            items:
-              - key: default.conf
-                path: default.conf
----
+# Source: av-mottak/templates/nginx-oauth2.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -64,7 +17,7 @@ data:
 
       location /tusd {
         proxy_pass http://av-mottak-dev-tusd-service;
-    {{/* proxy_set_header etc... usikker om det skal væer med her         */}}
+    
       }
 
       location /oauth2 {
@@ -92,7 +45,7 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/;
+        proxy_pass http://mottak.plattform.arkivverket.dev/;
       }
 
       error_page   500 502 503 504  /50x.html;
@@ -100,4 +53,54 @@ data:
         root   /usr/share/nginx/html;
       }
     }
-
+---
+# Source: av-mottak/templates/nginx-oauth2.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: av-mottak-dev-nginx-oauth2-service
+  namespace: av-mottak-dev
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    run: nginx
+---
+# Source: av-mottak/templates/nginx-oauth2.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: av-mottak-dev-nginx-oauth2
+  namespace: av-mottak-dev
+  labels:
+    app: nginx-oauth2
+spec:
+  selector:
+    matchLabels:
+      run: nginx
+  replicas: 1 # tells deployment to run 1 pods matching the template
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      containers:
+        - image: nginx
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx/conf.d
+              readOnly: true
+              name: default-conf
+      volumes:
+        - name: default-conf
+          configMap:
+            name: nginx-config
+            items:
+              - key: default.conf
+                path: default.conf
