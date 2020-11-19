@@ -22,6 +22,6 @@ spec:
         paths:
           - path: /
             backend:
-                serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-oauth2-service
+                serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-service
                 servicePort: 80
 

@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-config
+  namespace: av-mottak-dev
 data:
   default.conf: |
     server {
@@ -17,7 +18,7 @@ data:
 
       location /tusd {
         proxy_pass http://av-mottak-dev-tusd-service;
-
+    
       }
 
       location /oauth2 {
@@ -30,22 +31,26 @@ data:
         proxy_read_timeout 30;
       }
 
+      location /api/ {
+        proxy_pass http://av-mottak-dev-mottak-arkiv-service-service/;
+      }
+
       location / {
-        auth_request /oauth2/auth;
-        error_page 401 = /oauth2/sign_in;
 
-        # pass information via X-User and X-Email headers to backend,
-        # requires running with --set-xauthrequest flag
-        auth_request_set $user   $upstream_http_x_auth_request_user;
-        auth_request_set $email  $upstream_http_x_auth_request_email;
-        proxy_set_header X-User  $user;
-        proxy_set_header X-Email $email;
 
-        # if you enabled --cookie-refresh, this is needed for it to work with auth_request
-        auth_request_set $auth_cookie $upstream_http_set_cookie;
-        add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://mottak.plattform.arkivverket.dev/;
+
+
+
+
+
+
+
+
+
+
+
+        proxy_pass http://av-mottak-dev-mottak-arkiv-web-service;
       }
 
       error_page   500 502 503 504  /50x.html;
@@ -64,7 +69,7 @@ spec:
   type: ClusterIP
   ports:
     - name: http
-      port: 81
+      port: 80
       targetPort: 80
   selector:
     run: nginx
@@ -92,7 +97,7 @@ spec:
           imagePullPolicy: IfNotPresent
           name: nginx
           ports:
-            - containerPort: 81
+            - containerPort: 80
           volumeMounts:
             - mountPath: /etc/nginx/conf.d # mount nginx-conf volume to /etc/nginx/conf.d
               readOnly: true

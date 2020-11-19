@@ -35,7 +35,7 @@ spec:
       containers:
         - image: quay.io/oauth2-proxy/oauth2-proxy:latest
           imagePullPolicy: IfNotPresent
-          name: oauth2proxy
+          name: nginx
           ports:
             - containerPort: 4180
           args:
