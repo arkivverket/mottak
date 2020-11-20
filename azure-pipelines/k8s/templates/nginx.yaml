@@ -63,8 +63,8 @@ data:
       proxy_buffers         8 16k;  # Buffer pool = 8 buffers of 16k
       proxy_buffer_size     16k;    # 16k of buffers from pool used for headers
 
-      location /tusd {
-        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service;
+      location /tusd/ {
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service/;
     {{/* proxy_set_header etc... usikker om det skal væer med her         */}}
       }
 

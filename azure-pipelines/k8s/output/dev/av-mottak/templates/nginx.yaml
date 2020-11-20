@@ -16,8 +16,8 @@ data:
       proxy_buffers         8 16k;  # Buffer pool = 8 buffers of 16k
       proxy_buffer_size     16k;    # 16k of buffers from pool used for headers
 
-      location /tusd {
-        proxy_pass http://av-mottak-dev-tusd-service;
+      location /tusd/ {
+        proxy_pass http://av-mottak-dev-tusd-service/;
     
       }
 
