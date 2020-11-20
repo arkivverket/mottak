@@ -64,12 +64,12 @@ data:
       proxy_buffer_size     16k;    # 16k of buffers from pool used for headers
 
       location /tusd {
-        proxy_pass http://av-mottak-dev-tusd-service;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service;
     {{/* proxy_set_header etc... usikker om det skal væer med her         */}}
       }
 
       location /oauth2 {
-        proxy_pass http://av-mottak-dev-oauth2-proxy-service:4180;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-oauth2-proxy-service:4180;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Scheme $scheme;
@@ -93,7 +93,7 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://av-mottak-dev-mottak-arkiv-service-service/;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-service/;
       }
 
       location / {
@@ -111,7 +111,7 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://av-mottak-dev-mottak-arkiv-web-service;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-web-service;
       }
 
       error_page   500 502 503 504  /50x.html;
