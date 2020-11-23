@@ -31,6 +31,21 @@ spec:
       objectName: storageaccount-key                        # name of the mounted content to sync. this could be the object name or the object alias
     secretName: storageaccount-key                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+  - data:
+    - key: client-id
+      objectName: client-id
+    secretName: client-id
+    type: Opaque
+  - data:
+      - key: client-secret
+        objectName: client-secret
+    secretName: client-secret
+    type: Opaque
+  - data:
+      - key: cookie-secret
+        objectName: cookie-secret
+    secretName: cookie-secret
+    type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
     keyvaultName: "av-mottak-dev-vault"          # the name of the KeyVault
@@ -53,5 +68,14 @@ spec:
           objectName: storageaccount-key
           objectType: secret
           objectVersion: ""
+        - |
+          objectName: client-id
+          objectType: secret
+        - |
+          objectName: client-secret
+          objectType: secret
+        - |
+          objectName: cookie-secret
+          objectType: secret
     resourceGroup: "av-mottak-dev-rg"
     tenantId: "99d3d298-60cf-4636-9772-4a191b6f0d94"                    # the tenant ID of the KeyVault

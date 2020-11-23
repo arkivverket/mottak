@@ -22,7 +22,7 @@ spec:
     - host: mottak.plattform.arkivverket.dev
       http:
         paths:
-          - path: /tusd
+          - path: /
             backend:
-              serviceName: av-mottak-dev-tusd-service
-              servicePort: 80
+                serviceName: av-mottak-dev-nginx-service
+                servicePort: 80

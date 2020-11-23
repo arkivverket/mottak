@@ -38,6 +38,11 @@ kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/csi-driver-link.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/mount_the_secrets.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/minio-deployment.yaml"
 
+echo
+echo "Setting up ingress"
+kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/ingress.yaml"
+kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/nginx.yaml"
+kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/oauth2-proxy.yaml"
 
 #echo
 #echo "Setting up av-mottak-$ENV-rg"

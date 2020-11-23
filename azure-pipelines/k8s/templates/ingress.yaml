@@ -20,7 +20,8 @@ spec:
     - host: {{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}
       http:
         paths:
-          - path: /tusd
+          - path: /
             backend:
-              serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service
-              servicePort: 80
+                serviceName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-service
+                servicePort: 80
+

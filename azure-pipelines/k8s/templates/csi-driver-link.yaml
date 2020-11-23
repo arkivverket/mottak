@@ -29,6 +29,21 @@ spec:
       objectName: storageaccount-key                        # name of the mounted content to sync. this could be the object name or the object alias
     secretName: storageaccount-key                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
+  - data:
+    - key: client-id
+      objectName: client-id
+    secretName: client-id
+    type: Opaque
+  - data:
+      - key: client-secret
+        objectName: client-secret
+    secretName: client-secret
+    type: Opaque
+  - data:
+      - key: cookie-secret
+        objectName: cookie-secret
+    secretName: cookie-secret
+    type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
     keyvaultName: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-vault"          # the name of the KeyVault
@@ -51,5 +66,14 @@ spec:
           objectName: storageaccount-key
           objectType: secret
           objectVersion: ""
+        - |
+          objectName: client-id
+          objectType: secret
+        - |
+          objectName: client-secret
+          objectType: secret
+        - |
+          objectName: cookie-secret
+          objectType: secret
     resourceGroup: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-rg"
     tenantId: "{{ required "Missing value TENANT_ID_KEYVAULT" .Values.TENANT_ID_KEYVAULT }}"                    # the tenant ID of the KeyVault
