@@ -50,7 +50,7 @@ def get_metadata(conn, invitasjon_ekstern_id: str, logger):
             'a.id                   AS arkivuttrekk_id, '
             'a.storrelse            AS storrelse '
             'FROM invitasjon i LEFT JOIN arkivuttrekk a ON i.arkivuttrekk_id = a.id '
-            'WHERE i.ekstern_id =%s', (invitasjon_ekstern_id))
+            'WHERE i.ekstern_id =%s', [invitasjon_ekstern_id])
         rec = dict_cursor.fetchall()
         print(rec)
     except psycopg2.Error as exception:
