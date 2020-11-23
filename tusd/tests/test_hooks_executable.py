@@ -1,7 +1,7 @@
 import os
 
 hooks_folder = 'hooks'
-tusd_hooks = ['pre-create', 'post-create', 'pre-finish', 'post-finish', 'post-terminate', 'post-receive']
+tusd_hooks_valid_names = ['pre-create', 'post-create', 'pre-finish', 'post-finish', 'post-terminate', 'post-receive']
 
 
 def test_hooks_executable():
@@ -13,4 +13,4 @@ def test_hooks_executable():
 
 
 def is_hook_name(filename: str) -> bool:
-    return filename in tusd_hooks
+    return filename in tusd_hooks_valid_names
