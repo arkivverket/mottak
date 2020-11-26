@@ -77,10 +77,10 @@ def extract_filename_from_hook(tusd_data: dict) -> str:
         exit(JSONERROR)
 
 
-def extract_size_in_bytes_from_hook(tusd_data: dict) -> int:
+def extract_offset_size_in_bytes_from_hook(tusd_data: dict) -> int:
     # Collect transferred bytes from hook json:
     try:
-        return tusd_data['Upload']['Size']  # Total size of upload in bytes
+        return tusd_data['Upload']['Offset']  # Total size of upload in bytes
     except KeyError:
         logging.error("Could not find key/Size in JSON. Dumping JSON:")
         logging.error(json.dumps(tusd_data, indent=4, sort_keys=True))

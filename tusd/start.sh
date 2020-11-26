@@ -1,7 +1,7 @@
 #!/bin/bash
 # We only enable the hooks we have. This will reduce logging somewhat.
 # Consider hooking into post-terminate for logging.
-OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish"
+OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish,post-receive"
 
 # Handle optional configuration from environment:
 if [ -n "$BASE_PATH" ]; then
