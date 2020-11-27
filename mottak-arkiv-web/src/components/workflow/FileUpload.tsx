@@ -64,7 +64,6 @@ const FileUpload: React.FC = (): JSX.Element => {
 		error && setAlertContent && setAlertContent({ msg: 'Det skjedde en feil under opplasting av filen.', type: 'error' })
 	}, [error])
 
-
 	return (
 		<Grid container direction='column' justify='center'>
 			<Grid item style={{ margin: 'auto' }}>

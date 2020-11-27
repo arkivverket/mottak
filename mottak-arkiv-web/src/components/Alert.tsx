@@ -7,6 +7,7 @@ import {
 	IconButton,
 	Icon,
 } from '@material-ui/core'
+
 import { AlertContent } from '../types/sharedTypes'
 
 const useStyles = makeStyles(theme => ({
@@ -86,4 +87,3 @@ const Alert: React.FC<AlertContent> = ({ msg, type }): JSX.Element => {
 	)
 }
 export default Alert
-

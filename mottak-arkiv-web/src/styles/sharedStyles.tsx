@@ -25,4 +25,3 @@ export const useSharedStyles = makeStyles(theme => ({
 		width: '100%',
 	}
 }))
-

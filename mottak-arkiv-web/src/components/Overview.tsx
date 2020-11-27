@@ -3,9 +3,10 @@ import {
 	Button,
 	Grid,
 } from '@material-ui/core'
-import ArkivuttrekkTable from './ArkivuttrekkTable'
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
+
+import ArkivuttrekkTable from './arkivuttrekk-table/ArkivuttrekkTable'
 
 const useStyles = makeStyles(theme => ({
 	gridMargin: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Display arkivuttrekk as table data, and initializing adding new arkivuttrekk workflow .
+ * Display arkivuttrekk as table data, and initializing adding new arkivuttrekk workflow.
  */
 const Overview: React.FC = ():JSX.Element => {
 	const classes = useStyles()

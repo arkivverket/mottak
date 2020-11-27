@@ -2,8 +2,9 @@ import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Layout from './components/layout/Layout'
-import { defaultTheme } from './styles/themes'
 import { ThemeProvider } from '@material-ui/core/styles'
+
+import { defaultTheme } from './styles/themes'
 
 const App: React.FC = (): JSX.Element => (
 	<ThemeProvider theme={defaultTheme}>
@@ -12,7 +13,6 @@ const App: React.FC = (): JSX.Element => (
 			<Layout />
 		</BrowserRouter>
 	</ThemeProvider>
-
 )
 
 export default App
