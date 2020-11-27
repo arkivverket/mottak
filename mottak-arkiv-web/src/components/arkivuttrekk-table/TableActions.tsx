@@ -22,7 +22,7 @@ interface TablePaginationActionsProps {
 /**
  * Display Table pagination and handle paginationevents.
  */
-function TablePaginationActions(props: TablePaginationActionsProps) {
+const TablePaginationActions = (props: TablePaginationActionsProps) => {
 	const classes = useStyles()
 	const { count, page, rowsPerPage, onChangePage } = props
 
@@ -39,11 +39,9 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 	}
 
 	const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-		onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1))
+		onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1)) //TODO: will not work before we get total count from backend instead of default -1
 	}
 
-	console.warn('rowsPerPage', rowsPerPage)
-	console.warn('count', count)
 	return (
 		<div className={classes.root}>
 			<IconButton
