@@ -16,14 +16,6 @@ data:
       proxy_buffers         8 16k;  # Buffer pool = 8 buffers of 16k
       proxy_buffer_size     16k;    # 16k of buffers from pool used for headers
 
-      location /tusd/ {
-        # Add X-Forwarded-* headers
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Proto https;
-
-        proxy_pass http://av-mottak-dev-tusd-service/;
-        
-      }
 
       location /oauth2 {
         proxy_pass http://av-mottak-dev-oauth2-proxy-service:4180;
@@ -35,22 +27,6 @@ data:
         proxy_read_timeout 30;
       }
 
-      location /files {
-        proxy_pass http://av-mottak-dev-tusd-service;
-
-        # Disable request and response buffering
-        proxy_request_buffering  off;
-        proxy_buffering          off;
-        proxy_http_version       1.1;
-
-        # Add X-Forwarded-* headers
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Proto https;
-
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        client_max_body_size     0;
-      }
 
       location /api/ {
         auth_request /oauth2/auth;
@@ -70,6 +46,7 @@ data:
         proxy_pass http://av-mottak-dev-mottak-arkiv-service-service/;
       }
 
+
       location / {
         auth_request /oauth2/auth;
         error_page 401 = /oauth2/sign_in;
@@ -87,6 +64,25 @@ data:
 
         proxy_pass http://av-mottak-dev-mottak-arkiv-web-service;
       }
+
+
+      location /tusd {
+        proxy_pass http://av-mottak-dev-tusd-service;
+
+        # Disable request and response buffering
+        proxy_request_buffering  off;
+        proxy_buffering          off;
+        proxy_http_version       1.1;
+
+        # Add X-Forwarded-* headers
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        client_max_body_size     0;
+      }
+
 
       error_page   500 502 503 504  /50x.html;
       location = /50x.html {
