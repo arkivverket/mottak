@@ -98,25 +98,21 @@ const QualityCheck: React.FC = ():JSX.Element => {
 		const validObjId = validation['obj_id'].validator(values?.obj_id)
 		const validKoordEpost = validation['koordinator_epost'].validator(values?.koordinator_epost)
 
-		setValidation(prevState => {
-			return {
-				...prevState,
-				'tittel': {
-					...prevState['tittel'],
-					hasError: !validTittel
-				},
-			}
-		})
+		setValidation(prevState => ({
+			...prevState,
+			'tittel': {
+				...prevState['tittel'],
+				hasError: !validTittel
+			},
+		}))
 
-		setValidation(prevState => {
-			return {
-				...prevState,
-				'koordinator_epost': {
-					...prevState['koordinator_epost'],
-					hasError: !validKoordEpost
-				}
+		setValidation(prevState => ({
+			...prevState,
+			'koordinator_epost': {
+				...prevState['koordinator_epost'],
+				hasError: !validKoordEpost
 			}
-		})
+		}))
 
 		if (!(validTittel && validObjId && validKoordEpost)) return
 
@@ -133,15 +129,13 @@ const QualityCheck: React.FC = ():JSX.Element => {
 		if (validation[event.target.name]) {
 			const isValid = validation[event.target.name].validator(event.target.value)
 
-			setValidation(prevState => {
-				return {
-					...prevState,
-					[event.target.name]: {
-						...prevState[event.target.name],
-						hasError: !isValid,
-					}
+			setValidation(prevState => ({
+				...prevState,
+				[event.target.name]: {
+					...prevState[event.target.name],
+					hasError: !isValid,
 				}
-			})
+			}))
 		}
 		setValues(values => ({ ...values, [event.target.name]: event.target.value }))
 	}

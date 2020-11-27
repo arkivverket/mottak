@@ -1,5 +1,6 @@
 import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
 import { useEffect, useReducer } from 'react'
+
 import axiosAPI from '../request'
 
 type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string };
@@ -34,11 +35,16 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 	}
 }
 
+/**
+ * Custom hook to get data from endpoint on mount in the form of a GET request
+ *
+ * @param {String} url - Endpoint url.
+ * @param {AxiosRequestConfig}  params - The URL parameters to be sent with the request.
+ */
 const useGetOnMount = <T>(
 	url: string,
 	params?: AxiosRequestConfig | undefined
 ): State<T> => {
-
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
 		loading: false,
 		error: false,
@@ -76,4 +82,3 @@ const useGetOnMount = <T>(
 }
 
 export default useGetOnMount
-

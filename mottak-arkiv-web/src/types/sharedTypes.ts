@@ -45,4 +45,3 @@ export type AlertContent = ({
     msg?: string,
     type?: 'success' | 'error' | 'warning' | 'info' | '',
 })
-

@@ -1,5 +1,6 @@
 import axios, { AxiosPromise, AxiosRequestConfig } from 'axios'
 import { useReducer, useRef } from 'react'
+
 import axiosAPI from '../request'
 
 type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR', payload: string };
@@ -27,14 +28,13 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 				...state,
 				loading: true,
 			}
-		case 'SUCCESS': {
+		case 'SUCCESS':
 			return {
 				...state,
 				loading: false,
 				error: false,
 				data: action.payload,
 			}
-		}
 		case 'ERROR':
 			return {
 				...state,
@@ -44,6 +44,9 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
 	}
 }
 
+/**
+ * Custom hook to get data from endpoint.
+ */
 const useRequest = <T>() => {
 	const componentIsMounted = useRef(true)
 
@@ -53,6 +56,15 @@ const useRequest = <T>() => {
 		loading: false,
 	})
 
+	/**
+	* Custom hook to get data from endpoint in the form of a specified REST-request
+	*
+	* @param {String} url - Endpoint url.
+	* @param {String} method - HTTP Method, defaults to GET.
+	* @param {AxiosRequestConfig['headers']} headers - Custom headers to be sent.
+	* @param {AxiosRequestConfig['data']} data - The data to be sent as the request body.
+ 	* @param {AxiosRequestConfig['params']} params - The URL parameters to be sent with the request.
+	*/
 	const performRequest = async({
 		url,
 		method = 'GET',
@@ -99,6 +111,7 @@ const useRequest = <T>() => {
 				componentIsMounted.current && dispatch({ type: 'ERROR', payload: error })
 			}
 		}
+
 		source.cancel()
 	}
 
@@ -106,4 +119,3 @@ const useRequest = <T>() => {
 }
 
 export default useRequest
-
