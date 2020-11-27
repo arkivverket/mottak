@@ -6,7 +6,8 @@ from tusclient import client
 invitation_string = 'eyJyZWZlcmVuY2UiOiAiZWQ4ODlmZGMtYjRkMC00OWZlLWJmNGItY2FhMDgzNGNhYjJkIiwgInVwbG9hZFVybCI6ICJodHRwczovL21vdHRhay5wbGF0dGZvcm0uYXJraXZ2ZXJrZXQuZGV2L3R1c2QiLCAidXBsb2FkVHlwZSI6ICJ0YXIiLCAibWV0YSI6IHsiaW52aXRhc2pvbkVrc3Rlcm5JZCI6ICI4ZGU3NWMwNS03NDRkLTQ2MjItYWYzOC1mYWQ1YjZmMWRjMzAifX0='
 tusd_url = 'https://mottak.plattform.arkivverket.dev/tusd/files/'
 file_name = '../../../../eksempel-arkiv/large/ed889fdc-b4d0-49fe-bf4b-caa0834cab2d.tar'
-chunk_size_in_bytes = 4096
+# 4 mb = 4194304 bytes
+chunk_size_in_bytes = 4194304
 
 prefix_dev = 'dpldrdev://'
 prefix = 'dpldr://'

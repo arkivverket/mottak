@@ -139,9 +139,9 @@ def run():
         exit(UNKNOWNIID)
 
     try:
-        update_overforingspakke_in_db(connection, metadata, tusd_data)
+        update_overforingspakke_in_db(connection, tusd_data)
     except Exception as exception:
-        logging.error("Error while updating database {exception}")
+        logging.error(f"Error while updating database {exception}")
         exit(DBERROR)
 
     if metadata and ('uuid' in metadata):
