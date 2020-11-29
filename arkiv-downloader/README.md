@@ -8,8 +8,6 @@ Status reports are back to mottak-arkiv-service through another service bus queu
 Env variables needed:
 - ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-receiver;SharedAccessKey=<some_secret_key>`
 - ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-sender;SharedAccessKey=<some_secret_key>`
-# TODO - Remove QUEUE_CLIENT_STRING and replace with correct queue throughout arkiv-downloader
-- QUEUE_CLIENT_STRING : `Endpoint=sb://<service-bus-name>.servicebus.windows.net/;SharedAccessKeyName=<shared-access-key-name>;SharedAccessKey=<some_secret_key>`
 - STORAGE_LOCATION : `path/to/where/arkivuttrekk/will/be/downloaded/to`
 
 

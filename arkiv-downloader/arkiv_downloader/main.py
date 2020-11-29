@@ -18,6 +18,8 @@ except ImportError:
 
 # TODO Remove this env variable when ready. This will be a part of incoming message things are more ready.
 BLOB_SAS_URL = os.getenv('BLOB_SAS_URL')
+ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
+ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
 QUEUE_CLIENT_STRING = os.getenv('QUEUE_CLIENT_STRING')
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
 
@@ -70,7 +72,7 @@ def send_status_message(obj_id: UUID, status: TransferStatus, client: QueueClien
 
 def run(queue_client_downloader: QueueClient, queue_client_status: QueueClient, storage_location: str):
     while True:
-        arkivuttrekk = get_message_from_queue(queue_client_downloader)
+        arkivuttrekk = get_message_from_queue(queue_client_downloader) # TODO legg til await hvis ingen melding finnes. er dette automatisk?
         if arkivuttrekk:
             send_status_message(arkivuttrekk.obj_id, TransferStatus.STARTING_TRANSFER, queue_client_status)
             status = download_blob(arkivuttrekk, storage_location)
@@ -95,11 +97,13 @@ def mock_get_status(queue_client_status: QueueClient):
 
 
 if __name__ == '__main__':
-    _queue_client_downloader = create_queue_client(QUEUE_CLIENT_STRING, 'downloader')
-    _queue_client_status = create_queue_client(QUEUE_CLIENT_STRING, 'status')
+    _queue_client_archive_request_receiver = \
+        create_queue_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING, 'archive-download-request-receiver')
+    _queue_client_archive_status_sender = \
+        create_queue_client(ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING, 'archive-download-status-sender')
 
-    mock_input(_queue_client_downloader)  # Todo remove from final code
+    mock_input(_queue_client_archive_request_receiver)  # TODO remove from final code
 
-    run(_queue_client_downloader, _queue_client_status, STORAGE_LOCATION)
+    run(_queue_client_archive_request_receiver, _queue_client_archive_status_sender, STORAGE_LOCATION)
 
-    mock_get_status(_queue_client_status)  # Todo remove from final code
+    mock_get_status(_queue_client_archive_status_sender)  # TODO remove from final code
