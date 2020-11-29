@@ -20,6 +20,8 @@ def upgrade():
     op.create_table('transfer_request',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
+                    sa.Column('status', sa.Enum('Startet', 'Overført', 'Avbrutt', 'Feilet', name='transfer_request_status_type'),
+                              nullable=False),
                     sa.Column('storage_account', sa.String(), nullable=False),
                     sa.Column('container', sa.String(), nullable=False),
                     sa.Column('sas_token', sa.String(), nullable=False),

@@ -16,22 +16,24 @@ class UUIDEncoder(json.JSONEncoder):
 
 
 class TransferStatus(Enum):
-    STARTING_TRANSFER = 'Starting transfer'
-    FINISHED = 'Finished'
-    FAILED = 'Failed'
+    STARTET = 'Startet'
+    OVERFORT = 'Overført'
+    AVBRUTT = 'Avbrutt'
+    FEILET = 'Feilet'
 
 
-class ArkivuttrekkTransferInfo:
+class ArkivuttrekkTransferRequest:
     def __init__(self, obj_id: UUID, container_sas_url: str):
         self.obj_id = obj_id
-        self.container_sas_url = container_sas_url
+        self.container_sas_url = container_sas_url  # TODO legg til variabel sas_token container og storage_account, transfer-req_id
+
 
     @staticmethod
-    def from_string(json_string: str) -> Optional[ArkivuttrekkTransferInfo]:
+    def from_string(json_string: str) -> Optional[ArkivuttrekkTransferRequest]:
         try:
             json_message = json.loads(json_string)
             json_message['obj_id'] = UUID(json_message['obj_id'])
-            return ArkivuttrekkTransferInfo(**json_message)
+            return ArkivuttrekkTransferRequest(**json_message)
         except (ValueError, KeyError, TypeError) as e:
             logging.error(f'Failed to parse message {json_string}', e)
             return None
@@ -44,7 +46,7 @@ class ArkivuttrekkTransferStatus:
     def __init__(self, obj_id: UUID, status: TransferStatus):
         self.obj_id = obj_id
         self.status = status
-        self.statusCreatedTime = datetime.now()
+        self.statusCreatedTime = datetime.now()  # TODO Gir denne mening?
 
     def as_json_str(self) -> str:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)

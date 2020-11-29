@@ -103,6 +103,8 @@ class TransferRequest(Base):
     """
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
+    status = Column(Enum('Startet', 'Overført', 'Avbrutt', 'Feilet', name='transfer_request_status_type', create_type=True),
+                    nullable=False)
     storage_account = Column(String(), nullable=False)
     container = Column(String(), nullable=False)
     sas_token = Column(String(), nullable=False)
