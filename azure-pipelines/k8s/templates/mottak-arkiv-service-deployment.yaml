@@ -56,6 +56,16 @@ spec:
               value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: TUSD_URL
               value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd
+            - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY }}
+                  key: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY }}
+            - name: ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ required "Missing value ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
+                  key: {{ required "Missing value ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
       initContainers:
         - name: mottak-arkiv-service-db-migration
           image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
