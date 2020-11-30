@@ -94,7 +94,7 @@ const FileUpload: React.FC = (): JSX.Element => {
 					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
-							color="primary"
+							color='primary'
 							type='submit'
 							className={sharedClasses.fullWidth}
 						>

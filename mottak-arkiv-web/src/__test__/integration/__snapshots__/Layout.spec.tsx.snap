@@ -160,14 +160,14 @@ exports[`<Layout /> matches snapshot 1`] = `
               class="MuiGrid-root makeStyles-gridMargin-14 MuiGrid-container MuiGrid-align-items-xs-center MuiGrid-justify-xs-space-between"
             >
               <div
-                class="MuiGrid-root MuiGrid-item"
+                class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6"
               >
                 <h2>
                   Arkivuttrekk
                 </h2>
               </div>
               <div
-                class="MuiGrid-root MuiGrid-container MuiGrid-justify-xs-flex-end"
+                class="MuiGrid-root MuiGrid-container MuiGrid-item MuiGrid-justify-xs-flex-end MuiGrid-grid-xs-12 MuiGrid-grid-sm-6"
               >
                 <button
                   class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary"

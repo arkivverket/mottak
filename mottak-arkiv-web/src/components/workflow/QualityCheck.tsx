@@ -216,6 +216,16 @@ const QualityCheck: React.FC = ():JSX.Element => {
 								))}
 		 		 			</TextField>
 						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								id='sjekksum_sha256'
+								name='sjekksum_sha256'
+								label='Sjekksum'
+								value={values.sjekksum_sha256}
+								onChange={handleValueChange}
+								fullWidth
+							/>
+						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
 								select
@@ -232,16 +242,6 @@ const QualityCheck: React.FC = ():JSX.Element => {
 									</MenuItem>
 								))}
 		 		 			</TextField>
-						</Grid>
-						<Grid item xs={12} sm={6}>
-							<TextField
-								id='sjekksum_sha256'
-								name='sjekksum_sha256'
-								label='Sjekksum'
-								value={values.sjekksum_sha256}
-								onChange={handleValueChange}
-								fullWidth
-							/>
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField
