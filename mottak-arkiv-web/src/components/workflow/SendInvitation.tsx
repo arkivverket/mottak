@@ -73,7 +73,7 @@ const SendInvitation: React.FC = ():JSX.Element => {
 						className={sharedClasses.fullWidth}
 						disabled={loading}
 					>
-						{loading ? <CircularProgress size={14} /> : 'Send Invitasjon'}
+						{loading ? <CircularProgress size={22} /> : 'Send Invitasjon'}
 					</Button>
 				</Grid>
 			</Grid>

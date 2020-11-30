@@ -31,10 +31,10 @@ const Overview: React.FC = ():JSX.Element => {
 	return (
 		<>
 			<Grid container alignItems='center' justify='space-between' className={classes.gridMargin}>
-				<Grid item>
+				<Grid item xs={12} sm={6}>
 					<h2>Arkivuttrekk</h2>
 				</Grid>
-				<Grid container justify='flex-end'>
+				<Grid item container xs={12} sm={6} justify='flex-end'>
 					<Button
 						variant={'outlined'}
 						color='primary'

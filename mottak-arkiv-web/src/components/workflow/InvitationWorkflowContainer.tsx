@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { ArkivUttrekk,  } from '../../types/sharedTypes'
+import { ArkivUttrekk } from '../../types/sharedTypes'
 import WorkflowStepper from './WorkflowStepper'
 import FileUpload from './FileUpload'
 import QualityCheck from './QualityCheck'
