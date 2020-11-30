@@ -15,7 +15,8 @@ The values given here are examples. Please adjust to your local database.
 - MAILGUN_DOMAIN: `<some_id>.mailgun.org`
 - MAILGUN_SECRET: `<secret used for auth againt mailgun>`
 - TUSD_URL: `<public url to tusd>`
-
+- ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-sender;SharedAccessKey=<some_secret_key>`
+- ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-receiver;SharedAccessKey=<some_secret_key>`
 
 ### Running locally
 - Run `poetry install`
