@@ -18,6 +18,9 @@ The values given here are examples. Please adjust to your local database.
 - ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-sender;SharedAccessKey=<some_secret_key>`
 - ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-receiver;SharedAccessKey=<some_secret_key>`
 
+### Prerequisites
+- [`poetry`](https://python-poetry.org/docs/)
+
 ### Running locally
 - Run `poetry install`
 - Create a `.env` file in [root folder](.) containing env variables
