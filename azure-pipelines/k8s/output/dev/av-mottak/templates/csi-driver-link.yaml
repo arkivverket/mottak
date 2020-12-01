@@ -32,6 +32,11 @@ spec:
     secretName: storageaccount-key                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
+    - key: storageaccount-name
+      objectName: storageaccount-name                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: storageaccount-name                     # name of the Kubernetes Secret object
+    type: Opaque
+  - data:
     - key: client-id
       objectName: client-id
     secretName: client-id
@@ -66,6 +71,10 @@ spec:
           objectVersion: ""
         - |
           objectName: storageaccount-key
+          objectType: secret
+          objectVersion: ""
+        - |
+          objectName: storageaccount-name
           objectType: secret
           objectVersion: ""
         - |
