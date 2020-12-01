@@ -22,7 +22,8 @@ The values given here are examples. Please adjust to your local database.
 - [`poetry`](https://python-poetry.org/docs/)
 
 ### Running locally
-- Run `poetry install`
+- Run `poetry install` to [install the project dependencies](https://python-poetry.org/docs/cli/#install)
+- Run `poetry shell` to [load the virtual enviroment created by poetry](https://python-poetry.org/docs/cli/#shell)
 - Create a `.env` file in [root folder](.) containing env variables
 - Initiate the database by running `alembic upgrade head`
 - Run `uvicorn app.main:app --reload`
