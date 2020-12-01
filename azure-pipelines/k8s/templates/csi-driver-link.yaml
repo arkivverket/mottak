@@ -48,18 +48,22 @@ spec:
       - key: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY }}
         objectName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY }}
     secretName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY }}
+    type: Opaque
   - data:
       - key: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY }}
         objectName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY }}
     secretName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY }}
+    type: Opaque
   - data:
       - key: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
         objectName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
     secretName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
+    type: Opaque
   - data:
       - key: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY }}
         objectName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY }}
     secretName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY }}
+    type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
     keyvaultName: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-vault"          # the name of the KeyVault
