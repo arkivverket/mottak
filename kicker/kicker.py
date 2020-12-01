@@ -45,21 +45,21 @@ def create_param_file(params):
 def argo_submit(workflowfile, params):
     """ Submit a job to argo. Takes a YAML file as parameter """
     paramfile = create_param_file(params)
-    argocmd = ["argo", "submit", "--parameter-file", paramfile, workflowfile]
+    argocmd = ["argo", "submit", "--namespace", "av-mottak-dev", "--parameter-file", paramfile, workflowfile]
     logging.info(f"Argo cmd line: {argocmd}")
     try:
         submit = subprocess.run(argocmd, timeout=20, check=True, stdout=PIPE, stderr=PIPE)
+        if not submit.returncode == 0:
+            logging.error("Argo submit failed")
+            if submit.stderr:
+                logging.error(f"Stderr: {submit.stderr.decode('utf-8')}")
+            if submit.stdout:
+                logging.error(f"Stdout: {submit.stdout.decode('utf-8')}")
+            sys.exit(ARGOERROR)
     except subprocess.CalledProcessError as exception:
         logging.error(f"Invoking argo client: {exception}")
-        sys.exit(ARGOERROR)
+        logging.error(f"Stderr: {exception.stderr.decode('utf-8')}")
 
-    if not submit.returncode == 0:
-        logging.error("Argo submit failed")
-        if submit.stderr:
-            logging.error(f"Stderr: {submit.stderr.decode('utf-8')}")
-        if submit.stdout:
-            logging.error(f"Stdout: {submit.stdout.decode('utf-8')}")
-        sys.exit(ARGOERROR)
     os.remove(paramfile)
 
 
