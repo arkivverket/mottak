@@ -38,7 +38,7 @@ spec:
         run: mottak-arkiv-service-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:marelm'
           imagePullPolicy: Always
           name: mottak-arkiv-service-container
           ports:
@@ -59,9 +59,19 @@ spec:
               value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
             - name: TUSD_URL
               value: https://mottak.plattform.arkivverket.dev/tusd
+            - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: av-mottak-dev-sb-endpoint-archive-download-request-sender
+                  key: av-mottak-dev-sb-endpoint-archive-download-request-sender
+            - name: ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+                  key: av-mottak-dev-sb-endpoint-archive-download-status-receiver
       initContainers:
         - name: mottak-arkiv-service-db-migration
-          image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+          image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:marelm'
           imagePullPolicy: Always
           command: ["alembic", "upgrade", "head"]
           env:
