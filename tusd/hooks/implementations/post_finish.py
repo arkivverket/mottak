@@ -54,10 +54,10 @@ def gather_params(dbdata, data):
         'UUID': dbdata['uuid'],
         'OBJECT': data['Upload']['Storage']['Key'],
         'CHECKSUM': dbdata['checksum'],
-        'ARCHIVE_TYPE': dbdata['type'],
+        'ARCHIEVE_TYPE': dbdata['type'],  # TODO fix this typo in kicker and all dependencies there
         'NAME': dbdata['name'],
         'EMAIL': dbdata['email'],
-        'INVITATION_ID': dbdata['id']
+        'INVITATIONID': dbdata['id']  # TODO Change this to INVITATION_ID in kicker and all dependencies there
     }
     return params
 
