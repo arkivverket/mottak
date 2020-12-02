@@ -9,6 +9,9 @@ Application responsible for user interaction against mottak-arkiv-service. The a
 The values given here are examples. Please adjust to your local API url.
 - `API_BASEURL=http://localhost:8000`
 
+### Prerequisites
+- [`yarn`](https://classic.yarnpkg.com/en/docs/install)
+
 ### Running locally
 - Run `yarn install`
 - Create a `.env` file in [root folder](.) containing env variables
