@@ -46,7 +46,7 @@ def test_update_overforingspakke_in_db_fail(mocker):
 def test_gather_params(mocker):
     expected = {'UUID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'OBJECT': '9090fe36854e6761925e6e9ec475c17f',
                 'CHECKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
-                'ARCHIVE_TYPE': 'noark5', 'NAME': 'Joe Black', 'EMAIL': 'perbue@arkivverket.no', 'INVITATION_ID': 2}
+                'ARCHIEVE_TYPE': 'noark5', 'NAME': 'Joe Black', 'EMAIL': 'perbue@arkivverket.no', 'INVITATIONID': 2}
     data = json.loads(post_event)
     metadata = invitation_dict
     params = gather_params(data=data, dbdata=metadata)
