@@ -75,19 +75,15 @@ spec:
         - |
           objectName: av-mottak-dev-dsn
           objectType: secret        # object types: secret, key or cert
-          objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
         - |
           objectName: mailgun-secret
           objectType: secret
-          objectVersion: ""
         - |
           objectName: av-mottak-dev-sb-endpoint-argo-kicker
           objectType: secret
-          objectVersion: ""
         - |
           objectName: storageaccount-key
           objectType: secret
-          objectVersion: ""
         - |
           objectName: client-id
           objectType: secret
