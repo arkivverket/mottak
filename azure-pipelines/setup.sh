@@ -37,6 +37,7 @@ echo "Running kubectl apply -f on setup yamls"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/csi-driver-link.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/mount_the_secrets.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/minio-deployment.yaml"
+kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/argo-rbac.yaml"
 
 echo
 echo "Setting up ingress"

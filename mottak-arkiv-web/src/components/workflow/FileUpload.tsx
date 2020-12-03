@@ -64,7 +64,6 @@ const FileUpload: React.FC = (): JSX.Element => {
 		error && setAlertContent && setAlertContent({ msg: 'Det skjedde en feil under opplasting av filen.', type: 'error' })
 	}, [error])
 
-
 	return (
 		<Grid container direction='column' justify='center'>
 			<Grid item style={{ margin: 'auto' }}>
@@ -95,7 +94,7 @@ const FileUpload: React.FC = (): JSX.Element => {
 					<Grid item xs={12} sm={6}>
 						<Button
 							variant='outlined'
-							color="primary"
+							color='primary'
 							type='submit'
 							className={sharedClasses.fullWidth}
 						>

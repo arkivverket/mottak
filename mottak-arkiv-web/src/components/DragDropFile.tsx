@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import { Grid, Icon } from '@material-ui/core'
+
 import { AlertContext } from './WorkArea'
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +43,6 @@ const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
 	const fileInputRef = useRef<HTMLInputElement>(null)
 	const [inZone, setInZone] = useState(false)
 	const { setAlertContent } = useContext(AlertContext)
-
 
 	const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
 		event.preventDefault()

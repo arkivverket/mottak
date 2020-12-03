@@ -1,0 +1,65 @@
+{
+  "Upload": {
+    "ID": "6fb4909b3609d3d7f266c75a11e3d495",
+    "Size": 4775188480,
+    "SizeIsDeferred": false,
+    "Offset": 182272,
+    "MetaData": {
+      "invitasjonEksternId": "8de75c05-744d-4622-af38-fad5b6f1dc30"
+    },
+    "IsPartial": false,
+    "IsFinal": false,
+    "PartialUploads": null,
+    "Storage": {
+      "Container": "tusd-storage",
+      "Key": "6fb4909b3609d3d7f266c75a11e3d495",
+      "Type": "azurestore"
+    }
+  },
+  "HTTPRequest": {
+    "Method": "PATCH",
+    "URI": "/files/6fb4909b3609d3d7f266c75a11e3d495",
+    "RemoteAddr": "10.200.16.69:34698",
+    "Header": {
+      "Accept-Encoding": [
+        "identity"
+      ],
+      "Connection": [
+        "upgrade"
+      ],
+      "Content-Length": [
+        "1024"
+      ],
+      "Content-Type": [
+        "application/offset+octet-stream"
+      ],
+      "Tus-Resumable": [
+        "1.0.0"
+      ],
+      "Upload-Offset": [
+        "181248"
+      ],
+      "X-Appgw-Trace-Id": [
+        "564a28833d443ad1ef72782b64f52459"
+      ],
+      "X-Forwarded-For": [
+        "84.209.175.165:59515"
+      ],
+      "X-Forwarded-Host": [
+        "mottak.plattform.arkivverket.dev"
+      ],
+      "X-Forwarded-Port": [
+        "443"
+      ],
+      "X-Forwarded-Proto": [
+        "https"
+      ],
+      "X-Original-Host": [
+        "mottak.plattform.arkivverket.dev"
+      ],
+      "X-Original-Url": [
+        "/files/6fb4909b3609d3d7f266c75a11e3d495"
+      ]
+    }
+  }
+}

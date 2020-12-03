@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import Routes, { RouteType } from './routes/Routes'
 import { Container, Paper, Theme } from '@material-ui/core'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -8,6 +7,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import Alert from './Alert'
 import { LayoutContext } from './layout/Layout'
 import { AlertContent } from '../types/sharedTypes'
+
+import Routes, { RouteType } from './routes/Routes'
 
 type StyleProps = {
     drawerWidth: number | undefined

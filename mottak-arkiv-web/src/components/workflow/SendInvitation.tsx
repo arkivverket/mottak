@@ -19,7 +19,6 @@ const SendInvitation: React.FC = ():JSX.Element => {
 
 	const { data, loading, error, performRequest } = useRequest<Invitation>()
 
-
 	const handleSubmit = ( event: React.FormEvent) => {
 		if (event) {
 			event.preventDefault()
@@ -42,7 +41,6 @@ const SendInvitation: React.FC = ():JSX.Element => {
 	useEffect(() => {
 		setAlertContent && error && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under sending av epost.', type: 'error' })
 	}, [error])
-
 
 	return (
 		<form style={{ margin: '2rem' }} onSubmit={handleSubmit}>
@@ -75,7 +73,7 @@ const SendInvitation: React.FC = ():JSX.Element => {
 						className={sharedClasses.fullWidth}
 						disabled={loading}
 					>
-						{loading ? <CircularProgress size={14} /> : 'Send Invitasjon'}
+						{loading ? <CircularProgress size={22} /> : 'Send Invitasjon'}
 					</Button>
 				</Grid>
 			</Grid>

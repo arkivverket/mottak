@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { ArkivUttrekk,  } from '../../types/sharedTypes'
+
+import { ArkivUttrekk } from '../../types/sharedTypes'
 import WorkflowStepper from './WorkflowStepper'
 import FileUpload from './FileUpload'
 import QualityCheck from './QualityCheck'
 import SendInvitation from './SendInvitation'
-
 
 export type ContextType = ({
 	metadataId: number | null,

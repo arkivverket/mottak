@@ -32,6 +32,11 @@ spec:
     secretName: storageaccount-key                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
+    - key: storageaccount-name
+      objectName: storageaccount-name                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: storageaccount-name                     # name of the Kubernetes Secret object
+    type: Opaque
+  - data:
     - key: client-id
       objectName: client-id
     secretName: client-id
@@ -46,6 +51,26 @@ spec:
         objectName: cookie-secret
     secretName: cookie-secret
     type: Opaque
+  - data:
+      - key: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+        objectName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+    secretName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+    type: Opaque
+  - data:
+      - key: av-mottak-dev-sb-endpoint-archive-download-request-sender
+        objectName: av-mottak-dev-sb-endpoint-archive-download-request-sender
+    secretName: av-mottak-dev-sb-endpoint-archive-download-request-sender
+    type: Opaque
+  - data:
+      - key: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+        objectName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+    secretName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+    type: Opaque
+  - data:
+      - key: av-mottak-dev-sb-endpoint-archive-download-status-sender
+        objectName: av-mottak-dev-sb-endpoint-archive-download-status-sender
+    secretName: av-mottak-dev-sb-endpoint-archive-download-status-sender
+    type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
     keyvaultName: "av-mottak-dev-vault"          # the name of the KeyVault
@@ -55,17 +80,17 @@ spec:
         - |
           objectName: av-mottak-dev-dsn
           objectType: secret        # object types: secret, key or cert
-          objectVersion: ""         # [OPTIONAL] object versions, default to latest if empty
         - |
           objectName: mailgun-secret
           objectType: secret
-          objectVersion: ""
         - |
           objectName: av-mottak-dev-sb-endpoint-argo-kicker
           objectType: secret
-          objectVersion: ""
         - |
           objectName: storageaccount-key
+          objectType: secret
+        - |
+          objectName: storageaccount-name
           objectType: secret
           objectVersion: ""
         - |
@@ -76,6 +101,18 @@ spec:
           objectType: secret
         - |
           objectName: cookie-secret
+          objectType: secret
+        - |
+          objectName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+          objectType: secret
+        - |
+          objectName: av-mottak-dev-sb-endpoint-archive-download-request-sender
+          objectType: secret
+        - |
+          objectName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+          objectType: secret
+        - |
+          objectName: av-mottak-dev-sb-endpoint-archive-download-status-sender
           objectType: secret
     resourceGroup: "av-mottak-dev-rg"
     tenantId: "99d3d298-60cf-4636-9772-4a191b6f0d94"                    # the tenant ID of the KeyVault

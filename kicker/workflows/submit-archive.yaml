@@ -24,7 +24,7 @@ spec:
             arguments:
               artifacts:
                 - name: checksum-log
-                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"            
+                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
           - name: task-checksum-error
             template: checksum-error
             dependencies: [task-checksum]
@@ -85,14 +85,14 @@ spec:
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
-            value: "mottak"
+            value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: mottakmvp
+            value: avmottakdevsacc
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
-                name: storage-key
-                key: secret-value
+                name: storageaccount-key
+                key: storageaccount-key
       outputs:
         parameters:
           - name: checksum_result
@@ -103,8 +103,8 @@ spec:
             path: "/tmp/checksum.log"
             archive:
               none: {}
-      
-      
+
+
 
     # Kontainer som avviser et arkiv.
     # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
@@ -143,14 +143,14 @@ spec:
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
-            value: "mottak"
+            value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: mottakmvp
+            value: avmottakdevsacc
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
-                name: storage-key
-                key: secret-value
+                name: storageaccount-key
+                key: storageaccount-key
 
     - name: avscan
       container:
@@ -163,14 +163,14 @@ spec:
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
-            value: "mottak"
+            value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: mottakmvp
+            value: avmottakdevsacc
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
-                name: storage-key
-                key: secret-value
+                name: storageaccount-key
+                key: storageaccount-key
 
           - name: AVLOG
             value: /tmp/avlog
@@ -193,14 +193,14 @@ spec:
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
-            value: "mottak"
+            value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: mottakmvp
+            value: avmottakdevsacc
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
-                name: storage-key
-                key: secret-value
+                name: storageaccount-key
+                key: storageaccount-key
       outputs:
         artifacts:
           - name: unpacklog
@@ -228,15 +228,15 @@ spec:
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
-            value: "mottak"
+            value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: mottakmvp
+            value: avmottakdevsacc
             # Not that the key is in a slightly different variable here.
           - name: AZURE_STORAGE_KEY
             valueFrom:
               secretKeyRef:
-                name: storage-key
-                key: secret-value
+                name: storageaccount-key
+                key: storageaccount-key
       outputs:
         artifacts:
           - name: arkade-report

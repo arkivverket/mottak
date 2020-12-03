@@ -3,9 +3,10 @@ import {
 	Button,
 	Grid,
 } from '@material-ui/core'
-import ArkivuttrekkTable from './ArkivuttrekkTable'
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
+
+import ArkivuttrekkTable from './arkivuttrekk-table/ArkivuttrekkTable'
 
 const useStyles = makeStyles(theme => ({
 	gridMargin: {
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 /**
- * Display arkivuttrekk as table data, and initializing adding new arkivuttrekk workflow .
+ * Display arkivuttrekk as table data, and initializing adding new arkivuttrekk workflow.
  */
 const Overview: React.FC = ():JSX.Element => {
 	const classes = useStyles()
@@ -30,10 +31,10 @@ const Overview: React.FC = ():JSX.Element => {
 	return (
 		<>
 			<Grid container alignItems='center' justify='space-between' className={classes.gridMargin}>
-				<Grid item>
+				<Grid item xs={12} sm={6}>
 					<h2>Arkivuttrekk</h2>
 				</Grid>
-				<Grid container justify='flex-end'>
+				<Grid item container xs={12} sm={6} justify='flex-end'>
 					<Button
 						variant={'outlined'}
 						color='primary'
