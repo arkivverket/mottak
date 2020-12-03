@@ -154,7 +154,7 @@ spec:
 
     - name: avscan
       container:
-        image: arkivverket.azurecr.io/mottak/s3-scan-tar
+        image: arkivverket.azurecr.io/av-mottak/s3-scan-tar:e5ce915cc9eafbafd50a943944b9187371d95498
 
         imagePullPolicy: Always
         env:
