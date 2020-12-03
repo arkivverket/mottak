@@ -98,15 +98,13 @@ class Tester(Base):
     epost = Column(String(), nullable=False)
 
 
-class TransferRequest(Base):
-    """The transfer request to download an archive to on-prem storage.
-    """
+class Arkivkopi(Base):
+    """A request to copy an archive to on-prem storage."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
-    status = Column(Enum('Startet', 'Overført', 'Avbrutt', 'Feilet', name='transfer_request_status_type', create_type=True),
+    status = Column(Enum('Bestilt', 'Startet', 'OK', 'Avbrutt', 'Feilet', name='arkivkopi_status_type', create_type=True),
                     nullable=False)
     storage_account = Column(String(), nullable=False)
     container = Column(String(), nullable=False)
-    sas_token = Column(String(), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
     endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)

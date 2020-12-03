@@ -6,7 +6,7 @@ from typing import Optional
 
 from azure.servicebus import QueueClient, Message
 
-from arkiv_downloader.models.dto import TransferStatus, ArkivuttrekkTransferRequest, ArkivuttrekkTransferStatus
+from arkiv_downloader.models.dto import ArkivkopiStatus, ArkivkopiRequest, ArkivkopiStatusResponse
 
 try:
     # Importing .env file if it exists
@@ -36,16 +36,16 @@ def send_message_to_queue(message: str, client: QueueClient):
     client.send(msg)
 
 
-def get_message_from_queue(client: QueueClient) -> Optional[ArkivuttrekkTransferRequest]:
+def get_message_from_queue(client: QueueClient) -> Optional[ArkivkopiRequest]:
     with client.get_receiver() as receiver:
         message = receiver.next()  # TODO Trenger vi noen kontroll for om det er melding på køen her?
         message_str = str(message)
         message.complete()
         logging.info(f'Got download request for: {message to json-> obj_id}')  # Todo Remove this? Got downlo
-        return ArkivuttrekkTransferRequest.from_string(message_str)
+        return ArkivkopiRequest.from_string(message_str)
 
 
-def download_blob(arkivuttrekk: ArkivuttrekkTransferRequest, write_location: str) -> TransferStatus:
+def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
     save_path = write_location + os.path.sep + str(arkivuttrekk.obj_id) + os.path.sep
     azcopy_command = ['./azcopy/azcopy', 'cp', f'{arkivuttrekk.container_sas_url}', save_path, '--recursive']
     logging.info(f'Starting transfer of obj_id {arkivuttrekk.obj_id} to {save_path}')
@@ -55,17 +55,17 @@ def download_blob(arkivuttrekk: ArkivuttrekkTransferRequest, write_location: str
             stderr=subprocess.STDOUT
         )
         logging.info(response.decode('utf-8'))
-        return TransferStatus.OVERFORT
+        return ArkivkopiStatus.OK
     except subprocess.CalledProcessError as e:
         logging.error(e.output.decode('utf-8'))
-        return TransferStatus.FEILET
+        return ArkivkopiStatus.FEILET
     except FileNotFoundError as e:
         logging.error('Could not find azcopy', e)
-        return TransferStatus.FEILET
+        return ArkivkopiStatus.FEILET
 
 
-def send_status_message(obj_id: UUID, status: TransferStatus, client: QueueClient):
-    status_obj = ArkivuttrekkTransferStatus(obj_id, status)
+def send_status_message(obj_id: UUID, status: ArkivkopiStatus, client: QueueClient):
+    status_obj = ArkivkopiStatusResponse(obj_id, status)
     message = Message(status_obj.as_json_str())
     client.send(message)
 
@@ -75,14 +75,14 @@ def run(queue_client_downloader: QueueClient, queue_client_status: QueueClient, 
     while True:
         arkivuttrekk = get_message_from_queue(queue_client_downloader) # TODO legg til await hvis ingen melding finnes. er dette automatisk?
         if arkivuttrekk:
-            send_status_message(arkivuttrekk.obj_id, TransferStatus.STARTET, queue_client_status)
+            send_status_message(arkivuttrekk.obj_id, ArkivkopiStatus.STARTET, queue_client_status)
             status = download_blob(arkivuttrekk, storage_location)
             send_status_message(arkivuttrekk.obj_id, status, queue_client_status)
 
 
 # TODO remove this
 def mock_input(client: QueueClient):
-    a = ArkivuttrekkTransferRequest(uuid1(), BLOB_SAS_URL)
+    a = ArkivkopiRequest(uuid1(), BLOB_SAS_URL)
     m = Message(a.as_json_str())
     client.send(m)
 
