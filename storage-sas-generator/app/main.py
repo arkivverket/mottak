@@ -16,7 +16,7 @@ from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob import generate_container_sas, ContainerSasPermissions
 
 # Model
-from app.model.dto import SASRequest
+from app.model.dto import SASRequest, SASResponse
 from app.model.global_state import GlobalState
 from app.constants import *  # pylint: disable=wildcard-import
 
@@ -68,7 +68,7 @@ async def validate_container(client: BlobServiceClient, container: str) -> None:
     return None
 
 
-async def create_sas(container: str, duration_hours: int = 1) -> str:
+async def create_sas(container: str, duration_hours: int = 1) -> SASResponse:
     """ Creates the actual SAS signature.
 
     Gets the client connection from runtime_config.
@@ -78,7 +78,8 @@ async def create_sas(container: str, duration_hours: int = 1) -> str:
         duration_hours: int - How long should the SAS token be valid. Defaults to 1 hour
 
     Returns:
-        str - the generated SAS (sas_token).
+        SASResponse - An object containing information about the storage account and container
+        as well as the generated SAS (sas_token).
     """
     client = runtime_config["client"]
 
@@ -92,7 +93,7 @@ async def create_sas(container: str, duration_hours: int = 1) -> str:
         permission=ContainerSasPermissions(read=True),
         expiry=datetime.utcnow() + timedelta(hours=duration_hours)
     )
-    return sas_token
+    return SASResponse(client.account_name, container, sas_token)
 
 
 @app.on_event("startup")
@@ -115,7 +116,7 @@ async def startup_event():
                                             credential=key)
     logging.info(f'Connected to Azure Blob Service version {blob_service_client.api_version}')
     # This forces some talk on the wire to verify that we can talk to the Azure API.
-    runtime_config["client"] = blob_service_client
+    runtime_config["client"] = blob_service_client  # TODO Skal denne clienten også settes i global_state.client? Får feilmelding i IDE at den er None
     logging.info('Probing storage layer.')
     try:
         await blob_service_client.get_account_information()
@@ -145,8 +146,8 @@ async def generate_sas(dto: SASRequest):
     """
     logging.info(f'Generating SAS for container: "{dto.container}"')
     try:
-        sas = await create_sas(container=dto.container, duration_hours=dto.duration_hours)
-        return {"sas": sas}
+        sas_response = await create_sas(container=dto.container, duration_hours=dto.duration_hours)
+        return sas_response
     except ResourceNotFoundError as exception:
         raise HTTPException(status_code=HTTP_412_PRECONDITION_FAILED,
                             detail="The specified container does not exist") from exception
