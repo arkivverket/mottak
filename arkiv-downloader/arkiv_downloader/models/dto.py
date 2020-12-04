@@ -24,16 +24,18 @@ class ArkivkopiStatus(Enum):
 
 
 class ArkivkopiRequest:
-    def __init__(self, obj_id: UUID, container_sas_url: str):
-        self.obj_id = obj_id
-        self.container_sas_url = container_sas_url  # TODO legg til variabel sas_token container og storage_account, transfer-req_id
-
+    def __init__(self, _id: int, arkivuttrekk_id: UUID, status: ArkivkopiStatus, storage_account: str, container: str):
+        self.id = _id
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.status = status
+        self.storage_account = storage_account
+        self.container = container
 
     @staticmethod
     def from_string(json_string: str) -> Optional[ArkivkopiRequest]:
         try:
             json_message = json.loads(json_string)
-            json_message['obj_id'] = UUID(json_message['obj_id'])
+            # json_message['obj_id'] = UUID(json_message['obj_id'])
             return ArkivkopiRequest(**json_message)
         except (ValueError, KeyError, TypeError) as e:
             logging.error(f'Failed to parse message {json_string}', e)

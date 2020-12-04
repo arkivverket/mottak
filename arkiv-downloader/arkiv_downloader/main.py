@@ -98,6 +98,9 @@ def mock_get_status(queue_client_status: QueueClient):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    logging.info('arkiv_downloader starting up')
+    logging.getLogger("uamqp").setLevel(logging.WARNING)
     _queue_client_archive_request_receiver = \
         create_queue_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING, 'archive-download-request-receiver')
     _queue_client_archive_status_sender = \

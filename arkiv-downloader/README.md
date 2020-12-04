@@ -20,7 +20,11 @@ Env variables needed:
 ## Incomming message example
 ````json
 {
-  "obj_id": "c05a214c-fcc5-11ea-8558-acde48001122",
+  "id": 1,
+  "arkivuttrekk_id": "c05a214c-fcc5-11ea-8558-acde48001122",
+  "status": "Bestilt",
+  "storage_account": "avmottakdevsacc",
+  "container": 
   "blob_sas_url": "https://<storage_account>.blob.core.windows.net/<container>?<sas_token>"
 }
 ````
