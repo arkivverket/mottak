@@ -5,7 +5,7 @@
 
 # Expects the component/service to be in its own folder in root of repo, mottak/<component-name>
 # I.E: mottak/mottak-arkiv-service
-PYTHON_COMPONENT_NAMES=("mottak-arkiv-service" "arkiv-downloader" "tusd" "kicker" "storage-sas-generator" "s3-scan-tar")
+PYTHON_COMPONENT_NAMES=("mottak-arkiv-service" "arkiv-downloader" "tusd" "kicker" "storage-sas-generator" "s3-scan-tar" "s3-unpack")
 REACT_COMPONENT_NAMES=("mottak-arkiv-web")
 
 # Templates
