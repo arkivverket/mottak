@@ -11,16 +11,14 @@ from arkiv_downloader.models.dto import ArkivkopiStatus, ArkivkopiRequest, Arkiv
 try:
     # Importing .env file if it exists
     import dotenv
+
     dotenv.load_dotenv()
     del dotenv
 except ImportError:
     pass
 
-# TODO Remove this env variable when ready. This will be a part of incoming message things are more ready.
-BLOB_SAS_URL = os.getenv('BLOB_SAS_URL')
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
-QUEUE_CLIENT_STRING = os.getenv('QUEUE_CLIENT_STRING')
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
 
 logging.basicConfig(level=logging.INFO)
