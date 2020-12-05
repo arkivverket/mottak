@@ -93,7 +93,7 @@ async def create_sas(container: str, duration_hours: int = 1) -> SASResponse:
         permission=ContainerSasPermissions(read=True),
         expiry=datetime.utcnow() + timedelta(hours=duration_hours)
     )
-    return SASResponse(client.account_name, container, sas_token)
+    return SASResponse(storage_account=client.account_name, container=container, sas_token=sas_token)
 
 
 @app.on_event("startup")
