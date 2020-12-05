@@ -116,7 +116,7 @@ async def startup_event():
                                             credential=key)
     logging.info(f'Connected to Azure Blob Service version {blob_service_client.api_version}')
     # This forces some talk on the wire to verify that we can talk to the Azure API.
-    runtime_config["client"] = blob_service_client  # TODO Skal denne clienten også settes i global_state.client? Får feilmelding i IDE at den er None
+    runtime_config["client"] = blob_service_client
     logging.info('Probing storage layer.')
     try:
         await blob_service_client.get_account_information()
