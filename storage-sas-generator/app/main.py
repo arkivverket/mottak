@@ -31,13 +31,14 @@ except ModuleNotFoundError:
 
 app = FastAPI()
 
-global_state = GlobalState(status_code=STATUS_INITIALIZING,
-                           status_message='Initializing',
-                           azure_client=None)
+global_state = None
 
-runtime_config = {
-    'status': STATUS_ERROR
-}
+
+def init_global_state(client: BlobServiceClient):
+    global global_state
+    global_state = GlobalState(status_code=STATUS_INITIALIZING,
+                               status_message='Initializing',
+                               azure_client=client)
 
 
 async def register_status(status_code: int, message: str) -> None:
@@ -81,7 +82,7 @@ async def create_sas(container: str, duration_hours: int = 1) -> SASResponse:
         SASResponse - An object containing information about the storage account and container
         as well as the generated SAS (sas_token).
     """
-    client = runtime_config["client"]
+    client = global_state.azure_client
 
     # Validate that the container is online. Will raise an exception on error.
     await validate_container(client, container)
@@ -116,7 +117,8 @@ async def startup_event():
                                             credential=key)
     logging.info(f'Connected to Azure Blob Service version {blob_service_client.api_version}')
     # This forces some talk on the wire to verify that we can talk to the Azure API.
-    runtime_config["client"] = blob_service_client
+    init_global_state(blob_service_client)
+
     logging.info('Probing storage layer.')
     try:
         await blob_service_client.get_account_information()
