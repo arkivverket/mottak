@@ -1,18 +1,4 @@
 [[package]]
-name = "adal"
-version = "1.2.5"
-description = "Note: This library is already replaced by MSAL Python, available here: https://pypi.org/project/msal/ .ADAL Python remains available here as a legacy. The ADAL for Python library makes it easy for python application to authenticate to Azure Active Directory (AAD) in order to access AAD protected web resources."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-cryptography = ">=1.1.0"
-PyJWT = ">=1.0.0"
-python-dateutil = ">=2.1.0"
-requests = ">=2.0.0"
-
-[[package]]
 name = "aiohttp"
 version = "3.7.3"
 description = "Async http client/server framework (asyncio)"
@@ -75,14 +61,6 @@ tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)"
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-name = "azure-common"
-version = "1.1.26"
-description = "Microsoft Azure Client Library for Python (Common)"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "azure-core"
 version = "1.9.0"
 description = "Microsoft Azure Core Library for Python"
@@ -93,19 +71,6 @@ python-versions = "*"
 [package.dependencies]
 requests = ">=2.18.4"
 six = ">=1.6"
-
-[[package]]
-name = "azure-servicebus"
-version = "0.50.3"
-description = "Microsoft Azure Service Bus Client Library for Python"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-azure-common = ">=1.1,<2.0"
-msrestazure = ">=0.4.32,<2.0.0"
-uamqp = ">=1.2.8,<2.0.0"
 
 [[package]]
 name = "azure-storage-blob"
@@ -293,19 +258,6 @@ requests-oauthlib = ">=0.5.0"
 async = ["aiohttp (>=3.0)", "aiodns"]
 
 [[package]]
-name = "msrestazure"
-version = "0.6.4"
-description = "AutoRest swagger generator Python client runtime. Azure-specific module."
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-adal = ">=0.6.0,<2.0.0"
-msrest = ">=0.6.0,<2.0.0"
-six = "*"
-
-[[package]]
 name = "multidict"
 version = "5.1.0"
 description = "multidict implementation"
@@ -378,19 +330,6 @@ email = ["email-validator (>=1.0.3)"]
 typing_extensions = ["typing-extensions (>=3.7.2)"]
 
 [[package]]
-name = "pyjwt"
-version = "1.7.1"
-description = "JSON Web Token implementation in Python"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.extras]
-crypto = ["cryptography (>=1.4)"]
-flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
-test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
-
-[[package]]
 name = "pylint"
 version = "2.6.0"
 description = "python code static checker"
@@ -448,17 +387,6 @@ pytest = ">=5.4.0"
 
 [package.extras]
 testing = ["async-generator (>=1.3)", "coverage", "hypothesis (>=5.7.1)"]
-
-[[package]]
-name = "python-dateutil"
-version = "2.8.1"
-description = "Extensions to the standard Python datetime module"
-category = "main"
-optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-
-[package.dependencies]
-six = ">=1.5"
 
 [[package]]
 name = "python-dotenv"
@@ -540,18 +468,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "uamqp"
-version = "1.2.12"
-description = "AMQP 1.0 Client Library for Python"
-category = "main"
-optional = false
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-
-[package.dependencies]
-certifi = ">=2017.4.17"
-six = ">=1.0,<2.0"
-
-[[package]]
 name = "urllib3"
 version = "1.26.2"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -621,13 +537,9 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "31172ac080b1049e4fbc4425f79b0d93ef342754af6c478ee075f0642402c145"
+content-hash = "e7d0a130e7b18e4b5b120d9c4cb55c6dd01c55efb020f6445728a64c86179066"
 
 [metadata.files]
-adal = [
-    {file = "adal-1.2.5-py2.py3-none-any.whl", hash = "sha256:7492aff8f0ba7dd4e1c477303295c645141540fff34c3ca6de0a0b0e6c1c122a"},
-    {file = "adal-1.2.5.tar.gz", hash = "sha256:8003ba03ef04170195b3eddda8a5ab43649ef2c5f0287023d515affb1ccfcfc3"},
-]
 aiohttp = [
     {file = "aiohttp-3.7.3-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:328b552513d4f95b0a2eea4c8573e112866107227661834652a8984766aa7656"},
     {file = "aiohttp-3.7.3-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:c733ef3bdcfe52a1a75564389bad4064352274036e7e234730526d155f04d914"},
@@ -683,17 +595,9 @@ attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
 ]
-azure-common = [
-    {file = "azure-common-1.1.26.zip", hash = "sha256:b2866238aea5d7492cfb0282fc8b8d5f6d06fb433872345864d45753c10b6e4f"},
-    {file = "azure_common-1.1.26-py2.py3-none-any.whl", hash = "sha256:acd26b2adb3ea192d766b4f083805287da080adc7f316ce7e52ef0ea917fbe31"},
-]
 azure-core = [
     {file = "azure-core-1.9.0.zip", hash = "sha256:ef8ae93a2ce8b595f231395579be11aadc1838168cbc2582e2d0bbd8b15c461f"},
     {file = "azure_core-1.9.0-py2.py3-none-any.whl", hash = "sha256:a4db9e64fc0de9d19d004d6b3b908459aa7d9cb6730734c485f738cb56a1ef27"},
-]
-azure-servicebus = [
-    {file = "azure-servicebus-0.50.3.zip", hash = "sha256:2b1e60c81fcf5b6a5bb3ceddb27f24543f479912e39a4706a390a16d8c0a71f4"},
-    {file = "azure_servicebus-0.50.3-py2.py3-none-any.whl", hash = "sha256:e47af28d0eb1fb278bfb94fbf1ffa4f88e8d64f4101400bf1fd053a86e4ba6b4"},
 ]
 azure-storage-blob = [
     {file = "azure-storage-blob-12.6.0.zip", hash = "sha256:dc7832d48ae3f5b31a0b24191084ce6ef7d8dfbf73e553dfe34eaddcb6813be3"},
@@ -842,10 +746,6 @@ msrest = [
     {file = "msrest-0.6.19-py2.py3-none-any.whl", hash = "sha256:87aa64948c3ef3dbf6f6956d2240493e68d714e4621b92b65b3c4d5808297929"},
     {file = "msrest-0.6.19.tar.gz", hash = "sha256:55f8c3940bc5dc609f8cf9fcd639444716cc212a943606756272e0d0017bbb5b"},
 ]
-msrestazure = [
-    {file = "msrestazure-0.6.4-py2.py3-none-any.whl", hash = "sha256:3de50f56147ef529b31e099a982496690468ecef33f0544cb0fa0cfe1e1de5b9"},
-    {file = "msrestazure-0.6.4.tar.gz", hash = "sha256:a06f0dabc9a6f5efe3b6add4bd8fb623aeadacf816b7a35b0f89107e0544d189"},
-]
 multidict = [
     {file = "multidict-5.1.0-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:b7993704f1a4b204e71debe6095150d43b2ee6150fa4f44d6d966ec356a8d61f"},
     {file = "multidict-5.1.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:9dd6e9b1a913d096ac95d0399bd737e00f2af1e1594a787e00f7975778c8b2bf"},
@@ -929,10 +829,6 @@ pydantic = [
     {file = "pydantic-1.7.3-py3-none-any.whl", hash = "sha256:38be427ea01a78206bcaf9a56f835784afcba9e5b88fbdce33bbbfbcd7841229"},
     {file = "pydantic-1.7.3.tar.gz", hash = "sha256:213125b7e9e64713d16d988d10997dabc6a1f73f3991e1ff8e35ebb1409c7dc9"},
 ]
-pyjwt = [
-    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
-    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
-]
 pylint = [
     {file = "pylint-2.6.0-py3-none-any.whl", hash = "sha256:bfe68f020f8a0fece830a22dd4d5dddb4ecc6137db04face4c3420a46a52239f"},
     {file = "pylint-2.6.0.tar.gz", hash = "sha256:bb4a908c9dadbc3aac18860550e870f58e1a02c9f2c204fdf5693d73be061210"},
@@ -948,10 +844,6 @@ pytest = [
 pytest-asyncio = [
     {file = "pytest-asyncio-0.14.0.tar.gz", hash = "sha256:9882c0c6b24429449f5f969a5158b528f39bde47dc32e85b9f0403965017e700"},
     {file = "pytest_asyncio-0.14.0-py3-none-any.whl", hash = "sha256:2eae1e34f6c68fc0a9dc12d4bea190483843ff4708d24277c41568d6b6044f1d"},
-]
-python-dateutil = [
-    {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
-    {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
 python-dotenv = [
     {file = "python-dotenv-0.14.0.tar.gz", hash = "sha256:8c10c99a1b25d9a68058a1ad6f90381a62ba68230ca93966882a4dbc3bc9c33d"},
@@ -982,41 +874,6 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.3-py2-none-any.whl", hash = "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"},
     {file = "typing_extensions-3.7.4.3-py3-none-any.whl", hash = "sha256:7cb407020f00f7bfc3cb3e7881628838e69d8f3fcab2f64742a5e76b2f841918"},
     {file = "typing_extensions-3.7.4.3.tar.gz", hash = "sha256:99d4073b617d30288f569d3f13d2bd7548c3a7e4c8de87db09a9d29bb3a4a60c"},
-]
-uamqp = [
-    {file = "uamqp-1.2.12-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3b6ff4f03cd1cc92937b469c9e120f7223a5e799960eb640bc6a36fb0cfb096c"},
-    {file = "uamqp-1.2.12-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:b218907352147b060e8d782778869f69f9cfdc76c09f5d986a316f75a0cc5de6"},
-    {file = "uamqp-1.2.12-cp27-cp27m-manylinux2010_x86_64.whl", hash = "sha256:760c9a9c75a079d7fd70c41def6ffd7692a1817a5460425182d1d009ed19fd24"},
-    {file = "uamqp-1.2.12-cp27-cp27m-win32.whl", hash = "sha256:d1e1542241ea0fa8f3e18c4bf3788e2f0a2d1f9379094d6dca3de297c3082c17"},
-    {file = "uamqp-1.2.12-cp27-cp27m-win_amd64.whl", hash = "sha256:818e8d210b59f80daa39505feb17b9200be8981516e806ecc3907ea4f3381a99"},
-    {file = "uamqp-1.2.12-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:3473c5755557fdf9d064156c5af8fd83a4bd403e10dd942c6a36a402c3952a08"},
-    {file = "uamqp-1.2.12-cp27-cp27mu-manylinux2010_x86_64.whl", hash = "sha256:366a5bcd05acf96c160555a1367f2ed11bcfc442fdb598a74a57c0da66f86378"},
-    {file = "uamqp-1.2.12-cp35-cp35m-macosx_10_9_intel.whl", hash = "sha256:0eab1c5179fad2e6d6b443154220c9133fbf779bb245f5e1acc7f541a78aa2e3"},
-    {file = "uamqp-1.2.12-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:c6c57628c9185da5adefe44ae74f1f3078450847800f13e0216bae4d52170703"},
-    {file = "uamqp-1.2.12-cp35-cp35m-manylinux2010_x86_64.whl", hash = "sha256:2d84acd713a9707dce19bcb40f145b429fee6b89f4e10738a2d2ff36ab4af535"},
-    {file = "uamqp-1.2.12-cp35-cp35m-win32.whl", hash = "sha256:3e67ca26654f34f4c4ec1234b41a22139cbac13b3d3f6fdbf0cbb0b4ac40e585"},
-    {file = "uamqp-1.2.12-cp35-cp35m-win_amd64.whl", hash = "sha256:c34a65d36bbe5185225e419ff85585dd89a15958d60b7a4fbac5b0908380f087"},
-    {file = "uamqp-1.2.12-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:ff8b6ece15f55f778e313e59e719c9d4981f40c720ffd3764957b91ab8b4a248"},
-    {file = "uamqp-1.2.12-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:abd5f48b557252fc421a8a8ecb5cd8e2990913eaa482ae1a16e4d949fcac8d50"},
-    {file = "uamqp-1.2.12-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:74b68c0858f8974356adf9ce181dd3aec2dc6f2e12572c34eed8783d486bc024"},
-    {file = "uamqp-1.2.12-cp36-cp36m-win32.whl", hash = "sha256:25949bf78dbd9890fa5405adf43b9201665eec7058e423202be21265837400fc"},
-    {file = "uamqp-1.2.12-cp36-cp36m-win_amd64.whl", hash = "sha256:ce4b47c4f6101933a9dc6d87717c85240e4d68a17e3f967ed790a7cd19c57a51"},
-    {file = "uamqp-1.2.12-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:027a0c36c890091b5c9eb0161529b613007bd9ada2bdca7336af07303ce243a9"},
-    {file = "uamqp-1.2.12-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:6d31a9685e4cdb9ffd44f7bc4c5870a7bb48d9380f8425fde31a2983d6899f4a"},
-    {file = "uamqp-1.2.12-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:97eae4e7b733a5f6abc90e7877f3d8797e61d44dff506f09f63b198b25ab3a66"},
-    {file = "uamqp-1.2.12-cp37-cp37m-win32.whl", hash = "sha256:7a0b2f4efa01e0487bdb0652037ea7ad38d580009ecb8645b90d75630dc7ba34"},
-    {file = "uamqp-1.2.12-cp37-cp37m-win_amd64.whl", hash = "sha256:808fed9d9791bdbc05291b6c5eccf4e4932629b347b6744d76f6b4e6b63f8ab2"},
-    {file = "uamqp-1.2.12-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:f5d360be35f2ebad97d5d76adc9a5792204ecad86334fe7e9be2faa184e94d06"},
-    {file = "uamqp-1.2.12-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:a7e764bfaf5d81fc756f987c7a037775d88caaa6b2d604fca4e64fc5fa6f3f66"},
-    {file = "uamqp-1.2.12-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:e067ca5459490676242909d7fa300ce48ab59a3b718bc80838e67294f0941225"},
-    {file = "uamqp-1.2.12-cp38-cp38-win32.whl", hash = "sha256:f85643a2a509f01134aed11974b5331e7302bd2c319527bdd0b19033d0d26c57"},
-    {file = "uamqp-1.2.12-cp38-cp38-win_amd64.whl", hash = "sha256:5e4d220eb76e307c2ad22f49d95ee9c974a4a8017c85fc2943b0df2da2ee6895"},
-    {file = "uamqp-1.2.12-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:a33bed596e1ef7694d00327d55cf1c791a4b7b2cb171717549c37f90dc70d30d"},
-    {file = "uamqp-1.2.12-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:7884c2168de62b4bf064af36df8d0a3bee9d2198d660c8dbbcc2f7ac60b9496d"},
-    {file = "uamqp-1.2.12-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:dcc9e17206c236fff2ba50cd80cc60a095000854d40c1b0dba180b3f22e6778e"},
-    {file = "uamqp-1.2.12-cp39-cp39-win32.whl", hash = "sha256:a9fd2bee3d0b2bed1bf513b39ae2c76b0bddb637593eed3caa06339ba9c42f64"},
-    {file = "uamqp-1.2.12-cp39-cp39-win_amd64.whl", hash = "sha256:85852f054de604a8d632a24afdc004d4e600e2cb9c476714de58c24bb708a75d"},
-    {file = "uamqp-1.2.12.tar.gz", hash = "sha256:c6657f1d8aae566b89d02c6282827dddcec2a90f75dc0d2d91a47e00c8999d99"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.2-py2.py3-none-any.whl", hash = "sha256:d8ff90d979214d7b4f8ce956e80f4028fc6860e4431f731ea4a8c08f23f99473"},
