@@ -7,6 +7,8 @@ import os
 import logging
 
 # FastAPI and Starlette:
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR, HTTP_412_PRECONDITION_FAILED
 
@@ -31,28 +33,25 @@ except ModuleNotFoundError:
 
 app = FastAPI()
 
-global_state = None
+global_state = GlobalState(status_code=STATUS_INITIALIZING,
+                           status_message='Initializing',
+                           azure_client=None)
 
 
-def init_global_state(client: BlobServiceClient):
-    global global_state
-    global_state = GlobalState(status_code=STATUS_INITIALIZING,
-                               status_message='Initializing',
-                               azure_client=client)
-
-
-async def register_status(status_code: int, message: str) -> None:
+async def register_status(status_code: int, message: str, client: Optional[BlobServiceClient]) -> None:
     """
     Register a status internally. Used for the health check.
 
     Parameters:
           status_code: int, constant
           message: str - description of the state
+          client: Optional[BlobServiceClient] - azure client
 
           Returns None.
     """
     global_state.status_code = status_code
     global_state.status_message = message
+    global_state.azure_client = client
 
 
 async def get_service_url(account: str) -> str:
@@ -72,7 +71,7 @@ async def validate_container(client: BlobServiceClient, container: str) -> None:
 async def create_sas(container: str, duration_hours: int = 1) -> SASResponse:
     """ Creates the actual SAS signature.
 
-    Gets the client connection from runtime_config.
+    Gets the client connection from global_state.azure_client.
 
     Parameters:
         container: str  - The container which we should download
@@ -117,12 +116,11 @@ async def startup_event():
                                             credential=key)
     logging.info(f'Connected to Azure Blob Service version {blob_service_client.api_version}')
     # This forces some talk on the wire to verify that we can talk to the Azure API.
-    init_global_state(blob_service_client)
 
     logging.info('Probing storage layer.')
     try:
         await blob_service_client.get_account_information()
-        await register_status(STATUS_OK, 'OK')
+        await register_status(STATUS_OK, 'OK', blob_service_client)
     except ServiceRequestError as exception:
         await register_status(STATUS_ERROR, exception)
         logging.error(f"Something went wrong when talking to Azure: {exception}")
