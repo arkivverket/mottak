@@ -123,7 +123,7 @@ async def startup_event():
         await blob_service_client.get_account_information()
         await register_status(STATUS_OK, 'OK', blob_service_client)
     except ServiceRequestError as exception:
-        await register_status(STATUS_ERROR, exception)
+        await register_status(STATUS_ERROR, str(exception), None)
         logging.error(f"Something went wrong when talking to Azure: {exception}")
 
 
