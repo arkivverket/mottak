@@ -3,8 +3,8 @@
 Generates SAS signatures used inside of Azure to give other services access to an archive.
 
 Needs two environment variables to function.
- - AZURE_ACCOUNT
- - AZURE_KEY
+ - AZURE_ACCOUNT_NAME
+ - AZURE_ACCOUNT_KEY
 
 To run locally on your development machine:
 ```shell script
