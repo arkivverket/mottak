@@ -146,9 +146,6 @@ async def generate_sas(dto: SASRequest):
     Will fail with a 412 if the container cannot be found.
     """
     logging.info(f'Generating SAS for container: "{dto.container}"')
-    if global_state.status_code != STATUS_OK:
-        raise HTTPException(status_code=HTTP_412_PRECONDITION_FAILED,
-                            detail="No client to interact with Blob service exists.")
     try:
         sas_response = await create_sas(container=dto.container, duration_hours=dto.duration_hours)
         return sas_response
