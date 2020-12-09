@@ -90,6 +90,7 @@ async def create_sas(container: str, duration_hours: int = 1) -> str:
         container_name=container,
         account_key=client.credential.account_key,
         permission=ContainerSasPermissions(read=True),
+        start=datetime.utcnow(),
         expiry=datetime.utcnow() + timedelta(hours=duration_hours)
     )
     return sas_token

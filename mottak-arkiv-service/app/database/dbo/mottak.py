@@ -106,5 +106,7 @@ class Arkivkopi(Base):
                     nullable=False)
     storage_account = Column(String(), nullable=False)
     container = Column(String(), nullable=False)
+    sas_token_start = Column(String(), nullable=False)
+    sas_token_slutt = Column(String(), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
     endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)
