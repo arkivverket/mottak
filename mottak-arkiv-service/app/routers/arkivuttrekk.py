@@ -4,12 +4,14 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.connectors.mailgun.mailgun_client import MailgunClient
+from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
+from app.routers.dto.SASToken import SASToken
+from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url, get_sas_url
 
 router = APIRouter()
 
@@ -56,3 +58,15 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
                                 detail='Utsending av invitasjon feilet, venligst prøv igjen senere')
         else:
             return result
+
+@router.post('/{id}/bestill_nedlasting',
+             status_code=status.HTTP_200_OK,
+             response_model=SASToken,
+             summary='Bestiller en nedlastning fra arkiv downloader')
+async def request_download(id: int, db: Session = Depends(get_db_session)):
+    async with SASGeneratorClient(get_sas_url()) as client:
+        try:
+            result = await arkivuttrekk_service.request_download(id, db, client)
+        except Exception as err:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+        return result

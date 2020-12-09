@@ -5,6 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.connectors.mailgun.mailgun_client import MailgunClient
+from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
@@ -44,3 +45,12 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
         status = InvitasjonStatus.FEILET
 
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
+
+async def request_download(arkivuttrekk_id: int, db: Session, sas_generator_client: SASGeneratorClient):
+    arkivuttrekk = get_by_id(arkivuttrekk_id, db)
+    sas_token = await _request_sas_token(arkivuttrekk, db, sas_generator_client)
+    return {"status": 200}
+
+async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO, db: Session, sas_generator_client: SASGeneratorClient):
+    # ObjectID of the Arkivutrekk is name of the container
+    return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
