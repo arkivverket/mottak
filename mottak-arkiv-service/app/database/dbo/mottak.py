@@ -45,7 +45,7 @@ class Arkivuttrekk(Base):
     lokasjoner = relationship('Lokasjon', backref='arkivuttrekk')
     overforingspakker = relationship('Overforingspakke', backref='arkivuttrekk')
     testere = relationship('Tester', backref='arkivuttrekk')
-    transfer_request = relationship('Transfer Request', backref='arkivuttrekk')
+    arkivkopi = relationship('Arkivkopi', backref='arkivuttrekk')
 
 
 class Invitasjon(Base):

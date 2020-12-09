@@ -1,4 +1,4 @@
-"""create transfer request table
+"""create arkivkopi table
 
 Revision ID: 19ac377e3a40
 Revises: f0ecc7d899bf
