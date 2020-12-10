@@ -358,8 +358,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "83cf60f246bbcb520840d00c4bfdeef7a555cc8af3a4029d0f6c0476b72a3cd3"
+python-versions = "^3.8"
+content-hash = "cd7fbf1d1b5c34905ec1db26d34d1a16367429c28c8b9920a61d1a4817335a70"
 
 [metadata.files]
 adal = [

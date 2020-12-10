@@ -5,7 +5,7 @@ description = ""
 authors = ["Kristoffer Waløen <kriwal@arkivverket.no>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 azure-servicebus = "^0.50.3"
 
 [tool.poetry.dev-dependencies]
