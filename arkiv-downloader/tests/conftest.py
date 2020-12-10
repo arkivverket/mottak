@@ -13,7 +13,7 @@ def teststr_json_string() -> str:
 
 
 @pytest.fixture
-def testobj_arkivkopi_request():
+def testobj_arkivkopi_request() -> ArkivkopiRequest:
     return ArkivkopiRequest(
         arkivkopi_id=1,
         arkivuttrekk_id=UUID('bb5fc65e-386d-11eb-915c-acde48001122'),

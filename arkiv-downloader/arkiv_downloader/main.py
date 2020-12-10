@@ -18,16 +18,15 @@ except ImportError:
     pass
 
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
-ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request-receiver'
+ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request'
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
-ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status-sender'
+ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status'
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
 
 
 def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
     """ Returns the URL of the blob to be downloaded."""
-    return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/" \
-           f"{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
+    return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
 
 
 def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
@@ -38,7 +37,8 @@ def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> list[str]:
     """ Returns the command to download a blob using azcopy."""
-    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']
+    # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
+    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
 
 
 def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
