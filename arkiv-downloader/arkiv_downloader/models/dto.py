@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 import json
-from uuid import UUID
-from enum import Enum
 import logging
-from datetime import datetime
+from enum import Enum
 from typing import Optional
+from uuid import UUID
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -15,41 +15,57 @@ class UUIDEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class ArkivkopiStatus(Enum):
+class ArkivkopiStatus(str, Enum):
     BESTILT = 'Bestilt'
     STARTET = 'Startet'
     OK = 'OK'
     AVBRUTT = 'Avbrutt'
     FEILET = 'Feilet'
 
+    @staticmethod
+    def get_status(status_str: str) -> ArkivkopiStatus:
+        members = [member for member in ArkivkopiStatus.__members__.values() if member.value == status_str]
+        if members:
+            return members.pop()
+
 
 class ArkivkopiRequest:
-    def __init__(self, _id: int, arkivuttrekk_id: UUID, status: ArkivkopiStatus, storage_account: str, container: str):
-        self.id = _id
-        self.arkivuttrekk_id = arkivuttrekk_id
-        self.status = status
+    """
+    The information needed to make a copy of an archive from cloud to on-prem.
+    These objects are retrieved from the queue ARCHIVE_DOWNLOAD_REQUEST_RECEICER.
+    """
+
+    def __init__(self,
+                 arkivkopi_id: int,
+                 arkivuttrekk_id: UUID,
+                 status: ArkivkopiStatus,
+                 storage_account: str,
+                 container: str,
+                 sas_token: str):
+        self.arkivkopi_id = arkivkopi_id
+        self.arkivuttrekk_id = UUID(str(arkivuttrekk_id))
+        self.status = ArkivkopiStatus.get_status(status)
         self.storage_account = storage_account
         self.container = container
+        self.sas_token = sas_token
 
     @staticmethod
     def from_string(json_string: str) -> Optional[ArkivkopiRequest]:
         try:
             json_message = json.loads(json_string)
-            # json_message['obj_id'] = UUID(json_message['obj_id'])
             return ArkivkopiRequest(**json_message)
         except (ValueError, KeyError, TypeError) as e:
             logging.error(f'Failed to parse message {json_string}', e)
             return None
 
     def as_json_str(self):
-        return json.dumps(self.__dict__, cls=UUIDEncoder)
+        return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
 
 class ArkivkopiStatusResponse:
-    def __init__(self, obj_id: UUID, status: ArkivkopiStatus):
-        self.obj_id = obj_id
+    def __init__(self, arkivuttrekk_id: UUID, status: ArkivkopiStatus):
+        self.arkivuttrekk_id = arkivuttrekk_id
         self.status = status
-        self.statusCreatedTime = datetime.now()  # TODO Gir denne mening?
 
     def as_json_str(self) -> str:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
