@@ -38,8 +38,7 @@ def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> list[str]:
     """ Returns the command to download a blob using azcopy."""
-    return ['./azcopy/azcopy', 'cp',
-            get_sas_url(arkivkopi_request), save_path, '--recursive']
+    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']
 
 
 def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
