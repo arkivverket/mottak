@@ -21,32 +21,29 @@ ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_RE
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
 
-logging.basicConfig(level=logging.INFO)
-logging.getLogger('uamqp').setLevel(logging.WARNING)  # Reducing noise in the logs from overly verbose logger
+
+def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
+    """ Returns the URL of the blob to be downloaded."""
+    return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/" \
+           f"{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
 
 
-def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClient:
-    return QueueClient.from_connection_string(queue_client_string, queue_name)
+def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
+    """ Returns the path to where the downloaded blob should be saved"""
+    return os.path.join(write_location, str(arkivuttrekk_id)) + os.path.sep
+    # return write_location + os.path.sep + str(arkivuttrekk_id) + os.path.sep
 
 
-def send_message_to_queue(message: str, client: QueueClient):
-    msg = Message(message)
-    client.send(msg)
-
-
-def get_message_from_queue(client: QueueClient) -> Optional[ArkivkopiRequest]:
-    with client.get_receiver() as receiver:
-        message = receiver.next()  # TODO Trenger vi noen kontroll for om det er melding på køen her?
-        message_str = str(message)
-        message.complete()
-        logging.info(f'Got download request for: {message to json-> obj_id}')  # Todo Remove this? Got downlo
-        return ArkivkopiRequest.from_string(message_str)
+def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> list[str]:
+    """ Returns the command to download a blob using azcopy."""
+    return ['./azcopy/azcopy', 'cp',
+            get_sas_url(arkivkopi_request), save_path, '--recursive']
 
 
 def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
-    save_path = write_location + os.path.sep + str(arkivuttrekk.obj_id) + os.path.sep
-    azcopy_command = ['./azcopy/azcopy', 'cp', f'{arkivuttrekk.container_sas_url}', save_path, '--recursive']
-    logging.info(f'Starting transfer of obj_id {arkivuttrekk.obj_id} to {save_path}')
+    save_path = get_save_path(arkivuttrekk.arkivuttrekk_id, write_location)
+    azcopy_command = generate_azcopy_command(arkivuttrekk, save_path)
+    logging.info(f'Starting transfer of obj_id {arkivuttrekk.arkivuttrekk_id} to {save_path}')
     try:
         response = subprocess.check_output(
             azcopy_command,
