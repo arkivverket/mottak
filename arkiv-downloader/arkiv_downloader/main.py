@@ -1,8 +1,8 @@
-import os
 import logging
+import os
 import subprocess
-from uuid import uuid1, UUID
 from typing import Optional
+from uuid import UUID
 
 from azure.servicebus import QueueClient, Message
 
@@ -18,7 +18,9 @@ except ImportError:
     pass
 
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
+ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request-receiver'
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
+ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status-sender'
 STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
 
 
@@ -59,50 +61,58 @@ def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> Arkivk
         return ArkivkopiStatus.FEILET
 
 
-def send_status_message(obj_id: UUID, status: ArkivkopiStatus, client: QueueClient):
-    status_obj = ArkivkopiStatusResponse(obj_id, status)
+def send_status_message(arkivuttrekk_id: UUID, status: ArkivkopiStatus, client: QueueClient):
+    status_obj = ArkivkopiStatusResponse(arkivuttrekk_id, status)
     message = Message(status_obj.as_json_str())
     client.send(message)
 
 
+def download_arkivkopi(arkivkopi_request: ArkivkopiRequest,
+                       queue_client_status: QueueClient,
+                       storage_location: str) -> None:
+    logging.info(f'Got download request for object with arkivuttrekk_id: {arkivkopi_request.arkivuttrekk_id}')
+    send_status_message(arkivkopi_request.arkivuttrekk_id, ArkivkopiStatus.STARTET, queue_client_status)
+    status = download_blob(arkivkopi_request, storage_location)
+    send_status_message(arkivkopi_request.arkivuttrekk_id, status, queue_client_status)
+
+
+def process_message(message: Message) -> Optional[ArkivkopiRequest]:
+    """ Method that process a message containing an ArkivkopiRequest."""
+    logging.info('Got a message on the service bus')
+    message_str = str(message)
+    arkivkopi_request = ArkivkopiRequest.from_string(message_str)  # logs error if it fails to parse
+    message.complete()
+    return arkivkopi_request if arkivkopi_request else None
+
+
 def run(queue_client_downloader: QueueClient, queue_client_status: QueueClient, storage_location: str):
-    # with client.get_receiver() as receiver: legg til her
-    while True:
-        arkivuttrekk = get_message_from_queue(queue_client_downloader) # TODO legg til await hvis ingen melding finnes. er dette automatisk?
-        if arkivuttrekk:
-            send_status_message(arkivuttrekk.obj_id, ArkivkopiStatus.STARTET, queue_client_status)
-            status = download_blob(arkivuttrekk, storage_location)
-            send_status_message(arkivuttrekk.obj_id, status, queue_client_status)
+    """ The main loop that listens to the service bus queue"""
+    keep_running = True
+    with queue_client_downloader.get_receiver() as receiver:
+        logging.info(f"Starting receiving messages on queue {queue_client_downloader.name}")
+        while keep_running:
+            messages = receiver.fetch_next(timeout=3, max_batch_size=1)  # reads 1 messages then waits for 3 seconds
+            for message in messages:
+                arkivkopi_request = process_message(message)
+                if arkivkopi_request:
+                    download_arkivkopi(arkivkopi_request, queue_client_status, storage_location)
+    logging.info(f"Closing receiver {queue_client_downloader.name}")
 
 
-# TODO remove this
-def mock_input(client: QueueClient):
-    a = ArkivkopiRequest(uuid1(), BLOB_SAS_URL)
-    m = Message(a.as_json_str())
-    client.send(m)
-
-
-# TODO remove this
-def mock_get_status(queue_client_status: QueueClient):
-    with queue_client_status.get_receiver() as receiver:
-        for i in [1, 2]:
-            message = receiver.next()
-            message_str = str(message)
-            print(f'Got message {message_str}')
-            message.complete()
+def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClient:
+    return QueueClient.from_connection_string(queue_client_string, queue_name)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     logging.info('arkiv_downloader starting up')
-    logging.getLogger("uamqp").setLevel(logging.WARNING)
-    _queue_client_archive_request_receiver = \
-        create_queue_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING, 'archive-download-request-receiver')
-    _queue_client_archive_status_sender = \
-        create_queue_client(ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING, 'archive-download-status-sender')
+    logging.getLogger('uamqp').setLevel(logging.WARNING)  # Reducing noise in the logs from overly verbose logger
 
-    mock_input(_queue_client_archive_request_receiver)  # TODO remove from final code
+    # create queues
+    _request_receiver = create_queue_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING,
+                                            ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME)
+    _status_sender = create_queue_client(ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING,
+                                         ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME)
 
-    run(_queue_client_archive_request_receiver, _queue_client_archive_status_sender, STORAGE_LOCATION)
-
-    mock_get_status(_queue_client_archive_status_sender)  # TODO remove from final code
+    # start main loop
+    run(_request_receiver, _status_sender, STORAGE_LOCATION)
