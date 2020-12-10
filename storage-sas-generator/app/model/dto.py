@@ -8,3 +8,10 @@ class SASRequest(BaseModel):
     """ DTO for the generate_sas endpoint."""
     container: str
     duration_hours: Optional[int] = 1
+
+
+class SASResponse(BaseModel):
+    """DTO for the response sas object"""
+    storage_account: str
+    container: str
+    sas_token: str

@@ -18,13 +18,13 @@ spec:
           # Todo - make the condition less verbose so we don't have to state every condition. dont know how.
           - name: task-checksum
             template: checksum-check
-          - name: checksum-logging
-            template: checksum-logger
-            dependencies: [task-checksum]
-            arguments:
-              artifacts:
-                - name: checksum-log
-                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
+#          - name: checksum-logging
+#            template: checksum-logger
+#            dependencies: [task-checksum]
+#            arguments:
+#              artifacts:
+#                - name: checksum-log
+#                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
           - name: task-checksum-error
             template: checksum-error
             dependencies: [task-checksum]
@@ -46,18 +46,18 @@ spec:
             template: arkade5
             dependencies: [task-unpack]
             when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
-          - name: task-logger
-            template: final-logger
-            dependencies: [task-arkade5]
-            when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
-            arguments:
-              artifacts:
-                - name: arkade-report
-                  from: "{{tasks.task-arkade5.outputs.artifacts.arkade-report}}"
-                - name: avlog
-                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
-                - name: unpacklog
-                  from: "{{tasks.task-unpack.outputs.artifacts.unpacklog}}"
+#          - name: task-logger
+#            template: final-logger
+#            dependencies: [task-arkade5]
+#            when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
+#            arguments:
+#              artifacts:
+#                - name: arkade-report
+#                  from: "{{tasks.task-arkade5.outputs.artifacts.arkade-report}}"
+#                - name: avlog
+#                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+#                - name: unpacklog
+#                  from: "{{tasks.task-unpack.outputs.artifacts.unpacklog}}"
             # Done: send mail....
           - name: task-new-archive
             template: new-archive
@@ -154,7 +154,7 @@ spec:
 
     - name: avscan
       container:
-        image: arkivverket.azurecr.io/mottak/s3-scan-tar
+        image: arkivverket.azurecr.io/av-mottak/s3-scan-tar:e5ce915cc9eafbafd50a943944b9187371d95498
 
         imagePullPolicy: Always
         env:
@@ -183,7 +183,7 @@ spec:
 
     - name: unpack
       container:
-        image: arkivverket.azurecr.io/mottak/s3-unpack
+        image: arkivverket.azurecr.io/av-mottak/s3-unpack:36710f09735fb21a6be4fb3252a3d9699f19d9c8
         imagePullPolicy: Always
         env:
           - name: OBJECT
