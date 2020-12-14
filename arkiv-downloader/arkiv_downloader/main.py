@@ -4,6 +4,7 @@ import subprocess
 from typing import Optional
 from uuid import UUID
 
+from typing import List
 from azure.servicebus import QueueClient, Message
 
 from arkiv_downloader.models.dto import ArkivkopiStatus, ArkivkopiRequest, ArkivkopiStatusResponse
@@ -35,7 +36,7 @@ def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
     # return write_location + os.path.sep + str(arkivuttrekk_id) + os.path.sep
 
 
-def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> list[str]:
+def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
     """ Returns the command to download a blob using azcopy."""
     # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
     return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
