@@ -1,20 +1,20 @@
 ---
-# Source: av-mottak/templates/csi-driver-link.yaml
+# Source: da-mottak/templates/csi-driver-link.yaml
 # This is SecretProviderClass example using service-principal for authentication with Key Vault
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
 metadata:
-  name: av-mottak-dev-csidriver-keyvault
-  namespace: av-mottak-dev
+  name: da-mottak-dev-csidriver-keyvault
+  namespace: da-mottak-dev
   labels:
-    aadpodidbinding: av-mottak-dev-id-keyvault
+    aadpodidbinding: da-mottak-dev-id-keyvault
 spec:
   provider: azure
   secretObjects:                              # [OPTIONAL] SecretObject defines the desired state of synced K8s secret objects
   - data:
-    - key: av-mottak-dev-secret-dsn                      # data field to populate
-      objectName: av-mottak-dev-dsn                        # name of the mounted content to sync. this could be the object name or the object alias
-    secretName: av-mottak-dev-dsn                     # name of the Kubernetes Secret object
+    - key: da-mottak-dev-secret-dsn                      # data field to populate
+      objectName: da-mottak-dev-dsn                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: da-mottak-dev-dsn                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
     - key: mailgun-secret
@@ -22,9 +22,9 @@ spec:
     secretName: mailgun-secret                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
-    - key: av-mottak-dev-sb-endpoint-argo-kicker
-      objectName: av-mottak-dev-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
-    secretName: av-mottak-dev-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
+    - key: da-mottak-dev-sb-endpoint-argo-kicker
+      objectName: da-mottak-dev-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: da-mottak-dev-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
     type: Opaque
   - data:
     - key: storageaccount-key
@@ -52,39 +52,39 @@ spec:
     secretName: cookie-secret
     type: Opaque
   - data:
-      - key: av-mottak-dev-sb-endpoint-archive-download-request-receiver
-        objectName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
-    secretName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+      - key: da-mottak-dev-sb-endpoint-archive-download-request-receiver
+        objectName: da-mottak-dev-sb-endpoint-archive-download-request-receiver
+    secretName: da-mottak-dev-sb-endpoint-archive-download-request-receiver
     type: Opaque
   - data:
-      - key: av-mottak-dev-sb-endpoint-archive-download-request-sender
-        objectName: av-mottak-dev-sb-endpoint-archive-download-request-sender
-    secretName: av-mottak-dev-sb-endpoint-archive-download-request-sender
+      - key: da-mottak-dev-sb-endpoint-archive-download-request-sender
+        objectName: da-mottak-dev-sb-endpoint-archive-download-request-sender
+    secretName: da-mottak-dev-sb-endpoint-archive-download-request-sender
     type: Opaque
   - data:
-      - key: av-mottak-dev-sb-endpoint-archive-download-status-receiver
-        objectName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
-    secretName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+      - key: da-mottak-dev-sb-endpoint-archive-download-status-receiver
+        objectName: da-mottak-dev-sb-endpoint-archive-download-status-receiver
+    secretName: da-mottak-dev-sb-endpoint-archive-download-status-receiver
     type: Opaque
   - data:
-      - key: av-mottak-dev-sb-endpoint-archive-download-status-sender
-        objectName: av-mottak-dev-sb-endpoint-archive-download-status-sender
-    secretName: av-mottak-dev-sb-endpoint-archive-download-status-sender
+      - key: da-mottak-dev-sb-endpoint-archive-download-status-sender
+        objectName: da-mottak-dev-sb-endpoint-archive-download-status-sender
+    secretName: da-mottak-dev-sb-endpoint-archive-download-status-sender
     type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
-    keyvaultName: "av-mottak-dev-vault"          # the name of the KeyVault
+    keyvaultName: "da-mottak-dev-vault"          # the name of the KeyVault
     cloudName: ""          # [OPTIONAL for Azure] if not provided, azure environment will default to AzurePublicCloud
     objects:  |
       array:
         - |
-          objectName: av-mottak-dev-dsn
+          objectName: da-mottak-dev-dsn
           objectType: secret        # object types: secret, key or cert
         - |
           objectName: mailgun-secret
           objectType: secret
         - |
-          objectName: av-mottak-dev-sb-endpoint-argo-kicker
+          objectName: da-mottak-dev-sb-endpoint-argo-kicker
           objectType: secret
         - |
           objectName: storageaccount-key
@@ -103,16 +103,16 @@ spec:
           objectName: cookie-secret
           objectType: secret
         - |
-          objectName: av-mottak-dev-sb-endpoint-archive-download-request-receiver
+          objectName: da-mottak-dev-sb-endpoint-archive-download-request-receiver
           objectType: secret
         - |
-          objectName: av-mottak-dev-sb-endpoint-archive-download-request-sender
+          objectName: da-mottak-dev-sb-endpoint-archive-download-request-sender
           objectType: secret
         - |
-          objectName: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+          objectName: da-mottak-dev-sb-endpoint-archive-download-status-receiver
           objectType: secret
         - |
-          objectName: av-mottak-dev-sb-endpoint-archive-download-status-sender
+          objectName: da-mottak-dev-sb-endpoint-archive-download-status-sender
           objectType: secret
-    resourceGroup: "av-mottak-dev-rg"
+    resourceGroup: "da-mottak-dev-rg"
     tenantId: "99d3d298-60cf-4636-9772-4a191b6f0d94"                    # the tenant ID of the KeyVault

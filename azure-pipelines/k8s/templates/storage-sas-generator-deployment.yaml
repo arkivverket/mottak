@@ -37,7 +37,10 @@ spec:
             - containerPort: 80
           env:
             - name: AZURE_ACCOUNT_NAME
-              value: avmottakdevsacc
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: AZURE_ACCOUNT_KEY
               valueFrom:
                 secretKeyRef:

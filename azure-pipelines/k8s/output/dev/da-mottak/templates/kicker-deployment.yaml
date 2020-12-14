@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/kicker-deployment.yaml
+# Source: da-mottak/templates/kicker-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-kicker-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-kicker-deployment
+  namespace: da-mottak-dev
   labels:
     app: kicker-app
 spec:
@@ -18,7 +18,7 @@ spec:
         run: kicker-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/kicker:a3554de11a330acc63d70b13a6b3cb62ca8bb43d'
+        - image: 'arkivverket.azurecr.io/av-mottak/kicker:kriwal'
           imagePullPolicy: Always
           name: kicker-container
           env:
@@ -27,7 +27,7 @@ spec:
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-sb-endpoint-argo-kicker
-                  key: av-mottak-dev-sb-endpoint-argo-kicker
+                  name: da-mottak-dev-sb-endpoint-argo-kicker
+                  key: da-mottak-dev-sb-endpoint-argo-kicker
             - name: AZ_SB_QUEUE
               value: argo-workflow

@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 data:
   config: |
     artifactRepository:
@@ -20,12 +20,12 @@ data:
           name: storageaccount-key
           key: storageaccount-key
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-invocation
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 rules:
   - apiGroups:
       - "argoproj.io"
@@ -40,12 +40,12 @@ rules:
       - patch
       - delete
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-workflow
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 rules:
   # pod get/watch is used to identify the container IDs of the current pod
   # pod patch is used to annotate the step's outputs back to controller (e.g. artifact location)
@@ -66,12 +66,12 @@ rules:
       - get
       - watch
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: default-default-invocation
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -79,18 +79,18 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: av-mottak-dev
+    namespace: da-mottak-dev
 
 
 # give workflows (as argo:default) permissions to run things
 # see https://github.com/argoproj/argo/blob/master/docs/workflow-rbac.md
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-default-workflow
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -98,7 +98,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: av-mottak-dev
+    namespace: da-mottak-dev
 ---
-# Source: av-mottak/templates/argo-rbac.yaml
+# Source: da-mottak/templates/argo-rbac.yaml
 # give our webhook ap (as default:default) permissions to create workflows

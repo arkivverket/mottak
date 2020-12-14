@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/oauth2-proxy.yaml
+# Source: da-mottak/templates/oauth2-proxy.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name:  av-mottak-dev-oauth2-proxy-service
-  namespace: av-mottak-dev
+  name:  da-mottak-dev-oauth2-proxy-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -14,12 +14,12 @@ spec:
   selector:
     run: oauth2-proxy
 ---
-# Source: av-mottak/templates/oauth2-proxy.yaml
+# Source: da-mottak/templates/oauth2-proxy.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-oauth2-proxy-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-oauth2-proxy-deployment
+  namespace: da-mottak-dev
   labels:
     app: oauth2-proxy-pod
 spec:

@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/nginx.yaml
+# Source: da-mottak/templates/nginx.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-config
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 data:
   default.conf: |
     server {
@@ -18,7 +18,7 @@ data:
 
 
       location /oauth2 {
-        proxy_pass http://av-mottak-dev-oauth2-proxy-service:4180;
+        proxy_pass http://da-mottak-dev-oauth2-proxy-service:4180;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Scheme $scheme;
@@ -43,7 +43,7 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://av-mottak-dev-mottak-arkiv-service-service/;
+        proxy_pass http://da-mottak-dev-mottak-arkiv-service-service/;
       }
 
 
@@ -62,12 +62,12 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://av-mottak-dev-mottak-arkiv-web-service;
+        proxy_pass http://da-mottak-dev-mottak-arkiv-web-service;
       }
 
 
       location /tusd {
-        proxy_pass http://av-mottak-dev-tusd-service;
+        proxy_pass http://da-mottak-dev-tusd-service;
 
         # Disable request and response buffering
         proxy_request_buffering  off;
@@ -90,12 +90,12 @@ data:
       }
     }
 ---
-# Source: av-mottak/templates/nginx.yaml
+# Source: da-mottak/templates/nginx.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: av-mottak-dev-nginx-service
-  namespace: av-mottak-dev
+  name: da-mottak-dev-nginx-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -105,12 +105,12 @@ spec:
   selector:
     run: nginx
 ---
-# Source: av-mottak/templates/nginx.yaml
+# Source: da-mottak/templates/nginx.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-nginx-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-nginx-deployment
+  namespace: da-mottak-dev
   labels:
     run: nginx
 spec:

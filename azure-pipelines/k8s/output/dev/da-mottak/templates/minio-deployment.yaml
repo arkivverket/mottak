@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/minio-deployment.yaml
+# Source: da-mottak/templates/minio-deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name:  minio-service
-  namespace: av-mottak-dev
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -13,12 +13,12 @@ spec:
   selector:
     run:  minio-app    # references the deployment
 ---
-# Source: av-mottak/templates/minio-deployment.yaml
+# Source: da-mottak/templates/minio-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev.minio-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev.minio-deployment
+  namespace: da-mottak-dev
   labels:
     app: minio-app
 spec:
@@ -43,7 +43,10 @@ spec:
             - name: MINIO_AZURE_CHUNK_SIZE_MB
               value: "0.25"
             - name:  MINIO_ACCESS_KEY
-              value: "avmottakdevsacc"
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
