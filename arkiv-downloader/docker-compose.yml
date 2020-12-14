@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  arkiv-downloader:
+    image: "arkivverket.azurecr.io/av-mottak/arkiv-downloader:${TAG}"
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${STORAGE_LOCATION}:${STORAGE_LOCATION}"
+
+cd
