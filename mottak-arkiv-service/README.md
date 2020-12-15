@@ -7,7 +7,7 @@ Application responsible for serving the application mottak-arkiv-web with viewin
 - The application will parse the XML file and return a partially filled out form.
 - The user will be able to change and add information to the form before committing the data to the application.
 - Once the data has been persisted, an email will be sent out to the archive uploader, inviting them to upload the archive.
-- The archive is uploaded to an agreed upon object storage
+- The archive is uploaded to an agreed upon object storage.
 
 ### Environment variables needed
 The values given here are examples. Please adjust to your local database.
