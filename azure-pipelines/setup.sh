@@ -9,10 +9,7 @@ ENV="dev"
 OUTPUT_FOLDER="k8s/output/$ENV"
 CLUSTER_NAME="av-plattform-$ENV-aks"
 PLATFORM_RESOURCE_GROUP="av-plattform-$ENV-rg"
-MOTTAK_RESOURCE_GROUP="da-mottak-$ENV-rg"
 NAMESPACE="da-mottak-$ENV"
-STORAGE_ACCOUNT_NAME="damottak${ENV}sa"
-MOTTAK_VAULT_NAME="da-mottak-$ENV-vault"
 
 ## Auth against cluster
 echo
