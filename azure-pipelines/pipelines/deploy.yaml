@@ -41,7 +41,7 @@ steps:
       action: 'deploy'
       kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
       namespace: 'da-mottak-dev'
-      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
+      manifests: 'azure-pipelines/k8s/output/dev/da-mottak/templates/${{ parameters.deploymentYamlName }}'
     displayName: 'Deploying deployments'
 
   - task: KubernetesManifest@0
@@ -49,7 +49,7 @@ steps:
       action: 'deploy'
       kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
       namespace: 'da-mottak-dev'
-      manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/ingress.yaml'
+      manifests: 'azure-pipelines/k8s/output/dev/da-mottak/templates/ingress.yaml'
     displayName: 'Deploying ingress'
 
   - script: |
