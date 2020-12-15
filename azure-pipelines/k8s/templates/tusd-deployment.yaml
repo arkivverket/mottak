@@ -53,7 +53,10 @@ spec:
             - name: OBJECTSTORE
               value: "azure"
             - name: AZURE_ACCOUNT_NAME
-              value: {{ required "Missing value MOTTAK_STORAGE_ACCOUT_KEY" .Values.MOTTAK_STORAGE_ACCOUT_KEY }}
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: AZURE_ACCOUNT_KEY
               valueFrom:
                 secretKeyRef:

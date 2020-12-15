@@ -56,7 +56,10 @@ spec:
             - name: OBJECTSTORE
               value: "azure"
             - name: AZURE_ACCOUNT_NAME
-              value: damottakdevsa
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: AZURE_ACCOUNT_KEY
               valueFrom:
                 secretKeyRef:
