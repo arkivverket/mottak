@@ -10,5 +10,4 @@ Environment:
  * AVLOG, output (report), default /tmp/avlog
  * OBJECT, what to scan, must be a tar file, uncompressed
 
-
 In addition you'll need the ususal stuff to access the objectstore.

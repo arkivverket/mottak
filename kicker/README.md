@@ -23,3 +23,11 @@ Planned dags:
    - remove object stores that have been sent to preservation.
 
 This decouples running the DAG.
+
+
+## Testing in dev
+There is a small script [kicker-trigger](tests/kicker-trigger) that puts a message on the service bus queue in dev.
+This can be used to trigger kicker and argo in dev.
+Env variables needed:
+- `QUEUE_CLIENT_CONNECTION_STRING="Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>"`
+- `QUEUE_NAME="argo-workflow"`

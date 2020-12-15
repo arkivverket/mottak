@@ -18,6 +18,7 @@ The values given here are examples. Please adjust to your local API url.
 - Run `yarn start` (or optionally `API_BASEURL=http://api.somewhere.local/api/path yarn start`)
 - Open the web ui [http://localhost:3000](http://localhost:3000) in a browser
 
+
 ### Building and running in a Docker container
 - Build the docker image `docker build -t mottak-arkiv-web:prod .`
 - Start the docker container at port 3080
