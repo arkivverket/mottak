@@ -33,7 +33,7 @@ spec:
         run: tusd-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/tusd:c8a951e417c427e7ada6431332e3a9272619948a'
+        - image: 'arkivverket.azurecr.io/da-mottak/tusd:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: tusd-container
           ports:

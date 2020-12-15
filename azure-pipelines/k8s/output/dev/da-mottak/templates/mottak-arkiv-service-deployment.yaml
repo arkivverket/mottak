@@ -38,7 +38,7 @@ spec:
         run: mottak-arkiv-service-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: mottak-arkiv-service-container
           ports:
@@ -71,7 +71,7 @@ spec:
                   key: da-mottak-dev-sb-endpoint-archive-download-status-receiver
       initContainers:
         - name: mottak-arkiv-service-db-migration
-          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           command: ["alembic", "upgrade", "head"]
           env:

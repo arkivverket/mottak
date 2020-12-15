@@ -37,19 +37,19 @@ spec:
     secretName: storageaccount-name                     # name of the Kubernetes Secret object
     type: Opaque
   - data:
-    - key: client-id
-      objectName: client-id
-    secretName: client-id
+    - key: oauth-client-id
+      objectName: oauth-client-id
+    secretName: oauth-client-id
     type: Opaque
   - data:
-      - key: client-secret
-        objectName: client-secret
-    secretName: client-secret
+      - key: oauth-client-secret
+        objectName: oauth-client-secret
+    secretName: oauth-client-secret
     type: Opaque
   - data:
-      - key: cookie-secret
-        objectName: cookie-secret
-    secretName: cookie-secret
+      - key: oauth-cookie-secret
+        objectName: oauth-cookie-secret
+    secretName: oauth-cookie-secret
     type: Opaque
   - data:
       - key: da-mottak-dev-sb-endpoint-archive-download-request-receiver
@@ -94,13 +94,13 @@ spec:
           objectType: secret
           objectVersion: ""
         - |
-          objectName: client-id
+          objectName: oauth-client-id
           objectType: secret
         - |
-          objectName: client-secret
+          objectName: oauth-client-secret
           objectType: secret
         - |
-          objectName: cookie-secret
+          objectName: oauth-cookie-secret
           objectType: secret
         - |
           objectName: da-mottak-dev-sb-endpoint-archive-download-request-receiver

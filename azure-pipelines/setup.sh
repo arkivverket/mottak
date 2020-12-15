@@ -34,9 +34,16 @@ echo
 echo "Setting up ingress"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/ingress.yaml"
 kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/nginx.yaml"
-#kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/oauth2-proxy.yaml"
+kubectl apply -f "$OUTPUT_TEMPLATE_FOLDER/oauth2-proxy.yaml"
 
 # Installing argo workflows in namespace
 echo
 echo "Installing argo in namespace: $NAMESPACE"
 kubectl apply -n "$NAMESPACE" -f https://raw.githubusercontent.com/argoproj/argo/stable/manifests/namespace-install.yaml
+
+echo
+echo "Remember to manually add these secrets:"
+echo "mailgun-secret"
+echo "oauth-cookie-secret"
+echo "oauth-client-secret"
+echo "oauth-client-id"

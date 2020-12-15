@@ -44,15 +44,15 @@ spec:
             - name: OAUTH2_PROXY_COOKIE_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: cookie-secret
-                  key: cookie-secret
+                  name: oauth-cookie-secret
+                  key: oauth-cookie-secret
             - name: OAUTH2_PROXY_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: client-id
-                  key: client-id
+                  name: oauth-client-id
+                  key: oauth-client-id
             - name: OAUTH2_PROXY_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: client-secret
-                  key: client-secret
+                  name: oauth-client-secret
+                  key: oauth-client-secret
