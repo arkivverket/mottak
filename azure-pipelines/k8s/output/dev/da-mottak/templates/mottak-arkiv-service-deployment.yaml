@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/mottak-arkiv-service-deployment.yaml
+# Source: da-mottak/templates/mottak-arkiv-service-deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: av-mottak-dev-mottak-arkiv-service-service
-  namespace: av-mottak-dev
+  name: da-mottak-dev-mottak-arkiv-service-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -14,12 +14,12 @@ spec:
   selector:
     run:  mottak-arkiv-service-app    # references the deployment
 ---
-# Source: av-mottak/templates/mottak-arkiv-service-deployment.yaml
+# Source: da-mottak/templates/mottak-arkiv-service-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-mottak-arkiv-service-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-mottak-arkiv-service-deployment
+  namespace: da-mottak-dev
   labels:
     app: mottak-arkiv-service-app
 spec:
@@ -38,7 +38,7 @@ spec:
         run: mottak-arkiv-service-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: mottak-arkiv-service-container
           ports:
@@ -48,8 +48,8 @@ spec:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-dsn
-                  key: av-mottak-dev-secret-dsn
+                  name: da-mottak-dev-dsn
+                  key: da-mottak-dev-secret-dsn
             - name: MAILGUN_SECRET
               valueFrom:
                 secretKeyRef:
@@ -62,21 +62,21 @@ spec:
             - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-sb-endpoint-archive-download-request-sender
-                  key: av-mottak-dev-sb-endpoint-archive-download-request-sender
+                  name: da-mottak-dev-sb-endpoint-archive-download-request-sender
+                  key: da-mottak-dev-sb-endpoint-archive-download-request-sender
             - name: ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-sb-endpoint-archive-download-status-receiver
-                  key: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+                  name: da-mottak-dev-sb-endpoint-archive-download-status-receiver
+                  key: da-mottak-dev-sb-endpoint-archive-download-status-receiver
       initContainers:
         - name: mottak-arkiv-service-db-migration
-          image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:f2f1137cdc8cb71d067171451019c5a67792d472'
+          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           command: ["alembic", "upgrade", "head"]
           env:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-dsn
-                  key: av-mottak-dev-secret-dsn
+                  name: da-mottak-dev-dsn
+                  key: da-mottak-dev-secret-dsn

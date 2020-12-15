@@ -1,13 +1,13 @@
 ---
-# Source: av-mottak/templates/ingress.yaml
+# Source: da-mottak/templates/ingress.yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: av-mottak-dev-ingress
-  namespace: av-mottak-dev
+  name: da-mottak-dev-ingress
+  namespace: da-mottak-dev
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: av-mottak-dev-clusterissuer
+    cert-manager.io/cluster-issuer: da-mottak-dev-clusterissuer
     cert-manager.io/acme-challenge-type: http01
     appgw.ingress.kubernetes.io/backend-hostname: "mottak.plattform.arkivverket.dev"
     appgw.ingress.kubernetes.io/connection-draining: "true"
@@ -17,12 +17,12 @@ spec:
   tls:
     - hosts:
         - mottak.plattform.arkivverket.dev
-      secretName: av-mottak-dev-cert
+      secretName: da-mottak-dev-cert
   rules:
     - host: mottak.plattform.arkivverket.dev
       http:
         paths:
           - path: /
             backend:
-                serviceName: av-mottak-dev-nginx-service
+                serviceName: da-mottak-dev-nginx-service
                 servicePort: 80

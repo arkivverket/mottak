@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/tusd-deployment.yaml
+# Source: da-mottak/templates/tusd-deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: av-mottak-dev-tusd-service
-  namespace: av-mottak-dev
+  name: da-mottak-dev-tusd-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -14,12 +14,12 @@ spec:
   selector:
     run:  tusd-app    # references the deployment
 ---
-# Source: av-mottak/templates/tusd-deployment.yaml
+# Source: da-mottak/templates/tusd-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-tusd-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-tusd-deployment
+  namespace: da-mottak-dev
   labels:
     app: tusd-app
 spec:
@@ -33,7 +33,7 @@ spec:
         run: tusd-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/tusd:c8a951e417c427e7ada6431332e3a9272619948a'
+        - image: 'arkivverket.azurecr.io/da-mottak/tusd:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: tusd-container
           ports:
@@ -49,14 +49,17 @@ spec:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-dsn
-                  key: av-mottak-dev-secret-dsn
+                  name: da-mottak-dev-dsn
+                  key: da-mottak-dev-secret-dsn
             - name: BUCKET
               value: tusd-storage
             - name: OBJECTSTORE
               value: "azure"
             - name: AZURE_ACCOUNT_NAME
-              value: avmottakdevsacc
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: AZURE_ACCOUNT_KEY
               valueFrom:
                 secretKeyRef:
@@ -74,7 +77,7 @@ spec:
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:
-                  name: av-mottak-dev-sb-endpoint-argo-kicker
-                  key: av-mottak-dev-sb-endpoint-argo-kicker
+                  name: da-mottak-dev-sb-endpoint-argo-kicker
+                  key: da-mottak-dev-sb-endpoint-argo-kicker
             - name: AZ_SB_QUEUE
               value: argo-workflow

@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/mottak-arkiv-web-deployment.yaml
+# Source: da-mottak/templates/mottak-arkiv-web-deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: av-mottak-dev-mottak-arkiv-web-service
-  namespace: av-mottak-dev
+  name: da-mottak-dev-mottak-arkiv-web-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -14,12 +14,12 @@ spec:
   selector:
     run:  mottak-arkiv-web-app    # references the deployment
 ---
-# Source: av-mottak/templates/mottak-arkiv-web-deployment.yaml
+# Source: da-mottak/templates/mottak-arkiv-web-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-mottak-arkiv-web-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-mottak-arkiv-web-deployment
+  namespace: da-mottak-dev
   labels:
     app: mottak-arkiv-web-app
 spec:
@@ -33,7 +33,7 @@ spec:
         run: mottak-arkiv-web-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-web:7df018174d06c949878b5b99d9980592b587aa89'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: mottak-arkiv-web-container
           ports:

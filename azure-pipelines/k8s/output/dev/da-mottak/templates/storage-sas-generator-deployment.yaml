@@ -1,10 +1,10 @@
 ---
-# Source: av-mottak/templates/storage-sas-generator-deployment.yaml
+# Source: da-mottak/templates/storage-sas-generator-deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: av-mottak-dev-storage-sas-generator-service
-  namespace: av-mottak-dev
+  name: da-mottak-dev-storage-sas-generator-service
+  namespace: da-mottak-dev
 spec:
   type: ClusterIP
   ports:
@@ -14,12 +14,12 @@ spec:
   selector:
     run:  storage-sas-generator-app    # references the deployment
 ---
-# Source: av-mottak/templates/storage-sas-generator-deployment.yaml
+# Source: da-mottak/templates/storage-sas-generator-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: av-mottak-dev-storage-sas-generator-deployment
-  namespace: av-mottak-dev
+  name: da-mottak-dev-storage-sas-generator-deployment
+  namespace: da-mottak-dev
   labels:
     app: storage-sas-generator-app
 spec:
@@ -33,14 +33,17 @@ spec:
         run: storage-sas-generator-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:a5a36d8e0fdff7986490c765a9f824187ff70df1'
+        - image: 'arkivverket.azurecr.io/da-mottak/storage-sas-generator:2a166b25a82733e74c6aeca6046a0f6622970dd3'
           imagePullPolicy: Always
           name: storage-sas-generator
           ports:
             - containerPort: 80
           env:
             - name: AZURE_ACCOUNT_NAME
-              value: avmottakdevsacc
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: AZURE_ACCOUNT_KEY
               valueFrom:
                 secretKeyRef:

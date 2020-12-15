@@ -40,7 +40,10 @@ spec:
             - name: MINIO_AZURE_CHUNK_SIZE_MB
               value: "0.25"
             - name:  MINIO_ACCESS_KEY
-              value: "avmottakdevsacc"
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-name
+                  key: storageaccount-name
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:

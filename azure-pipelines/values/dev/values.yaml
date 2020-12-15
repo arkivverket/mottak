@@ -1,17 +1,17 @@
 ## VALUES
-AV_NAMESPACE: av-mottak-dev
-MOTTAK_STORAGE_ACCOUT_KEY: avmottakdevsacc
+AV_NAMESPACE: da-mottak-dev
+MOTTAK_STORAGE_ACCOUT_KEY: damottakdevsa
 TUSD_KICKER_SERVICE_BUS_QUEUE: argo-workflow
-AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT: av-mottak-dev-sb-endpoint-argo-kicker
+AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT: da-mottak-dev-sb-endpoint-argo-kicker
 AV_MOTTAK_DNS: mottak.plattform.arkivverket.dev
 
 # arkiv-downloader -- nøkler til å hente connection-string for respektive kø fra keyVault
-ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY: av-mottak-dev-sb-endpoint-archive-download-request-receiver
-ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY: av-mottak-dev-sb-endpoint-archive-download-status-sender
+ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY: da-mottak-dev-sb-endpoint-archive-download-request-receiver
+ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY: da-mottak-dev-sb-endpoint-archive-download-status-sender
 
 # mottak-arkiv-service -- nøkler til å hente connection-string for respektive kø fra keyVault
-ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY: av-mottak-dev-sb-endpoint-archive-download-request-sender
-ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY: av-mottak-dev-sb-endpoint-archive-download-status-receiver
+ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY: da-mottak-dev-sb-endpoint-archive-download-request-sender
+ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY: da-mottak-dev-sb-endpoint-archive-download-status-receiver
 
 # CSI Driver Link
 TENANT_ID_KEYVAULT: 99d3d298-60cf-4636-9772-4a191b6f0d94
