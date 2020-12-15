@@ -63,6 +63,6 @@ jobs:
           password: ${{ secrets.ARKIVVERKET_AZURE_REGISTRY_PASSWORD }}
 
       - run: |
-          docker build . -t arkivverket.azurecr.io/av-mottak/s3-unpack:${{ github.sha }}
-          docker push arkivverket.azurecr.io/av-mottak/s3-unpack:${{ github.sha }}
+          docker build . -t arkivverket.azurecr.io/da-mottak/s3-unpack:${{ github.sha }}
+          docker push arkivverket.azurecr.io/da-mottak/s3-unpack:${{ github.sha }}
 
