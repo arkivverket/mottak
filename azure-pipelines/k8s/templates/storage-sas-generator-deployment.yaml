@@ -30,7 +30,7 @@ spec:
         run: storage-sas-generator-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:{{ required "Missing value container image" .Values.AV_MOTTAK_STORAGE_SAS_GENERATOR_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/storage-sas-generator:{{ required "Missing value container image" .Values.AV_MOTTAK_STORAGE_SAS_GENERATOR_TAG }}'
           imagePullPolicy: Always
           name: storage-sas-generator
           ports:

@@ -40,7 +40,7 @@ steps:
     inputs:
       action: 'deploy'
       kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
-      namespace: 'av-mottak-dev'
+      namespace: 'da-mottak-dev'
       manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}'
     displayName: 'Deploying deployments'
 
@@ -48,13 +48,13 @@ steps:
     inputs:
       action: 'deploy'
       kubernetesServiceConnection: 'av-mottak-dev@av-plattform-dev-aks-connection'
-      namespace: 'av-mottak-dev'
+      namespace: 'da-mottak-dev'
       manifests: 'azure-pipelines/k8s/output/dev/av-mottak/templates/ingress.yaml'
     displayName: 'Deploying ingress'
 
   - script: |
       git add "azure-pipelines/values/${{ parameters.env }}/values-containers.yaml"
-      git add "azure-pipelines/k8s/output/dev/av-mottak/templates/${{ parameters.deploymentYamlName }}"
+      git add "azure-pipelines/k8s/output/dev/da-mottak/templates/${{ parameters.deploymentYamlName }}"
       git commit -m "Updates ${{ parameters.valuesContainerKey }} ${{ parameters.containerTag }}"
       echo $(git status)
 #      git push origin ## We will enable this at a later point when we have verified a bit more

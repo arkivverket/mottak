@@ -33,7 +33,7 @@ spec:
         run: mottak-arkiv-web-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-web:7df018174d06c949878b5b99d9980592b587aa89'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:7df018174d06c949878b5b99d9980592b587aa89'
           imagePullPolicy: Always
           name: mottak-arkiv-web-container
           ports:

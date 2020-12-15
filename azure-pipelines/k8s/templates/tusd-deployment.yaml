@@ -30,7 +30,7 @@ spec:
         run: tusd-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/tusd:{{ required "Missing value AV_MOTTAK_TUSD_TAG" .Values.AV_MOTTAK_TUSD_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/tusd:{{ required "Missing value AV_MOTTAK_TUSD_TAG" .Values.AV_MOTTAK_TUSD_TAG }}'
           imagePullPolicy: Always
           name: tusd-container
           ports:

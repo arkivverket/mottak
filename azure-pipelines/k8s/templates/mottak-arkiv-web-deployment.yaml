@@ -30,7 +30,7 @@ spec:
         run: mottak-arkiv-web-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-web:{{ required "Missing value container image" .Values.AV_MOTTAK_ARKIV_WEB_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:{{ required "Missing value container image" .Values.AV_MOTTAK_ARKIV_WEB_TAG }}'
           imagePullPolicy: Always
           name: mottak-arkiv-web-container
           ports:

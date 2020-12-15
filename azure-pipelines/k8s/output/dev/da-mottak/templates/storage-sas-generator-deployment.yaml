@@ -33,7 +33,7 @@ spec:
         run: storage-sas-generator-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/storage-sas-generator:a5a36d8e0fdff7986490c765a9f824187ff70df1'
+        - image: 'arkivverket.azurecr.io/da-mottak/storage-sas-generator:a5a36d8e0fdff7986490c765a9f824187ff70df1'
           imagePullPolicy: Always
           name: storage-sas-generator
           ports:

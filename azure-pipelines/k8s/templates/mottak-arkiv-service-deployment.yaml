@@ -35,7 +35,7 @@ spec:
         run: mottak-arkiv-service-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
           imagePullPolicy: Always
           name: mottak-arkiv-service-container
           ports:
@@ -68,7 +68,7 @@ spec:
                   key: {{ required "Missing value ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
       initContainers:
         - name: mottak-arkiv-service-db-migration
-          image: 'arkivverket.azurecr.io/av-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
           imagePullPolicy: Always
           command: ["alembic", "upgrade", "head"]
           env:

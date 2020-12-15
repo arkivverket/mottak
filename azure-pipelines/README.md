@@ -5,7 +5,7 @@ including the helm scripts used for CD.
 ## Continuous Deployment
 Pushing a new image/tag to one of the watched repositories at [arkivverket.azurecr.io](arkivverket.azurecr.io) will
 trigger the matching Azure DevOps pipeline in [pipelines](pipelines). Ie a new image to
-[av-mottak/kicker](arkivverket.azurecr.io/av-mottak/kicker) will trigger
+[da-mottak/kicker](arkivverket.azurecr.io/da-mottak/kicker) will trigger
 [kicker-deploy.yaml](pipelines/kicker-deploy.yaml).
 
 ## Adding pipeline to Azure DevOps
@@ -18,7 +18,7 @@ pipeline from GIT.
 #### Setting up the cluster
 Prerequisites:
 - A cluster setup up by the platform team, named: `av-plattform-<env>-aks`
-- A namespace in the cluster named: `av-mottak-<env>`
+- A namespace in the cluster named: `da-mottak-<env>`
 - Azure cli installed on your machine, and you are signed in with
 a user with enough permissions.
 
