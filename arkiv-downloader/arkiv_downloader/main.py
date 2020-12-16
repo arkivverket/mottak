@@ -22,7 +22,7 @@ ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_RE
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request'
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
 ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status'
-STORAGE_LOCATION = os.getenv('STORAGE_LOCATION')
+ARCHIVE_TARGET_LOCATION = os.getenv('ARCHIVE_TARGET_LOCATION')
 
 
 def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
@@ -115,4 +115,4 @@ if __name__ == '__main__':
                                          ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME)
 
     # start main loop
-    run(_request_receiver, _status_sender, STORAGE_LOCATION)
+    run(_request_receiver, _status_sender, ARCHIVE_TARGET_LOCATION)
