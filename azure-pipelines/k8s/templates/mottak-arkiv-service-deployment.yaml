@@ -55,7 +55,7 @@ spec:
             - name: MAILGUN_DOMAIN
               value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: TUSD_URL
-              value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd
+              value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd/files
             - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:
