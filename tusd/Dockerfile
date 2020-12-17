@@ -27,7 +27,7 @@ RUN mkdir -p /srv/hooks /srv/tusd-data \
 
 
 # RUN pip3 install --upgrade pip
-RUN pip3 install azure-servicebus
+RUN pip3 install azure-servicebus==0.50.3
 WORKDIR /srv/tusd-data
 COPY hooks  /srv/hooks
 COPY start.sh /srv/start.sh
