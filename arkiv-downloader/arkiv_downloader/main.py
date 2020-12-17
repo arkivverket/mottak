@@ -33,7 +33,6 @@ def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
 def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
     """ Returns the path to where the downloaded blob should be saved"""
     return os.path.join(write_location, str(arkivuttrekk_id)) + os.path.sep
-    # return write_location + os.path.sep + str(arkivuttrekk_id) + os.path.sep
 
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
