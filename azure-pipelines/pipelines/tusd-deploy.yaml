@@ -18,7 +18,7 @@ variables:
   env: dev
   jobName: deploy_tusd
   displayName: Deploy tusd
-  valuesContainerKey: AV_MOTTAK_TUSD_TAG  # As found in values/<env>/values-containers.yaml
+  valuesContainerKey: DA_MOTTAK_TUSD_TAG  # As found in values/<env>/values-containers.yaml
   deploymentYamlName: tusd-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
 
 

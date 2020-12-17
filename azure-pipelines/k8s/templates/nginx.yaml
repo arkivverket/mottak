@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-nginx-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 spec:
   type: ClusterIP
   ports:
@@ -15,8 +15,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-nginx-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-nginx-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     run: nginx
 spec:
@@ -51,7 +51,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx-config
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 data:
   default.conf: |
     server {
@@ -65,7 +65,7 @@ data:
 
 
       location /oauth2 {
-        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-oauth2-proxy-service:4180;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-oauth2-proxy-service:4180;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Scheme $scheme;
@@ -90,7 +90,7 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-service/;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-service-service/;
       }
 
 
@@ -109,12 +109,12 @@ data:
         auth_request_set $auth_cookie $upstream_http_set_cookie;
         add_header Set-Cookie $auth_cookie;
 
-        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-web-service;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-web-service;
       }
 
 
       location /tusd {
-        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service;
+        proxy_pass http://{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-tusd-service;
 
         # Disable request and response buffering
         proxy_request_buffering  off;

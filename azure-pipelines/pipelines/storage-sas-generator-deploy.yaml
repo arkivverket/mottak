@@ -18,7 +18,7 @@ variables:
   env: dev
   jobName: deploy_storage_sas_generator
   displayName: Deploy storage-sas-generator
-  valuesContainerKey: AV_MOTTAK_STORAGE_SAS_GENERATOR_TAG  # As found in values/<env>/values-containers.yaml
+  valuesContainerKey: DA_MOTTAK_STORAGE_SAS_GENERATOR_TAG  # As found in values/<env>/values-containers.yaml
   deploymentYamlName: storage-sas-generator-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
 
 

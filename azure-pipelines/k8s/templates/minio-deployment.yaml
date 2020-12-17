@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name:  minio-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 spec:
   type: ClusterIP
   ports:
@@ -14,8 +14,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}.minio-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}.minio-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     app: minio-app
 spec:
