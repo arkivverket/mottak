@@ -160,7 +160,7 @@ spec:
 
     - name: avscan
       container:
-        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:e5ce915cc9eafbafd50a943944b9187371d95498
+        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:2a166b25a82733e74c6aeca6046a0f6622970dd3
 
         imagePullPolicy: Always
         env:
@@ -192,7 +192,7 @@ spec:
 
     - name: unpack
       container:
-        image: arkivverket.azurecr.io/da-mottak/s3-unpack:36710f09735fb21a6be4fb3252a3d9699f19d9c8
+        image: arkivverket.azurecr.io/da-mottak/s3-unpack:2a166b25a82733e74c6aeca6046a0f6622970dd3
         imagePullPolicy: Always
         env:
           - name: OBJECT
