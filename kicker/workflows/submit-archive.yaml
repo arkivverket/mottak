@@ -87,7 +87,10 @@ spec:
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: avmottakdevsacc
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
@@ -145,7 +148,10 @@ spec:
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: avmottakdevsacc
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
@@ -154,7 +160,7 @@ spec:
 
     - name: avscan
       container:
-        image: arkivverket.azurecr.io/av-mottak/s3-scan-tar:e5ce915cc9eafbafd50a943944b9187371d95498
+        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:e5ce915cc9eafbafd50a943944b9187371d95498
 
         imagePullPolicy: Always
         env:
@@ -165,7 +171,10 @@ spec:
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: avmottakdevsacc
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
@@ -183,7 +192,7 @@ spec:
 
     - name: unpack
       container:
-        image: arkivverket.azurecr.io/av-mottak/s3-unpack:36710f09735fb21a6be4fb3252a3d9699f19d9c8
+        image: arkivverket.azurecr.io/da-mottak/s3-unpack:36710f09735fb21a6be4fb3252a3d9699f19d9c8
         imagePullPolicy: Always
         env:
           - name: OBJECT
@@ -195,7 +204,10 @@ spec:
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: avmottakdevsacc
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
           - name: AZURE_KEY
             valueFrom:
               secretKeyRef:
@@ -230,7 +242,10 @@ spec:
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_ACCOUNT
-            value: avmottakdevsacc
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
             # Not that the key is in a slightly different variable here.
           - name: AZURE_STORAGE_KEY
             valueFrom:

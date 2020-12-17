@@ -45,7 +45,7 @@ def create_param_file(params):
 def argo_submit(workflowfile, params):
     """ Submit a job to argo. Takes a YAML file as parameter """
     paramfile = create_param_file(params)
-    argocmd = ["argo", "submit", "--namespace", "av-mottak-dev", "--parameter-file", paramfile, workflowfile]
+    argocmd = ["argo", "submit", "--namespace", "da-mottak-dev", "--parameter-file", paramfile, workflowfile]
     logging.info(f"Argo cmd line: {argocmd}")
     try:
         submit = subprocess.run(argocmd, timeout=20, check=True, stdout=PIPE, stderr=PIPE)
