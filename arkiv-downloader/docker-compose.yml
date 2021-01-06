@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+  arkiv-downloader:
+    image: arkivverket.azurecr.io/da-mottak/arkiv-downloader:marelm
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - "${ARCHIVE_TARGET_LOCATION}:${ARCHIVE_TARGET_LOCATION}"
+

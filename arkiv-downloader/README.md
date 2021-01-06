@@ -6,10 +6,8 @@ Download location will be `STORAGE_LOCATION/<azure blob container name>`.
 Status reports are back to mottak-arkiv-service through another service bus queue.
 
 Env variables needed:
-- ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-receiver;SharedAccessKey=<some_secret_key>`
-- ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-sender;SharedAccessKey=<some_secret_key>`
-# TODO - Remove QUEUE_CLIENT_STRING and replace with correct queue throughout arkiv-downloader
-- QUEUE_CLIENT_STRING : `Endpoint=sb://<service-bus-name>.servicebus.windows.net/;SharedAccessKeyName=<shared-access-key-name>;SharedAccessKey=<some_secret_key>`
+- ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING: `Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-receiver;SharedAccessKey=<some_secret_key>`
+- ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING: `Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-sender;SharedAccessKey=<some_secret_key>`
 - STORAGE_LOCATION : `path/to/where/arkivuttrekk/will/be/downloaded/to`
 
 
@@ -23,7 +21,10 @@ Env variables needed:
 ## Incomming message example
 ````json
 {
-  "obj_id": "c05a214c-fcc5-11ea-8558-acde48001122",
+  "id": 1,
+  "arkivuttrekk_id": "c05a214c-fcc5-11ea-8558-acde48001122",
+  "storage_account": "damottakdevsa",
+  "container":
   "blob_sas_url": "https://<storage_account>.blob.core.windows.net/<container>?<sas_token>"
 }
 ````

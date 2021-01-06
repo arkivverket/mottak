@@ -1,42 +1,56 @@
 import logging
-from uuid import uuid1
-from arkiv_downloader.models.dto import ArkivuttrekkTransferInfo, ArkivuttrekkTransferStatus, TransferStatus
+from uuid import UUID
+
+import pytest
+
+from arkiv_downloader.models.dto import ArkivkopiRequest, ArkivkopiStatusResponse, ArkivkopiStatus
 
 logging.disable(logging.CRITICAL)
 
 
-def test_ArkivuttrekkTransferInfo_from_correct_string():
-    json_string = '{"obj_id": "e9aa8f30-fda3-11ea-afc9-acde48001122", "container_sas_url": "https://storageaccount.blob.core.windows.net/containerid?sp=rl&st=2020-09-23T13:21:28Z&se=2020-09-24T13:21:28Z&sv=2019-12-12&sr=someSignature"}'
-    a = ArkivuttrekkTransferInfo.from_string(json_string)
-    assert a
-    assert a.as_json_str() == json_string
+@pytest.fixture
+def _arkivkopi_status_response() -> ArkivkopiStatusResponse:
+    return ArkivkopiStatusResponse(arkivuttrekk_id=UUID("bb5fc65e-386d-11eb-915c-acde48001122"),
+                                   status=ArkivkopiStatus.STARTET)
 
 
-def test_ArkivuttrekkTransferInfo_from_string_missing_obj_id():
-    json_string = '{"container_sas_url": "https://storageaccount.blob.core.windows.net/containerid?sp=rl&st=2020-09-23T13:21:28Z&se=2020-09-24T13:21:28Z&sv=2019-12-12&sr=c&sig=someSignature"}'
-    a = ArkivuttrekkTransferInfo.from_string(json_string)
-    assert not a
+def test_arkivkopirequest_from_string(teststr_json_string):
+    """
+    GIVEN   a json string containing an ArkivkopiRequest
+    WHEN    calling the method from_string() in ArkivkopiRequest
+    THEN    controll that the returned ArkivkopiRequest is correct
+    """
+    expected = ArkivkopiRequest(
+        arkivkopi_id=1,
+        arkivuttrekk_id=UUID("bb5fc65e-386d-11eb-915c-acde48001122"),
+        storage_account="storage_account_test",
+        container="container_test",
+        sas_token="se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"
+    )
+    actual = ArkivkopiRequest.from_string(teststr_json_string)
+    assert actual == expected
 
 
-def test_ArkivuttrekkTransferInfo_from_string_missing_container_sas_url():
-    json_string = '{"obj_id": "e9aa8f30-fda3-11ea-afc9-acde48001122"}'
-    a = ArkivuttrekkTransferInfo.from_string(json_string)
-    assert not a
+def test_arkivkopirequest_as_json_str(testobj_arkivkopi_request):
+    """
+    GIVEN   an ArkivkopiRequest object
+    WHEN    calling the method as_json_str() on the ArkivkopiRequest object
+    THEN    controll that the returned json is correct
+    """
+    expected = '{"arkivkopi_id": 1, "arkivuttrekk_id": "bb5fc65e-386d-11eb-915c-acde48001122", ' \
+               '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
+               '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"}'
+    actual = testobj_arkivkopi_request.as_json_str()
+    assert actual == expected
 
 
-def test_ArkivuttrekkTransferStatus_obj_id_ok():
-    uuid = uuid1()
-    status = TransferStatus.STARTING_TRANSFER
-    a = ArkivuttrekkTransferStatus(uuid, status)
-    assert uuid == a.obj_id, 'ID should be identical'
-    assert status == a.status, 'Status should be identical'
+def test_arkivkopistatus_as_json_str(_arkivkopi_status_response):
+    """
+    GIVEN   an ArkivkopiStatus object
+    WHEN    calling the method as_json_str() on the ArkivkopiStatus object
+    THEN    controll that the returned json is correct
+    """
+    expected = '{"arkivuttrekk_id": "bb5fc65e-386d-11eb-915c-acde48001122", "status": "Startet"}'
+    actual = _arkivkopi_status_response.as_json_str()
+    assert actual == expected
 
-
-def test_ArkivuttrekkTransferStatus_as_json_str():
-    uuid = uuid1()
-    status = TransferStatus.STARTING_TRANSFER
-    result = ArkivuttrekkTransferStatus(uuid, status).as_json_str()
-    expected_id_in_string = f'"obj_id": "{uuid}"'
-    expected_status_in_string = f'"status": "{status}"'
-    assert expected_id_in_string in result, 'obj_id should be correct in json string'
-    assert expected_status_in_string in result, 'status should be correct in json string'

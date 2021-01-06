@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 import json
-from uuid import UUID
-from enum import Enum
 import logging
-from datetime import datetime
+from enum import Enum
 from typing import Optional
+from uuid import UUID
 
 
 class UUIDEncoder(json.JSONEncoder):
@@ -15,36 +15,63 @@ class UUIDEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class TransferStatus(Enum):
-    STARTING_TRANSFER = 'Starting transfer'
-    FINISHED = 'Finished'
-    FAILED = 'Failed'
-
-
-class ArkivuttrekkTransferInfo:
-    def __init__(self, obj_id: UUID, container_sas_url: str):
-        self.obj_id = obj_id
-        self.container_sas_url = container_sas_url
+class ArkivkopiStatus(str, Enum):
+    BESTILT = 'Bestilt'
+    STARTET = 'Startet'
+    OK = 'OK'
+    FEILET = 'Feilet'
 
     @staticmethod
-    def from_string(json_string: str) -> Optional[ArkivuttrekkTransferInfo]:
+    def get_status(status_str: str) -> ArkivkopiStatus:
+        members = [member for member in ArkivkopiStatus.__members__.values() if member.value == status_str]
+        if members:
+            return members.pop()
+
+
+class ArkivkopiRequest:
+    """
+    The information needed to make a copy of an archive from cloud to on-prem.
+    These objects are retrieved from the queue ARCHIVE_DOWNLOAD_REQUEST_RECEICER.
+    """
+
+    def __init__(self,
+                 arkivkopi_id: int,
+                 arkivuttrekk_id: UUID,
+                 storage_account: str,
+                 container: str,
+                 sas_token: str):
+        self.arkivkopi_id = arkivkopi_id
+        self.arkivuttrekk_id = UUID(str(arkivuttrekk_id))
+        self.storage_account = storage_account
+        self.container = container
+        self.sas_token = sas_token
+
+    def __eq__(self, other):
+        if isinstance(other, ArkivkopiRequest):
+            return self.arkivkopi_id == other.arkivkopi_id and \
+                   self.arkivuttrekk_id == other.arkivuttrekk_id and \
+                   self.storage_account == other.storage_account and \
+                   self.container == other.container and \
+                   self.sas_token == other.sas_token
+        return False
+
+    @staticmethod
+    def from_string(json_string: str) -> Optional[ArkivkopiRequest]:
         try:
             json_message = json.loads(json_string)
-            json_message['obj_id'] = UUID(json_message['obj_id'])
-            return ArkivuttrekkTransferInfo(**json_message)
+            return ArkivkopiRequest(**json_message)
         except (ValueError, KeyError, TypeError) as e:
             logging.error(f'Failed to parse message {json_string}', e)
             return None
 
     def as_json_str(self):
-        return json.dumps(self.__dict__, cls=UUIDEncoder)
+        return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
 
-class ArkivuttrekkTransferStatus:
-    def __init__(self, obj_id: UUID, status: TransferStatus):
-        self.obj_id = obj_id
+class ArkivkopiStatusResponse:
+    def __init__(self, arkivuttrekk_id: UUID, status: ArkivkopiStatus):
+        self.arkivuttrekk_id = arkivuttrekk_id
         self.status = status
-        self.statusCreatedTime = datetime.now()
 
     def as_json_str(self) -> str:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)

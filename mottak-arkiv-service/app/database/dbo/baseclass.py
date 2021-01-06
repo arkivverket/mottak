@@ -13,5 +13,5 @@ class Base:
     @declared_attr
     def __tablename__(cls) -> str:
         name = cls.__name__
-        # This beutiful line transforms CamelCase to snake_case and adds an s
+        # This beautiful line transforms CamelCase to snake_case and adds an s
         return re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()

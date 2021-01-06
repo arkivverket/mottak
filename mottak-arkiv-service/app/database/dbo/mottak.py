@@ -1,4 +1,3 @@
-import uuid
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, DateTime, Enum, BigInteger, Date, Float
 from sqlalchemy import func, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -46,6 +45,7 @@ class Arkivuttrekk(Base):
     lokasjoner = relationship('Lokasjon', backref='arkivuttrekk')
     overforingspakker = relationship('Overforingspakke', backref='arkivuttrekk')
     testere = relationship('Tester', backref='arkivuttrekk')
+    arkivkopi = relationship('Arkivkopi', backref='arkivuttrekk')
 
 
 class Invitasjon(Base):
@@ -96,3 +96,17 @@ class Tester(Base):
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
     epost = Column(String(), nullable=False)
+
+
+class Arkivkopi(Base):
+    """A request to copy an archive to on-prem storage."""
+    id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
+    arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
+    status = Column(Enum('Bestilt', 'Startet', 'OK', 'Feilet', name='arkivkopi_status_type', create_type=True),
+                    nullable=False)
+    storage_account = Column(String(), nullable=False)
+    container = Column(String(), nullable=False)
+    sas_token_start = Column(DateTime(), nullable=False)
+    sas_token_slutt = Column(DateTime(), nullable=False)
+    opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
+    endret = Column(DateTime(), server_default=func.now(), onupdate=func.current_timestamp(), nullable=False)
