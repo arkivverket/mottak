@@ -37,13 +37,11 @@ class ArkivkopiRequest:
     def __init__(self,
                  arkivkopi_id: int,
                  arkivuttrekk_id: UUID,
-                 status: ArkivkopiStatus,
                  storage_account: str,
                  container: str,
                  sas_token: str):
         self.arkivkopi_id = arkivkopi_id
         self.arkivuttrekk_id = UUID(str(arkivuttrekk_id))
-        self.status = ArkivkopiStatus.get_status(status)
         self.storage_account = storage_account
         self.container = container
         self.sas_token = sas_token
