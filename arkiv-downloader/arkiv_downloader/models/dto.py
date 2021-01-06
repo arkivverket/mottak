@@ -19,7 +19,6 @@ class ArkivkopiStatus(str, Enum):
     BESTILT = 'Bestilt'
     STARTET = 'Startet'
     OK = 'OK'
-    AVBRUTT = 'Avbrutt'
     FEILET = 'Feilet'
 
     @staticmethod

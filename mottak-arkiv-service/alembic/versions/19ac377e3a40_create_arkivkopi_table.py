@@ -20,7 +20,7 @@ def upgrade():
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('arkivuttrekk_id', sa.Integer(), nullable=False),
                     sa.Column('status',
-                              sa.Enum('Bestilt', 'Startet', 'OK', 'Avbrutt', 'Feilet', name='arkivkopi_status_type',
+                              sa.Enum('Bestilt', 'Startet', 'OK', 'Feilet', name='arkivkopi_status_type',
                                       create_type=False), nullable=False),
                     sa.Column('storage_account', sa.String(), nullable=False),
                     sa.Column('container', sa.String(), nullable=False),
