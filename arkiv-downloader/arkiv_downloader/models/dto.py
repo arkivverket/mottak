@@ -46,6 +46,15 @@ class ArkivkopiRequest:
         self.container = container
         self.sas_token = sas_token
 
+    def __eq__(self, other):
+        if isinstance(other, ArkivkopiRequest):
+            return self.arkivkopi_id == other.arkivkopi_id and \
+                   self.arkivuttrekk_id == other.arkivuttrekk_id and \
+                   self.storage_account == other.storage_account and \
+                   self.container == other.container and \
+                   self.sas_token == other.sas_token
+        return False
+
     @staticmethod
     def from_string(json_string: str) -> Optional[ArkivkopiRequest]:
         try:
