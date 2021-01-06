@@ -18,7 +18,7 @@ variables:
   env: dev
   jobName: deploy_mottak_arkiv_service
   displayName: Deploy mottak-arkiv-service
-  valuesContainerKey: AV_MOTTAK_ARKIV_SERVICE_TAG  # As found in values/<env>/values-containers.yaml
+  valuesContainerKey: DA_MOTTAK_ARKIV_SERVICE_TAG  # As found in values/<env>/values-containers.yaml
   deploymentYamlName: mottak-arkiv-service-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
 
 

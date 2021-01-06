@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-invocation
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 rules:
   - apiGroups:
       - "argoproj.io"
@@ -23,7 +23,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: default-default-invocation
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -31,7 +31,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+    namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 
 
 # give workflows (as argo:default) permissions to run things
@@ -41,7 +41,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: argo-workflow
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 rules:
   # pod get/watch is used to identify the container IDs of the current pod
   # pod patch is used to annotate the step's outputs back to controller (e.g. artifact location)
@@ -66,7 +66,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: argo-default-workflow
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -74,13 +74,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+    namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: workflow-controller-configmap
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 data:
   config: |
     artifactRepository:

@@ -1,9 +1,9 @@
 ## VALUES
-AV_NAMESPACE: da-mottak-dev
+DA_NAMESPACE: da-mottak-dev
 MOTTAK_STORAGE_ACCOUT_KEY: damottakdevsa
 TUSD_KICKER_SERVICE_BUS_QUEUE: argo-workflow
-AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT: da-mottak-dev-sb-endpoint-argo-kicker
-AV_MOTTAK_DNS: mottak.plattform.arkivverket.dev
+DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT: da-mottak-dev-sb-endpoint-argo-kicker
+DA_MOTTAK_DNS: mottak.plattform.arkivverket.dev
 
 # arkiv-downloader -- nøkler til å hente connection-string for respektive kø fra keyVault
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY: da-mottak-dev-sb-endpoint-archive-download-request-receiver

@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-kicker-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-kicker-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     app: kicker-app
 spec:
@@ -16,7 +16,7 @@ spec:
         run: kicker-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/kicker:{{ required "Missing value container image" .Values.AV_MOTTAK_KICKER_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/kicker:{{ required "Missing value container image" .Values.DA_MOTTAK_KICKER_TAG }}'
           imagePullPolicy: Always
           name: kicker-container
           env:
@@ -25,7 +25,7 @@ spec:
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
-                  key: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+                  name: {{ required "Missing value DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+                  key: {{ required "Missing value DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
             - name: AZ_SB_QUEUE
               value: {{ required "Missing value TUSD_KICKER_SERVICE_BUS_QUEUE" .Values.TUSD_KICKER_SERVICE_BUS_QUEUE }}

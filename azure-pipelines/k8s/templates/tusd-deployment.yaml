@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-tusd-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 spec:
   type: ClusterIP
   ports:
@@ -15,8 +15,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-tusd-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-tusd-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     app: tusd-app
 spec:
@@ -30,7 +30,7 @@ spec:
         run: tusd-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/tusd:{{ required "Missing value AV_MOTTAK_TUSD_TAG" .Values.AV_MOTTAK_TUSD_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/tusd:{{ required "Missing value DA_MOTTAK_TUSD_TAG" .Values.DA_MOTTAK_TUSD_TAG }}'
           imagePullPolicy: Always
           name: tusd-container
           ports:
@@ -46,8 +46,8 @@ spec:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
-                  key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn
+                  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn
+                  key: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-secret-dsn
             - name: BUCKET
               value: {{ required "Missing value TUSD_DOWNLOAD_LOCATION_CONTAINER" .Values.TUSD_DOWNLOAD_LOCATION_CONTAINER }}
             - name: OBJECTSTORE
@@ -74,7 +74,7 @@ spec:
             - name: AZ_SB_CON_KICKER
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
-                  key: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+                  name: {{ required "Missing value DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+                  key: {{ required "Missing value DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
             - name: AZ_SB_QUEUE
               value: {{ required "Missing value TUSD_KICKER_SERVICE_BUS_QUEUE" .Values.TUSD_KICKER_SERVICE_BUS_QUEUE }}

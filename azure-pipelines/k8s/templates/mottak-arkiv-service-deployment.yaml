@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-service-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 spec:
   type: ClusterIP
   ports:
@@ -15,8 +15,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-service-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-service-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     app: mottak-arkiv-service-app
 spec:
@@ -35,7 +35,7 @@ spec:
         run: mottak-arkiv-service-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value DA_MOTTAK_ARKIV_SERVICE_TAG" .Values.DA_MOTTAK_ARKIV_SERVICE_TAG }}'
           imagePullPolicy: Always
           name: mottak-arkiv-service-container
           ports:
@@ -45,8 +45,8 @@ spec:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
-                  key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn
+                  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn
+                  key: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-secret-dsn
             - name: MAILGUN_SECRET
               valueFrom:
                 secretKeyRef:
@@ -55,7 +55,7 @@ spec:
             - name: MAILGUN_DOMAIN
               value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: TUSD_URL
-              value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/tusd/files
+              value: https://{{ required "Missing value DA_MOTTAK_DNS" .Values.DA_MOTTAK_DNS }}/tusd/files
             - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:
@@ -68,12 +68,12 @@ spec:
                   key: {{ required "Missing value ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY }}
       initContainers:
         - name: mottak-arkiv-service-db-migration
-          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value AV_MOTTAK_ARKIV_SERVICE_TAG" .Values.AV_MOTTAK_ARKIV_SERVICE_TAG }}'
+          image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-service:{{ required "Missing value DA_MOTTAK_ARKIV_SERVICE_TAG" .Values.DA_MOTTAK_ARKIV_SERVICE_TAG }}'
           imagePullPolicy: Always
           command: ["alembic", "upgrade", "head"]
           env:
             - name: DBSTRING
               valueFrom:
                 secretKeyRef:
-                  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
-                  key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn
+                  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn
+                  key: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-secret-dsn

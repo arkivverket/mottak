@@ -18,7 +18,7 @@ variables:
   env: dev
   jobName: deploy_kicker
   displayName: Deploy kicker
-  valuesContainerKey: AV_MOTTAK_KICKER_TAG  # As found in values/<env>/values-containers.yaml
+  valuesContainerKey: DA_MOTTAK_KICKER_TAG  # As found in values/<env>/values-containers.yaml
   deploymentYamlName: kicker-deployment.yaml # As found in k8s/templates/<app>-deployment.yaml
 
 

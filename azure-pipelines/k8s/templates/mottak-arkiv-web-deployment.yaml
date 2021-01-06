@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-web-service
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-web-service
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
 spec:
   type: ClusterIP
   ports:
@@ -15,8 +15,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-mottak-arkiv-web-deployment
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-mottak-arkiv-web-deployment
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
     app: mottak-arkiv-web-app
 spec:
@@ -30,11 +30,11 @@ spec:
         run: mottak-arkiv-web-app
     spec:
       containers:
-        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:{{ required "Missing value container image" .Values.AV_MOTTAK_ARKIV_WEB_TAG }}'
+        - image: 'arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:{{ required "Missing value container image" .Values.DA_MOTTAK_ARKIV_WEB_TAG }}'
           imagePullPolicy: Always
           name: mottak-arkiv-web-container
           ports:
             - containerPort: 80
           env:
             - name: API_BASEURL
-              value: https://{{ required "Missing value AV_MOTTAK_DNS" .Values.AV_MOTTAK_DNS }}/api
+              value: https://{{ required "Missing value DA_MOTTAK_DNS" .Values.DA_MOTTAK_DNS }}/api

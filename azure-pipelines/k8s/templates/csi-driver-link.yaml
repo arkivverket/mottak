@@ -2,17 +2,17 @@
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
 metadata:
-  name: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-csidriver-keyvault
-  namespace: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}
+  name: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-csidriver-keyvault
+  namespace: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}
   labels:
-    aadpodidbinding: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-id-keyvault
+    aadpodidbinding: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-id-keyvault
 spec:
   provider: azure
   secretObjects:                              # [OPTIONAL] SecretObject defines the desired state of synced K8s secret objects
   - data:
-    - key: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-secret-dsn                      # data field to populate
-      objectName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn                        # name of the mounted content to sync. this could be the object name or the object alias
-    secretName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn                     # name of the Kubernetes Secret object
+    - key: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-secret-dsn                      # data field to populate
+      objectName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
     - key: mailgun-secret
@@ -20,9 +20,9 @@ spec:
     secretName: mailgun-secret                     # name of the Kubernetes Secret object
     type: Opaque                              # type of the Kubernetes Secret object e.g. Opaque, kubernetes.io/tls
   - data:
-    - key: {{ required "Missing value AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.AV_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
-      objectName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
-    secretName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
+    - key: {{ required "Missing value DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT" .Values.DA_MOTTAK_TUSD_KICKER_SB_ENDPOINT }}
+      objectName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-sb-endpoint-argo-kicker                        # name of the mounted content to sync. this could be the object name or the object alias
+    secretName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-sb-endpoint-argo-kicker                     # name of the Kubernetes Secret object
     type: Opaque
   - data:
     - key: storageaccount-key
@@ -71,18 +71,18 @@ spec:
     type: Opaque
   parameters:
     usePodIdentity: "true"         # [OPTIONAL] if not provided, will default to "false"
-    keyvaultName: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-vault"          # the name of the KeyVault
+    keyvaultName: "{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-vault"          # the name of the KeyVault
     cloudName: ""          # [OPTIONAL for Azure] if not provided, azure environment will default to AzurePublicCloud
     objects:  |
       array:
         - |
-          objectName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-dsn
+          objectName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-dsn
           objectType: secret        # object types: secret, key or cert
         - |
           objectName: mailgun-secret
           objectType: secret
         - |
-          objectName: {{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-sb-endpoint-argo-kicker
+          objectName: {{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-sb-endpoint-argo-kicker
           objectType: secret
         - |
           objectName: storageaccount-key
@@ -112,5 +112,5 @@ spec:
         - |
           objectName: {{ required "Missing value ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_KEY" .Values.ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY }}
           objectType: secret
-    resourceGroup: "{{ required "Missing value NAMESPACE" .Values.AV_NAMESPACE }}-rg"
+    resourceGroup: "{{ required "Missing value NAMESPACE" .Values.DA_NAMESPACE }}-rg"
     tenantId: "{{ required "Missing value TENANT_ID_KEYVAULT" .Values.TENANT_ID_KEYVAULT }}"                    # the tenant ID of the KeyVault
