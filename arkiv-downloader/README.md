@@ -23,7 +23,7 @@ Env variables needed:
   "id": 1,
   "arkivuttrekk_id": "c05a214c-fcc5-11ea-8558-acde48001122",
   "status": "Bestilt",
-  "storage_account": "avmottakdevsacc",
+  "storage_account": "damottakdevsa",
   "container": 
   "blob_sas_url": "https://<storage_account>.blob.core.windows.net/<container>?<sas_token>"
 }
