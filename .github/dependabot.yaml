@@ -1,0 +1,27 @@
+version: 2
+updates:
+  # github-actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # mottak-arkiv-service
+  - package-ecosystem: "docker"
+    directory: "/mottak-arkiv-service"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    directory: "/mottak-arkiv-service"
+    schedule:
+      interval: "daily"
+
+  # mottak-arkiv-web
+  - package-ecosystem: "docker"
+    directory: "/mottak-arkiv-web"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directory: "/mottak-arkiv-web"
+    schedule:
+      interval: "daily"
