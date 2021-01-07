@@ -4,11 +4,14 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from app.connectors.azure_servicebus.azure_servicebus_client import AzureServicebus
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
+from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
+from app.domain.models.Bestilling import BestillingRequest, BestillingStatus
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, SASTokenPreconditionFailed
 from app.routers.router_dependencies import get_sas_url
@@ -54,16 +57,29 @@ async def request_download(arkivuttrekk_id: int, db: Session):
     except SASTokenPreconditionFailed:
         return {"status": 412}
 
+    request_download = await _request_download(sas_token, arkivuttrekk)
+    if not request_download:
+        return {"status": 500}
+
     return {"status": 200}
 
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     # ObjectID of the Arkivutrekk is name of the container
     sas_generator_client = SASGeneratorClient(get_sas_url())
     resp = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
-    sas_token = resp.json()
 
     if resp.status_code == 412:
         logging.error(f"Fant ikke container med id={arkivuttrekk.obj_id}")
         raise SASTokenPreconditionFailed(arkivuttrekk.obj_id)
 
-    return sas_token
+    return resp.json()
+
+async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO):
+    arkivkopi_request = BestillingRequest(arkivkopi_id=arkivuttrekk.id,
+                                          arkivuttrekk_id=arkivuttrekk.obj_id,
+                                          storage_account=sas_token["storage_account"],
+                                          container=sas_token["container"],
+                                          sas_token=sas_token["sas_token"])
+
+    serivce_bus = AzureServicebus()
+    return await serivce_bus.request_download(arkivkopi_request)

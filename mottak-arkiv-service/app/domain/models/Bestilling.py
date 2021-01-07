@@ -1,12 +1,19 @@
+from __future__ import annotations
+
 import json
 import logging
-
+from enum import Enum
 from typing import Optional
 from uuid import UUID
 
-from app.connectors.azure_servicebus.utils import UUIDEncoder
+class UUIDEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            # if the obj is uuid, we simply return the value of uuid
+            return str(obj)
+        return json.JSONEncoder.default(self, obj)
 
-class ArkivkopiRequest:
+class BestillingRequest:
     """
     The information needed to make a copy of an archive from cloud to on-prem.
     These objects are retrieved from the queue ARCHIVE_DOWNLOAD_REQUEST_RECEICER.
@@ -25,7 +32,7 @@ class ArkivkopiRequest:
         self.sas_token = sas_token
 
     def __eq__(self, other):
-        if isinstance(other, ArkivkopiRequest):
+        if isinstance(other, BestillingRequest):
             return self.arkivkopi_id == other.arkivkopi_id and \
                    self.arkivuttrekk_id == other.arkivuttrekk_id and \
                    self.storage_account == other.storage_account and \
@@ -35,3 +42,10 @@ class ArkivkopiRequest:
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
+
+
+class BestillingStatus(str, Enum):
+    BESTILT = 'Bestilt'
+    STARTET = 'Startet'
+    OK = 'OK'
+    FEILET = 'Feilet'

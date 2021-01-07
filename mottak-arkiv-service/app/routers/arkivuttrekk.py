@@ -68,8 +68,8 @@ async def request_download(id: int, db: Session = Depends(get_db_session)):
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
-    if result["status"] == 412:
-        raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED,
+    if result["status"] != 200:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail='Bestilling feilet, venligst prøv igjen senere')
 
     return result

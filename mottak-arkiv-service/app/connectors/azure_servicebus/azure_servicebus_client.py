@@ -1,18 +1,10 @@
-"""
-{
-  "obj_id": "c05a214c-fcc5-11ea-8558-acde48001122",
-  "blob_sas_url": "https://<storage_account>.blob.core.windows.net/<container>?<arkivkopi_request>"
-}
-"""
-
+import logging
 import os
-import json
-from uuid import UUID
+
 from azure.servicebus.aio import QueueClient, Message
 from azure.servicebus.common.errors import MessageSendFailed
 
-from app.connectors.azure_servicebus.models import ArkivkopiRequest
-from app.connectors.azure_servicebus.utils import UUIDEncoder
+from app.domain.models.Bestilling import BestillingRequest
 
 class AzureServicebus():
     def __init__(self):
@@ -23,15 +15,16 @@ class AzureServicebus():
     def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClient:
         return QueueClient.from_connection_string(queue_client_string, queue_name)
 
-    async def request_download(self, arkivkopi_request: ArkivkopiRequest) -> bool:
+    async def request_download(self, arkivkopi_request: BestillingRequest) -> bool:
         queue_client = self.create_queue_client(self.sender_con_string,
                                                 self.sender_queue_name)
 
-        message = Message(json.dumps(arkivkopi_request, cls=UUIDEncoder, default=str))
+        message = Message(arkivkopi_request.as_json_str())
 
-        # try:
-        #     await queue_client.send(message)
-        # except MessageSendFailed:
-        #     return False
+        try:
+            await queue_client.send(message)
+        except MessageSendFailed:
+            logging.error(f"Could not send message to the {self.sender_queue_name} queue with the following data: {arkivkopi_request.as_json_str()}")
+            return False
 
         return True
