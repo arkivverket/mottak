@@ -81,5 +81,5 @@ async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_D
                                           container=sas_token["container"],
                                           sas_token=sas_token["sas_token"])
 
-    serivce_bus = AzureServicebus()
-    return await serivce_bus.request_download(arkivkopi_request)
+    service_bus = AzureServicebus()
+    return await service_bus.request_download(arkivkopi_request)
