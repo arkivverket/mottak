@@ -8,7 +8,7 @@ updates:
     directory: "/mottak-arkiv-service"
     schedule:
       interval: "daily"
-  - package-ecosystem: "poetry"
+  - package-ecosystem: "pip"
     directory: "/mottak-arkiv-service"
     schedule:
       interval: "daily"
