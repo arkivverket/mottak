@@ -52,10 +52,9 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
 async def request_download(arkivuttrekk_id: int, db: Session):
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    try:
-        sas_token = await _request_sas_token(arkivuttrekk)
-    except SASTokenPreconditionFailed:
-        return {"status": 412}
+    sas_token = await _request_sas_token(arkivuttrekk)
+    if not sas_token:
+        return {"status": 500}
 
     request_download = await _request_download(sas_token, arkivuttrekk)
     if not request_download:
@@ -66,13 +65,7 @@ async def request_download(arkivuttrekk_id: int, db: Session):
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     # ObjectID of the Arkivutrekk is name of the container
     sas_generator_client = SASGeneratorClient(get_sas_url())
-    resp = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
-
-    if resp.status_code == 412:
-        logging.error(f"Fant ikke container med id={arkivuttrekk.obj_id}")
-        raise SASTokenPreconditionFailed(arkivuttrekk.obj_id)
-
-    return resp.json()
+    return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO):
     arkivkopi_request = BestillingRequest(arkivkopi_id=arkivuttrekk.id,
