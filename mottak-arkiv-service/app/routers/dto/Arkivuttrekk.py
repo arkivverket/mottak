@@ -71,3 +71,6 @@ class Arkivuttrekk(ArkivuttrekkBase):
 
     class Config:
         orm_mode = True
+
+class BestillNedlastning(BaseModel):
+    status: int

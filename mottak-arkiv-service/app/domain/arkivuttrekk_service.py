@@ -10,7 +10,8 @@ from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound
+from app.exceptions import ArkivuttrekkNotFound, SASTokenPreconditionFailed
+from app.routers.router_dependencies import get_sas_url
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
@@ -46,11 +47,23 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
-async def request_download(arkivuttrekk_id: int, db: Session, sas_generator_client: SASGeneratorClient):
+async def request_download(arkivuttrekk_id: int, db: Session):
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    sas_token = await _request_sas_token(arkivuttrekk, db, sas_generator_client)
+    try:
+        sas_token = await _request_sas_token(arkivuttrekk)
+    except SASTokenPreconditionFailed:
+        return {"status": 412}
+
     return {"status": 200}
 
-async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO, db: Session, sas_generator_client: SASGeneratorClient):
+async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     # ObjectID of the Arkivutrekk is name of the container
-    return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
+    sas_generator_client = SASGeneratorClient(get_sas_url())
+    resp = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
+    sas_token = resp.json()
+
+    if resp.status_code == 412:
+        logging.error(f"Fant ikke container med id={arkivuttrekk.obj_id}")
+        raise SASTokenPreconditionFailed(arkivuttrekk.obj_id)
+
+    return sas_token

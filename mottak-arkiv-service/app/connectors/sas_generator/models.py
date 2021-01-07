@@ -1,3 +1,4 @@
+from pydantic.main import BaseModel
 from uuid import UUID
 
 class SASTokenRequest:
@@ -11,3 +12,9 @@ class SASTokenRequest:
         :return: a dict following SAS generator expected data structure
         """
         return {'container': self.container, 'duration': self.duration}
+
+class SASResponse(BaseModel):
+    """DTO for the response sas object"""
+    storage_account: str
+    container: str
+    sas_token: str
