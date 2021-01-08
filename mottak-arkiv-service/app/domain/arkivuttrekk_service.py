@@ -5,6 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureServicebus
+from app.connectors.connectors_variables import get_sas_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
@@ -14,7 +15,6 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Bestilling import BestillingRequest
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
-from app.routers.router_dependencies import get_sas_url
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
