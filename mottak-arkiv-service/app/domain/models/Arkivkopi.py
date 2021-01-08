@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import json
-import logging
 from enum import Enum
-from typing import Optional
 from uuid import UUID
 
 
@@ -15,7 +13,7 @@ class UUIDEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-class BestillingRequest:
+class ArkivkopiRequest:
     """
     The information needed to make a copy of an archive from cloud to on-prem.
     These objects are retrieved from the queue ARCHIVE_DOWNLOAD_REQUEST_RECEICER.
@@ -34,7 +32,7 @@ class BestillingRequest:
         self.sas_token = sas_token
 
     def __eq__(self, other):
-        if isinstance(other, BestillingRequest):
+        if isinstance(other, ArkivkopiRequest):
             return self.arkivkopi_id == other.arkivkopi_id and \
                    self.arkivuttrekk_id == other.arkivuttrekk_id and \
                    self.storage_account == other.storage_account and \
@@ -46,7 +44,7 @@ class BestillingRequest:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
 
-class BestillingStatus(str, Enum):
+class ArkivkopiStatus(str, Enum):
     BESTILT = 'Bestilt'
     STARTET = 'Startet'
     OK = 'OK'

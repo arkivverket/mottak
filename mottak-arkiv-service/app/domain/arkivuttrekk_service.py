@@ -12,7 +12,7 @@ from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Bestilling import BestillingRequest
+from app.domain.models.Arkivkopi import ArkivkopiRequest
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 
@@ -71,11 +71,11 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
 
 
 async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO):
-    arkivkopi_request = BestillingRequest(arkivkopi_id=arkivuttrekk.id,
-                                          arkivuttrekk_id=arkivuttrekk.obj_id,
-                                          storage_account=sas_token["storage_account"],
-                                          container=sas_token["container"],
-                                          sas_token=sas_token["sas_token"])
+    arkivkopi_request = ArkivkopiRequest(arkivkopi_id=arkivuttrekk.id,
+                                         arkivuttrekk_id=arkivuttrekk.obj_id,
+                                         storage_account=sas_token["storage_account"],
+                                         container=sas_token["container"],
+                                         sas_token=sas_token["sas_token"])
 
     service_bus = AzureServicebus(get_sender_con_str(), SENDER_QUEUE_NAME)
     return await service_bus.request_download(arkivkopi_request.as_json_str())
