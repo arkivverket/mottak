@@ -11,9 +11,9 @@ from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Bestilling import BestillingRequest, BestillingStatus
+from app.domain.models.Bestilling import BestillingRequest
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, SASTokenPreconditionFailed
+from app.exceptions import ArkivuttrekkNotFound
 from app.routers.router_dependencies import get_sas_url
 
 

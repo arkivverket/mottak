@@ -4,13 +4,12 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.connectors.mailgun.mailgun_client import MailgunClient
-from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase, BestillNedlastning
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url, get_sas_url
+from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
 
 router = APIRouter()
 
