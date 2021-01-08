@@ -50,6 +50,7 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
+
 async def request_download(arkivuttrekk_id: int, db: Session):
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)

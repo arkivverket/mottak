@@ -6,6 +6,7 @@ from uuid import UUID
 
 from app.connectors.sas_generator.models import SASResponse, SASTokenRequest
 
+
 class SASGeneratorClient():
     def __init__(self, sas_url: str):
         self.url = sas_url
