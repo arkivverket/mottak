@@ -57,7 +57,7 @@ class InvalidContentType(Exception):
 
 class SASTokenPreconditionFailed(Exception):
     """
-    Exception raised when
+    Exception raised when sas generator returns a 412 error, because the container does not exist.
 
     Attributes:
         container_id -- Object ID for the container
