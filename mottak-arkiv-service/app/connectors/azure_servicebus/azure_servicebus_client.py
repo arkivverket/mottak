@@ -6,6 +6,7 @@ from azure.servicebus.common.errors import MessageSendFailed
 
 from app.domain.models.Bestilling import BestillingRequest
 
+
 class AzureServicebus():
     def __init__(self):
         self.sender_con_string = os.environ['ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING']

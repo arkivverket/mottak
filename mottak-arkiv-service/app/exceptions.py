@@ -1,5 +1,6 @@
 from uuid import UUID
 
+
 class MetadatafilNotFound(Exception):
     """
     Exception raised when metadatafil doesn't exist in database
@@ -52,6 +53,7 @@ class InvalidContentType(Exception):
 
     def __str__(self):
         return self.message
+
 
 class SASTokenPreconditionFailed(Exception):
     """
