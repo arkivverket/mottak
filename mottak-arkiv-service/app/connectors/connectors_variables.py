@@ -1,5 +1,7 @@
 import os
 
+SENDER_QUEUE_NAME = 'archive-download-request'
+
 
 def get_mailgun_domain() -> str:
     """
@@ -35,3 +37,10 @@ def get_sas_url() -> str:
     """
     # TODO handle KeyError
     return os.environ['SAS_URL']
+
+
+def get_sender_con_str() -> str:
+    """
+    Gets env variable for ServiceBus sender connection string
+    """
+    return os.environ['ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING']

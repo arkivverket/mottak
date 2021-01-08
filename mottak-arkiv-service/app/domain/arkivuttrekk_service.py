@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureServicebus
-from app.connectors.connectors_variables import get_sas_url
+from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_url, get_sender_con_str
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
@@ -77,5 +77,5 @@ async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_D
                                           container=sas_token["container"],
                                           sas_token=sas_token["sas_token"])
 
-    service_bus = AzureServicebus()
-    return await service_bus.request_download(arkivkopi_request)
+    service_bus = AzureServicebus(get_sender_con_str(), SENDER_QUEUE_NAME)
+    return await service_bus.request_download(arkivkopi_request.as_json_str())
