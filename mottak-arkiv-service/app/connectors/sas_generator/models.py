@@ -17,13 +17,6 @@ class SASTokenRequest:
         self.container = container
         self.duration = duration
 
-    def as_data(self) -> dict:
-        """
-        Creates a dict adhering to SAS generator expected data structure
-        :return: a dict following SAS generator expected data structure
-        """
-        return {'container': self.container, 'duration': self.duration}
-
     def as_json(self) -> str:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
