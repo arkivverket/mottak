@@ -36,6 +36,7 @@ def get_tusd_url() -> str:
     # TODO handle KeyError
     return os.environ['TUSD_URL']
 
+
 def get_sas_url() -> str:
     """
     Gets env variable for SAS generator url

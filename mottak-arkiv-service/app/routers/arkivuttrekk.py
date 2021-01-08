@@ -57,6 +57,7 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
         else:
             return result
 
+
 @router.post('/{id}/bestill_nedlasting',
              status_code=status.HTTP_200_OK,
              response_model=BestillNedlastning,
