@@ -59,6 +59,8 @@ spec:
               value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
             - name: TUSD_URL
               value: https://mottak.plattform.arkivverket.dev/tusd/files
+            - name: SAS_GENERATOR_HOST
+              value: http://da-mottak-dev-storage-sas-generator-service
             - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:
