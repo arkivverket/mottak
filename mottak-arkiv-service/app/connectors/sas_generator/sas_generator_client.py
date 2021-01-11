@@ -8,7 +8,7 @@ from app.connectors.sas_generator.models import SASResponse, SASTokenRequest
 
 class SASGeneratorClient():
     def __init__(self, sas_generator_host: str):
-        self.url = f"{sas_generator_host}/generate_sas"
+        self.url = f"http://{sas_generator_host}/generate_sas"
 
     async def request_sas(self, container: UUID, duration: int = 24) -> SASResponse:
         async with AsyncClient() as client:

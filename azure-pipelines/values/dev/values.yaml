@@ -12,7 +12,7 @@ ARCHIVE_DOWNLOAD_STATUS_SENDER_KEY: da-mottak-dev-sb-endpoint-archive-download-s
 # mottak-arkiv-service -- nøkler til å hente connection-string for respektive kø fra keyVault
 ARCHIVE_DOWNLOAD_REQUEST_SENDER_KEY: da-mottak-dev-sb-endpoint-archive-download-request-sender
 ARCHIVE_DOWNLOAD_STATUS_RECEIVER_KEY: da-mottak-dev-sb-endpoint-archive-download-status-receiver
-SAS_GENERATOR_HOST: http://da-mottak-dev-storage-sas-generator-service
+SAS_GENERATOR_HOST: da-mottak-dev-storage-sas-generator-service
 
 # CSI Driver Link
 TENANT_ID_KEYVAULT: 99d3d298-60cf-4636-9772-4a191b6f0d94
