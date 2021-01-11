@@ -8,7 +8,7 @@ from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase, BestillNedlastning
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session
 
