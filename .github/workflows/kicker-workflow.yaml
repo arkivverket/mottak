@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 'kicker/**'
+      - '.github/workflows/kicker-workflow.yaml'
   pull_request:
     paths:
       - 'kicker/**'
+      - '.github/workflows/kicker-workflow.yaml'
 
 jobs:
   test:
