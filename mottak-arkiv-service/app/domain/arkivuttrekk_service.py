@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureServicebus
-from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_url, get_sender_con_str
+from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_generator_host, get_sender_con_str
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
@@ -66,7 +66,7 @@ async def request_download(arkivuttrekk_id: int, db: Session):
 
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     # ObjectID of the Arkivutrekk is name of the container
-    sas_generator_client = SASGeneratorClient(get_sas_url())
+    sas_generator_client = SASGeneratorClient(get_sas_generator_host())
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 
