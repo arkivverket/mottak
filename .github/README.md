@@ -1,3 +1,8 @@
+# Dependabot
+We use dependabot to monitor dependency versions. To add a new application to dependabot monitoring, add it in
+[dependabot.yaml](dependabot.yaml). For more documentation see
+[dependabot documentation](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/keeping-your-dependencies-updated-automatically).
+
 # Building Github Actions workflows
 
 ### Adding new workflow

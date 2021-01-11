@@ -10,7 +10,7 @@ logging.disable(logging.CRITICAL)
 
 @pytest.fixture
 def _arkivkopi_status_response() -> ArkivkopiStatusResponse:
-    return ArkivkopiStatusResponse(arkivuttrekk_id=UUID("bb5fc65e-386d-11eb-915c-acde48001122"),
+    return ArkivkopiStatusResponse(arkivkopi_id=1,
                                    status=ArkivkopiStatus.STARTET)
 
 
@@ -22,7 +22,6 @@ def test_arkivkopirequest_from_string(teststr_json_string):
     """
     expected = ArkivkopiRequest(
         arkivkopi_id=1,
-        arkivuttrekk_id=UUID("bb5fc65e-386d-11eb-915c-acde48001122"),
         storage_account="storage_account_test",
         container="container_test",
         sas_token="se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"
@@ -37,7 +36,7 @@ def test_arkivkopirequest_as_json_str(testobj_arkivkopi_request):
     WHEN    calling the method as_json_str() on the ArkivkopiRequest object
     THEN    controll that the returned json is correct
     """
-    expected = '{"arkivkopi_id": 1, "arkivuttrekk_id": "bb5fc65e-386d-11eb-915c-acde48001122", ' \
+    expected = '{"arkivkopi_id": 1, ' \
                '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
                '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"}'
     actual = testobj_arkivkopi_request.as_json_str()
@@ -50,7 +49,7 @@ def test_arkivkopistatus_as_json_str(_arkivkopi_status_response):
     WHEN    calling the method as_json_str() on the ArkivkopiStatus object
     THEN    controll that the returned json is correct
     """
-    expected = '{"arkivuttrekk_id": "bb5fc65e-386d-11eb-915c-acde48001122", "status": "Startet"}'
+    expected = '{"arkivkopi_id": 1, "status": "Startet"}'
     actual = _arkivkopi_status_response.as_json_str()
     assert actual == expected
 
