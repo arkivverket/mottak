@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 'mottak-arkiv-service/**'
+      - '.github/workflows/mottak-arkiv-service-workflow.yaml'
   pull_request:
     paths:
       - 'mottak-arkiv-service/**'
+      - '.github/workflows/mottak-arkiv-service-workflow.yaml'
 
 jobs:
   test:

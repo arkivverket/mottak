@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 'storage-sas-generator/**'
+      - '.github/workflows/storage-sas-generator-workflow.yaml'
   pull_request:
     paths:
       - 'storage-sas-generator/**'
+      - '.github/workflows/storage-sas-generator-workflow.yaml'
 
 jobs:
   test:
