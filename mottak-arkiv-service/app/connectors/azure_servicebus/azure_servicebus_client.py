@@ -12,7 +12,7 @@ class AzureServicebus():
     def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClient:
         return QueueClient.from_connection_string(queue_client_string, queue_name)
 
-    async def request_download(self, _message: str) -> bool:
+    async def send_message(self, _message: str) -> bool:
         message = Message(_message)
 
         try:
