@@ -36,12 +36,10 @@ class ArkivkopiRequest:
 
     def __init__(self,
                  arkivkopi_id: int,
-                 arkivuttrekk_id: UUID,
                  storage_account: str,
                  container: str,
                  sas_token: str):
         self.arkivkopi_id = arkivkopi_id
-        self.arkivuttrekk_id = UUID(str(arkivuttrekk_id))
         self.storage_account = storage_account
         self.container = container
         self.sas_token = sas_token
@@ -49,7 +47,6 @@ class ArkivkopiRequest:
     def __eq__(self, other):
         if isinstance(other, ArkivkopiRequest):
             return self.arkivkopi_id == other.arkivkopi_id and \
-                   self.arkivuttrekk_id == other.arkivuttrekk_id and \
                    self.storage_account == other.storage_account and \
                    self.container == other.container and \
                    self.sas_token == other.sas_token
@@ -69,8 +66,8 @@ class ArkivkopiRequest:
 
 
 class ArkivkopiStatusResponse:
-    def __init__(self, arkivuttrekk_id: UUID, status: ArkivkopiStatus):
-        self.arkivuttrekk_id = arkivuttrekk_id
+    def __init__(self, arkivkopi_id: int, status: ArkivkopiStatus):
+        self.arkivkopi_id = arkivkopi_id
         self.status = status
 
     def as_json_str(self) -> str:
