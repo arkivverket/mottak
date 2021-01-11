@@ -1,3 +1,6 @@
+from uuid import UUID
+
+
 class MetadatafilNotFound(Exception):
     """
     Exception raised when metadatafil doesn't exist in database
@@ -49,4 +52,22 @@ class InvalidContentType(Exception):
         super().__init__(self.message)
 
     def __str__(self):
+        return self.message
+
+
+class SASTokenPreconditionFailed(Exception):
+    """
+    Exception raised when sas generator returns a 412 error, because the container does not exist.
+
+    Attributes:
+        container_id -- Object ID for the container
+        message -- explanation of the error
+    """
+
+    def __init__(self, container_id: UUID):
+        self.container_id = container_id
+        self.message = f"The container '{container_id}' does not exist"
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
         return self.message

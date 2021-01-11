@@ -56,6 +56,8 @@ spec:
               value: {{ required "Missing value MAILGUN_DOMAIN" .Values.MAILGUN_DOMAIN }}
             - name: TUSD_URL
               value: https://{{ required "Missing value DA_MOTTAK_DNS" .Values.DA_MOTTAK_DNS }}/tusd/files
+            - name: SAS_GENERATOR_HOST
+              value: {{ required "Missing value SAS_GENERATOR_HOST" .Values.SAS_GENERATOR_HOST }}
             - name: ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING
               valueFrom:
                 secretKeyRef:

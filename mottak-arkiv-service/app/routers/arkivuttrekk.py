@@ -3,13 +3,14 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session, get_mailgun_domain, get_mailgun_secret, get_tusd_url
+from app.routers.router_dependencies import get_db_session
 
 router = APIRouter()
 
@@ -56,3 +57,19 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
                                 detail='Utsending av invitasjon feilet, venligst prøv igjen senere')
         else:
             return result
+
+
+@router.post('/{id}/bestill_nedlasting',
+             status_code=status.HTTP_200_OK,
+             summary='Bestiller en nedlastning fra arkiv downloader')
+async def request_download(id: int, db: Session = Depends(get_db_session)):
+    try:
+        result = await arkivuttrekk_service.request_download(id, db)
+    except ArkivuttrekkNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+
+    if result["status"] != 200:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail='Bestilling feilet, venligst prøv igjen senere')
+
+    return result
