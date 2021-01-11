@@ -29,10 +29,8 @@ def test_get_save_path(testobj_arkivkopi_request, _write_location):
     WHEN    calling the method get_save_path()
     THEN    check that the returned string is correct
     """
-    expected = \
-        str(get_project_root() / 'tests' / 'testdata' / 'bb5fc65e-386d-11eb-915c-acde48001122') \
-        + os.path.sep
-    actual = get_save_path(testobj_arkivkopi_request.arkivuttrekk_id, _write_location)
+    expected = str(get_project_root() / 'tests' / 'testdata') + os.path.sep
+    actual = get_save_path(_write_location)
     assert actual == expected
 
 

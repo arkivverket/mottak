@@ -30,9 +30,9 @@ def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
     return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
 
 
-def get_save_path(arkivuttrekk_id: UUID, write_location: str) -> str:
+def get_save_path(write_location: str) -> str:
     """ Returns the path to where the downloaded blob should be saved"""
-    return os.path.join(write_location, str(arkivuttrekk_id)) + os.path.sep
+    return write_location + os.path.sep
 
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
@@ -42,9 +42,9 @@ def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str)
 
 
 def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
-    save_path = get_save_path(arkivuttrekk.arkivuttrekk_id, write_location)
+    save_path = get_save_path(write_location)
     azcopy_command = generate_azcopy_command(arkivuttrekk, save_path)
-    logging.info(f'Starting transfer of obj_id {arkivuttrekk.arkivuttrekk_id} to {save_path}')
+    logging.info(f'Starting transfer of container {arkivuttrekk.container} to {save_path}')
     try:
         response = subprocess.check_output(
             azcopy_command,
@@ -60,8 +60,8 @@ def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> Arkivk
         return ArkivkopiStatus.FEILET
 
 
-def send_status_message(arkivuttrekk_id: UUID, status: ArkivkopiStatus, client: QueueClient):
-    status_obj = ArkivkopiStatusResponse(arkivuttrekk_id, status)
+def send_status_message(arkivkopi_id: int, status: ArkivkopiStatus, client: QueueClient):
+    status_obj = ArkivkopiStatusResponse(arkivkopi_id, status)
     message = Message(status_obj.as_json_str())
     client.send(message)
 
@@ -69,10 +69,10 @@ def send_status_message(arkivuttrekk_id: UUID, status: ArkivkopiStatus, client: 
 def download_arkivkopi(arkivkopi_request: ArkivkopiRequest,
                        queue_client_status: QueueClient,
                        storage_location: str) -> None:
-    logging.info(f'Got download request for object with arkivuttrekk_id: {arkivkopi_request.arkivuttrekk_id}')
-    send_status_message(arkivkopi_request.arkivuttrekk_id, ArkivkopiStatus.STARTET, queue_client_status)
+    logging.info(f'Got download request for container with container name: {arkivkopi_request.container}')
+    send_status_message(arkivkopi_request.arkivkopi_id, ArkivkopiStatus.STARTET, queue_client_status)
     status = download_blob(arkivkopi_request, storage_location)
-    send_status_message(arkivkopi_request.arkivuttrekk_id, status, queue_client_status)
+    send_status_message(arkivkopi_request.arkivkopi_id, status, queue_client_status)
 
 
 def process_message(message: Message) -> Optional[ArkivkopiRequest]:
