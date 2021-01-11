@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 's3-scan-tar/**'
+      - '.github/workflows/s3-scan-tar-workflow.yaml'
   pull_request:
     paths:
       - 's3-scan-tar/**'
+      - '.github/workflows/s3-scan-tar-workflow.yaml'
 
 jobs:
   test:

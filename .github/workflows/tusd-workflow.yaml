@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 'tusd/**'
+      - '.github/workflows/tusd-workflow.yaml'
   pull_request:
     paths:
       - 'tusd/**'
+      - '.github/workflows/tusd-workflow.yaml'
 
 jobs:
   test:

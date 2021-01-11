@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 's3-unpack/**'
+      - '.github/workflows/s3-unpack-workflow.yaml'
   pull_request:
     paths:
       - 's3-unpack/**'
+      - '.github/workflows/s3-unpack-workflow.yaml'
 
 jobs:
   test:

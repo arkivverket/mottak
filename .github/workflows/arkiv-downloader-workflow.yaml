@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - 'arkiv-downloader/**'
+      - '.github/workflows/arkiv-downloader-workflow.yaml'
   pull_request:
     paths:
       - 'arkiv-downloader/**'
+      - '.github/workflows/arkiv-downloader-workflow.yaml'
 
 jobs:
   test:

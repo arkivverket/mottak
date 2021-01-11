@@ -4,9 +4,11 @@ on:
     branches: [ develop ]
     paths:
       - '!COMPONENT_NAME!/**'
+      - '.github/workflows/!COMPONENT_NAME!-workflow.yaml'
   pull_request:
     paths:
       - '!COMPONENT_NAME!/**'
+      - '.github/workflows/!COMPONENT_NAME!-workflow.yaml'
 
 jobs:
   test:
