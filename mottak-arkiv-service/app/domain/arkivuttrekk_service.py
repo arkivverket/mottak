@@ -72,7 +72,6 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
 
 async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO):
     arkivkopi_request = ArkivkopiRequest(arkivkopi_id=arkivuttrekk.id,
-                                         arkivuttrekk_id=arkivuttrekk.obj_id,
                                          storage_account=sas_token["storage_account"],
                                          container=sas_token["container"],
                                          sas_token=sas_token["sas_token"])
