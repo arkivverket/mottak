@@ -1,8 +1,5 @@
 import os
 
-REQUEST_SENDER_QUEUE_NAME = 'archive-download-request'
-STATUS_RECEIVER_QUEUE_NAME = 'archive-download-status'
-
 
 def get_mailgun_domain() -> str:
     """
