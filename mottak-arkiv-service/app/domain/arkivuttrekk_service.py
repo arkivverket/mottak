@@ -4,7 +4,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender
+from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender, AzureQueueReceiver
 from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
@@ -12,9 +12,9 @@ from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
 from app.database.repositories import arkivuttrekk_repository, invitasjon_repository, arkivkopi_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus
+from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus, ArkivkopiStatusResponse
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiNotFound
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
@@ -84,3 +84,25 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> ArkivkopiSt
     if not result:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
     return result.status
+
+
+def run_queue_receiver(azure_queue: AzureQueueReceiver, db: Session):
+    """ A running loop that listens to the service bus receiver queue"""
+    keep_running = True
+    with azure_queue.receiver as receiver:
+        logging.info(f"Starting receiving messages on queue {receiver.queue_name}")
+        while keep_running:
+            messages = receiver.fetch_next(timeout=3, max_batch_size=1)  # reads 1 messages then waits for 3 seconds
+            for message in messages:
+                logging.info('Got a message on the service bus')
+                message_str = azure_queue.message_to_str(message)
+                arkivkopi_status_response = ArkivkopiStatusResponse.from_string(message_str)
+                if arkivkopi_status_response:
+                    _update_arkivkopi_status(arkivkopi_status_response, db)
+    logging.info(f"Closing receiver {azure_queue.queue_name}")
+
+
+def _update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
+    result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
+    if not result:
+        raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
