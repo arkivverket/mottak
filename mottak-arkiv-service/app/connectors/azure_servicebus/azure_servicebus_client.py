@@ -17,7 +17,14 @@ class AzureServicebus():
 class AzureQueueReceiver(AzureServicebus):
     def __init__(self, connection_string: str, queue_name: str):
         super().__init__(connection_string, queue_name)
-        # self.receiver = self.queue_client.get_receiver()
+        self.receiver = self.queue_client.get_receiver()
+
+    @staticmethod
+    def message_to_str(_message: Message) -> str:
+        """ Method that converts a message to a string and completes the message"""
+        message_str = str(_message)
+        await _message.complete()
+        return message_str
 
 
 class AzureQueueSender(AzureServicebus):
