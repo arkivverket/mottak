@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import logging
 from enum import Enum
+from typing import Optional
 from uuid import UUID
 
 
@@ -11,6 +13,13 @@ class UUIDEncoder(json.JSONEncoder):
             # if the obj is uuid, we simply return the value of uuid
             return str(obj)
         return json.JSONEncoder.default(self, obj)
+
+
+class ArkivkopiStatus(str, Enum):
+    BESTILT = 'Bestilt'
+    STARTET = 'Startet'
+    OK = 'OK'
+    FEILET = 'Feilet'
 
 
 class ArkivkopiRequest:
@@ -41,8 +50,16 @@ class ArkivkopiRequest:
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
 
-class ArkivkopiStatus(str, Enum):
-    BESTILT = 'Bestilt'
-    STARTET = 'Startet'
-    OK = 'OK'
-    FEILET = 'Feilet'
+class ArkivkopiStatusResponse:
+    def __init__(self, arkivkopi_id: int, status: ArkivkopiStatus):
+        self.arkivkopi_id = arkivkopi_id
+        self.status = status
+
+    @staticmethod
+    def from_string(json_string: str) -> Optional[ArkivkopiStatusResponse]:
+        try:
+            json_message = json.loads(json_string)
+            return ArkivkopiStatusResponse(**json_message)
+        except (ValueError, KeyError, TypeError) as e:
+            logging.error(f'Failed to parse message {json_string}', e)
+            return None
