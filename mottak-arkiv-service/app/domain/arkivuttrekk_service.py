@@ -5,14 +5,14 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender
-from app.connectors.connectors_variables import REQUEST_SENDER_QUEUE_NAME, get_sas_generator_host, get_sender_con_str
+from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
-from app.database.repositories import arkivuttrekk_repository, invitasjon_repository
+from app.database.repositories import arkivuttrekk_repository, invitasjon_repository, arkivkopi_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Arkivkopi import ArkivkopiRequest
+from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 
@@ -77,3 +77,10 @@ async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_D
                                          sas_token=sas_token["sas_token"])
 
     return await queue_sender.send_message(arkivkopi_request.as_json_str())
+
+
+async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> ArkivkopiStatus:
+    result = arkivkopi_repository.get_by_arkivuttrekk_id(db, arkivuttrekk_id)
+    if not result:
+        raise ArkivuttrekkNotFound(arkivuttrekk_id)
+    return result.status

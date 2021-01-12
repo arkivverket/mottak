@@ -73,3 +73,15 @@ async def request_download(id: int, db: Session = Depends(get_db_session), queue
                             detail='Bestilling feilet, venligst prøv igjen senere')
 
     return result
+
+
+@router.get('/{id}/bestill_nedlasting/status',
+            status_code=status.HTTP_200_OK,
+            summary='Hent status for nedlasting av arkiv basert')
+async def router_get_download_status(id: int, db: Session = Depends(get_db_session)):
+    try:
+        result = await arkivuttrekk_service.get_arkivkopi_status(id, db)
+    except ArkivuttrekkNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+
+    return {"status": result}
