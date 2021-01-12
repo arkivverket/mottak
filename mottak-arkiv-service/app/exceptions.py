@@ -71,3 +71,21 @@ class SASTokenPreconditionFailed(Exception):
 
     def __str__(self) -> str:
         return self.message
+
+
+class ArkivkopiNotFound(Exception):
+    """
+    Exception raised when arkivkopi doesn't exist in database
+
+    Attributes:
+        id -- Integer ID for the arkivuttrekk in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, id_: int, message="Fant ikke arkivuttrekk med id="):
+        self.id = id_
+        self.message = message + str(id_)
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
