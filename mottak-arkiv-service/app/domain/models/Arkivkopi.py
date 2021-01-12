@@ -55,6 +55,12 @@ class ArkivkopiStatusResponse:
         self.arkivkopi_id = arkivkopi_id
         self.status = status
 
+    def __eq__(self, other):
+        if isinstance(other, ArkivkopiStatusResponse):
+            return self.arkivkopi_id == other.arkivkopi_id and \
+                   self.status == other.status
+        return False
+
     @staticmethod
     def from_string(json_string: str) -> Optional[ArkivkopiStatusResponse]:
         try:
