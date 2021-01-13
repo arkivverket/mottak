@@ -7,9 +7,9 @@ ZERO_GENERATION = '0'
 
 
 class SASTokenRequest:
-    def __init__(self, container: UUID, duration: int):
+    def __init__(self, container: UUID, duration_hours: int):
         self.container = f'{str(container)}-{ZERO_GENERATION}'
-        self.duration = duration
+        self.duration_hours = duration_hours
 
     def as_json(self) -> str:
         return json.dumps(self.__dict__)
