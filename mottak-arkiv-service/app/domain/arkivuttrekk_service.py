@@ -9,7 +9,7 @@ from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_gener
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
-from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
+from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus
@@ -51,15 +51,15 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session):
+async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)
     if not sas_token:
-        return False
+        return None
 
     request_download = await _request_download(sas_token, arkivuttrekk)
     if not request_download:
-        return False
+        return None
 
     return arkivkopi_repository.create(db, arkivuttrekk.id, ArkivkopiStatus.BESTILT,
                                        storage_account=sas_token["storage_account"],
