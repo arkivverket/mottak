@@ -59,10 +59,6 @@ async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivk
     if not sas_token:
         return None
 
-    request_download = await _request_download(sas_token, arkivuttrekk)
-    if not request_download:
-        return None
-
     query_string = parse_qs(sas_token["sas_token"])
     sas_token_start = convert_string_to_datetime(query_string["st"][0])
     sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
@@ -73,6 +69,10 @@ async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivk
                                             sas_token_start=sas_token_start,
                                             sas_token_slutt=sas_token_slutt)
 
+    request_download = await _request_download(sas_token, arkivkopi)
+    if not request_download:
+        return None
+
     return arkivkopi
 
 
@@ -82,8 +82,8 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 
-async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO):
-    arkivkopi_request = ArkivkopiRequest(arkivkopi_id=arkivuttrekk.id,
+async def _request_download(sas_token: SASResponse, arkivkopi: Arkivkopi_DBO):
+    arkivkopi_request = ArkivkopiRequest(arkivkopi_id=arkivkopi.id,
                                          storage_account=sas_token["storage_account"],
                                          container=sas_token["container"],
                                          sas_token=sas_token["sas_token"])
