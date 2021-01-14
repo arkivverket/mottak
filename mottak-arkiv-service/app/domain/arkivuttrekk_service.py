@@ -1,6 +1,7 @@
 import logging
 import uuid
 from typing import Optional
+from urllib.parse import parse_qs
 
 from sqlalchemy.orm import Session
 
@@ -9,12 +10,13 @@ from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_gener
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
-from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi
+from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
+from app.utils import convert_string_to_datetime
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
@@ -51,7 +53,7 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi]:
+async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)
     if not sas_token:
@@ -61,10 +63,17 @@ async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivk
     if not request_download:
         return None
 
-    return arkivkopi_repository.create(db, arkivuttrekk.id, ArkivkopiStatus.BESTILT,
-                                       storage_account=sas_token["storage_account"],
-                                       container=sas_token["container"],
-                                       sas_token=sas_token["sas_token"])
+    query_string = parse_qs(sas_token["sas_token"])
+    sas_token_start = convert_string_to_datetime(query_string["st"][0])
+    sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
+
+    arkivkopi = arkivkopi_repository.create(db, arkivuttrekk.id, ArkivkopiStatus.BESTILT,
+                                            storage_account=sas_token["storage_account"],
+                                            container=sas_token["container"],
+                                            sas_token_start=sas_token_start,
+                                            sas_token_slutt=sas_token_slutt)
+
+    return arkivkopi
 
 
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
