@@ -19,9 +19,9 @@ spec:
             template: terraform
             dependencies: [azcopy]
           - name: notify-user
-            
+
     - name: checksum-check
-    container:
+      container:
         image: arkivverket.azurecr.io/mottak/s3-checksum256
         imagePullPolicy: Always
         env:
@@ -50,6 +50,3 @@ spec:
             path: "/tmp/checksum.log"
             archive:
               none: {}
-      
-      
-      
