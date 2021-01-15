@@ -1,4 +1,5 @@
 from __future__ import annotations
+from datetime import datetime
 
 import json
 from enum import Enum
@@ -11,6 +12,38 @@ class UUIDEncoder(json.JSONEncoder):
             # if the obj is uuid, we simply return the value of uuid
             return str(obj)
         return json.JSONEncoder.default(self, obj)
+
+
+class Arkivkopi:
+    id: int
+    arkivuttrekk_id: int
+    status: ArkivkopiStatus
+    storage_account: str
+    container: str
+    sas_token_start: datetime
+    sas_token_slutt: datetime
+    opprettet: datetime
+    endret: datetime
+
+    def __init__(self,
+                 id_=None,
+                 arkivuttrekk_id=None,
+                 status=None,
+                 storage_account=None,
+                 container=None,
+                 sas_token_start=None,
+                 sas_token_slutt=None,
+                 opprettet=None,
+                 endret=None):
+        self.id = id_
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.status = status
+        self.storage_account = storage_account
+        self.container = container
+        self.sas_token_start = sas_token_start
+        self.sas_token_slutt = sas_token_slutt
+        self.opprettet = opprettet
+        self.endret = endret
 
 
 class ArkivkopiRequest:

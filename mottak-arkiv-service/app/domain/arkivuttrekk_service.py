@@ -13,7 +13,7 @@ from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus
+from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequest, ArkivkopiStatus
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
 from app.utils import convert_string_to_datetime
@@ -59,17 +59,10 @@ async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivk
     if not sas_token:
         return None
 
-    query_string = parse_qs(sas_token["sas_token"])
-    sas_token_start = convert_string_to_datetime(query_string["st"][0])
-    sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
+    arkivkopi = await _create_arkivkopi(arkivuttrekk.id, sas_token)
+    arkivkopi_dbo = arkivkopi_repository.create(db, arkivkopi)
 
-    arkivkopi = arkivkopi_repository.create(db, arkivuttrekk.id, ArkivkopiStatus.BESTILT,
-                                            storage_account=sas_token["storage_account"],
-                                            container=sas_token["container"],
-                                            sas_token_start=sas_token_start,
-                                            sas_token_slutt=sas_token_slutt)
-
-    request_download = await _request_download(sas_token, arkivkopi)
+    request_download = await _request_download(sas_token, arkivkopi_dbo)
     if not request_download:
         return None
 
@@ -80,6 +73,19 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     # ObjectID of the Arkivutrekk is name of the container
     sas_generator_client = SASGeneratorClient(get_sas_generator_host())
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
+
+
+async def _create_arkivkopi(arkivuttrekk_id, sas_token: SASResponse) -> Arkivkopi:
+    query_string = parse_qs(sas_token["sas_token"])
+    sas_token_start = convert_string_to_datetime(query_string["st"][0])
+    sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
+
+    return Arkivkopi(arkivuttrekk_id=arkivuttrekk_id,
+                     status=ArkivkopiStatus.BESTILT,
+                     storage_account=sas_token["storage_account"],
+                     container=sas_token["container"],
+                     sas_token_start=sas_token_start,
+                     sas_token_slutt=sas_token_slutt)
 
 
 async def _request_download(sas_token: SASResponse, arkivkopi: Arkivkopi_DBO):
