@@ -8,7 +8,7 @@ from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiFailedDuringTransmission
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
@@ -70,10 +70,8 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
         result = await arkivuttrekk_service.request_download(id, db, queue_sender)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
-
-    if not result:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail='Bestilling feilet, venligst prøv igjen senere')
+    except ArkivkopiFailedDuringTransmission as err:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
     return result
 

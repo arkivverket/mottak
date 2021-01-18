@@ -82,7 +82,25 @@ class ArkivkopiNotFound(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int, message="Fant ikke arkivuttrekk med id="):
+    def __init__(self, id_: int, message="Fant ikke arkivkopi med id="):
+        self.id = id_
+        self.message = message + str(id_)
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class ArkivkopiFailedDuringTransmission(Exception):
+    """
+    Exception raised when arkivkopi fails during transmission
+
+    Attributes:
+        id -- Integer ID for the arkivuttrekk in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, id_: int, message=f"Nedlasting av arkivkopi med id={id} feilet under overføring"):
         self.id = id_
         self.message = message + str(id_)
         super().__init__(self.message)

@@ -22,6 +22,7 @@ class UUIDEncoder(json.JSONEncoder):
 
 class ArkivkopiStatus(str, Enum):
     BESTILT = 'Bestilt'
+    FEILET_UNDER_OVERFORING = 'Feilet under overføring'
     STARTET = 'Startet'
     OK = 'OK'
     FEILET = 'Feilet'

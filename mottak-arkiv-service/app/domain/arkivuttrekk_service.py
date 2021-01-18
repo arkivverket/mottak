@@ -14,7 +14,7 @@ from app.database.repositories import arkivkopi_repository, arkivuttrekk_reposit
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequest, ArkivkopiStatus, ArkivkopiStatusResponse
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiNotFound
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiNotFound, ArkivkopiFailedDuringTransmission
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
@@ -51,8 +51,8 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session, queue_sender: AzureQueueSender) -> Optional[
-    Arkivuttrekk_DBO]:
+async def request_download(arkivuttrekk_id: int, db: Session,
+                           queue_sender: AzureQueueSender) -> Optional[Arkivuttrekk_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)
     if not sas_token:
@@ -60,9 +60,11 @@ async def request_download(arkivuttrekk_id: int, db: Session, queue_sender: Azur
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
-    request_download = await _request_download(sas_token, arkivkopi, queue_sender)
-    if not request_download:
-        return None
+    archive_download = await _request_download(sas_token, arkivkopi.id, queue_sender)
+    if not archive_download:
+        _update_arkivkopi_status(
+            ArkivkopiStatusResponse(arkivkopi_id=arkivkopi.id, status=ArkivkopiStatus.FEILET_UNDER_OVERFORING), db)
+        raise ArkivkopiFailedDuringTransmission(arkivkopi.id)
 
     return arkivkopi
 
@@ -73,11 +75,16 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 
-async def _request_download(sas_token: SASResponse, arkivkopi: Arkivkopi_DBO,
-                            queue_sender: AzureQueueSender):  # TODO, arkivkopi_id her?
-    arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi.id, sas_token)
+async def _request_download(sas_token: SASResponse, arkivkopi_id: int, queue_sender: AzureQueueSender):
+    arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi_id, sas_token)
 
     return await queue_sender.send_message(arkivkopi_request.as_json_str())
+
+
+def _update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
+    result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
+    if not result:
+        raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
 
 
 async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> ArkivkopiStatus:
@@ -102,8 +109,3 @@ def run_queue_receiver(azure_queue: AzureQueueReceiver, db: Session):
                     _update_arkivkopi_status(arkivkopi_status_response, db)
     logging.info(f"Closing receiver {azure_queue.queue_name}")
 
-
-def _update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
-    result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
-    if not result:
-        raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
