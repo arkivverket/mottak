@@ -44,9 +44,9 @@ class ArkivkopiRequest:
     @staticmethod
     def from_id_and_token(arkivkopi_id: int, sas_token: SASResponse):
         return ArkivkopiRequest(arkivkopi_id=arkivkopi_id,
-                                storage_account=sas_token["storage_account"],
-                                container=sas_token["container"],
-                                sas_token=sas_token["sas_token"])
+                                storage_account=sas_token.storage_account,
+                                container=sas_token.container,
+                                sas_token=sas_token.sas_token)
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)

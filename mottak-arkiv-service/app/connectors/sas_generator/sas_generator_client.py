@@ -28,4 +28,4 @@ class SASGeneratorClient():
                 logging.error(f"Det skjedde en feil under genereringen av sas_token for container med id={container}")
                 return False
 
-            return resp.json()
+            return SASResponse.from_json(resp.json())
