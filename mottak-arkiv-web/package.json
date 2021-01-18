@@ -15,10 +15,15 @@
 		"uuid": "^8.3.2"
 	},
 	"scripts": {
-		"start": "chmod +x ./env.sh && ./env.sh && cp env-config.js ./public/ && react-scripts start",
+		"prestart": "yarn generate-env",
+		"start": "react-scripts start",
+		"prebuild": "yarn generate-env",
 		"build": "react-scripts build",
 		"test": "react-scripts test --env=jest-environment-jsdom-sixteen",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"lint": "yarn lint:eslint",
+		"lint:eslint": "eslint 'src/**/*.{ts,tsx}'  --cache --report-unused-disable-directives",
+		"generate-env": "./env.sh && mv env-config.js public"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
