@@ -3,11 +3,13 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender
 from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound
+from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session
@@ -62,7 +64,8 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
 @router.post('/{id}/bestill_nedlasting',
              status_code=status.HTTP_200_OK,
              summary='Bestiller en nedlastning fra arkiv downloader')
-async def request_download(id: int, db: Session = Depends(get_db_session), queue_sender: AzureQueueSender = Depends(get_queue_sender)):
+async def request_download(id: int, db: Session = Depends(get_db_session),
+                           queue_sender: AzureQueueSender = Depends(get_request_sender)):
     try:
         result = await arkivuttrekk_service.request_download(id, db, queue_sender)
     except ArkivuttrekkNotFound as err:
@@ -77,11 +80,10 @@ async def request_download(id: int, db: Session = Depends(get_db_session), queue
 
 @router.get('/{id}/bestill_nedlasting/status',
             status_code=status.HTTP_200_OK,
+            response_model=Arkivkopi,
             summary='Hent status for nedlasting av arkiv basert')
 async def router_get_download_status(id: int, db: Session = Depends(get_db_session)):
     try:
-        result = await arkivuttrekk_service.get_arkivkopi_status(id, db)
+        return await arkivuttrekk_service.get_arkivkopi_status(id, db)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
-
-    return {"status": result}
