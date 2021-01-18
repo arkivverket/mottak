@@ -45,7 +45,7 @@ jobs:
 
       - name: Run ESlint
         run: |
-          yarn eslint .
+          yarn lint
 
       - name: Test with yarn
         run: |
