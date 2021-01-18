@@ -10,7 +10,7 @@ describe('<Layout />', () => {
 		documentBody = render(
 			<BrowserRouter>
 				<Layout />
-			</BrowserRouter>
+			</BrowserRouter>,
 		)
 	})
 	it('matches snapshot', () => {

@@ -11,7 +11,7 @@ import useRequest from '../../hooks/useRequest'
 /**
  * Step component for providing ui to send invitation.
  */
-const SendInvitation: React.FC = ():JSX.Element => {
+const SendInvitation: React.FC = (): JSX.Element => {
 	const { handleNext, handleCancel } = useContext(StepperContext)
 	const { arkivUttrekk } = useContext(WorkflowContext)
 	const { setAlertContent } = useContext(AlertContext)
@@ -19,7 +19,7 @@ const SendInvitation: React.FC = ():JSX.Element => {
 
 	const { data, loading, error, performRequest } = useRequest<Invitation>()
 
-	const handleSubmit = ( event: React.FormEvent) => {
+	const handleSubmit = (event: React.FormEvent) => {
 		if (event) {
 			event.preventDefault()
 		}
@@ -33,13 +33,22 @@ const SendInvitation: React.FC = ():JSX.Element => {
 
 	useEffect(() => {
 		if (data) {
-			setAlertContent && setAlertContent({ msg: `Invitasjon er sendt til ${arkivUttrekk?.avgiver_epost}`, type: 'info' })
+			setAlertContent &&
+				setAlertContent({
+					msg: `Invitasjon er sendt til ${arkivUttrekk?.avgiver_epost}`,
+					type: 'info',
+				})
 			handleNext && handleNext()
 		}
 	}, [data])
 
 	useEffect(() => {
-		setAlertContent && error && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under sending av epost.', type: 'error' })
+		setAlertContent &&
+			error &&
+			setAlertContent({
+				msg: error?.response?.data?.detail || 'Det skjedde en feil under sending av epost.',
+				type: 'error',
+			})
 	}, [error])
 
 	return (
@@ -47,32 +56,20 @@ const SendInvitation: React.FC = ():JSX.Element => {
 			<p style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
 				{`Send opplastings-invitasjon for arkivet ${arkivUttrekk?.tittel} til ${arkivUttrekk?.avgiver_epost}.`}
 			</p>
-			<Grid
-				container
-				item
-				alignItems='center'
-				justify='center'
-				spacing={2}
-				style={{ margin: '2rem auto' }}
-			>
+			<Grid container item alignItems="center" justify="center" spacing={2} style={{ margin: '2rem auto' }}>
 				<Grid item xs={12} sm={6}>
 					<Button
-						variant='outlined'
-						type='button'
-						color='primary'
+						variant="outlined"
+						type="button"
+						color="primary"
 						className={sharedClasses.fullWidth}
 						onClick={handleCancel}
 					>
-							Avbryt
+						Avbryt
 					</Button>
 				</Grid>
 				<Grid item xs={12} sm={6}>
-					<Button
-						variant='outlined'
-						type='submit'
-						className={sharedClasses.fullWidth}
-						disabled={loading}
-					>
+					<Button variant="outlined" type="submit" className={sharedClasses.fullWidth} disabled={loading}>
 						{loading ? <CircularProgress size={22} /> : 'Send Invitasjon'}
 					</Button>
 				</Grid>

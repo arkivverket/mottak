@@ -3,21 +3,21 @@ import { useReducer, useRef } from 'react'
 
 import axiosAPI from '../request'
 
-type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR', payload: string };
+type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string }
 
 type Method = 'DELETE' | 'PATCH' | 'POST' | 'GET'
 
 interface State<T> {
-	data: T | null;
-	error: any;
-	loading: boolean;
+	data: T | null
+	error: any
+	loading: boolean
 }
 
 type RequestType = {
-	url: any,
-	method?: Method,
-	headers?: AxiosRequestConfig['headers'],
-	data?: AxiosRequestConfig['data'],
+	url: any
+	method?: Method
+	headers?: AxiosRequestConfig['headers']
+	data?: AxiosRequestConfig['data']
 	params?: AxiosRequestConfig['params']
 }
 
@@ -57,28 +57,24 @@ const useRequest = <T>() => {
 	})
 
 	/**
-	* Custom hook to get data from endpoint in the form of a specified REST-request
-	*
-	* @param {String} url - Endpoint url.
-	* @param {String} method - HTTP Method, defaults to GET.
-	* @param {AxiosRequestConfig['headers']} headers - Custom headers to be sent.
-	* @param {AxiosRequestConfig['data']} data - The data to be sent as the request body.
- 	* @param {AxiosRequestConfig['params']} params - The URL parameters to be sent with the request.
-	*/
-	const performRequest = async({
-		url,
-		method = 'GET',
-		headers = null,
-		data = null,
-		params = null }: RequestType ) => {
+	 * Custom hook to get data from endpoint in the form of a specified REST-request
+	 *
+	 * @param {String} url - Endpoint url.
+	 * @param {String} method - HTTP Method, defaults to GET.
+	 * @param {AxiosRequestConfig['headers']} headers - Custom headers to be sent.
+	 * @param {AxiosRequestConfig['data']} data - The data to be sent as the request body.
+	 * @param {AxiosRequestConfig['params']} params - The URL parameters to be sent with the request.
+	 */
+	const performRequest = async ({ url, method = 'GET', headers = null, data = null, params = null }: RequestType) => {
 		const source = axios.CancelToken.source()
 
 		let settings: {
-			method: Method,
-			headers?: AxiosRequestConfig['headers'],
-			data?: AxiosRequestConfig['data'],
-			params?: AxiosRequestConfig['params'],
-			cancelToken?: AxiosRequestConfig['cancelToken']} = { method }
+			method: Method
+			headers?: AxiosRequestConfig['headers']
+			data?: AxiosRequestConfig['data']
+			params?: AxiosRequestConfig['params']
+			cancelToken?: AxiosRequestConfig['cancelToken']
+		} = { method }
 
 		dispatch({ type: 'PENDING' })
 
@@ -97,7 +93,7 @@ const useRequest = <T>() => {
 				settings = {
 					...settings,
 					params,
-					cancelToken: source.token
+					cancelToken: source.token,
 				}
 			}
 		}

@@ -11,7 +11,7 @@ import { AlertContent } from '../types/sharedTypes'
 import Routes, { RouteType } from './routes/Routes'
 
 type StyleProps = {
-    drawerWidth: number | undefined
+	drawerWidth: number | undefined
 }
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
@@ -23,43 +23,44 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
 	content: {
 		flexGrow: 1,
 	},
-	contentShift: props => ({
+	contentShift: (props) => ({
 		transition: theme.transitions.create('margin', {
-		  easing: theme.transitions.easing.sharp,
-		  duration: theme.transitions.duration.leavingScreen,
+			easing: theme.transitions.easing.sharp,
+			duration: theme.transitions.duration.leavingScreen,
 		}),
 		marginLeft: props.drawerWidth && -props.drawerWidth,
 	}),
 	contentPush: {
 		transition: theme.transitions.create('margin', {
-		  easing: theme.transitions.easing.easeOut,
-		  duration: theme.transitions.duration.enteringScreen,
+			easing: theme.transitions.easing.easeOut,
+			duration: theme.transitions.duration.enteringScreen,
 		}),
 		marginLeft: 0,
 	},
 }))
 
-export type ContextType = ({
-	setAlertContent: React.Dispatch<React.SetStateAction<AlertContent>>,
-})
+export type ContextType = {
+	setAlertContent: React.Dispatch<React.SetStateAction<AlertContent>>
+}
 
 export const AlertContext = React.createContext<Partial<ContextType>>({})
 
 /**
  * Hold workarea routing and app alert state
  */
-const WorkArea: React.FC = ():JSX.Element => {
-	const [alertContent, setAlertContent] = useState<AlertContent>({ msg: '', type: '' })
+const WorkArea: React.FC = (): JSX.Element => {
+	const [alertContent, setAlertContent] = useState<AlertContent>({
+		msg: '',
+		type: '',
+	})
 	const { isOpen, drawerWidth } = useContext(LayoutContext)
 	const classes = useStyles({ drawerWidth })
 
 	return (
 		<AlertContext.Provider value={{ setAlertContent }}>
-			<main
-				className={clsx(classes.content, isOpen ? classes.contentPush : classes.contentShift)}
-			>
+			<main className={clsx(classes.content, isOpen ? classes.contentPush : classes.contentShift)}>
 				<div className={classes.appBarSpacer} />
-				<Container maxWidth='lg' className={classes.container}>
+				<Container maxWidth="lg" className={classes.container}>
 					<Paper elevation={2} style={{ padding: '2rem' }}>
 						<Switch>
 							{Routes.map((route: RouteType) => (

@@ -1,28 +1,19 @@
 import React, { useState } from 'react'
-import {
-	Box,
-	Collapse,
-	IconButton,
-	Icon,
-	List,
-	ListItem,
-	TableCell,
-	TableRow,
-} from '@material-ui/core'
+import { Box, Collapse, IconButton, Icon, List, ListItem, TableCell, TableRow } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { ArkivUttrekk } from '../../types/sharedTypes'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		'&:hover': {
 			color: theme.palette.primary.main,
 			backgroundColor: theme.palette.secondary.light,
-		}
+		},
 	},
 	gridMargin: {
-		marginBottom: theme.spacing(3)
+		marginBottom: theme.spacing(3),
 	},
 	label: {
 		color: theme.palette.primary.main,
@@ -33,29 +24,25 @@ const useStyles = makeStyles(theme => ({
 /**
  * Display single arkivuttrekk as a toggle-row.
  */
-const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrekk }):JSX.Element => {
+const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrekk }): JSX.Element => {
 	const [isOpen, setIsOpen] = useState(false)
 	const classes = useStyles()
 
 	const toggle = () => {
-		setIsOpen(prevState => !prevState)
+		setIsOpen((prevState) => !prevState)
 	}
 
 	return (
 		<>
 			<TableRow key={arkivUttrekk.id} className={classes.root}>
-				<TableCell component='th' scope='row'>
-					<Link style={{ color: '#034c6b' }} to={`/arkivuttrekk/${arkivUttrekk.id}`}>{arkivUttrekk.tittel}</Link>
+				<TableCell component="th" scope="row">
+					<Link style={{ color: '#034c6b' }} to={`/arkivuttrekk/${arkivUttrekk.id}`}>
+						{arkivUttrekk.tittel}
+					</Link>
 				</TableCell>
-				<TableCell>
-					{arkivUttrekk.type}
-				</TableCell>
-				<TableCell>
-					{arkivUttrekk.avgiver_navn}
-				</TableCell>
-				<TableCell>
-					{arkivUttrekk.status}
-				</TableCell>
+				<TableCell>{arkivUttrekk.type}</TableCell>
+				<TableCell>{arkivUttrekk.avgiver_navn}</TableCell>
+				<TableCell>{arkivUttrekk.status}</TableCell>
 				<TableCell>
 					<IconButton aria-label="expand row" size="small" onClick={toggle}>
 						<Icon>{isOpen ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}</Icon>
@@ -66,7 +53,7 @@ const ArkivuttrekkRow: React.FC<{ arkivUttrekk: ArkivUttrekk }> = ({ arkivUttrek
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 					<Collapse in={isOpen} timeout="auto" unmountOnExit>
 						<Box>
-							<List component='div'>
+							<List component="div">
 								<ListItem>
 									<span className={classes.label}>Koordinators epost: </span>
 									<span>{arkivUttrekk?.koordinator_epost}</span>

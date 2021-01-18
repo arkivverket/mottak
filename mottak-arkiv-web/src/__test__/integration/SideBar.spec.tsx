@@ -17,7 +17,7 @@ describe('<SideBar />', () => {
 				<LayoutContext.Provider value={value}>
 					<SideBar />
 				</LayoutContext.Provider>
-			</MemoryRouter>
+			</MemoryRouter>,
 		)
 
 		Routes.map((route: RouteType) => {

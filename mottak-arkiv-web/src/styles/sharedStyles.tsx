@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 
-export const useSharedStyles = makeStyles(theme => ({
+export const useSharedStyles = makeStyles((theme) => ({
 	roundedBox: {
 		padding: theme.spacing(3),
 		borderRadius: theme.spacing(1),
@@ -18,10 +18,10 @@ export const useSharedStyles = makeStyles(theme => ({
 		root: {
 			'&:hover': {
 				backgroundColor: theme.palette.secondary.main,
-			}
-		}
+			},
+		},
 	},
 	fullWidth: {
 		width: '100%',
-	}
+	},
 }))
