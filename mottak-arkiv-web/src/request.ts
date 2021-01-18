@@ -7,5 +7,5 @@ axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
 export default axios.create({
 	baseURL: window?._env_?.API_BASEURL,
 	timeout: 0,
-	credentials: 'same-origin',
+	withCredentials: true,
 })
