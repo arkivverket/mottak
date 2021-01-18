@@ -1,0 +1,51 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": [
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:react-hooks/recommended"
+	],
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"rules": {
+		"indent": [
+			"error",
+			"tab",
+			{
+				"SwitchCase": 1,
+				"MemberExpression": "off"
+			}
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"never"
+		],
+		"no-trailing-spaces": [
+			"error"
+		],
+		"react-hooks/rules-of-hooks": "error",
+		"react/prop-types": "off",
+		"react-hooks/exhaustive-deps": "off",
+		"@typescript-eslint/ban-ts-comment": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off"
+	},
+	"settings": {
+		"react": {
+			"version": "detect"
+		}
+	}
+}
