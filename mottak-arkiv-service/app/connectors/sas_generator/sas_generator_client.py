@@ -10,9 +10,9 @@ class SASGeneratorClient():
     def __init__(self, sas_generator_host: str):
         self.url = f"http://{sas_generator_host}/generate_sas"
 
-    async def request_sas(self, container: UUID, duration: int = 24) -> SASResponse:
+    async def request_sas(self, container: UUID, duration_hours: int = 24) -> SASResponse:
         async with AsyncClient() as client:
-            request = SASTokenRequest(container, duration)
+            request = SASTokenRequest(container, duration_hours)
 
             try:
                 resp = await client.post(self.url, data=request.as_json())

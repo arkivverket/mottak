@@ -7,12 +7,12 @@ from sqlalchemy.orm import Session
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender, AzureQueueReceiver
 from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
-from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.sas_generator.models import SASResponse
-from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO
-from app.database.repositories import arkivuttrekk_repository, invitasjon_repository, arkivkopi_repository
+from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
+from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
+from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
+from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequest, ArkivkopiStatus, ArkivkopiStatusResponse
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatus, ArkivkopiStatusResponse
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiNotFound
 
@@ -51,17 +51,20 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session, queue_sender: AzureQueueSender):
+async def request_download(arkivuttrekk_id: int, db: Session, queue_sender: AzureQueueSender) -> Optional[
+    Arkivuttrekk_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)
     if not sas_token:
-        return {"status": 500}
+        return None
 
-    request_download = await _request_download(sas_token, arkivuttrekk, queue_sender)
+    arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
+
+    request_download = await _request_download(sas_token, arkivkopi, queue_sender)
     if not request_download:
-        return {"status": 500}
+        return None
 
-    return {"status": 200}
+    return arkivkopi
 
 
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
@@ -70,11 +73,9 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 
-async def _request_download(sas_token: SASResponse, arkivuttrekk: Arkivuttrekk_DBO, queue_sender: AzureQueueSender):
-    arkivkopi_request = ArkivkopiRequest(arkivkopi_id=arkivuttrekk.id,
-                                         storage_account=sas_token["storage_account"],
-                                         container=sas_token["container"],
-                                         sas_token=sas_token["sas_token"])
+async def _request_download(sas_token: SASResponse, arkivkopi: Arkivkopi_DBO,
+                            queue_sender: AzureQueueSender):  # TODO, arkivkopi_id her?
+    arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi.id, sas_token)
 
     return await queue_sender.send_message(arkivkopi_request.as_json_str())
 
