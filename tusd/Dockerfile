@@ -11,27 +11,37 @@ RUN version="$(git tag -l --points-at HEAD)" && \
         -o "/go/bin/tusd" ./cmd/tusd/main.go && \
         rm -r /go/src/*
 
-FROM debian:buster-slim
+
+FROM python:3.8-slim
+
+WORKDIR /srv/tusd-data
 
 COPY --from=builder /go/bin/tusd /usr/local/bin/tusd
 
+# Install poetry and required dependencies
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget ca-certificates python3 python3-pip python3-psycopg2 \
-    && apt-get clean
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+        libpq-dev \
+		build-essential \
+        curl \
+	\
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python \
+    && ln -s /opt/poetry/bin/poetry /usr/local/bin/
 
 RUN mkdir -p /srv/hooks /srv/tusd-data \
     && useradd --system --user-group tusd \
     && chown tusd:tusd /srv/tusd-data
 
+COPY poetry.lock /srv
+COPY pyproject.toml /srv
+RUN poetry config virtualenvs.create false \
+    && cd /srv \
+    && poetry install --no-root --no-dev
 
-
-
-# RUN pip3 install --upgrade pip
-RUN pip3 install azure-servicebus==0.50.3
-WORKDIR /srv/tusd-data
 COPY hooks  /srv/hooks
 COPY start.sh /srv/start.sh
-EXPOSE 1080
-USER tusd
 
+USER tusd
+EXPOSE 1080
 CMD ["/srv/start.sh"]
