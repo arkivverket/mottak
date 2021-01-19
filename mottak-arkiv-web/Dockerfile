@@ -4,6 +4,7 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY yarn.lock ./
+RUN apk add --no-cache bash
 RUN yarn install --frozen-lockfile
 COPY . ./
 RUN yarn build
