@@ -5,7 +5,7 @@ import { Grid, Icon } from '@material-ui/core'
 
 import { AlertContext } from './WorkArea'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	container: {
 		backgroundColor: '#c9e6ee',
 		marginTop: theme.spacing(3),
@@ -22,20 +22,20 @@ const useStyles = makeStyles(theme => ({
 		outline: `2px dashed ${theme.palette.secondary.dark}`,
 		transition: theme.transitions.create('all', {
 			easing: theme.transitions.easing.sharp,
-		  }),
+		}),
 	},
 	active: {
 		backgroundColor: '#dceff4',
 		outlineOffset: '-5px',
 		transition: theme.transitions.create('all', {
 			easing: theme.transitions.easing.easeOut,
-		})
+		}),
 	},
 }))
 
 type Props = {
-	selectedFile: any,
-	setSelectedFile: React.Dispatch<React.SetStateAction<Blob | string>>,
+	selectedFile: any
+	setSelectedFile: React.Dispatch<React.SetStateAction<Blob | string>>
 }
 
 const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
@@ -94,23 +94,22 @@ const DragDropFile: React.FC<Props> = ({ selectedFile, setSelectedFile }) => {
 				onDragEnter={handleDragEnter}
 				onClick={fileInputClicked}
 			>
-				<Grid
-					container
-					direction='column'
-					alignItems='center'
-					justify='center'
-				>
-					<Icon color='primary' fontSize='large'>{selectedFile ? 'description' : 'cloud_upload'}</Icon>
+				<Grid container direction="column" alignItems="center" justify="center">
+					<Icon color="primary" fontSize="large">
+						{selectedFile ? 'description' : 'cloud_upload'}
+					</Icon>
 					{selectedFile && <p>{selectedFile?.name}</p>}
-					<p style={{ padding: `${!selectedFile ? '0 2rem' : '' }` }}>{`Klikk for å velge ${selectedFile && 'en ny '}fil eller dra filen hit.`}</p>
+					<p style={{ padding: `${!selectedFile ? '0 2rem' : ''}` }}>{`Klikk for å velge ${
+						selectedFile && 'en ny '
+					}fil eller dra filen hit.`}</p>
 				</Grid>
 				<input
-			   		ref={fileInputRef}
+					ref={fileInputRef}
 					style={{ display: 'none' }}
-					id='button-file'
-					type='file'
+					id="button-file"
+					type="file"
 					onChange={handleFileChosen}
-					data-testid='fileUi'
+					data-testid="fileUi"
 				/>
 			</div>
 		</div>

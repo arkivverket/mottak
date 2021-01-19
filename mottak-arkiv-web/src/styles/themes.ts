@@ -31,6 +31,6 @@ export const defaultTheme = createMuiTheme({
 			light: '#b4080d',
 			main: '#9c070b',
 			dark: '#8e1d08',
-		}
-	  },
+		},
+	},
 })

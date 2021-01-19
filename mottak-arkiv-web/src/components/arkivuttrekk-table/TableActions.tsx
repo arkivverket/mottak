@@ -1,11 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-	Icon,
-	IconButton,
-} from '@material-ui/core'
+import { Icon, IconButton } from '@material-ui/core'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	root: {
 		flexShrink: 0,
 		marginLeft: theme.spacing(2.5),
@@ -13,11 +10,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface TablePaginationActionsProps {
-    count: number;
-    page: number;
-    rowsPerPage: number;
-    onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
-  }
+	count: number
+	page: number
+	rowsPerPage: number
+	onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void
+}
 
 /**
  * Display Table pagination and handle paginationevents.
@@ -44,31 +41,23 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
 
 	return (
 		<div className={classes.root}>
-			<IconButton
-				onClick={handleFirstPageButtonClick}
-				disabled={page === 0}
-				aria-label='første side'
-			>
+			<IconButton onClick={handleFirstPageButtonClick} disabled={page === 0} aria-label="første side">
 				<Icon>first_page</Icon>
 			</IconButton>
-			<IconButton
-				onClick={handleBackButtonClick}
-				disabled={page === 0}
-				aria-label='forrige side'
-			>
+			<IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="forrige side">
 				<Icon>keyboard_arrow_left</Icon>
 			</IconButton>
 			<IconButton
 				onClick={handleNextButtonClick}
 				//disabled= TODO: fill in once we get total count from backend
-				aria-label='neste side'
+				aria-label="neste side"
 			>
 				<Icon>keyboard_arrow_right</Icon>
 			</IconButton>
 			<IconButton
 				onClick={handleLastPageButtonClick}
 				//disabled= TODO: fill in once we get total count from backend
-				aria-label='siste side'
+				aria-label="siste side"
 			>
 				<Icon>last_page</Icon>
 			</IconButton>

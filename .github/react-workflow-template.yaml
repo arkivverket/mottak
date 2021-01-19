@@ -28,13 +28,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Installing app dependencies
-        run: |
-          yarn install
+      - name: Cache node_modules
+        id: cache-node_modules
+        uses: actions/cache@v2
+        with:
+          path: '!COMPONENT_NAME!/node_modules'
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+            ${{ runner.os }}-
 
-      - name: Run ESlint
+      - name: Installing app dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: |
-          yarn eslint .
+          yarn install --frozen-lockfile
+
+      - name: Run linting
+        run: |
+          yarn lint
 
       - name: Test with yarn
         run: |

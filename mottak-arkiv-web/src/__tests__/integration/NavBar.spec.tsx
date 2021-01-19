@@ -13,7 +13,7 @@ describe('<NavBar />', () => {
 		render(
 			<LayoutContext.Provider value={value}>
 				<NavBar />
-			</LayoutContext.Provider>
+			</LayoutContext.Provider>,
 		)
 		expect(screen.getByTestId('toggle-btn')).toBeInTheDocument()
 
@@ -32,7 +32,7 @@ describe('<NavBar />', () => {
 		render(
 			<LayoutContext.Provider value={value}>
 				<NavBar />
-			</LayoutContext.Provider>
+			</LayoutContext.Provider>,
 		)
 
 		expect(screen.getByText('close')).toBeInTheDocument()

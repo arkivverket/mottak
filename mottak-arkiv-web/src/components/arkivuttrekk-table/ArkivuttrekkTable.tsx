@@ -17,7 +17,7 @@ import useRequest from '../../hooks/useRequest'
 import { ArkivUttrekk } from '../../types/sharedTypes'
 import { AlertContext } from '../WorkArea'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	title: {
 		color: theme.palette.primary.main,
 	},
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 /**
  * Get and display arkivuttrekk as table data.
  */
-const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = true }):JSX.Element => {
+const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = true }): JSX.Element => {
 	const columns = [
 		{
 			id: 'tittel',
@@ -60,23 +60,24 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 	//@ts-ignore
 	const handleChangePage = (e, newPage) => {
 		setPage(newPage)
-		handleTableChange((newPage * rows), rows)
+		handleTableChange(newPage * rows, rows)
 	}
 
 	//@ts-ignore
-	const handleChangeRows = e => {
+	const handleChangeRows = (e) => {
 		const tmpRows = parseInt(e.target.value, 10)
 		setRows(tmpRows)
 		setPage(0)
 		handleTableChange(0, tmpRows)
 	}
 
-
 	useEffect(() => {
-		error && setAlertContent && setAlertContent({
-			msg: error?.response?.data?.detail || 'Det skjedde en feil under lasting av arkivuttrekk.',
-			type: 'error'
-		})
+		error &&
+			setAlertContent &&
+			setAlertContent({
+				msg: error?.response?.data?.detail || 'Det skjedde en feil under lasting av arkivuttrekk.',
+				type: 'error',
+			})
 	}, [error])
 
 	useEffect(() => {
@@ -94,53 +95,48 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 		})
 	}
 
-	return (
-		loading ?
-			<CircularProgress /> :
-			(
-				<Table>
-					<TableHead>
-						<TableRow>
-							{
-								columns.map(col => (
-									<TableCell key={col.id} className={classes.title}>
-										{col.label}
-									</TableCell>
-								))
-							}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{data?.length ?
-							data.map((arkivUttrekk: ArkivUttrekk) => (
-								<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
-							)) :
-							<TableRow>
-								<TableCell>
-								Ingen arkivuttrekk
-								</TableCell>
-							</TableRow>
-						}
-					</TableBody>
-					{pagination &&
-						<TableFooter>
-							<TableRow>
-								<TablePagination
-									rowsPerPageOptions={[5, 10, 20, 50]}
-									count={-1} //TODO: update once we get total count from backend
-									rowsPerPage={rows}
-									labelRowsPerPage={'Velg antall per side'}
-									labelDisplayedRows={({ from, to }) => (`${from}-${to} av totalt`)} //TODO: update once we get total count from backend
-									page={page}
-									onChangePage={handleChangePage}
-									onChangeRowsPerPage={handleChangeRows}
-									ActionsComponent={TablePaginationActions}
-								/>
-							</TableRow>
-						</TableFooter>
-					}
-				</Table>
-			)
+	return loading ? (
+		<CircularProgress />
+	) : (
+		<Table>
+			<TableHead>
+				<TableRow>
+					{columns.map((col) => (
+						<TableCell key={col.id} className={classes.title}>
+							{col.label}
+						</TableCell>
+					))}
+				</TableRow>
+			</TableHead>
+			<TableBody>
+				{data?.length ? (
+					data.map((arkivUttrekk: ArkivUttrekk) => (
+						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
+					))
+				) : (
+					<TableRow>
+						<TableCell>Ingen arkivuttrekk</TableCell>
+					</TableRow>
+				)}
+			</TableBody>
+			{pagination && (
+				<TableFooter>
+					<TableRow>
+						<TablePagination
+							rowsPerPageOptions={[5, 10, 20, 50]}
+							count={-1} //TODO: update once we get total count from backend
+							rowsPerPage={rows}
+							labelRowsPerPage={'Velg antall per side'}
+							labelDisplayedRows={({ from, to }) => `${from}-${to} av totalt`} //TODO: update once we get total count from backend
+							page={page}
+							onChangePage={handleChangePage}
+							onChangeRowsPerPage={handleChangeRows}
+							ActionsComponent={TablePaginationActions}
+						/>
+					</TableRow>
+				</TableFooter>
+			)}
+		</Table>
 	)
 }
 

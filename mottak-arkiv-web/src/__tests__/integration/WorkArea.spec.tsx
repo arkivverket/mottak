@@ -14,7 +14,7 @@ describe('<WorkArea />', () => {
 				<Route>
 					<Overview />
 				</Route>
-			</MemoryRouter>
+			</MemoryRouter>,
 		)
 
 		expect(getByText(/nytt arkivuttrekk/i)).toBeInTheDocument()
@@ -24,10 +24,10 @@ describe('<WorkArea />', () => {
 			<MemoryRouter initialEntries={['/upload']}>
 				<Route>
 					<InvitationWorkflowContainer>
-						<WorkflowStepper/>
+						<WorkflowStepper />
 					</InvitationWorkflowContainer>
 				</Route>
-			</MemoryRouter>
+			</MemoryRouter>,
 		)
 
 		expect(getByTestId('stepper')).toBeInTheDocument()
@@ -38,7 +38,7 @@ describe('<WorkArea />', () => {
 				<Route>
 					<WorkArea />
 				</Route>
-			</MemoryRouter>
+			</MemoryRouter>,
 		)
 
 		expect(getByText(/404/i)).toBeInTheDocument()

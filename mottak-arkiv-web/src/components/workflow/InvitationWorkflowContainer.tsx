@@ -6,17 +6,17 @@ import FileUpload from './FileUpload'
 import QualityCheck from './QualityCheck'
 import SendInvitation from './SendInvitation'
 
-export type ContextType = ({
-	metadataId: number | null,
-	setMetadataId: React.Dispatch<React.SetStateAction<number | null>>,
-	arkivUttrekk: ArkivUttrekk | null,
-	setArkivUttrekk: React.Dispatch<React.SetStateAction<ArkivUttrekk | null>>,
+export type ContextType = {
+	metadataId: number | null
+	setMetadataId: React.Dispatch<React.SetStateAction<number | null>>
+	arkivUttrekk: ArkivUttrekk | null
+	setArkivUttrekk: React.Dispatch<React.SetStateAction<ArkivUttrekk | null>>
 	steps: {
-		number: number,
-		label: string,
-		component: JSX.Element,
-	}[],
-})
+		number: number
+		label: string
+		component: JSX.Element
+	}[]
+}
 
 export const WorkflowContext = React.createContext<Partial<ContextType>>({})
 
@@ -31,22 +31,30 @@ const InvitationWorkflowContainer: React.FC = (): JSX.Element => {
 		{
 			number: 0,
 			label: 'Last opp fil',
-			component: <FileUpload />
+			component: <FileUpload />,
 		},
 		{
 			number: 1,
 			label: 'Godkjenn verdier',
-			component: <QualityCheck />
+			component: <QualityCheck />,
 		},
 		{
 			number: 2,
 			label: 'Send invitasjon',
-			component: <SendInvitation />
+			component: <SendInvitation />,
 		},
 	]
 
 	return (
-		<WorkflowContext.Provider value={{ metadataId, setMetadataId, arkivUttrekk, setArkivUttrekk, steps }}>
+		<WorkflowContext.Provider
+			value={{
+				metadataId,
+				setMetadataId,
+				arkivUttrekk,
+				setArkivUttrekk,
+				steps,
+			}}
+		>
 			<WorkflowStepper />
 		</WorkflowContext.Provider>
 	)
