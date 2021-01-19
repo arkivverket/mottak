@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender
+from app.connectors.arkiv_downloader.queues.ArchiveDownloadRequestSender import ArchiveDownloadRequestSender
 from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
@@ -12,7 +12,7 @@ from app.exceptions import ArkivuttrekkNotFound, ArkivkopiFailedDuringTransmissi
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
-from app.routers.router_dependencies import get_db_session
+from app.routers.router_dependencies import get_db_session, get_request_sender
 
 router = APIRouter()
 
@@ -65,7 +65,7 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
              status_code=status.HTTP_200_OK,
              summary='Bestiller en nedlastning fra arkiv downloader')
 async def request_download(id: int, db: Session = Depends(get_db_session),
-                           queue_sender: AzureQueueSender = Depends(get_request_sender)):
+                           queue_sender: ArchiveDownloadRequestSender = Depends(get_request_sender)):
     try:
         result = await arkivuttrekk_service.request_download(id, db, queue_sender)
     except ArkivuttrekkNotFound as err:

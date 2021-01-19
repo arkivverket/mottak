@@ -20,7 +20,7 @@ class AzureQueueReceiver(AzureServicebus):
         self.receiver = self.queue_client.get_receiver()
 
     @staticmethod
-    def message_to_str(_message: Message) -> str:
+    async def message_to_str(_message: Message) -> str:
         """ Method that converts a message to a string and completes the message"""
         message_str = str(_message)
         await _message.complete()
@@ -30,14 +30,13 @@ class AzureQueueReceiver(AzureServicebus):
 class AzureQueueSender(AzureServicebus):
     def __init__(self, connection_string: str, queue_name: str):
         super().__init__(connection_string, queue_name)
-        # self.sender = self.queue_client.get_sender()
+        self.sender = self.queue_client.get_sender()
 
     async def send_message(self, _message: str) -> bool:
         message = Message(_message)
 
         try:
-            await self.queue_client.send(message)
-            # await self.sender.send(message)
+            await self.sender.send(message)
         except MessageSendFailed:
             logging.error(f"Could not send message to the {self.queue_name} queue with the following data: {_message}")
             return False
