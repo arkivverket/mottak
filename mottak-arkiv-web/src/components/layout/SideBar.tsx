@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import { LayoutContext } from './Layout'
 
-import Routes, { RouteType } from '../routes/Routes'
+import Routes, { RouteType } from 'src/routes'
 
 type StyleProps = {
 	drawerWidth: number | undefined

@@ -8,7 +8,7 @@ import Alert from './Alert'
 import { LayoutContext } from './layout/Layout'
 import { AlertContent } from '../types/sharedTypes'
 
-import Routes, { RouteType } from './routes/Routes'
+import Routes, { RouteType } from 'src/routes'
 
 type StyleProps = {
 	drawerWidth: number | undefined
