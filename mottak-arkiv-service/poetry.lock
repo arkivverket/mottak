@@ -14,17 +14,17 @@ requests = ">=2.0.0"
 
 [[package]]
 name = "alembic"
-version = "1.4.3"
+version = "1.5.0"
 description = "A database migration tool for SQLAlchemy."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
 
 [package.dependencies]
 Mako = "*"
 python-dateutil = "*"
 python-editor = ">=0.3"
-SQLAlchemy = ">=1.1.0"
+SQLAlchemy = ">=1.3.0"
 
 [[package]]
 name = "astroid"
@@ -708,7 +708,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "49bb14b873ff93a4a66e6792a547a97f96c1823180e95f35d1cb2930d6a029c3"
+content-hash = "65a489c3a888ed538ead6ff947c347b158ccd7888f79887f074a8382b4329672"
 
 [metadata.files]
 adal = [
@@ -716,8 +716,7 @@ adal = [
     {file = "adal-1.2.5.tar.gz", hash = "sha256:8003ba03ef04170195b3eddda8a5ab43649ef2c5f0287023d515affb1ccfcfc3"},
 ]
 alembic = [
-    {file = "alembic-1.4.3-py2.py3-none-any.whl", hash = "sha256:4e02ed2aa796bd179965041afa092c55b51fb077de19d61835673cc80672c01c"},
-    {file = "alembic-1.4.3.tar.gz", hash = "sha256:5334f32314fb2a56d86b4c4dd1ae34b08c03cae4cb888bc699942104d66bc245"},
+    {file = "alembic-1.5.0.tar.gz", hash = "sha256:b7b3b43adc71447967b5f7bf55d5cc9113bb4e74840b6907d2705b34f2c0f898"},
 ]
 astroid = [
     {file = "astroid-2.4.2-py3-none-any.whl", hash = "sha256:bc58d83eb610252fd8de6363e39d4f1d0619c894b0ed24603b881c02e64c7386"},
@@ -1170,6 +1169,8 @@ uamqp = [
     {file = "uamqp-1.2.13-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:dd3e58e723fe90e241e3c99d5a2bbf018d62245377dc864ea467f1ce60e15dd3"},
     {file = "uamqp-1.2.13-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:4059a73c42b69916601e38268692321df1e48b3f584f1e9d74f493a22c47c2eb"},
     {file = "uamqp-1.2.13-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:8a072be11fcef9306fc363fe3619204594778008a4b5ba77cc83960a785c59dd"},
+    {file = "uamqp-1.2.13-cp39-cp39-win32.whl", hash = "sha256:2ec5c0657491a5167f55ac211c6810d0ee03de945817b9669670a97433f680ee"},
+    {file = "uamqp-1.2.13-cp39-cp39-win_amd64.whl", hash = "sha256:c7aa6f71ab4213eda5afebd41b866492478cbc03ec733cf4e137547adb23135c"},
     {file = "uamqp-1.2.13.tar.gz", hash = "sha256:cc35057bfc8c093867faa26a0de90cad41c47f58251b1070e298a81312cba2a8"},
 ]
 urllib3 = [
