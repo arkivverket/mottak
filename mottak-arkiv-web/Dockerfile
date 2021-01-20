@@ -4,7 +4,6 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY yarn.lock ./
-RUN apk add --no-cache bash
 RUN yarn install --frozen-lockfile
 COPY . ./
 RUN yarn build
@@ -14,13 +13,11 @@ FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
 EXPOSE 80
 WORKDIR /usr/share/nginx/html
-COPY ./env.sh .
 
-# Add bash
-RUN apk add --no-cache bash
+COPY env.sh .
 
 # Make our shell script executable
 RUN chmod +x env.sh
 
 # Start Nginx server
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]
+CMD ["/bin/sh", "-c", "/usr/share/nginx/html/env.sh && nginx -g 'daemon off;'"]
