@@ -9,3 +9,6 @@ class Arkivkopi(BaseModel):
     """
     id: int
     status: ArkivkopiStatus
+
+    class Config:
+        orm_mode = True

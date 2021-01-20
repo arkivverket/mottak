@@ -88,9 +88,9 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
         raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
 
 
-async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> ArkivkopiStatus:
+async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session):
     result = arkivkopi_repository.get_by_arkivuttrekk_id(db, arkivuttrekk_id)
     if not result:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
-    return result.status
+    return result
 
