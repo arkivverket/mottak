@@ -5,7 +5,14 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
-COPY . ./
+
+# Only copy required files
+COPY src /app/src
+COPY public /app/public
+COPY env.sh /app
+COPY tsconfig.json /app
+# For some reason "create-react-app build" requires ESlint config
+COPY .eslintrc.json /app
 RUN yarn build
 
 # production environment
