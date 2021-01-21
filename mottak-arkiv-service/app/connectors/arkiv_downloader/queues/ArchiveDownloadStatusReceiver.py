@@ -20,15 +20,25 @@ class ArchiveDownloadStatusReceiver(AzureQueueReceiver):
         self.db = db
 
     async def a_run(self):
-        """ A running loop that listens to the service bus receiver queue"""
-        keep_running = True
-        print(f"Starting receiving messages on queue {self.queue_name}")
-        while keep_running:
-            messages = await self.receiver.fetch_next(timeout=5, max_batch_size=1)
-            for message in messages:
-                logging.info('Got a message on the service bus')
-                message_str = await self.a_message_to_str(message)
-                arkivkopi_status_response = ArkivkopiStatusResponse.from_string(message_str)
-                if arkivkopi_status_response:
-                    update_arkivkopi_status(arkivkopi_status_response, self.db)
-        logging.info(f"Closing receiver {self.queue_name}")
+        """ Async function that is run from a scheduler to receive messages from the service bus receiver queue"""
+        messages = await self.receiver.fetch_next(timeout=5, max_batch_size=1)
+        for message in messages:
+            # logging.info('Got a message on the service bus')
+            print('Got a message on the service bus')
+            message_str = await self.a_message_to_str(message)
+            arkivkopi_status_response = ArkivkopiStatusResponse.from_string(message_str)
+            if arkivkopi_status_response:
+                update_arkivkopi_status(arkivkopi_status_response, self.db)
+                await self.a_message_processed(message)
+
+    def s_run(self):
+        """ Sync function that is run from a scheduler to receive messages from the service bus receiver queue"""
+        message = self.receiver.next()
+        if message:
+            # logging.info('Got a message on the service bus')
+            print('Got a message on the service bus')
+            message_str = self.s_message_to_str(message)
+            arkivkopi_status_response = ArkivkopiStatusResponse.from_string(message_str)
+            if arkivkopi_status_response:
+                update_arkivkopi_status(arkivkopi_status_response, self.db)
+

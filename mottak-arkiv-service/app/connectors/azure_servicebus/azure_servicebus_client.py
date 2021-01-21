@@ -21,16 +21,20 @@ class AzureQueueReceiver(AzureServicebus):
 
     @staticmethod
     async def a_message_to_str(_message: Message) -> str:
-        """ Method that converts a message to a string and completes the message"""
+        """ Method that converts a message to a string"""
         message_str = str(_message)
-        await _message.complete()
         return message_str
 
     @staticmethod
-    def s_message_to_st(_message: Message) -> str:
+    def s_message_to_str(_message: Message) -> str:
         message_str = str(_message)
         _message.complete()
         return message_str
+
+    @staticmethod
+    async def a_message_processed(_message: Message):
+        """ Method that removes message from queue"""
+        await _message.complete()
 
 
 class AzureQueueSender(AzureServicebus):

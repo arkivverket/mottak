@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI, status
 
-from app.connectors.arkiv_downloader.queues.ArchiveDownloadStatusReceiver import ArchiveDownloadStatusReceiver
 from app.routers import arkivuttrekk, metadatafil
-from app.routers.router_dependencies import get_db_session
 
 try:
     from dotenv import load_dotenv
@@ -30,10 +27,6 @@ async def health_check():
     return "Seems healthy"
 
 
-status_receiver = ArchiveDownloadStatusReceiver(get_db_session())
-app.scheduler = AsyncIOScheduler()
-app.scheduler.add_job(status_receiver.run, 'interval', seconds=10)
-app.scheduler.start()
 app.include_router(
     router=arkivuttrekk.router,
     prefix="/arkivuttrekk",
@@ -45,4 +38,6 @@ app.include_router(
 
 if __name__ == '__main__':
     import uvicorn
+
+    print("Starting mottak-arkiv-service")
     uvicorn.run(app, host="0.0.0.0", port=8000)
