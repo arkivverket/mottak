@@ -20,10 +20,16 @@ class AzureQueueReceiver(AzureServicebus):
         self.receiver = self.queue_client.get_receiver()
 
     @staticmethod
-    async def message_to_str(_message: Message) -> str:
+    async def a_message_to_str(_message: Message) -> str:
         """ Method that converts a message to a string and completes the message"""
         message_str = str(_message)
         await _message.complete()
+        return message_str
+
+    @staticmethod
+    def s_message_to_st(_message: Message) -> str:
+        message_str = str(_message)
+        _message.complete()
         return message_str
 
 
