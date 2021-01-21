@@ -2,7 +2,8 @@ import logging
 
 import pytest
 
-from app.domain.models.Arkivkopi import ArkivkopiRequest, ArkivkopiStatusResponse, ArkivkopiStatus
+from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse
+from app.domain.models.Arkivkopi import ArkivkopiStatus
 
 logging.disable(logging.CRITICAL)
 
