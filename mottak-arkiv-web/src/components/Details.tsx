@@ -30,7 +30,7 @@ const Details: React.FC = (): JSX.Element => {
 				msg: error?.response?.data?.detail || 'Det skjedde en feil under henting av arkivuttrekk.',
 				type: 'error',
 			})
-	}, [error])
+	}, [error, setAlertContent])
 
 	return (
 		<>
