@@ -6,7 +6,7 @@ authors = ["Mårten Elmgren <elmgren@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastapi = "^0.61.1"
+fastapi = "^0.63.0"
 uvicorn = "^0.13.3"
 python-multipart = "^0.0.5"
 alembic = "^1.5.2"
