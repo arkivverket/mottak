@@ -24,9 +24,10 @@ def get_by_arkivuttrekk_id(db: Session, arkivuttrekk_id) -> Arkivkopi_DBO:
         .first()
 
 
-
 def update_status(db: Session, id_: int, status: ArkivkopiStatus) -> Optional[Arkivkopi_DBO]:
     arkivkopi = get_by_id(db, id_)
+    if not arkivkopi:
+        return None
     arkivkopi.status = status
     db.commit()
     return arkivkopi

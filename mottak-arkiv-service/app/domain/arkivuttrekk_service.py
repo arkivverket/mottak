@@ -15,7 +15,7 @@ from app.database.repositories import arkivkopi_repository, arkivuttrekk_reposit
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiStatus
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiNotFound, ArkivkopiFailedDuringTransmission
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiFailedDuringTransmission
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session):
@@ -85,7 +85,10 @@ async def _request_download(sas_token: SASResponse, arkivkopi_id: int, queue_sen
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
     result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
     if not result:
-        raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
+        # TODO Feilhåndtering når arkivkopi ikke finnes. Raise = avbryt applikasjon
+        # raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
+        logging.info(f"Fant ikke arkivkopi med id={arkivkopi.arkivkopi_id} å updatere til status={arkivkopi.status}")
+    return result
 
 
 async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session):
