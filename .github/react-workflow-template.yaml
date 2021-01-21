@@ -50,6 +50,9 @@ jobs:
       - name: Test with yarn
         run: |
           yarn test
+      - name: Verify build docker image
+        run: |
+          docker build . -t !COMPONENT_NAME!:${{ github.sha }}
 
   build-and-push-docker-image:
 
