@@ -19,16 +19,15 @@ class ArchiveDownloadStatusReceiver(AzureQueueReceiver):
         super().__init__(connection_string=get_status_con_str(), queue_name=STATUS_RECEIVER_QUEUE_NAME)
         self.db = db
 
-    async def run(self):
+    async def a_run(self):
         """ A running loop that listens to the service bus receiver queue"""
-        # keep_running = True
-        with self.receiver as receiver:
-            print(f"Starting receiving messages on queue {receiver.queue_name}")
-            # while keep_running:
-            messages = receiver.fetch_next(timeout=5, max_batch_size=1)  # reads 1 messages then waits for 3 seconds
+        keep_running = True
+        print(f"Starting receiving messages on queue {self.queue_name}")
+        while keep_running:
+            messages = await self.receiver.fetch_next(timeout=5, max_batch_size=1)
             for message in messages:
                 logging.info('Got a message on the service bus')
-                message_str = await self.message_to_str(message)
+                message_str = await self.a_message_to_str(message)
                 arkivkopi_status_response = ArkivkopiStatusResponse.from_string(message_str)
                 if arkivkopi_status_response:
                     update_arkivkopi_status(arkivkopi_status_response, self.db)
