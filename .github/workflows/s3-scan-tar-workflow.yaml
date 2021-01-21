@@ -44,6 +44,9 @@ jobs:
       - name: Test with pytest
         run: |
           poetry run pytest
+      - name: Verify build docker image
+        run: |
+          docker build . -t arkivverket.azurecr.io/da-mottak/s3-scan-tar:${{ github.sha }}
 
   build-and-push-docker-image:
 
