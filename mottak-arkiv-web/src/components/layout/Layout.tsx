@@ -11,11 +11,11 @@ const useStyles = makeStyles(() => ({
 	},
 }))
 
-export type ContextType = ({
-	toggleDrawer: () => void,
-	isOpen: boolean,
-	drawerWidth: number,
-})
+export type ContextType = {
+	toggleDrawer: () => void
+	isOpen: boolean
+	drawerWidth: number
+}
 
 export const LayoutContext = React.createContext<Partial<ContextType>>({})
 
@@ -27,7 +27,7 @@ const Layout: React.FC = (): JSX.Element => {
 	const drawerWidth = 240
 
 	const toggleDrawer = () => {
-		setIsOpen(prevState => !prevState)
+		setIsOpen((prevState) => !prevState)
 	}
 
 	return (

@@ -1,11 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import {
-	Divider,
-	Grid,
-	List,
-	ListItem,
-	CircularProgress,
-	Typography } from '@material-ui/core'
+import { Divider, Grid, List, ListItem, CircularProgress, Typography } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
@@ -14,38 +8,46 @@ import { AlertContext } from './WorkArea'
 import { ArkivUttrekk } from '../types/sharedTypes'
 import useGetOnMount from '../hooks/useGetOnMount'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	label: {
 		color: theme.palette.primary.main,
-		fontWeight: 'bold'
+		fontWeight: 'bold',
 	},
 }))
 
-const Details: React.FC = ():JSX.Element => {
+const Details: React.FC = (): JSX.Element => {
 	const classes = useStyles()
 	const { setAlertContent } = useContext(AlertContext)
 
-	const { id } = useParams<{id: string}>()
+	const { id } = useParams<{ id: string }>()
 
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
 	useEffect(() => {
-		setAlertContent && error && setAlertContent({ msg: error?.response?.data?.detail || 'Det skjedde en feil under henting av arkivuttrekk.', type: 'error' })
+		setAlertContent &&
+			error &&
+			setAlertContent({
+				msg: error?.response?.data?.detail || 'Det skjedde en feil under henting av arkivuttrekk.',
+				type: 'error',
+			})
 	}, [error])
 
 	return (
 		<>
-			{loading ?
-				<CircularProgress /> :
+			{loading ? (
+				<CircularProgress />
+			) : (
 				<>
-					<Grid container alignItems='center' justify='space-between'>
-						<Typography variant='h6' color='primary' gutterBottom>
+					<Grid container alignItems="center" justify="space-between">
+						<Typography variant="h6" color="primary" gutterBottom>
 							{data?.tittel || 'Ingen tittel'}
 						</Typography>
-						<Link style={{ color: '#034c6b' }} to={'/'}>Til oversikten</Link>
+						<Link style={{ color: '#034c6b' }} to={'/'}>
+							Til oversikten
+						</Link>
 					</Grid>
 					<Divider />
-					<List component='div'>
+					<List component="div">
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Koordinators epost:</div>
@@ -54,7 +56,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{data?.koordinator_epost}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Objektid:</div>
@@ -63,7 +65,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{data?.obj_id}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Arkivtype:</div>
@@ -72,7 +74,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{data?.type}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Størrelse:</div>
@@ -81,7 +83,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{data?.storrelse}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Tidsspenn:</div>
@@ -90,7 +92,7 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{`${data?.arkiv_startdato} - ${data?.arkiv_sluttdato}`}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 						<ListItem>
 							<Divider />
 							<Grid className={classes.label} item xs={12} sm={3}>
@@ -100,10 +102,10 @@ const Details: React.FC = ():JSX.Element => {
 								<div>{data?.avtalenummer}</div>
 							</Grid>
 						</ListItem>
-						<Divider light={true} variant='middle' />
+						<Divider light={true} variant="middle" />
 					</List>
 				</>
-			}
+			)}
 		</>
 	)
 }

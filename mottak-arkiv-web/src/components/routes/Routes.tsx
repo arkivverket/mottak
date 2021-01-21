@@ -5,10 +5,10 @@ import NotFound from '../NotFound'
 import InvitationWorkflowContainer from '../workflow/InvitationWorkflowContainer'
 
 export type RouteType = {
-	path: string,
-	name: string,
-	component: any,
-	nav: boolean,
+	path: string
+	name: string
+	component: any
+	nav: boolean
 }
 
 const Routes: RouteType[] = [

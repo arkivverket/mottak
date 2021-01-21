@@ -3,12 +3,12 @@ import { useEffect, useReducer } from 'react'
 
 import axiosAPI from '../request'
 
-type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string };
+type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string }
 
 interface State<T> {
-    loading: boolean;
-    error: any;
-    data: T | null;
+	loading: boolean
+	error: any
+	data: T | null
 }
 
 const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
@@ -41,10 +41,7 @@ const getReducer = <T>() => (state: State<T>, action: Action<T>): State<T> => {
  * @param {String} url - Endpoint url.
  * @param {AxiosRequestConfig}  params - The URL parameters to be sent with the request.
  */
-const useGetOnMount = <T>(
-	url: string,
-	params?: AxiosRequestConfig | undefined
-): State<T> => {
+const useGetOnMount = <T>(url: string, params?: AxiosRequestConfig | undefined): State<T> => {
 	const [{ data, error, loading }, dispatch] = useReducer(getReducer<T>(), {
 		loading: false,
 		error: false,
@@ -59,9 +56,9 @@ const useGetOnMount = <T>(
 			try {
 				const axiosPromise: AxiosPromise<T> = axiosAPI.get(url, {
 					params: {
-						params
+						params,
 					},
-					cancelToken: source.token
+					cancelToken: source.token,
 				})
 				const result = await axiosPromise
 				dispatch({ type: 'SUCCESS', payload: result.data })

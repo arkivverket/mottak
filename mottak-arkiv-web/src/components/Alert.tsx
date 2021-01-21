@@ -1,16 +1,11 @@
 import React, { useEffect } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-	Snackbar,
-	SnackbarContent,
-	IconButton,
-	Icon,
-} from '@material-ui/core'
+import { Snackbar, SnackbarContent, IconButton, Icon } from '@material-ui/core'
 
 import { AlertContent } from '../types/sharedTypes'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	success: {
 		backgroundColor: theme.palette.success.light,
 	},
@@ -58,7 +53,7 @@ const Alert: React.FC<AlertContent> = ({ msg, type }): JSX.Element => {
 		<Snackbar
 			anchorOrigin={{
 				vertical: 'bottom',
-				horizontal: 'center'
+				horizontal: 'center',
 			}}
 			open={open}
 			autoHideDuration={5000}
@@ -73,14 +68,9 @@ const Alert: React.FC<AlertContent> = ({ msg, type }): JSX.Element => {
 					</div>
 				}
 				action={[
-					<IconButton
-						key='close'
-						aria-label='Close'
-						color='inherit'
-						onClick={handleClose}
-					>
+					<IconButton key="close" aria-label="Close" color="inherit" onClick={handleClose}>
 						<Icon>close</Icon>
-					</IconButton>
+					</IconButton>,
 				]}
 			/>
 		</Snackbar>
