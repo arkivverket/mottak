@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 ENV_FILE=".env"
-ENV_VARIABLES=("API_BASEURL")
+ENV_VARIABLES="API_BASEURL"
 
 # Recreate config file
 rm -rf ./env-config.js
@@ -27,10 +27,9 @@ if [ -f "$ENV_FILE" ]; then
 else
   # .env doesn't exist, needs to use env variables from list
   # Read each env variable name from list and get value from env variable
-  for env_var in "${ENV_VARIABLES[@]}";
-  do
+  for env_var in ${ENV_VARIABLES}; do
     # Read value of current variable if exists as Environment variable
-    value=$(printf '%s\n' "${!env_var}")
+    value=$(printenv $env_var)
 
     # Append configuration property to JS file
     echo "	$env_var: '$value'," >> ./env-config.js
