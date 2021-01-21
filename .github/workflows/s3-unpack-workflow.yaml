@@ -46,7 +46,7 @@ jobs:
           poetry run pytest
       - name: Verify build docker image
         run: |
-          docker build . -t arkivverket.azurecr.io/da-mottak/s3-unpack:${{ github.sha }}
+          docker build . -t s3-unpack:${{ github.sha }}
 
   build-and-push-docker-image:
 

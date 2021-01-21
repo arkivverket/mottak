@@ -52,7 +52,7 @@ jobs:
           yarn test
       - name: Verify build docker image
         run: |
-          docker build . -t arkivverket.azurecr.io/da-mottak/!COMPONENT_NAME!:${{ github.sha }}
+          docker build . -t !COMPONENT_NAME!:${{ github.sha }}
 
   build-and-push-docker-image:
 

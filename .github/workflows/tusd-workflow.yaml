@@ -46,7 +46,7 @@ jobs:
           poetry run pytest
       - name: Verify build docker image
         run: |
-          docker build . -t arkivverket.azurecr.io/da-mottak/tusd:${{ github.sha }}
+          docker build . -t tusd:${{ github.sha }}
 
   build-and-push-docker-image:
 
