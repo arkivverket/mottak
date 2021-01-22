@@ -86,6 +86,7 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
 
 @router.post('/{id}/bestill_nedlasting',
              status_code=status.HTTP_200_OK,
+             response_model=Arkivkopi,
              summary='Bestiller en nedlastning fra arkiv downloader')
 async def request_download(id: int, db: Session = Depends(get_db_session),
                            queue_sender: ArchiveDownloadRequestSender = Depends(get_request_sender)):
