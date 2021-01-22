@@ -85,9 +85,7 @@ async def _request_download(sas_token: SASResponse, arkivkopi_id: int, queue_sen
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session):
     result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
     if not result:
-        # TODO Feilhåndtering når arkivkopi ikke finnes. Raise = avbryt applikasjon
-        # raise ArkivkopiNotFound(arkivkopi.arkivkopi_id)
-        logging.info(f"Fant ikke arkivkopi med id={arkivkopi.arkivkopi_id} å updatere til status={arkivkopi.status}")
+        logging.error(f"Fant ikke arkivkopi med id={arkivkopi.arkivkopi_id} å updatere til status={arkivkopi.status}")
     return result
 
 
