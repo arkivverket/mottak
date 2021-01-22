@@ -23,6 +23,7 @@ class AzureQueueReceiver(AzureServicebus):
     async def a_message_to_str(_message: Message) -> str:
         """ Method that converts a message to a string"""
         message_str = str(_message)
+        await _message.complete()
         return message_str
 
     @staticmethod

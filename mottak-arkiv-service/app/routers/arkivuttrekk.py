@@ -29,16 +29,14 @@ async def init_status_receiver():
     status_receiver = ArchiveDownloadStatusReceiver(own_db_session)
     router.background_queue_name = status_receiver.queue_name
     router.scheduler = AsyncIOScheduler()
-    router.scheduler.add_job(status_receiver.a_run, 'interval', seconds=10)
+    router.scheduler.add_job(status_receiver.fetch, 'interval', seconds=10)
     logging.info(f"Starting receiving messages on queue {router.background_queue_name}")
-    print(f"Starting receiving messages on queue {router.background_queue_name}")
     router.scheduler.start()
 
 
 @router.on_event("shutdown")
 async def shutdown_status_receiver():
     logging.info(f"Closing receiver {router.background_queue_name}")
-    print(f"Closing receiver {router.background_queue_name}")
     router.scheduler.shutdown()
 
 
