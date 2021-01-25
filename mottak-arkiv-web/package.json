@@ -12,7 +12,7 @@
     "eject": "react-scripts eject",
     "lint": "yarn lint:eslint",
     "lint:eslint": "eslint 'src/**/*.{ts,tsx}'  --cache --report-unused-disable-directives",
-    "generate-env": "./env.sh && mv env-config.js public"
+    "generate-env": "./env.sh"
   },
   "browserslist": {
     "production": [
