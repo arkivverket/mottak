@@ -101,7 +101,6 @@ const Details: React.FC = (): JSX.Element => {
 		})
 
 		// @TODO: Figure out why useRequest causes infinte requests
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
 	useLayoutEffect(() => {
