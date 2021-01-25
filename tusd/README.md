@@ -21,3 +21,27 @@ The dependency `psycopg2` requires that you have installed postgresql on mac:
    * AZ_SB_QUEUE - what queue
 
 
+# Testing with Azure
+To test this, you need these env variables in your `.env`
+```env
+DBSTRING=
+BUCKET=
+OBJECTSTORE=
+AZURE_ACCOUNT_NAME=
+AZURE_ACCOUNT_KEY=
+AZ_SB_CON_KICKER=
+AZ_SB_QUEUE=
+```
+
+Build the docker image locally
+```shell
+docker build --tag da-mottak/tusd .
+```
+
+And then run it locally
+```shell
+docker run --rm -it --env-file=.env -p 1080:1080 da-mottak/tusd
+```
+The `--env-file=.env` is important to no expose secrets in your terminal history and adds less arguments to run.
+
+Then modify line 6 and 7 in [tests/tus-uploader/tus-uploader.py](tests/tus-uploader/tus-uploader.py) to point to your docker container, usually `tusd_url = 'http://localhost:1080/tusd/files/'` and then `file_name` to point to a local test archive.
