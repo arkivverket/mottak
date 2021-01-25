@@ -6,6 +6,9 @@ from tusclient import client
 tusd_url = 'https://mottak.plattform.arkivverket.dev/tusd/files/'
 file_name = '../../../../eksempel-arkiv/large/ed889fdc-b4d0-49fe-bf4b-caa0834cab2d.tar'
 # 4 mb = 4194304 bytes
+# 4 MiN = 4194304 bytes
+# This is a limit in the azure store implementation as it's using an older version of the service API
+# And is limited to 4MiB chunks if the file is less that 195GiB
 chunk_size_in_bytes = 4194304
 
 prefix_dev = 'dpldrdev://'
