@@ -45,3 +45,14 @@ export type AlertContent = {
 	msg?: string
 	type?: 'success' | 'error' | 'warning' | 'info' | ''
 }
+
+export enum ArkivkopiStatus {
+	BESTILT = 'Bestilt',
+	STARTET = 'Startet',
+	OK = 'OK',
+	FEILET = 'Feilet',
+}
+
+export interface ArkivkopiStatusRequest {
+	status: ArkivkopiStatus
+}
