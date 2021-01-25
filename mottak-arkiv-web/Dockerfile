@@ -22,6 +22,7 @@ EXPOSE 80
 WORKDIR /usr/share/nginx/html
 
 COPY env.sh .
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # Make our shell script executable
 RUN chmod +x env.sh
