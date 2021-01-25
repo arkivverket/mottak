@@ -9,6 +9,9 @@ import { ArkivUttrekk } from '../types/sharedTypes'
 import useGetOnMount from '../hooks/useGetOnMount'
 
 const useStyles = makeStyles((theme) => ({
+	list: {
+		marginBottom: '1rem',
+	},
 	label: {
 		color: theme.palette.primary.main,
 		fontWeight: 'bold',
@@ -46,8 +49,10 @@ const Details: React.FC = (): JSX.Element => {
 							Til oversikten
 						</Link>
 					</Grid>
+
 					<Divider />
-					<List component="div">
+
+					<List component="div" className={classes.list}>
 						<ListItem>
 							<Grid className={classes.label} item xs={12} sm={3}>
 								<div>Koordinators epost:</div>
