@@ -5,7 +5,7 @@ OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish -base-path 
 
 # Handle optional configuration from environment:
 if [ -n "$BASE_PATH" ]; then
-    OPT_PARAMS="$OPT_PARAMS --base-path $BASE_PATH"
+    OPT_PARAMS="$OPT_PARAMS -base-path $BASE_PATH"
 fi
 
 echo "Enviroment overview:"
