@@ -1,12 +1,7 @@
 #!/bin/bash
 # We only enable the hooks we have. This will reduce logging somewhat.
 # Consider hooking into post-terminate for logging.
-OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish -base-path /tusd/files/"
-
-# Handle optional configuration from environment:
-if [ -n "$BASE_PATH" ]; then
-    OPT_PARAMS="$OPT_PARAMS -base-path $BASE_PATH"
-fi
+OPT_PARAMS="-hooks-enabled-events pre-create,post-create,post-finish -base-path ${BASE_PATH:-/tusd/files/}"
 
 echo "Enviroment overview:"
 echo "Bucket: ${BUCKET}"
@@ -48,6 +43,7 @@ else
     TUSD_PARAMS="-hooks-dir /srv/hooks -behind-proxy -s3-bucket ${BUCKET} -s3-endpoint ${ENDPOINT}"
 fi
 
-echo tusd command line: "tusd $TUSD_PARAMS $OPT_PARAMS"
+echo "============"
+echo "Running tusd with these flags: ${TUSD_PARAMS} ${OPT_PARAMS}"
 echo "============"
 tusd ${TUSD_PARAMS} ${OPT_PARAMS}
