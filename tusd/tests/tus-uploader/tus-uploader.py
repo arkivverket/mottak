@@ -3,19 +3,26 @@ import base64
 from tusclient import client
 
 
-invitation_string = 'eyJyZWZlcmVuY2UiOiAiZWQ4ODlmZGMtYjRkMC00OWZlLWJmNGItY2FhMDgzNGNhYjJkIiwgInVwbG9hZFVybCI6ICJodHRwczovL21vdHRhay5wbGF0dGZvcm0uYXJraXZ2ZXJrZXQuZGV2L3R1c2QiLCAidXBsb2FkVHlwZSI6ICJ0YXIiLCAibWV0YSI6IHsiaW52aXRhc2pvbkVrc3Rlcm5JZCI6ICI4ZGU3NWMwNS03NDRkLTQ2MjItYWYzOC1mYWQ1YjZmMWRjMzAifX0='
 tusd_url = 'https://mottak.plattform.arkivverket.dev/tusd/files/'
 file_name = '../../../../eksempel-arkiv/large/ed889fdc-b4d0-49fe-bf4b-caa0834cab2d.tar'
 # 4 mb = 4194304 bytes
+# 4 MiN = 4194304 bytes
+# This is a limit in the azure store implementation as it's using an older version of the service API
+# And is limited to 4MiB chunks if the file is less that 195GiB
 chunk_size_in_bytes = 4194304
 
 prefix_dev = 'dpldrdev://'
 prefix = 'dpldr://'
 
-
-def convert_to_dict(base64_str: str) -> dict:
-    inv_str = str(base64.standard_b64decode(base64_str), 'utf-8')
-    return json.loads(inv_str)
+invitation = {
+    "reference": "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d",
+    "uploadUrl": "https://mottak.plattform.arkivverket.dev/tusd",
+    "uploadType": "tar",
+    "meta": {
+        # Replace this with an UUID from the "invitasjon" table
+        "invitasjonEksternId": "3d4a64c4-c187-4e64-8f28-1f4a8b775b2e"
+    }
+}
 
 
 def upload(path_to_file: str, metadata: dict, chunk_size_bytes):
@@ -29,5 +36,4 @@ def upload(path_to_file: str, metadata: dict, chunk_size_bytes):
 
 
 if __name__ == '__main__':
-    json_dict = convert_to_dict(invitation_string)
-    upload(file_name, json_dict['meta'], chunk_size_in_bytes)
+    upload(file_name, invitation['meta'], chunk_size_in_bytes)
