@@ -1,15 +1,11 @@
-import logging
 from typing import List
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.queues.ArchiveDownloadRequestSender import ArchiveDownloadRequestSender
-from app.connectors.arkiv_downloader.queues.ArchiveDownloadStatusReceiver import ArchiveDownloadStatusReceiver
 from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
 from app.connectors.mailgun.mailgun_client import MailgunClient
-from app.database.session import get_session
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiFailedDuringTransmission
@@ -19,25 +15,6 @@ from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_request_sender
 
 router = APIRouter()
-router.scheduler = None
-router.background_queue_name = None
-
-
-@router.on_event("startup")
-async def init_status_receiver():
-    own_db_session = get_session()
-    status_receiver = ArchiveDownloadStatusReceiver(own_db_session)
-    router.background_queue_name = status_receiver.queue_name
-    router.scheduler = AsyncIOScheduler()
-    router.scheduler.add_job(status_receiver.fetch, 'interval', seconds=10)
-    logging.info(f"Starting receiving messages on queue {router.background_queue_name}")
-    router.scheduler.start()
-
-
-@router.on_event("shutdown")
-async def shutdown_status_receiver():
-    logging.info(f"Closing receiver {router.background_queue_name}")
-    router.scheduler.shutdown()
 
 
 @router.post("",

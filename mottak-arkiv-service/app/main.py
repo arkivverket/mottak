@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+import logging
 
 from fastapi import FastAPI, status
 
+from app.jobs.schedule_status_receiver_job import init_scheduled_job
 from app.routers import arkivuttrekk, metadatafil
 
 try:
@@ -27,6 +29,8 @@ async def health_check():
     return "Seems healthy"
 
 
+app.scheduler = None
+app.queue_name = None
 app.include_router(
     router=arkivuttrekk.router,
     prefix="/arkivuttrekk",
@@ -35,6 +39,20 @@ app.include_router(
     router=metadatafil.router,
     prefix="/metadatafil",
     tags=['metadatafil'])
+
+
+@app.on_event("startup")
+async def init_jobs():
+    app.scheduler, app.queue_name = await init_scheduled_job()
+    logging.info(f"Starting receiving messages on queue {app.queue_name}")
+    app.scheduler.start()
+
+
+@app.on_event("shutdown")
+async def teardown_jobs():
+    logging.info(f"Closing receiver {app.queue_name}")
+    app.scheduler.shutdown()
+
 
 if __name__ == '__main__':
     import uvicorn
