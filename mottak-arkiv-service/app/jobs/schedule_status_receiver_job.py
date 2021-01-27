@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 from app.connectors.arkiv_downloader.queues.ArchiveDownloadStatusReceiver import ArchiveDownloadStatusReceiver
+from app.connectors.connectors_variables import get_status_con_str
 from app.database.session import get_session
 from app.domain.arkivuttrekk_service import update_arkivkopi_status
 
@@ -12,7 +13,7 @@ from app.domain.arkivuttrekk_service import update_arkivkopi_status
 async def init_scheduled_job() -> [AsyncIOScheduler, str]:
     scheduler = AsyncIOScheduler()
     db_session = get_session()
-    status_receiver = ArchiveDownloadStatusReceiver()
+    status_receiver = ArchiveDownloadStatusReceiver(get_status_con_str())
     queue_name = status_receiver.queue_name
     scheduler.add_job(fetch, 'interval', seconds=10, args=[status_receiver, db_session])
     return scheduler, queue_name

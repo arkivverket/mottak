@@ -6,6 +6,8 @@ from fastapi import FastAPI, status
 from app.jobs.schedule_status_receiver_job import init_scheduled_job
 from app.routers import arkivuttrekk, metadatafil
 
+logging.basicConfig(level=logging.INFO)
+
 try:
     from dotenv import load_dotenv
 
@@ -56,6 +58,5 @@ async def teardown_jobs():
 
 if __name__ == '__main__':
     import uvicorn
-
     print("Starting mottak-arkiv-service")
     uvicorn.run(app, host="0.0.0.0", port=8000)

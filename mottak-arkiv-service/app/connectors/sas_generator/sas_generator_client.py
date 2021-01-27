@@ -7,7 +7,7 @@ from uuid import UUID
 from app.connectors.sas_generator.models import SASResponse, SASTokenRequest
 
 
-class SASGeneratorClient():
+class SASGeneratorClient:
     def __init__(self, sas_generator_host: str):
         self.url = f"http://{sas_generator_host}/generate_sas"
 
@@ -22,11 +22,11 @@ class SASGeneratorClient():
                 return None
 
             if resp.status_code == 412:
-                logging.error(f"Fant ikke container med id={container}")
+                logging.error(f"Could not find container with id={container}")
                 return None
 
             if resp.status_code != 200:
-                logging.error(f"Det skjedde en feil under genereringen av sas_token for container med id={container}")
+                logging.error(f"Something went wrong during the generation of sas_token for container with id={container}")
                 return None
 
             return SASResponse.from_json(resp.json())
