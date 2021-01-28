@@ -19,11 +19,19 @@ class AzureQueueReceiver(AzureServicebus):
         super().__init__(connection_string, queue_name)
         self.receiver = self.queue_client.get_receiver()
 
+    async def receive_messages(self, max_batch_size: int = 1) -> list[str]:
+        messages = await self.receiver.fetch_next(timeout=5, max_batch_size=max_batch_size)
+        result = []
+        for message in messages:
+            result.append(await self.message_to_str(message))
+            await message.complete()
+        return result
+
     @staticmethod
     async def message_to_str(_message: Message) -> str:
         """ Method that converts a message to a string"""
         message_str = str(_message)
-        await _message.complete()
+        # await _message.complete()
         return message_str
 
 

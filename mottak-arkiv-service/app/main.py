@@ -45,14 +45,14 @@ app.include_router(
 
 @app.on_event("startup")
 async def init_jobs():
-    app.scheduler, app.queue_name = await init_scheduled_job()
-    logging.info(f"Starting receiving messages on queue {app.queue_name}")
+    app.scheduler = await init_scheduled_job()
+    logging.info("Starting scheduler")
     app.scheduler.start()
 
 
 @app.on_event("shutdown")
 async def teardown_jobs():
-    logging.info(f"Closing receiver {app.queue_name}")
+    logging.info("Shutting down scheduler")
     app.scheduler.shutdown()
 
 
