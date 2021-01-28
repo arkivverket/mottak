@@ -1,3 +1,5 @@
+from typing import List
+
 from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueReceiver
 from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 
@@ -12,7 +14,7 @@ class ArchiveDownloadStatusReceiver(AzureQueueReceiver):
     def __init__(self, connection_string: str):
         super().__init__(connection_string=connection_string, queue_name=STATUS_RECEIVER_QUEUE_NAME)
 
-    async def receive_messages(self, max_batch_size: int = 1) -> list[ArkivkopiStatusResponse]:
+    async def receive_messages(self, max_batch_size: int = 1) -> List[ArkivkopiStatusResponse]:
         """
         Receives ArchiveDownloadStatus messages from the service bus
         :param max_batch_size: Number of messages to process
