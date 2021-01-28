@@ -82,27 +82,28 @@ class ArkivkopiNotFound(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int, message="Fant ikke arkivkopi med id="):
-        self.id = id_
-        self.message = message + str(id_)
+    def __init__(self, id_: int):
+        self.id_ = id_
+        self.message = f"Fant ikke arkivkopi med id={self.id_}"
         super().__init__(self.message)
 
     def __str__(self):
         return self.message
 
 
-class ArkivkopiFailedDuringTransmission(Exception):
+class ArkivkopiRequestFailed(Exception):
     """
-    Exception raised when arkivkopi fails during transmission
+    Exception raised when ordering an arkivkopi fails
 
     Attributes:
         id -- Integer ID for the arkivuttrekk in the database
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int, message=f"Nedlasting av arkivkopi med id={id} feilet under overføring"):
-        self.id = id_
-        self.message = message + str(id_)
+    def __init__(self, id_: int, obj_id: int):
+        self.id_ = id_
+        self.obj_id = obj_id
+        self.message = f"Bestilling nr {self.id_} av nedlasting av arkiv med obj_id={self.obj_id} feilet"
         super().__init__(self.message)
 
     def __str__(self):

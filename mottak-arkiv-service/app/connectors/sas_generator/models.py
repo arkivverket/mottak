@@ -30,5 +30,5 @@ class SASResponse:
         try:
             return SASResponse(**json_message)
         except (ValueError, KeyError, TypeError) as e:
-            logging.error(f"Failed to create SASResponse from json {json_message}", e)
+            logging.error(f"Failed to create SASResponse from json", e)
             return None

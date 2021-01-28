@@ -10,7 +10,7 @@ from app.utils import convert_string_to_datetime
 
 class ArkivkopiStatus(str, Enum):
     BESTILT = 'Bestilt'
-    FEILET_UNDER_OVERFORING = 'Feilet under overføring'
+    BESTILLING_FEILET = 'Bestilling feilet'
     STARTET = 'Startet'
     OK = 'OK'
     FEILET = 'Feilet'

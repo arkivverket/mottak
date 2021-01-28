@@ -15,7 +15,7 @@ from app.database.repositories import arkivkopi_repository, arkivuttrekk_reposit
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiStatus
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiFailedDuringTransmission
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
 
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session) -> Arkivuttrekk_DBO:
@@ -64,8 +64,8 @@ async def request_download(arkivuttrekk_id: int, db: Session,
     archive_download = await _request_download(sas_token, arkivkopi.id, queue_sender)
     if not archive_download:
         update_arkivkopi_status(
-            ArkivkopiStatusResponse(arkivkopi_id=arkivkopi.id, status=ArkivkopiStatus.FEILET_UNDER_OVERFORING), db)
-        raise ArkivkopiFailedDuringTransmission(arkivkopi.id)
+            ArkivkopiStatusResponse(arkivkopi_id=arkivkopi.id, status=ArkivkopiStatus.BESTILLING_FEILET), db)
+        raise ArkivkopiRequestFailed(arkivkopi.id, arkivuttrekk.obj_id)
 
     return arkivkopi
 
@@ -79,8 +79,8 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO) -> Optional[SASResp
 
 async def _request_download(sas_token: SASResponse, arkivkopi_id: int, queue_sender: AzureQueueSender):
     arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi_id, sas_token)
-
-    return await queue_sender.send_message(arkivkopi_request.as_json_str())
+    return None
+    # return await queue_sender.send_message(arkivkopi_request.as_json_str())
 
 
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
