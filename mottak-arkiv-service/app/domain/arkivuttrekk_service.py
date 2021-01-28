@@ -5,7 +5,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse
-from app.connectors.azure_servicebus.azure_servicebus_client import AzureQueueSender
+from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.models import SASResponse
@@ -53,7 +53,7 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
 
 async def request_download(arkivuttrekk_id: int, db: Session,
-                           queue_sender: AzureQueueSender) -> Optional[Arkivkopi_DBO]:
+                           archive_download_request_client: ArchiveDownloadRequestSender) -> Optional[Arkivkopi_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await _request_sas_token(arkivuttrekk)
     if not sas_token:
@@ -61,8 +61,8 @@ async def request_download(arkivuttrekk_id: int, db: Session,
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
-    archive_download = await _request_download(sas_token, arkivkopi.id, queue_sender)
-    if not archive_download:
+    request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
+    if not request_sent:
         update_arkivkopi_status(
             ArkivkopiStatusResponse(arkivkopi_id=arkivkopi.id, status=ArkivkopiStatus.BESTILLING_FEILET), db)
         raise ArkivkopiRequestFailed(arkivkopi.id, arkivuttrekk.obj_id)
@@ -75,12 +75,6 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO) -> Optional[SASResp
     # ObjectID of the Arkivutrekk is name of the container
     sas_generator_client = SASGeneratorClient(get_sas_generator_host())
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
-
-
-async def _request_download(sas_token: SASResponse, arkivkopi_id: int, queue_sender: AzureQueueSender):
-    arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi_id, sas_token)
-    return None
-    # return await queue_sender.send_message(arkivkopi_request.as_json_str())
 
 
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:

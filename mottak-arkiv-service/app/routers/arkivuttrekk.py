@@ -66,9 +66,9 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
              response_model=Arkivkopi,
              summary='Bestiller en nedlastning fra arkiv downloader')
 async def request_download(id: int, db: Session = Depends(get_db_session),
-                           queue_sender: ArchiveDownloadRequestSender = Depends(get_request_sender)):
+                           archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender)):
     try:
-        result = await arkivuttrekk_service.request_download(id, db, queue_sender)
+        result = await arkivuttrekk_service.request_download(id, db, archive_download_request_client)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
     except ArkivkopiRequestFailed as err:
