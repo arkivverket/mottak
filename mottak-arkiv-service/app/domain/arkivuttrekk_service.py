@@ -71,7 +71,6 @@ async def request_download(arkivuttrekk_id: int, db: Session,
 
 
 async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO) -> Optional[SASResponse]:
-
     # ObjectID of the Arkivutrekk is name of the container
     sas_generator_client = SASGeneratorClient(get_sas_generator_host())
     return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
@@ -86,7 +85,7 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
 
 
 async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
-    result = arkivkopi_repository.get_by_arkivuttrekk_id(db, arkivuttrekk_id)
-    if not result:
+    results = arkivkopi_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not results:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
-    return result
+    return results
