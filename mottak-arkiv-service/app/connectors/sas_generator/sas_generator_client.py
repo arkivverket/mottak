@@ -26,7 +26,8 @@ class SASGeneratorClient:
                 return None
 
             if resp.status_code != 200:
-                logging.error(f"Something went wrong during the generation of sas_token for container with id={container}")
+                msg = f"Something went wrong during the generation of sas_token for container with id={container}"
+                logging.error(msg)
                 return None
 
             return SASResponse.from_json(resp.json())

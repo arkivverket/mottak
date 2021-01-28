@@ -4,7 +4,7 @@ from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
-from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse
+from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
@@ -80,7 +80,8 @@ async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO) -> Optional[SASResp
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
     result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
     if not result:
-        logging.error(f"Could not find arkivkopi with id={arkivkopi.arkivkopi_id} for updating of status={arkivkopi.status}")
+        msg = f"Could not find arkivkopi with id={arkivkopi.arkivkopi_id} for updating of status={arkivkopi.status}"
+        logging.error(msg)
     return result
 
 
@@ -89,4 +90,3 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Ar
     if not result:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
     return result
-
