@@ -20,5 +20,5 @@ class ArchiveDownloadStatusReceiver(AzureQueueReceiver):
         :param max_batch_size: Number of messages to process
         :return: list with ArkivkopiStatus objects
         """
-        messages = await super().receive_messages()
+        messages = await super().receive_messages(max_batch_size)
         return [ArkivkopiStatusResponse.from_string(message) for message in messages]
