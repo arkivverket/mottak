@@ -21,8 +21,8 @@ def arkivkopi_status_response():
 
 
 def test_arkivkopirequest_equals(arkivkopi_request):
-    arkivkopi_request_2 = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
-    assert arkivkopi_request == arkivkopi_request_2
+    expected = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
+    assert expected == arkivkopi_request
 
 
 def test_arkivkopirequest_not_equals(arkivkopi_request):
