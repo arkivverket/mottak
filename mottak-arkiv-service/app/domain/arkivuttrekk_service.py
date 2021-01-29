@@ -1,34 +1,33 @@
 import logging
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
-from app.connectors.azure_servicebus.azure_servicebus_client import AzureServicebus
-from app.connectors.connectors_variables import SENDER_QUEUE_NAME, get_sas_generator_host, get_sender_con_str
+from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
+from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
-from app.connectors.sas_generator.models import SASResponse
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
+from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequest
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
 
 
-def create(arkivuttrekk: Arkivuttrekk, db: Session):
+def create(arkivuttrekk: Arkivuttrekk, db: Session) -> Arkivuttrekk_DBO:
     return arkivuttrekk_repository.create(db, arkivuttrekk)
 
 
-def get_by_id(arkivuttrekk_id: int, db: Session):
+def get_by_id(arkivuttrekk_id: int, db: Session) -> Arkivuttrekk_DBO:
     result = arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id)
     if not result:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
     return result
 
 
-def get_all(db: Session, skip: int, limit: int):
+def get_all(db: Session, skip: int, limit: int) -> List[Arkivuttrekk_DBO]:
     return arkivuttrekk_repository.get_all(db, skip, limit)
 
 
@@ -51,29 +50,34 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+async def request_download(arkivuttrekk_id: int, db: Session,
+                           archive_download_request_client: ArchiveDownloadRequestSender,
+                           sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    sas_token = await _request_sas_token(arkivuttrekk)
+    sas_token = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
     if not sas_token:
         return None
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
-    request_download = await _request_download(sas_token, arkivkopi)
-    if not request_download:
-        return None
+    request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
+    if not request_sent:
+        arkivkopi_repository.delete(db, arkivkopi)
+        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
 
     return arkivkopi
 
 
-async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO):
-    # ObjectID of the Arkivutrekk is name of the container
-    sas_generator_client = SASGeneratorClient(get_sas_generator_host())
-    return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
+def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
+    result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
+    if not result:
+        msg = f"Could not find arkivkopi with id={arkivkopi.arkivkopi_id} for updating of status={arkivkopi.status}"
+        logging.error(msg)
+    return result
 
 
-async def _request_download(sas_token: SASResponse, arkivkopi: Arkivkopi_DBO):
-    arkivkopi_request = ArkivkopiRequest.from_id_and_token(arkivkopi.id, sas_token)
-
-    service_bus = AzureServicebus(get_sender_con_str(), SENDER_QUEUE_NAME)
-    return await service_bus.send_message(arkivkopi_request.as_json_str())
+async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+    results = arkivkopi_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not results:
+        raise ArkivuttrekkNotFound(arkivuttrekk_id)
+    return results

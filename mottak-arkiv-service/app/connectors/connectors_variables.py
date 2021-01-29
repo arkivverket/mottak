@@ -1,7 +1,5 @@
 import os
 
-SENDER_QUEUE_NAME = 'archive-download-request'
-
 
 def get_mailgun_domain() -> str:
     """
@@ -41,6 +39,13 @@ def get_sas_generator_host() -> str:
 
 def get_sender_con_str() -> str:
     """
-    Gets env variable for ServiceBus sender connection string
+    Gets env variable for ServiceBus archive_download_request_sender connection string
     """
     return os.environ['ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING']
+
+
+def get_status_con_str() -> str:
+    """
+    Gets env variable for ServiceBus archive_download_status_receiver connection string
+    """
+    return os.environ['ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING']

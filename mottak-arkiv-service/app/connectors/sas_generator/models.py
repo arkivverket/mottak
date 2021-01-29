@@ -1,6 +1,8 @@
-import json
+from __future__ import annotations
 
-from pydantic.main import BaseModel
+import json
+import logging
+from typing import Optional
 from uuid import UUID
 
 ZERO_GENERATION = '0'
@@ -15,8 +17,18 @@ class SASTokenRequest:
         return json.dumps(self.__dict__)
 
 
-class SASResponse(BaseModel):
+class SASResponse:
     """DTO for the response sas object"""
-    storage_account: str
-    container: str
-    sas_token: str
+
+    def __init__(self, storage_account, container, sas_token):
+        self.storage_account = storage_account
+        self.container = container
+        self.sas_token = sas_token
+
+    @staticmethod
+    def from_json(json_message: dict) -> Optional[SASResponse]:
+        try:
+            return SASResponse(**json_message)
+        except (ValueError, KeyError, TypeError) as e:
+            logging.error(f"Failed to create SASResponse from json", e)
+            return None

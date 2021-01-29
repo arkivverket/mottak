@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
-import uvicorn
+import logging
+
 from fastapi import FastAPI, status
+
+from app.jobs.schedule_status_receiver_job import init_scheduled_job
 from app.routers import arkivuttrekk, metadatafil
+
+logging.basicConfig(level=logging.INFO)
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ModuleNotFoundError:
     pass
@@ -25,16 +31,32 @@ async def health_check():
     return "Seems healthy"
 
 
+app.scheduler = None
+app.queue_name = None
 app.include_router(
-    arkivuttrekk.router,
+    router=arkivuttrekk.router,
     prefix="/arkivuttrekk",
     tags=['arkivuttrekk'])
 app.include_router(
-    metadatafil.router,
+    router=metadatafil.router,
     prefix="/metadatafil",
     tags=['metadatafil'])
-# app.add_exception_handler(exc.NoResultFound, sqlalchemy_exception_handler)
+
+
+@app.on_event("startup")
+async def init_jobs():
+    app.scheduler = await init_scheduled_job()
+    logging.info("Starting scheduler")
+    app.scheduler.start()
+
+
+@app.on_event("shutdown")
+async def teardown_jobs():
+    logging.info("Shutting down scheduler")
+    app.scheduler.shutdown()
 
 
 if __name__ == '__main__':
+    import uvicorn
+    print("Starting mottak-arkiv-service")
     uvicorn.run(app, host="0.0.0.0", port=8000)

@@ -2,10 +2,6 @@ from sqlalchemy.orm import Session
 
 from app.database.dbo.mottak import Metadatafil as Metadatafil_DBO
 from app.domain.models.Metadatafil import Metadatafil
-from sqlalchemy.orm import Session
-
-from app.database.dbo.mottak import Metadatafil as Metadatafil_DBO
-from app.domain.models.Metadatafil import Metadatafil
 
 
 def create(db: Session, metadatfil: Metadatafil) -> Metadatafil_DBO:
