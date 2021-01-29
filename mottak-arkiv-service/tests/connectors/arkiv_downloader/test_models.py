@@ -53,8 +53,8 @@ def test_arkivkopistatus_response_not_equals(arkivkopi_status_response):
 
 
 def test_arkivkopistatus_response_not_equals_status(arkivkopi_status_response):
-    arkivkopi_status_response_2 = ArkivkopiStatusResponse(arkivkopi_id, ArkivkopiStatus.BESTILLING_FEILET)
-    assert not arkivkopi_status_response == arkivkopi_status_response_2
+    arkivkopi_status_response_2 = ArkivkopiStatusResponse(arkivkopi_id, ArkivkopiStatus.OK)
+    assert arkivkopi_status_response != arkivkopi_status_response_2
 
 
 def test_arkivkopistatus_response_from_string(arkivkopi_status_response):
