@@ -17,14 +17,16 @@ RUN yarn build
 
 # production environment
 FROM nginx:stable-alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-WORKDIR /usr/share/nginx/html
+WORKDIR /app
+
+COPY --from=build /app/build /app/public
 
 COPY env.sh .
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # Make our shell script executable
 RUN chmod +x env.sh
 
+EXPOSE 80
 # Start Nginx server
-CMD ["/bin/sh", "-c", "/usr/share/nginx/html/env.sh && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "/app/env.sh && nginx -g 'daemon off;'"]

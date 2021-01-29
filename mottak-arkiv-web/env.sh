@@ -4,11 +4,11 @@ ENV_FILE=".env"
 ENV_VARIABLES="API_BASEURL"
 
 # Recreate config file
-rm -rf ./env-config.js
-touch ./env-config.js
+rm -rf ./public/env-config.js
+touch ./public/env-config.js
 
 # Add assignment
-echo "window._env_ = {" >> ./env-config.js
+echo "window._env_ = {" >> ./public/env-config.js
 
 if [ -f "$ENV_FILE" ]; then
   # Read each line in .env file
@@ -22,7 +22,7 @@ if [ -f "$ENV_FILE" ]; then
     fi
 
     # Append configuration property to JS file
-    echo "	$varname: '$varvalue'," >> ./env-config.js
+    echo "	$varname: '$varvalue'," >> ./public/env-config.js
   done < "$ENV_FILE"
 else
   # .env doesn't exist, needs to use env variables from list
@@ -32,8 +32,8 @@ else
     value=$(printenv $env_var)
 
     # Append configuration property to JS file
-    echo "	$env_var: '$value'," >> ./env-config.js
+    echo "	$env_var: '$value'," >> ./public/env-config.js
   done
 fi
 
-echo "}" >> ./env-config.js
+echo "}" >> ./public/env-config.js
