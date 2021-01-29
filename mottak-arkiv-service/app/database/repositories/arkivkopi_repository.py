@@ -24,6 +24,11 @@ def get_by_arkivuttrekk_id_newest(db: Session, arkivuttrekk_id) -> Arkivkopi_DBO
         .first()
 
 
+def delete(db: Session, arkivkopi: Arkivkopi):
+    db.delete(arkivkopi)
+    db.commit()
+
+
 def update_status(db: Session, id_: int, status: ArkivkopiStatus) -> Optional[Arkivkopi_DBO]:
     arkivkopi = get_by_id(db, id_)
     if not arkivkopi:

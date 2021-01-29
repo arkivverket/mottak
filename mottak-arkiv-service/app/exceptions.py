@@ -100,10 +100,9 @@ class ArkivkopiRequestFailed(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int, obj_id: int):
-        self.id_ = id_
+    def __init__(self, obj_id: str):
         self.obj_id = obj_id
-        self.message = f"Bestilling nr {self.id_} av nedlasting av arkiv med obj_id={self.obj_id} feilet"
+        self.message = f"Bestilling av nedlasting av arkiv med obj_id={self.obj_id} feilet"
         super().__init__(self.message)
 
     def __str__(self):

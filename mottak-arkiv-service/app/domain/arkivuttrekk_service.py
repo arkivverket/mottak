@@ -6,13 +6,11 @@ from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
-from app.connectors.connectors_variables import get_sas_generator_host
 from app.connectors.mailgun.mailgun_client import MailgunClient
-from app.connectors.sas_generator.models import SASResponse
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
-from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiStatus
+from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
@@ -53,9 +51,10 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
 
 async def request_download(arkivuttrekk_id: int, db: Session,
-                           archive_download_request_client: ArchiveDownloadRequestSender) -> Optional[Arkivkopi_DBO]:
+                           archive_download_request_client: ArchiveDownloadRequestSender,
+                           sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    sas_token = await _request_sas_token(arkivuttrekk)
+    sas_token = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
     if not sas_token:
         return None
 
@@ -63,17 +62,10 @@ async def request_download(arkivuttrekk_id: int, db: Session,
 
     request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
     if not request_sent:
-        update_arkivkopi_status(
-            ArkivkopiStatusResponse(arkivkopi_id=arkivkopi.id, status=ArkivkopiStatus.BESTILLING_FEILET), db)
-        raise ArkivkopiRequestFailed(arkivkopi.id, arkivuttrekk.obj_id)
+        arkivkopi_repository.delete(db, arkivkopi)
+        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
 
     return arkivkopi
-
-
-async def _request_sas_token(arkivuttrekk: Arkivuttrekk_DBO) -> Optional[SASResponse]:
-    # ObjectID of the Arkivutrekk is name of the container
-    sas_generator_client = SASGeneratorClient(get_sas_generator_host())
-    return await sas_generator_client.request_sas(arkivuttrekk.obj_id)
 
 
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
