@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "noImplicitAny": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": false,
     "esModuleInterop": true,
     "module": "esnext",

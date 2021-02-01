@@ -56,7 +56,7 @@ async def request_download(arkivuttrekk_id: int, db: Session,
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     sas_token = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
     if not sas_token:
-        return None
+        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 

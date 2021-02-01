@@ -1,7 +1,7 @@
 import React from 'react'
 import { MemoryRouter } from 'react-router'
 import { render } from '@testing-library/react'
-import Routes, { RouteType } from '../../components/routes/Routes'
+import Routes, { RouteType } from '../../routes'
 import SideBar from '../../components/layout/SideBar'
 import { LayoutContext } from '../../components/layout/Layout'
 

@@ -1,8 +1,8 @@
-import AllArkivuttrekk from '../AllArkivuttrekk'
-import Details from '../Details'
-import Overview from '../Overview'
-import NotFound from '../NotFound'
-import InvitationWorkflowContainer from '../workflow/InvitationWorkflowContainer'
+import AllArkivuttrekk from './components/AllArkivuttrekk'
+import Details from './components/Details'
+import Overview from './components/Overview'
+import NotFound from './components/NotFound'
+import InvitationWorkflowContainer from './components/workflow/InvitationWorkflowContainer'
 
 export type RouteType = {
 	path: string
