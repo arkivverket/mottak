@@ -5,6 +5,9 @@ from azure.servicebus.aio import QueueClient, Message
 from azure.servicebus.common.errors import MessageSendFailed
 
 
+logger = logging.getLogger(__name__)
+
+
 class AzureServicebus():
     def __init__(self, connection_string: str, queue_name: str):
         self.queue_name = queue_name
@@ -46,7 +49,7 @@ class AzureQueueSender(AzureServicebus):
         try:
             await self.sender.send(message)
         except MessageSendFailed:
-            logging.error(f"Could not send message to the {self.queue_name} queue with the following data: {_message}")
+            logger.error(f"Could not send message to the {self.queue_name} queue with the following data: {_message}")
             return False
 
         return True

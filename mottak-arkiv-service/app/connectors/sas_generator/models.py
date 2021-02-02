@@ -5,6 +5,8 @@ import logging
 from typing import Optional
 from uuid import UUID
 
+logger = logging.getLogger(__name__)
+
 ZERO_GENERATION = '0'
 
 
@@ -30,5 +32,5 @@ class SASResponse:
         try:
             return SASResponse(**json_message)
         except (ValueError, KeyError, TypeError) as e:
-            logging.error(f"Failed to create SASResponse from json", e)
+            logger.error(f"Failed to create SASResponse from json", e)
             return None

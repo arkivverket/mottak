@@ -6,19 +6,21 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
+logger = logging.getLogger(__name__)
+
 try:
     from dotenv import load_dotenv
     load_dotenv()
     print("dotenv loaded")
 except ModuleNotFoundError:
-    print("Failed to load dotenv file. Assuming production")
+    logger.info("Failed to load dotenv file. Assuming production")
 
 
 def get_url():
     try:
         return os.environ["DBSTRING"]
     except KeyError as exception:
-        logging.error(f"Environment variable not set {exception}")
+        logger.error(f"Environment variable not set {exception}")
         sys.exit(1)
 
 
