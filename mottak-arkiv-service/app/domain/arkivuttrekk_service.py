@@ -58,14 +58,14 @@ async def request_download(arkivuttrekk_id: int, db: Session,
     container_id = await _get_container_id(arkivuttrekk_id, db)
     sas_token = await sas_generator_client.request_sas(container_id)
     if not sas_token:
-        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
+        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
     request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
     if not request_sent:
         arkivkopi_repository.delete(db, arkivkopi)
-        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
+        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
 
     return arkivkopi
 
