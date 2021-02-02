@@ -6,6 +6,8 @@ from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.connectors_variables import get_sender_con_str, get_sas_generator_host
 from app.database.session import get_session
 
+logger = logging.getLogger(__name__)
+
 
 async def get_db_session():
     try:
@@ -16,7 +18,7 @@ async def get_db_session():
 
 
 async def get_request_sender() -> ArchiveDownloadRequestSender:
-    logging.info(f"Create queue client for sending messages on queue {REQUEST_SENDER_QUEUE_NAME}")
+    logger.info(f"Create queue client for sending messages on queue {REQUEST_SENDER_QUEUE_NAME}")
     return ArchiveDownloadRequestSender(get_sender_con_str())
 
 

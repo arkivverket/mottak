@@ -8,6 +8,8 @@ from uuid import UUID
 from app.connectors.sas_generator.models import SASResponse
 from app.domain.models.Arkivkopi import ArkivkopiStatus
 
+logger = logging.getLogger(__name__)
+
 
 class UUIDEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -69,5 +71,5 @@ class ArkivkopiStatusResponse:
             json_message = json.loads(json_string)
             return ArkivkopiStatusResponse(**json_message)
         except (ValueError, KeyError, TypeError) as e:
-            logging.error(f'Failed to parse message {json_string}', e)
+            logger.error(f'Failed to parse message {json_string}', e)
             return None

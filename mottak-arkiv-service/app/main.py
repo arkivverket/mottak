@@ -6,7 +6,11 @@ from fastapi import FastAPI, status
 from app.jobs.schedule_status_receiver_job import init_scheduled_job
 from app.routers import arkivuttrekk, metadatafil
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(name)s | %(levelname)s | %(message)s')
+logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
+logging.getLogger('uamqp').setLevel(logging.WARNING)
+
+logger = logging.getLogger(__name__)
 
 try:
     from dotenv import load_dotenv
@@ -46,13 +50,13 @@ app.include_router(
 @app.on_event("startup")
 async def init_jobs():
     app.scheduler = await init_scheduled_job()
-    logging.info("Starting scheduler")
+    logger.info("Starting scheduler")
     app.scheduler.start()
 
 
 @app.on_event("shutdown")
 async def teardown_jobs():
-    logging.info("Shutting down scheduler")
+    logger.info("Shutting down scheduler")
     app.scheduler.shutdown()
 
 

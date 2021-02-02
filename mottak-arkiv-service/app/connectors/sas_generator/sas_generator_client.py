@@ -6,6 +6,8 @@ from uuid import UUID
 
 from app.connectors.sas_generator.models import SASResponse, SASTokenRequest
 
+logger = logging.getLogger(__name__)
+
 
 class SASGeneratorClient:
     def __init__(self, sas_generator_host: str):
@@ -18,16 +20,16 @@ class SASGeneratorClient:
             try:
                 resp = await client.post(self.url, data=request.as_json())
             except HTTPError as err:
-                logging.error(f"Error while requesting {err.request.url!r}.")
+                logger.error(f"Error while requesting {err.request.url!r}.")
                 return None
 
             if resp.status_code == 412:
-                logging.error(f"Could not find container with id={container}")
+                logger.error(f"Could not find container with id={container}")
                 return None
 
             if resp.status_code != 200:
                 msg = f"Something went wrong during the generation of sas_token for container with id={container}"
-                logging.error(msg)
+                logger.error(msg)
                 return None
 
             return SASResponse.from_json(resp.json())

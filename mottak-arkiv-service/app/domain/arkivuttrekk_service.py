@@ -15,6 +15,8 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
 
+logger = logging.getLogger(__name__)
+
 
 def create(arkivuttrekk: Arkivuttrekk, db: Session) -> Arkivuttrekk_DBO:
     return arkivuttrekk_repository.create(db, arkivuttrekk)
@@ -44,7 +46,7 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     if resp.status_code == 200:
         status = InvitasjonStatus.SENDT
     else:
-        logging.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk.id} med {resp.status_code} {resp.text}")
+        logger.warning(f"Invitasjon feilet for arkivuttrekk {arkivuttrekk.id} med {resp.status_code} {resp.text}")
         status = InvitasjonStatus.FEILET
 
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
@@ -72,7 +74,7 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
     result = arkivkopi_repository.update_status(db, arkivkopi.arkivkopi_id, arkivkopi.status)
     if not result:
         msg = f"Could not find arkivkopi with id={arkivkopi.arkivkopi_id} for updating of status={arkivkopi.status}"
-        logging.error(msg)
+        logger.error(msg)
     return result
 
 
