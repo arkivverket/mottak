@@ -11,6 +11,5 @@ RUN wget https://github.com/kahing/goofys/releases/latest/download/goofys && \
     chmod +x goofys && \
     mv goofys /usr/local/bin/goofys
 
-COPY get-mets.py /opt
 COPY run.sh /opt
 CMD ["/opt/run.sh"]
