@@ -1,4 +1,5 @@
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1.1-buster-slim
+FROM mcr.microsoft.com/dotnet/runtime:5.0-buster-slim
+
 RUN mkdir -p /opt
 WORKDIR /opt/arkade5
 RUN apt-get update && apt-get install -y --no-install-recommends unzip lsb-release gnupg2 fuse httpie wget
@@ -10,6 +11,5 @@ RUN wget https://github.com/kahing/goofys/releases/latest/download/goofys && \
     chmod +x goofys && \
     mv goofys /usr/local/bin/goofys
 
-COPY get-mets.py /opt
 COPY run.sh /opt
 CMD ["/opt/run.sh"]

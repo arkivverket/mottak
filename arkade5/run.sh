@@ -5,11 +5,12 @@ set -e
 echo "Object:        $OBJECT"
 echo "Archieve type: $ARCHIEVE_TYPE"
 echo "UUID:          $UUID"
+echo "Invitation id: $INVITATIONID"
 echo "Account        $AZURE_ACCOUNT"
 
 STORE="/objectstore"
 TARGET="$STORE/$UUID/content"
-CONTAINER="$UUID-0"
+CONTAINER="$INVITATIONID-0"
 
 
 mkdir -p /opt/output
