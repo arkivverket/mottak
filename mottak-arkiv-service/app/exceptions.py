@@ -97,12 +97,15 @@ class ArkivkopiRequestFailed(Exception):
 
     Attributes:
         id -- Integer ID for the arkivuttrekk in the database
+        invitasjon_id -- UUID used as reference when uploading an arkivuttrekk. Also used as container_id later on.
         message -- explanation of the error
     """
 
-    def __init__(self, obj_id: str):
-        self.obj_id = obj_id
-        self.message = f"Bestilling av nedlasting av arkiv med obj_id={self.obj_id} feilet"
+    def __init__(self, arkivuttrekk_id: int, invitasjon_ekstern_id: UUID):
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.invitasjon_ekstern_id = invitasjon_ekstern_id
+        self.message = f"Bestilling av nedlasting feilet for invitasjon med ekstern_id={self.invitasjon_ekstern_id} " \
+                       f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
         super().__init__(self.message)
 
     def __str__(self):

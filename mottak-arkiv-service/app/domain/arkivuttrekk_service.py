@@ -55,19 +55,42 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 async def request_download(arkivuttrekk_id: int, db: Session,
                            archive_download_request_client: ArchiveDownloadRequestSender,
                            sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
-    arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    sas_token = await sas_generator_client.request_sas(arkivuttrekk.obj_id)
+    container_id = await _get_container_id(arkivuttrekk_id, db)
+    sas_token = await sas_generator_client.request_sas(container_id)
     if not sas_token:
-        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
+        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
     request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
     if not request_sent:
         arkivkopi_repository.delete(db, arkivkopi)
-        raise ArkivkopiRequestFailed(arkivuttrekk.obj_id)
+        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
 
     return arkivkopi
+
+
+async def _get_container_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
+    """
+    Private function that returns the container_id associated with the given arkivuttrekk.
+
+    ____________________________________________________________________________________________________________________
+    Documentation of container_id in the current implementation of mottak.
+
+    In the current implementation we will assume that for every arkivuttrekk there is only one active invitasjon.
+    It is assumed that the active invitasjon is the most recently created invitasjon.
+    In other words, it is possible for an arkivuttrekk to have multiple associated invitasjon,
+    but when requesting to download an arkivuttrekk to on-prem the most recently created invitasjon will be used.
+
+    The container_id will be a string representation of the ekstern_id created in the method _send_invitation.
+    The container_id will be used as the target_container_name when unpacking the tar-file to an azure container
+    during the argo-workflow step s3-unpack.
+
+    In other words, the end result of uploading an archive can be found in an azure container named container_id.
+    ____________________________________________________________________________________________________________________
+    """
+    invitasjon = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    return invitasjon.ekstern_id
 
 
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
