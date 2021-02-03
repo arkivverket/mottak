@@ -222,7 +222,7 @@ spec:
 
     - name: arkade5
       container:
-        image: arkivverket.azurecr.io/mottak/arkade5
+        image: arkivverket.azurecr.io/da-mottak/arkade5:e464174dceb158d403b741ea1c03373edb5f3e9b
         imagePullPolicy: Always
         # We need this for FUSE / goofys
         securityContext:
