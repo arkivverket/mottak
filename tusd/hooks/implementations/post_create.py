@@ -6,7 +6,7 @@ import psycopg2
 import psycopg2.extras
 
 from hooks.implementations.hooks_utils import read_tusd_event, my_connect, my_disconnect, get_metadata
-from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNIID
+from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNIID, DBERROR
 from hooks.implementations.status import OverforingspakkeStatus
 from hooks.models.DataFromDatabase import DataFromDatabase
 from hooks.models.HookData import HookData
@@ -61,7 +61,11 @@ def run():
 
     # map metadata dict to parameter class
     data_from_db = DataFromDatabase.init_from_dict(metadata)
-    add_overforingspakke_to_db(connection, data_from_db, hook_data)
+    try:
+        add_overforingspakke_to_db(connection, data_from_db, hook_data)
+    except Exception as exception:
+        logging.error(f"Error while creating overforingspakke in database {exception}")
+        exit(DBERROR)
     exit(OK)
 
 
