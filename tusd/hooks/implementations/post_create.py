@@ -1,30 +1,29 @@
+import logging
 import os
 import sys
-import logging
+
 import psycopg2
 import psycopg2.extras
 
-from .return_codes import JSONERROR, OK
-from .status import OverforingspakkeStatus
-from .hooks_utils import read_tusd_event, my_connect, my_disconnect, extract_tusd_id_from_hook, \
-    extract_filename_from_hook, extract_offset_size_in_bytes_from_hook, get_metadata
-
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, my_disconnect, get_metadata
+from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNIID
+from hooks.implementations.status import OverforingspakkeStatus
+from hooks.models.DataFromDatabase import DataFromDatabase
+from hooks.models.HookData import HookData
 
 DBSTRING = os.getenv('DBSTRING')
 
 
-def add_overforingspakke_to_db(conn, metadata: dict, tusd_data: dict):
+def add_overforingspakke_to_db(conn, data_from_db: DataFromDatabase, hook_data: HookData):
     """ Adds overforingspakke to mottak-arkiv-service db
         We do this as tusd assigns a random name to each object """
-    offset_size = extract_offset_size_in_bytes_from_hook(tusd_data)
-    filename = extract_filename_from_hook(tusd_data)
-    tusd_id = extract_tusd_id_from_hook(tusd_data)
     try:
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, navn, storrelse, status) '
+            'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, navn, storrelse, status) '  # TODO navn -> objekt_navn
             'VALUES (%s, %s, %s, %s, %s)',
-            (metadata['arkivuttrekk_id'], tusd_id, filename, offset_size, OverforingspakkeStatus.STARTET))
+            (data_from_db.arkivuttrekk_id, hook_data.tusd_id, hook_data.objekt_navn, hook_data.transferred_bytes,
+             OverforingspakkeStatus.STARTET))
         conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
@@ -45,12 +44,24 @@ def run():
         logging.error(exception)
         exit(JSONERROR)
 
-    invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjonEksternId"]
+    if not tusd_data:
+        logging.error("Could not read tusd event.")
+        exit(JSONERROR)
+
+    # map tusd_data to parameter class
+    hook_data = HookData(tusd_data)
+    if not hook_data.ekstern_id:
+        logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
+        exit(UNKNOWNIID)
+    logging.info(f"Invitasjon_ekstern_id from JSON: {hook_data.ekstern_id}")
 
     connection = my_connect(DBSTRING, logger=logging)
-    metadata = get_metadata(connection, invitasjon_ekstern_id, logging)
-    add_overforingspakke_to_db(connection, metadata, tusd_data)
+    metadata = get_metadata(connection, hook_data.ekstern_id, logging)
     my_disconnect(connection)
+
+    # map metadata dict to parameter class
+    data_from_db = DataFromDatabase.init_from_dict(metadata)
+    add_overforingspakke_to_db(connection, data_from_db, hook_data)
     exit(OK)
 
 
