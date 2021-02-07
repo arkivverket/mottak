@@ -51,13 +51,21 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'UUID': dbdata['uuid'],
-        'OBJECT': data['Upload']['Storage']['Key'],
-        'CHECKSUM': dbdata['checksum'],
-        'ARCHIEVE_TYPE': dbdata['type'],  # TODO fix this typo in kicker and all dependencies there
-        'NAME': dbdata['name'],
-        'EMAIL': dbdata['email'],
-        'INVITATIONID': dbdata['id']  # TODO Change this to INVITATION_ID in kicker and all dependencies there
+        'UUID': data_from_db.ekstern_id,
+        'OBJECT': hook_data.objekt_navn,
+        'CHECKSUM': data_from_db.sjekksum,  # THE ONLY PARAM WE KEEP AFTER MOL-284 CHANGES
+        'ARCHIEVE_TYPE': data_from_db.arkiv_type,
+        'NAME': data_from_db.avgiver_navn,
+        'EMAIL': data_from_db.avgiver_epost,
+        'INVITATIONID': data_from_db.invitasjon_id,
+        # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
+        'TARGET_CONTAINER_NAME': data_from_db.ekstern_id,
+        'TUSD_OBJECT_NAME': hook_data.objekt_navn,
+        'EXTERNAL_ID': data_from_db.ekstern_id,
+        'ARCHIVE_TYPE': data_from_db.arkiv_type,
+        'SUBMITTER_NAME': data_from_db.avgiver_navn,
+        'SUBMITTER_EMAIL': data_from_db.avgiver_epost,
+        'INVITATION_ID': data_from_db.invitasjon_id
     }
     return params
 
