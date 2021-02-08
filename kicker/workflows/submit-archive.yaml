@@ -128,13 +128,13 @@ spec:
                 name: mailgun
                 key: secret-value
           - name: NAME
-            value: "{{workflow.parameters.NAME}}"
+            value: "{{workflow.parameters.SUBMITTER_NAME}}"
           - name: RECIPIENT
-            value: "{{workflow.parameters.EMAIL}}"
+            value: "{{workflow.parameters.SUBMITTER_EMAIL}}"
           - name: SUBJECT
             value: "Archieve rejected"
           - name: MESSAGE
-            value: "The archieve {{workflow.parameters.UUID}} was rejected due to checksum error. It will be deleted."
+            value: "The archieve {{workflow.parameters.EXTERNAL_ID}} was rejected due to checksum error. It will be deleted."
 
     - name: delete
       container:
