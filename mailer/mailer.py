@@ -34,7 +34,6 @@ def find_attachments(path):
     files = []
     if path and os.path.isdir(path):
         files = glob.glob(path + "/*")
-        return files
     return files
 
 
@@ -70,6 +69,7 @@ def main():
     """ Run from here """
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
+    logging.info(f'Starting mailer')
     logging.info(f'{__file__} version {__version__} running')
     # Check that we got what we need to run:
     verify_environment()
