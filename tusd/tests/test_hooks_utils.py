@@ -4,8 +4,7 @@ import io
 import logging
 import json
 
-from hooks.implementations.hooks_utils import get_metadata, my_connect, read_tusd_event, extract_tusd_id_from_hook, \
-    extract_offset_size_in_bytes_from_hook, extract_filename_from_hook
+from hooks.implementations.hooks_utils import get_metadata, my_connect, read_tusd_event
 
 
 pre_event = """{"Upload":{"ID":"","Size":440320,"SizeIsDeferred":false,"Offset":0,"MetaData":{"fileName":"df53d1d8-39bf-4fea-a741-58d472664ce2.tar","invitasjonEksternId":"d703908a-f39e-4e38-a0bf-64f64b6b7c86"},"IsPartial":false,"IsFinal":false,"PartialUploads":null,"Storage":null},"HTTPRequest":{"Method":"POST","URI":"/files","RemoteAddr":"10.52.0.1:58955","Header":{"Connection":["Keep-Alive"],"Content-Length":["0"],"Tus-Resumable":["1.0.0"],"Upload-Length":["440320"],"Upload-Metadata":["invitation_id Nw==,fileName ZGY1M2QxZDgtMzliZi00ZmVhLWE3NDEtNThkNDcyNjY0Y2UyLnRhcg=="],"Via":["1.1 google"],"X-Cloud-Trace-Context":["b167c3b206b0f8d40b1bfc018db3912f/16434868822010988609"],"X-Forwarded-For":["128.39.57.12, 34.107.169.47"],"X-Forwarded-Proto":["https"]}}}"""
@@ -70,27 +69,3 @@ def test_get_sb_sender(mocker):
 
 def test_argo_submit(mocker):
     pass
-
-
-def test_extract_offset_size_in_bytes_from_post_finish_hook():
-    json_hook = json.loads(post_event)
-    size = extract_offset_size_in_bytes_from_hook(json_hook)
-    assert size == 440320
-
-
-def test_extract_offset_size_in_bytes_from_pre_create_hook():
-    json_hook = json.loads(pre_event)
-    size = extract_offset_size_in_bytes_from_hook(json_hook)
-    assert size == 0
-
-
-def test_extract_tusd_id_from_hook():
-    json_hook = json.loads(post_event)
-    size = extract_tusd_id_from_hook(json_hook)
-    assert size == '9090fe36854e6761925e6e9ec475c17f'
-
-
-def test_extract_filename_from_hook():
-    json_hook = json.loads(post_event)
-    size = extract_filename_from_hook(json_hook)
-    assert size == '9090fe36854e6761925e6e9ec475c17f'

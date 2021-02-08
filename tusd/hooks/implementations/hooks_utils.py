@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 import json
-import psycopg2
-import psycopg2.extras
 import logging
-
 from typing import TextIO
 
-from .return_codes import DBERROR, JSONERROR
+import psycopg2
+import psycopg2.extras
+
+from .return_codes import DBERROR
 
 
 def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
