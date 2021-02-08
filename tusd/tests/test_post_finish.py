@@ -65,7 +65,7 @@ def test_gather_params(mocker):
     expected = {'UUID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'OBJECT': '9090fe36854e6761925e6e9ec475c17f',
                 'CHECKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'ARCHIEVE_TYPE': 'Noark5', 'NAME': 'Per Buer', 'EMAIL': 'perbue@arkivverket.no', 'INVITATIONID': 2,
-                'TARGET_CONTAINER_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
+                'TARGET_OBJECT_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
                 'TUSD_OBJECT_NAME': '9090fe36854e6761925e6e9ec475c17f',
                 'EXTERNAL_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARCHIVE_TYPE': 'Noark5',
                 'SUBMITTER_NAME': 'Per Buer', 'SUBMITTER_EMAIL': 'perbue@arkivverket.no', 'INVITATION_ID': 2}
