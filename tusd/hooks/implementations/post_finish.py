@@ -61,11 +61,12 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
         # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
         'TARGET_OBJECT_NAME': data_from_db.ekstern_id,
         'TUSD_OBJECT_NAME': hook_data.objekt_navn,
-        'EXTERNAL_ID': data_from_db.ekstern_id,
-        'ARCHIVE_TYPE': data_from_db.arkiv_type,
-        'SUBMITTER_NAME': data_from_db.avgiver_navn,
-        'SUBMITTER_EMAIL': data_from_db.avgiver_epost,
-        'INVITATION_ID': data_from_db.invitasjon_id
+        'SJEKKSUM': data_from_db.sjekksum,
+        'EKSTERN_ID': data_from_db.ekstern_id,
+        'ARKIV_TYPE': data_from_db.arkiv_type,
+        'AVGIVER_NAVN': data_from_db.avgiver_navn,
+        'AVGIVER_EPOST': data_from_db.avgiver_epost,
+        'INVITASJON_ID': data_from_db.invitasjon_id
     }
     return params
 
