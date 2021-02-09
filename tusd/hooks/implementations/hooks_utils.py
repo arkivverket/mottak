@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import json
 import logging
-from typing import TextIO
+from typing import TextIO, Optional
 
 import psycopg2
 import psycopg2.extras
 
-from .return_codes import DBERROR
+from hooks.implementations.return_codes import DBERROR
+from hooks.models.DataFromDatabase import DataFromDatabase
 
 
 def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
@@ -35,8 +36,9 @@ def my_connect(dbstring: str, logger):
         return connection
 
 
-def get_metadata(conn, invitasjon_ekstern_id: str, logger):
+def get_data_from_db(conn, invitasjon_ekstern_id: str, logger) -> Optional[DataFromDatabase]:
     """ Fetch metadata about an invitation from the database using the invitation id as key """
+    rec = []
     try:
         dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         dict_cursor.execute(
@@ -60,7 +62,7 @@ def get_metadata(conn, invitasjon_ekstern_id: str, logger):
     if len(rec) == 0:
         return None
     else:
-        return rec[0]
+        return DataFromDatabase.init_from_dict(rec[0])
 
 
 def my_disconnect(conn):

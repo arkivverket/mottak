@@ -5,8 +5,8 @@ import sys
 import psycopg2
 import psycopg2.extras
 
-from hooks.implementations.hooks_utils import read_tusd_event, my_connect, my_disconnect, get_metadata
-from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNIID, DBERROR
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, my_disconnect, get_data_from_db
+from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNEID, DBERROR
 from hooks.implementations.status import OverforingspakkeStatus
 from hooks.models.DataFromDatabase import DataFromDatabase
 from hooks.models.HookData import HookData
@@ -52,15 +52,16 @@ def run():
     hook_data = HookData(tusd_data)
     if not hook_data.ekstern_id:
         logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
-        exit(UNKNOWNIID)
+        exit(UNKNOWNEID)
     logging.info(f"Invitasjon_ekstern_id from JSON: {hook_data.ekstern_id}")
 
     connection = my_connect(DBSTRING, logger=logging)
-    metadata = get_metadata(connection, hook_data.ekstern_id, logging)
+    data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logging)
     my_disconnect(connection)
+    if not data_from_db:
+        logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
+        exit(UNKNOWNEID)
 
-    # map metadata dict to parameter class
-    data_from_db = DataFromDatabase.init_from_dict(metadata)
     try:
         add_overforingspakke_to_db(connection, data_from_db, hook_data)
     except Exception as exception:

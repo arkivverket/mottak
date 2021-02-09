@@ -11,9 +11,9 @@ from azure.servicebus import QueueClient, Message
 
 from hooks.models.DataFromDatabase import DataFromDatabase
 from hooks.models.HookData import HookData
-from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
-from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, OK, UNKNOWNUUID
-from .status import OverforingspakkeStatus
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
+from hooks.implementations.return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK, UNKNOWNUUID
+from hooks.implementations.status import OverforingspakkeStatus
 
 try:
     from dotenv import load_dotenv
@@ -126,7 +126,7 @@ def run():
     hook_data = HookData(tusd_data)
     if not hook_data.ekstern_id:
         logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
-        exit(UNKNOWNIID)
+        exit(UNKNOWNEID)
     logging.info(f"Invitasjon_ekstern_id from JSON: {hook_data.ekstern_id}")
 
     if not (os.getenv('DBSTRING')):
@@ -134,18 +134,11 @@ def run():
         exit(USAGEERROR)
 
     connection = my_connect(os.getenv('DBSTRING'), logger=logging)
-    metadata = get_metadata(connection, hook_data.ekstern_id, logger=logging)
+    data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logger=logging)
     my_disconnect(connection)
-    if not metadata:
-        logging.error(
-            f"Failed to fetch metadata for invitation {hook_data.ekstern_id} - no invitation?")
-        exit(UNKNOWNIID)
-
-    # map metadata dict to parameter class
-    data_from_db = DataFromDatabase.init_from_dict(metadata)
-    if not data_from_db.ekstern_id:
-        logging.error(f'Error while looking up ekstern_id from invitasjon ({hook_data.ekstern_id}) from DB:')
-        exit(UNKNOWNUUID)
+    if not data_from_db:
+        logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
+        exit(UNKNOWNEID)
 
     try:
         update_overforingspakke_in_db(connection, hook_data)

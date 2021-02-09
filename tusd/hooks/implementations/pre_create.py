@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-import os                               # for getenv
-import sys
 import logging
+import os  # for getenv
+import sys
 
-from hooks.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
+from hooks.implementations.return_codes import JSONERROR, USAGEERROR, UNKNOWNEID, UUIDERROR, OK
 from hooks.models.HookData import HookData
-from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect
-from hooks.implementations.return_codes import JSONERROR, USAGEERROR, UNKNOWNIID, UUIDERROR, OK, UNKNOWNUUID
 
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except:
     print('dotenv not loaded')
+
 
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
@@ -43,7 +43,7 @@ def run():
     hook_data = HookData(tusd_data)
     if not hook_data.ekstern_id:
         logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
-        exit(UNKNOWNIID)
+        exit(UNKNOWNEID)
     logging.info(f"Invitasjon_ekstern_id from JSON: {hook_data.ekstern_id}")
 
     if not (os.getenv('DBSTRING')):
@@ -51,19 +51,14 @@ def run():
         exit(USAGEERROR)
 
     connection = my_connect(os.getenv('DBSTRING'), logger=logging)
-    metadata = get_metadata(connection, hook_data.ekstern_id, logger=logging)
+    data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logger=logging)
     my_disconnect(connection)
-    if not metadata:
-        logging.error(
-            f"Failed to fetch metadata for invitation {hook_data.ekstern_id} - no invitation?")
-        exit(UNKNOWNIID)
-
-    # map metadata dict to parameter class
-    data_from_db = DataFromDatabase.init_from_dict(metadata)
-
+    if not data_from_db:
+        logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
+        exit(UNKNOWNEID)
     if not data_from_db.ekstern_id:
         logging.error(f'Error while looking up ekstern_id from invitasjon ({hook_data.ekstern_id}) from DB:')
-        exit(UNKNOWNUUID)
+        exit(UNKNOWNEID)
 
     # This is the pre-create hook. The only concern here is to validate the UUID
     if hook_data.ekstern_id == data_from_db.ekstern_id:
