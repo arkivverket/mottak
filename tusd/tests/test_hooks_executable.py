@@ -1,6 +1,7 @@
 import os
 
-hooks_folder = 'hooks'
+current_path = os.path.dirname(__file__)
+hooks_folder = os.path.join(current_path, '../hooks')
 tusd_hooks_valid_names = ['pre-create', 'post-create', 'pre-finish', 'post-finish', 'post-terminate', 'post-receive']
 
 
