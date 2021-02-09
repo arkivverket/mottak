@@ -1,10 +1,16 @@
 from __future__ import annotations
+from uuid import UUID
 
 
 class HookData:
     """
     Parameter class for data read from the hook event (stdin)
     """
+    tusd_id: UUID
+    ekstern_id: UUID
+    transferred_bytes: int
+    objekt_navn: str
+
     def __init__(self,
                  tusd_id=None,
                  ekstern_id=None,

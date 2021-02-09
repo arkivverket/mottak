@@ -8,8 +8,8 @@ import psycopg2.extras
 from hooks.implementations.hooks_utils import read_tusd_event, my_connect, my_disconnect, get_data_from_db
 from hooks.implementations.return_codes import JSONERROR, OK, UNKNOWNEID, DBERROR
 from hooks.implementations.status import OverforingspakkeStatus
-from hooks.models.DataFromDatabase import DataFromDatabase
-from hooks.models.HookData import HookData
+from hooks.implementations.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.models.HookData import HookData
 
 DBSTRING = os.getenv('DBSTRING')
 

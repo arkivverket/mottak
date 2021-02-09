@@ -5,7 +5,7 @@ import sys
 
 from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
 from hooks.implementations.return_codes import JSONERROR, USAGEERROR, UNKNOWNEID, UUIDERROR, OK
-from hooks.models.HookData import HookData
+from hooks.implementations.models.HookData import HookData
 
 try:
     from dotenv import load_dotenv

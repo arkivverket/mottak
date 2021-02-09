@@ -9,10 +9,10 @@ import psycopg2
 import psycopg2.extras
 from azure.servicebus import QueueClient, Message
 
-from hooks.models.DataFromDatabase import DataFromDatabase
-from hooks.models.HookData import HookData
+from hooks.implementations.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.models.HookData import HookData
 from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
-from hooks.implementations.return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK, UNKNOWNUUID
+from hooks.implementations.return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK
 from hooks.implementations.status import OverforingspakkeStatus
 
 try:

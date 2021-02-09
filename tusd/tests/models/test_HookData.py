@@ -1,6 +1,6 @@
 import pytest
 
-from hooks.models.HookData import HookData
+from hooks.implementations.models.HookData import HookData
 
 
 @pytest.fixture

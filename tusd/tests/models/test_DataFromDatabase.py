@@ -1,6 +1,6 @@
 import pytest
 
-from hooks.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.models.DataFromDatabase import DataFromDatabase
 
 
 @pytest.fixture

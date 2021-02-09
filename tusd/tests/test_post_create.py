@@ -1,6 +1,6 @@
 from hooks.implementations.post_create import add_overforingspakke_to_db
-from hooks.models.DataFromDatabase import DataFromDatabase
-from hooks.models.HookData import HookData
+from hooks.implementations.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.models.HookData import HookData
 
 mock_hook_data = HookData(tusd_id="9090fe36854e6761925e6e9ec475c17f",
                           ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",

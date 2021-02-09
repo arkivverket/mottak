@@ -1,10 +1,20 @@
 from __future__ import annotations
+from uuid import UUID
 
 
 class DataFromDatabase:
     """
     Parameter class for data read from the mottak database.
     """
+    invitasjon_id: int
+    ekstern_id: UUID
+    sjekksum: str
+    avgiver_navn: str
+    avgiver_epost: str
+    koordinator_epost: str
+    arkiv_type: str
+    arkivuttrekk_id: int
+    storrelse: int
 
     def __init__(self,
                  invitasjon_id=None,
