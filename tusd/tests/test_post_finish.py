@@ -33,6 +33,7 @@ mock_dbdata = DataFromDatabase(invitasjon_id=2,
                                sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                avgiver_navn="Per Buer",
                                avgiver_epost="perbue@arkivverket.no",
+                               koordinator_epost="marelm@arkivverket.no",
                                arkiv_type="Noark5",
                                arkivuttrekk_id=1,
                                storrelse=440320)
@@ -67,8 +68,10 @@ def test_gather_params(mocker):
                 'ARCHIEVE_TYPE': 'Noark5', 'NAME': 'Per Buer', 'EMAIL': 'perbue@arkivverket.no', 'INVITATIONID': 2,
                 'TARGET_OBJECT_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
                 'TUSD_OBJECT_NAME': '9090fe36854e6761925e6e9ec475c17f',
-                'EXTERNAL_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARCHIVE_TYPE': 'Noark5',
-                'SUBMITTER_NAME': 'Per Buer', 'SUBMITTER_EMAIL': 'perbue@arkivverket.no', 'INVITATION_ID': 2}
+                'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
+                'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARKIV_TYPE': 'Noark5',
+                'AVGIVER_NAVN': 'Per Buer', 'AVGIVER_EPOST': 'perbue@arkivverket.no',
+                'KOORDINATOR_EPOST': 'marelm@arkivverket.no', 'INVITASJON_ID': 2}
     # data = json.loads(post_event)
     # metadata = invitation_dict
     params = gather_params(hook_data=mock_hook_data, data_from_db=mock_dbdata)

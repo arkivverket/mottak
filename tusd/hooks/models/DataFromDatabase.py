@@ -12,6 +12,7 @@ class DataFromDatabase:
                  sjekksum=None,
                  avgiver_navn=None,
                  avgiver_epost=None,
+                 koordinator_epost=None,
                  arkiv_type=None,
                  arkivuttrekk_id=None,
                  storrelse=None):
@@ -20,6 +21,7 @@ class DataFromDatabase:
         self.sjekksum = sjekksum
         self.avgiver_navn = avgiver_navn
         self.avgiver_epost = avgiver_epost
+        self.koordinator_epost = koordinator_epost
         self.arkiv_type = arkiv_type
         self.arkivuttrekk_id = arkivuttrekk_id
         self.storrelse = storrelse
@@ -31,6 +33,7 @@ class DataFromDatabase:
                    self.sjekksum == other.sjekksum and \
                    self.avgiver_navn == other.avgiver_navn and \
                    self.avgiver_epost == other.avgiver_epost and \
+                   self.koordinator_epost == other.koordinator_epost and \
                    self.arkiv_type == other.arkiv_type and \
                    self.arkivuttrekk_id == other.arkivuttrekk_id and \
                    self.storrelse == other.storrelse
@@ -43,6 +46,7 @@ class DataFromDatabase:
         sjekksum = metadata.get('sjekksum')
         avgiver_navn = metadata.get('avgiver_navn')
         avgiver_epost = metadata.get('avgiver_epost')
+        koordinator_epost = metadata.get('koordinator_epost')
         arkiv_type = metadata.get('arkiv_type')
         arkivuttrekk_id = metadata.get('arkivuttrekk_id')
         storrelse = metadata.get('storrelse')
@@ -52,6 +56,7 @@ class DataFromDatabase:
                                 sjekksum=sjekksum,
                                 avgiver_navn=avgiver_navn,
                                 avgiver_epost=avgiver_epost,
+                                koordinator_epost=koordinator_epost,
                                 arkiv_type=arkiv_type,
                                 arkivuttrekk_id=arkivuttrekk_id,
                                 storrelse=storrelse)

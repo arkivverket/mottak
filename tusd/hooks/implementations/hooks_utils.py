@@ -45,6 +45,7 @@ def get_metadata(conn, invitasjon_ekstern_id: str, logger):
             'a.sjekksum_sha256      AS sjekksum, '
             'a.avgiver_navn         AS avgiver_navn, '
             'a.avgiver_epost        AS avgiver_epost, '
+            'a.koordinator_epost    AS koordinator_epost, '
             'a.type                 AS arkiv_type, '
             'a.id                   AS arkivuttrekk_id, '
             'a.storrelse            AS storrelse '
