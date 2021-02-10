@@ -111,6 +111,8 @@ spec:
 
     # Kontainer som avviser et arkiv.
     # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
+    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
+    # TODO Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
     - name: checksum-error
       container:
         image: arkivverket.azurecr.io/mottak/mailer
@@ -128,9 +130,9 @@ spec:
                 name: mailgun
                 key: secret-value
           - name: NAME
-            value: "{{workflow.parameters.SUBMITTER_NAME}}"
+            value: "Koordinator"  # {{workflow.parameters.KOORDINATOR_NAVN}}
           - name: RECIPIENT
-            value: "{{workflow.parameters.SUBMITTER_EMAIL}}"
+            value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
             value: "Archieve rejected"
           - name: MESSAGE
@@ -315,6 +317,8 @@ spec:
                 key: secret-value
 
 
+    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
+    # TODO Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
     - name: new-archive
       inputs:
         artifacts:
@@ -343,9 +347,9 @@ spec:
                 name: mailgun-secret
                 key: secret-value
           - name: NAME
-            value: "{{workflow.parameters.NAME}}"
+            value: "Koordinator"  # "{{workflow.parameters.KOORDINATOR_NAVN}}"
           - name: RECIPIENT
-            value: "{{workflow.parameters.EMAIL}}"
+            value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
             value: "Archieve processed"
           - name: MESSAGE
