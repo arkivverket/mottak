@@ -38,10 +38,10 @@ def write_result(res):
 
 def get_object_stream():
     bucket = os.getenv('BUCKET')
-    filename = os.getenv('TUSD_OBJECT_NAME')
-    logging.info(f'Opening a streaming connection to {filename} in {bucket}')
+    objectname = os.getenv('TUSD_OBJECT_NAME')
+    logging.info(f'Opening a streaming connection to {objectname} in {bucket}')
     storage = ArkivverketObjectStorage()
-    return storage.download_stream(bucket, filename)
+    return storage.download_stream(bucket, objectname)
 
 
 def main():
