@@ -62,7 +62,7 @@ def main():
         logging.error(f'error caught while streaming/checksumming: {e}')
         exit(FILEERROR)
 
-    expected = os.getenv('CHECKSUM')
+    expected = os.getenv('SJEKKSUM')
     if checksum == expected:
         logging.info(f'Checksum ({checksum}) verified')
         write_result('ok')
