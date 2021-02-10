@@ -7,7 +7,7 @@ class DataFromDatabase:
     Parameter class for data read from the mottak database.
     """
     invitasjon_id: int
-    ekstern_id: UUID
+    ekstern_id: str
     sjekksum: str
     avgiver_navn: str
     avgiver_epost: str

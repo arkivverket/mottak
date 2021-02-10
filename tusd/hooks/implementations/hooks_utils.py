@@ -6,8 +6,8 @@ from typing import TextIO, Optional
 import psycopg2
 import psycopg2.extras
 
-from hooks.implementations.return_codes import DBERROR
 from hooks.implementations.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.return_codes import DBERROR
 
 
 def read_tusd_event(step: str, input_data: TextIO, logger) -> dict:
