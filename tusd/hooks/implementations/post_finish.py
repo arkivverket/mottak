@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
+import json
+import logging
 import os  # for getenv
 import sys
-import json
+from datetime import datetime
+
 import psycopg2
 import psycopg2.extras
-import logging
-from datetime import datetime
 from azure.servicebus import QueueClient, Message
 
-from .status import OverforingspakkeStatus
-from .hooks_utils import read_tusd_event, my_connect, get_metadata, my_disconnect, extract_offset_size_in_bytes_from_hook, \
-    extract_tusd_id_from_hook
-from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNIID, DBERROR, UUIDERROR, OK
+from hooks.implementations.models.DataFromDatabase import DataFromDatabase
+from hooks.implementations.models.HookData import HookData
+from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
+from hooks.implementations.return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK
+from hooks.implementations.status import OverforingspakkeStatus
 
 try:
     from dotenv import load_dotenv
@@ -27,37 +29,45 @@ except:
 # Todo: clean up logging between hooks_utils and this file
 
 
-def update_overforingspakke_in_db(conn, tusd_data: dict):
+def update_overforingspakke_in_db(conn, hook_data: HookData):
     """ Updates overforingspakke in mottak-arkiv-service db with size and filename
         We do this as tusd assigns a random name to each object """
-    offset_size = extract_offset_size_in_bytes_from_hook(tusd_data)
-    tusd_id = extract_tusd_id_from_hook(tusd_data)
     try:
         cur = conn.cursor()
         cur.execute('UPDATE overforingspakke '
                     'SET storrelse = %s, status = %s, endret = %s '
                     'WHERE tusd_id = %s',
-                    (offset_size, OverforingspakkeStatus.OK, datetime.now(), tusd_id))
+                    (hook_data.transferred_bytes, OverforingspakkeStatus.OK, datetime.now(), hook_data.tusd_id))
         if cur.rowcount != 1:
             raise psycopg2.DataError
-        logging.debug(f"Updated status to OK for tusd_id {tusd_id}")
+        logging.debug(f"Updated status to OK for tusd_id {hook_data.tusd_id}")
         conn.commit()
     except psycopg2.Error as exception:
         logging.error(f'Database error: {exception}')
         raise exception
 
 
-def gather_params(dbdata, data):
+def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'UUID': dbdata['uuid'],
-        'OBJECT': data['Upload']['Storage']['Key'],
-        'CHECKSUM': dbdata['checksum'],
-        'ARCHIEVE_TYPE': dbdata['type'],  # TODO fix this typo in kicker and all dependencies there
-        'NAME': dbdata['name'],
-        'EMAIL': dbdata['email'],
-        'INVITATIONID': dbdata['id']  # TODO Change this to INVITATION_ID in kicker and all dependencies there
+        'UUID': data_from_db.ekstern_id,
+        'OBJECT': hook_data.objekt_navn,
+        'CHECKSUM': data_from_db.sjekksum,  # THE ONLY PARAM WE KEEP AFTER MOL-284 CHANGES
+        'ARCHIEVE_TYPE': data_from_db.arkiv_type,
+        'NAME': data_from_db.avgiver_navn,
+        'EMAIL': data_from_db.avgiver_epost,
+        'INVITATIONID': data_from_db.invitasjon_id,
+        # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
+        'TARGET_BUCKET_NAME': data_from_db.ekstern_id,
+        'TUSD_OBJECT_NAME': hook_data.objekt_navn,
+        'SJEKKSUM': data_from_db.sjekksum,
+        'EKSTERN_ID': data_from_db.ekstern_id,
+        'ARKIV_TYPE': data_from_db.arkiv_type,
+        'AVGIVER_NAVN': data_from_db.avgiver_navn,
+        'AVGIVER_EPOST': data_from_db.avgiver_epost,
+        'KOORDINATOR_EPOST': data_from_db.koordinator_epost,
+        'INVITASJON_ID': data_from_db.invitasjon_id
     }
     return params
 
@@ -86,7 +96,7 @@ def argo_submit(params):
         try:
             message = Message(json.dumps(message).encode('utf8'))
             logging.info(f'Sending message: {message}')
-            ret = qsender.send(message)
+            qsender.send(message)
         except Exception as exception:
             logging.error(
                 f'Failed to send message over service bus: {exception}')
@@ -112,46 +122,33 @@ def run():
         logging.error("Could not read tusd event.")
         exit(JSONERROR)
 
+    # map tusd_data to parameter class
+    hook_data = HookData.init_from_dict(tusd_data)
+    if not hook_data.ekstern_id:
+        logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
+        exit(UNKNOWNEID)
+    logging.info(f"Invitasjon_ekstern_id from JSON: {hook_data.ekstern_id}")
+
     if not (os.getenv('DBSTRING')):
         logging.error("DBSTRING environment variable not set")
         exit(USAGEERROR)
 
-    try:
-        invitasjon_ekstern_id = tusd_data["Upload"]["MetaData"]["invitasjonEksternId"]
-        logging.info(f"Invitation ID from JSON: {invitasjon_ekstern_id}")
-        # todo: Specify exception.
-    except:
-        logging.error(f"Could not find invitation_id in JSON: {invitasjon_ekstern_id}")
-        exit(UNKNOWNIID)
-
     connection = my_connect(os.getenv('DBSTRING'), logger=logging)
-    metadata = get_metadata(connection, invitasjon_ekstern_id, logger=logging)
-    if not metadata:
-        logging.error(
-            f"Failed to fetch metadata for invitation {invitasjon_ekstern_id} - no invitation?")
-        exit(UNKNOWNIID)
+    data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logger=logging)
+    my_disconnect(connection)
+    if not data_from_db:
+        logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
+        exit(UNKNOWNEID)
 
     try:
-        uuid = metadata['uuid']
-    except Exception as exception:
-        logging.error(
-            f'Error while looking up uuid from invition ({invitasjon_ekstern_id}) from DB: {exception}')
-        exit(UNKNOWNIID)
-
-    try:
-        update_overforingspakke_in_db(connection, tusd_data)
+        update_overforingspakke_in_db(connection, hook_data)
     except Exception as exception:
         logging.error(f"Error while updating database {exception}")
         exit(DBERROR)
 
-    if metadata and ('uuid' in metadata):
-        params = gather_params(metadata, tusd_data)
-        argo_submit(params)
-        my_disconnect(connection)
-        exit(OK)
-    else:
-        logging.error("Unknown UUID:" + uuid)
-        exit(UUIDERROR)
+    params = gather_params(data_from_db, hook_data)
+    argo_submit(params)
+    exit(OK)
 
 
 if __name__ == "__main__":
