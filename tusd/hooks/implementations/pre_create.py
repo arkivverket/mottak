@@ -40,7 +40,7 @@ def run():
         exit(JSONERROR)
 
     # map tusd_data to parameter class
-    hook_data = HookData(tusd_data)
+    hook_data = HookData.init_from_dict(tusd_data)
     if not hook_data.ekstern_id:
         logging.error("Could not find invitasjon_ekstern_id in JSON from hook event")
         exit(UNKNOWNEID)
