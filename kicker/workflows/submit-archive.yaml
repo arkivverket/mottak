@@ -134,9 +134,9 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Archieve rejected"
+            value: "Arkiv avvist"
           - name: MESSAGE
-            value: "The archieve {{workflow.parameters.EXTERNAL_ID}} was rejected due to checksum error. It will be deleted."
+            value: "Arkiv med ekstern id {{workflow.parameters.EKSTERN_ID}} avvist pga. feil i sjekksum. Arkivet slettes."
 
     - name: delete
       container:
@@ -332,9 +332,10 @@ spec:
             path: /tmp/message
             raw:
               data: |
-                An archieve ({{workflow.parameters.OBJECT}} stored as {{workflow.parameters.OBJECT}}) of type {{workflow.parameters.ARCHIEVE_TYPE}} has been processed.
-                Attached to this email is the report from Arkade5 and the log from the anti-virus scan.
-                Please review.
+                Arkiv {{workflow.parameters.TUSD_OBJECT_NAME}} av typen {{workflow.parameters.ARKIV_TYPE}} er behandlet
+                og lagret som {{workflow.parameteres.EKSTERN_ID}} i bucket {{workflow.parameters.TARGET_BUCKET_NAME}}.
+                Vedlagt denne e-post er rapporten fra Arkade5 og loggen fra antivirus-skanningen.
+                Vennligst se over.
       container:
         image: arkivverket.azurecr.io/mottak/mailer
         imagePullPolicy: Always
@@ -351,7 +352,7 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Archieve processed"
+            value: "Arkiv behandlet"
           - name: MESSAGE
             value: /tmp/message
           - name: ATTACHMENTS
