@@ -80,8 +80,8 @@ spec:
         env:
           - name: TUSD_OBJECT_NAME
             value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
-          - name: CHECKSUM
-            value: "{{workflow.parameters.CHECKSUM}}"
+          - name: SJEKKSUM
+            value: "{{workflow.parameters.SJEKKSUM}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
