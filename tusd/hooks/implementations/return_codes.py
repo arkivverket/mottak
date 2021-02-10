@@ -9,5 +9,5 @@ IOERROR = 12
 USAGEERROR = 13  # some sort of user error.
 ARGOERROR = 14   # no in use anymore
 UNKNOWNUUID = 15  # unknown UUID
-UNKNOWNIID = 16  # unknown invitation
+UNKNOWNEID = 16  # unknown invitation ekstern_id
 SBERROR = 17

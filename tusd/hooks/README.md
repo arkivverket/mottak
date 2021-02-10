@@ -19,7 +19,7 @@ The event looks like this:
     "Offset": 0,
     "MetaData": {
       "fileName": "df53d1d8-39bf-4fea-a741-58d472664ce2.tar",
-      "invitation_id": "7"
+      "invitasjonEksternId": "80895248-3d0d-477c-948e-7b0de59d7f6b"
     },
     "IsPartial": false,
     "IsFinal": false,
@@ -59,7 +59,7 @@ The post-upload hook will start argo and feed it the relevant stuff. The event i
     "Offset": 440320,
     "MetaData": {
       "fileName": "df53d1d8-39bf-4fea-a741-58d472664ce2.tar",
-      "invitation_id": "7"
+      "invitasjonEksternId": "80895248-3d0d-477c-948e-7b0de59d7f6b"
     },
     "IsPartial": false,
     "IsFinal": false,
@@ -90,3 +90,5 @@ The post-upload hook will start argo and feed it the relevant stuff. The event i
   }
 }
 ```
+
+General information about [the hook event JSON object](https://github.com/tus/tusd/blob/master/docs/hooks.md#the-hooks-environment)
