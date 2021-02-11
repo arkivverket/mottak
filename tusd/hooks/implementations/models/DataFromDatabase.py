@@ -14,6 +14,7 @@ class DataFromDatabase:
     koordinator_epost: str
     arkiv_type: str
     arkivuttrekk_id: int
+    arkivuttrekk_obj_id: str
     storrelse: int
 
     def __init__(self,
@@ -25,6 +26,7 @@ class DataFromDatabase:
                  koordinator_epost=None,
                  arkiv_type=None,
                  arkivuttrekk_id=None,
+                 arkivuttrekk_obj_id=None,
                  storrelse=None):
         self.invitasjon_id = invitasjon_id
         self.ekstern_id = ekstern_id
@@ -34,6 +36,7 @@ class DataFromDatabase:
         self.koordinator_epost = koordinator_epost
         self.arkiv_type = arkiv_type
         self.arkivuttrekk_id = arkivuttrekk_id
+        self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.storrelse = storrelse
 
     def __eq__(self, other) -> bool:
@@ -46,6 +49,7 @@ class DataFromDatabase:
                    self.koordinator_epost == other.koordinator_epost and \
                    self.arkiv_type == other.arkiv_type and \
                    self.arkivuttrekk_id == other.arkivuttrekk_id and \
+                   self.arkivuttrekk_obj_id == other.arkivuttrekk_obj_id and \
                    self.storrelse == other.storrelse
         return False
 
@@ -59,6 +63,7 @@ class DataFromDatabase:
         koordinator_epost = metadata.get('koordinator_epost')
         arkiv_type = metadata.get('arkiv_type')
         arkivuttrekk_id = metadata.get('arkivuttrekk_id')
+        arkivuttrekk_obj_id = metadata.get('arkivuttrekk_obj_id')
         storrelse = metadata.get('storrelse')
 
         return DataFromDatabase(invitasjon_id=invitasjon_id,
@@ -69,4 +74,5 @@ class DataFromDatabase:
                                 koordinator_epost=koordinator_epost,
                                 arkiv_type=arkiv_type,
                                 arkivuttrekk_id=arkivuttrekk_id,
+                                arkivuttrekk_obj_id=arkivuttrekk_obj_id,
                                 storrelse=storrelse)
