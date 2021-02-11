@@ -7,7 +7,7 @@ We use dependabot to monitor dependency versions. To add a new application to de
 
 ### Adding new workflow
 To create a new workflow you need to add a new service/component name to
-[build-workflows.sh](build-worflows.sh) and run the script. This will then autogenerate
+[build-workflows.sh](build-workflows.sh) and run the script. This will then autogenerate
 new workflows for all the services added to the script.
 
 ### Changing a workflow

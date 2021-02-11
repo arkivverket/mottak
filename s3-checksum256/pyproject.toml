@@ -12,6 +12,7 @@ py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
 pylint = "^2.4.4"
 python-dotenv = "^0.13.0"
 autopep8 = "^1.5.3"
+pytest = "^6.2.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
