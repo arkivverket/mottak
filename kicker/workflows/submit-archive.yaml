@@ -74,7 +74,7 @@ spec:
 
     - name: checksum-check
       container:
-        image: arkivverket.azurecr.io/mottak/s3-checksum256
+        image: arkivverket.azurecr.io/da-mottak/s3-checksum256:66668ebaf417dcaf0ef05529bd72923ded8941e7
         imagePullPolicy: Always
 
         env:
