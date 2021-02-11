@@ -136,7 +136,9 @@ spec:
           - name: SUBJECT
             value: "Arkiv avvist"
           - name: MESSAGE
-            value: "Arkiv med ekstern id {{workflow.parameters.EKSTERN_ID}} avvist pga. feil i sjekksum. Arkivet slettes."
+            value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
+            tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}} avvist pga. feil sjekksum.
+            Arkivet slettes."
 
     - name: delete
       container:
@@ -332,8 +334,8 @@ spec:
             path: /tmp/message
             raw:
               data: |
-                Arkiv {{workflow.parameters.TUSD_OBJECT_NAME}} av typen {{workflow.parameters.ARKIV_TYPE}} er behandlet
-                og lagret som {{workflow.parameteres.EKSTERN_ID}} i bucket {{workflow.parameters.TARGET_BUCKET_NAME}}.
+                Overføringspakke tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
+                er behandlet og lagret i bucket {{workflow.parameters.TARGET_BUCKET_NAME}}.
                 Vedlagt denne e-post er rapporten fra Arkade5 og loggen fra antivirus-skanningen.
                 Vennligst se over.
       container:
