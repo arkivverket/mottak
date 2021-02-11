@@ -19,7 +19,8 @@ mock_dbdata = DataFromDatabase(invitasjon_id=2,
                                koordinator_epost="marelm@arkivverket.no",
                                arkiv_type="Noark5",
                                arkivuttrekk_id=1,
-                               storrelse=440320)
+                               storrelse=440320,
+                               arkivuttrekk_obj_id="ed889fdc-b4d0-49fe-bf4b-caa0834cab2d")
 
 
 def test_update_overforingspakke_in_db(mocker):
@@ -52,7 +53,8 @@ def test_gather_params(mocker):
                 'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARKIV_TYPE': 'Noark5',
                 'AVGIVER_NAVN': 'Per Buer', 'AVGIVER_EPOST': 'perbue@arkivverket.no',
-                'KOORDINATOR_EPOST': 'marelm@arkivverket.no', 'INVITASJON_ID': 2}
+                'KOORDINATOR_EPOST': 'marelm@arkivverket.no', 'INVITASJON_ID': 2,
+                'ARKIVUTTREKK_OBJ_ID':"ed889fdc-b4d0-49fe-bf4b-caa0834cab2d"}
     # data = json.loads(post_event)
     # metadata = invitation_dict
     params = gather_params(hook_data=mock_hook_data, data_from_db=mock_dbdata)
