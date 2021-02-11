@@ -78,10 +78,10 @@ spec:
         imagePullPolicy: Always
 
         env:
-          - name: OBJECT
-            value: "{{workflow.parameters.OBJECT}}"
-          - name: CHECKSUM
-            value: "{{workflow.parameters.CHECKSUM}}"
+          - name: TUSD_OBJECT_NAME
+            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: SJEKKSUM
+            value: "{{workflow.parameters.SJEKKSUM}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
@@ -180,7 +180,6 @@ spec:
               secretKeyRef:
                 name: storageaccount-key
                 key: storageaccount-key
-
           - name: AVLOG
             value: /tmp/avlog
       outputs:
