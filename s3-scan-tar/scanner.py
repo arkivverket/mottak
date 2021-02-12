@@ -147,18 +147,18 @@ def main():
     logging.info(f'{__file__} version {__version__} running')
 
     bucket = os.getenv('BUCKET')
-    filename = os.getenv('OBJECT')
+    objectname = os.getenv('TUSD_OBJECT_NAME')
     # Get the max file size for clamd. Default is 1023 MiB
     scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES
 
-    logging.info(f'Intializing scan on {bucket}/{filename} with scan limit {scan_limit} MiB')
+    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {scan_limit} MiB')
 
     storage = ArkivverketObjectStorage()
-    obj = storage.download_stream(bucket, filename)
-    file_stream = MakeIterIntoFile(obj)
+    obj = storage.download_stream(bucket, objectname)
+    object_stream = MakeIterIntoFile(obj)
     # If you wanna test this on local files do something like this:
-    # file_stream = open(filename,'br')
-    # print("Local File opened:", file_stream)
+    # object_stream = open(objectname,'br')
+    # print("Local File opened:", object_stream)
 
     try:
         clamd_socket = get_clam()
@@ -173,7 +173,7 @@ def main():
         logging.error(exception)
         sys.exit(CLAMAVERROR)
     scan_ret = scan_archive(
-        file_stream, clamd_socket, scan_limit)
+        object_stream, clamd_socket, scan_limit)
 
     logging.info(f"{scan_ret.clean} files scanned and found clean")
     logging.info(f"{scan_ret.virus} viruses found")
