@@ -1,13 +1,28 @@
-# scan-tar
+## Scan-tar
 
-This takes a tar file and runs it though clamav. It does this by doing a streaming
-read on the file and picks out each element and feeds this to clamav over a socket.
+This container performs an antivirus-scan on an object read from objectstorage.
 
-The signatures are refreshed on startup using freshclam.
+The container does a streaming read of a tar-file (object in objectstorage)
+and feeds each element of it to [ClamAV](https://www.clamav.net/) over a socket.
 
-Environment:
- * CLAMD_SOCK, point to the clamd socket
- * AVLOG, output (report), default /tmp/avlog
- * OBJECT, what to scan, must be a tar file, uncompressed
+### Environment variables
+* OBJECT, what to scan, must be a tar file, uncompressed
+* AVLOG, output (report), default /tmp/avlog
+* CLAMD_SOCK, point to the clamd socket
+* MAXSIZE, Optional - default is 1023 MiB
 
-In addition you'll need the ususal stuff to access the objectstore.
+The remaining variables shown below are used to access the objectstore with [py-objectstore](https://github.com/arkivverket/py-objectstore).
+
+
+The values given here are examples or hints to proper variables.
+```yaml
+- TUSD_OBJECT_NAME=ok63e2f0-39bf-4fea-a741-58d472664ce2
+- AVLOG=/tmp/avlog
+- CLAMD_SOCK=/var/run/clamav/clamd.ctl
+- MAXSIZE=1023
+- OBJECTSTORE=abs
+- BUCKET=bucket-storage
+- AZURE_ACCOUNT=myazureaccdev
+- AZURE_KEY=secret
+```
+
