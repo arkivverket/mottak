@@ -63,7 +63,7 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
     def seek(self, pos: int, **kwargs) -> int:
         raise io.UnsupportedOperation
 
-
+# TODO - Use parameters instead of environment variables in functions
 def get_clam():
     """Establish connection with Clamd
     :return: pyclamd socket object
@@ -144,12 +144,13 @@ def main():
     logging.basicConfig(level=logging.INFO, filename='/tmp/avlog',
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info("Starting s3-scan-tar")
     logging.info(f'{__file__} version {__version__} running')
 
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
     # Get the max file size for clamd. Default is 1023 MiB
-    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES
+    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES  # TODO Find out why the limit is 1023?
 
     logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {scan_limit} MiB')
 
