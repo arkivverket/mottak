@@ -6,7 +6,7 @@ The container does a streaming read of a tar-file (object in objectstorage)
 and feeds each element of it to [ClamAV](https://www.clamav.net/) over a socket.
 
 ### Environment variables
-* OBJECT, what to scan, must be a tar file, uncompressed
+* TUSD_OBJECT_NAME, what to scan, must be a tar file, uncompressed
 * AVLOG, output (report), default /tmp/avlog
 * CLAMD_SOCK, point to the clamd socket
 * MAXSIZE, Optional - default is 1023 MiB
