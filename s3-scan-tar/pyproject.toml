@@ -5,7 +5,7 @@ description = "Container for clamav scanning objectstore objects."
 authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
 pyClamd = "^0.4.0"
 

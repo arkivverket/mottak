@@ -375,8 +375,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "5dafb36b0fa07b3ff7e1925a18ed0b115c26aec6bc6caea3e0529195d7c58d13"
+python-versions = "^3.8"
+content-hash = "7c24e2aa5b8cd4f608889de8943ae140ef33df96d0dba13e3a064aa66820f692"
 
 [metadata.files]
 apache-libcloud = [
