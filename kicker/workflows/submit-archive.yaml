@@ -198,10 +198,10 @@ spec:
         image: arkivverket.azurecr.io/da-mottak/s3-unpack:2a166b25a82733e74c6aeca6046a0f6622970dd3
         imagePullPolicy: Always
         env:
-          - name: OBJECT
-            value: "{{workflow.parameters.OBJECT}}"
-          - name: UUID
-            value: "{{workflow.parameters.UUID}}"
+          - name: TUSD_OBJECT_NAME
+            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: TARGET_BUCKET_NAME
+            value: "{{workflow.parameters.TARGET_BUCKET_NAME}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
