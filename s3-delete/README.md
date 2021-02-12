@@ -2,9 +2,8 @@
 
 This container is used to delete an object in the objectstore.
 
-Invoked by Argo whenever Argo decides something needs to die.
-When invoked by Argo it means the workflow has failed and the transferred archive must be manually controlled before
-it is re-submitted to the application. This container will remove the received tar-file from the tusd-storage container.
+When invoked by Argo it means the workflow has failed and the transferred archive must be re-submitted to the
+application. This container will remove the received tar-file(overføringspakke) from the tusd-storage container.
 
 ### Environment variables needed
 The values given here are examples or hints.
