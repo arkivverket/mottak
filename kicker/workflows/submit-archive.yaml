@@ -145,8 +145,8 @@ spec:
         image: arkivverket.azurecr.io/mottak/s3-delete
         imagePullPolicy: Always
         env:
-          - name: OBJECT
-            value: "{{workflow.parameters.OBJECT}}"
+          - name: TUSD_OBJECT_NAME
+            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
