@@ -22,6 +22,7 @@ try:
 except:
     print('dotenv not loaded')
 
+ZERO_GENERATION = "-0"
 
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
@@ -59,7 +60,7 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
         'EMAIL': data_from_db.avgiver_epost,
         'INVITATIONID': data_from_db.invitasjon_id,
         # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
-        'TARGET_BUCKET_NAME': data_from_db.ekstern_id,
+        'TARGET_BUCKET_NAME': data_from_db.ekstern_id + ZERO_GENERATION,
         'TUSD_OBJECT_NAME': hook_data.objekt_navn,
         'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,

@@ -16,7 +16,6 @@ except:
 
 # Constants
 LOG_PATH = '/tmp/unpack.log'
-ZERO_GENERATION = '0'
 METS_FILENAME = "dias-mets.xml"
 
 TAR_ERROR = 10
@@ -24,14 +23,14 @@ UPLOAD_ERROR = 11
 OBJECTSTORE_ERROR = 12
 
 # Environment variables
-MANDATORY_ENV_VARS = ['BUCKET', 'OBJECT', 'UUID']
+MANDATORY_ENV_VARS = ['BUCKET', 'TUSD_OBJECT_NAME', 'TARGET_BUCKET_NAME']
 for var in MANDATORY_ENV_VARS:
     if var not in os.environ:
         raise EnvironmentError(f"Failed because {var} is not set in .env")
 
 bucket = os.getenv('BUCKET')
-filename = os.getenv('OBJECT')
-uuid = os.getenv('UUID')
+objectname = os.getenv('TUSD_OBJECT_NAME')
+target_bucket_name = os.getenv('TARGET_BUCKET_NAME')
 
 # Global variables
 storage = ArkivverketObjectStorage()
@@ -63,7 +62,7 @@ def stream_tar(stream):
 
 
 def unpack_tar(target_container):
-    obj = storage.download_stream(bucket, filename)
+    obj = storage.download_stream(bucket, objectname)
     file_stream = MakeIterIntoFile(obj)
     tar_iterator, tar_file = stream_tar(file_stream)
 
@@ -93,7 +92,7 @@ def create_target(container_name):
         container = storage.create_container(container_name)
         return container
     except Exception as e:
-        logging.error(f'While creating container {container_name}: {e}')
+        logging.error(f'Error while creating container {container_name}: {e}')
         raise e
 
 
@@ -116,12 +115,11 @@ def main():
                         format='%(asctime)s %(levelname)s %(message)s')
     # Also log to STDERR so k8s understands what is going on.
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info("Starting s3-unpack")
     logging.info(f'{__file__} version {__version__} running')
 
-    target_container_name = f'{uuid}-{ZERO_GENERATION}'
-    logging.info(f"Unpacking {filename} into container {target_container_name}")
-    target_container = create_target(target_container_name)
-    # target_container = storage.get_container(target_container_name)
+    logging.info(f"Unpacking {objectname} into container {target_bucket_name}")
+    target_container = create_target(target_bucket_name)
     unpack_tar(target_container)
 
 
