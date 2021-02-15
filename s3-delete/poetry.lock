@@ -241,8 +241,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "e157013a377461341358582e6dd6239070da82708d12af9c805de884562a12d3"
+python-versions = "^3.8"
+content-hash = "7d3b414690f8e0c2dafbffae77f61ad7227ec23b17bb11d6c495438a815f43dd"
 
 [metadata.files]
 apache-libcloud = [
