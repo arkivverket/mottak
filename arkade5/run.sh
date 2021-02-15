@@ -2,15 +2,13 @@
 
 set -e
 # set -x
-echo "Object:        $OBJECT"
-echo "Archieve type: $ARCHIEVE_TYPE"
-echo "UUID:          $UUID"
-echo "Invitation id: $INVITATIONID"
-echo "Account        $AZURE_ACCOUNT"
+echo "Target Bucket Name:   $TARGET_BUCKET_NAME"
+echo "Archive type:         $ARKIV_TYPE"
+echo "Account               $AZURE_ACCOUNT"
 
 STORE="/objectstore"
-TARGET="$STORE/$UUID/content"
-CONTAINER="$INVITATIONID-0"
+TARGET="$STORE/content"  # TODO Update TARGET after structure of objectpath has been decided
+CONTAINER="$TARGET_BUCKET_NAME"
 
 
 mkdir -p /opt/output
@@ -22,10 +20,10 @@ dotnet /opt/arkade5/Arkivverket.Arkade.CLI.dll \
     test \
     -a "$TARGET" \
     -p /tmp -o /opt/output  \
-     -t "$ARCHIEVE_TYPE"
+    -t "$ARKIV_TYPE"
 
-# The report is available at /opt/output/Arkaderapport-$UUID.html
-# Move it to a know location so Argo can get at it.
+# The report is available at /opt/output/Arkaderapport-.html
+# Move it to a known location so Argo can get at it.
 mv -v /opt/output/Arkaderapport-*.html /tmp/arkade.html
 
 echo "Arkade report is at /tmp/arkade.html"
