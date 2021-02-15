@@ -76,4 +76,3 @@ jobs:
       - run: |
           docker build . -t arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:${{ github.sha }}
           docker push arkivverket.azurecr.io/da-mottak/mottak-arkiv-web:${{ github.sha }}
-

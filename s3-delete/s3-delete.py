@@ -16,16 +16,17 @@ ENVERROR = 1
 DELETEERROR = 2
 
 bucket = os.getenv('BUCKET')
-filename = os.getenv('OBJECT')
+objectname = os.getenv('TUSD_OBJECT_NAME')
 
-logging.basicConfig(level=logging.INFO, 
+logging.basicConfig(level=logging.INFO,
                     filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+logging.info("Starting s3-delete")
 logging.info(f'{__file__} version {__version__} running')
 
 storage = ArkivverketObjectStorage()
-if storage.delete(bucket, filename):
-    logging.info(f"Object deleted {filename} succesfully from {bucket}")
+if storage.delete(bucket, objectname):
+    logging.info(f"Object {objectname} deleted succesfully from {bucket}")
     sys.exit(SUCCESS)
 else:
-    logging.error(f"Failed to delete {filename} from {bucket}")
+    logging.error(f"Failed to delete {objectname} from {bucket}")
     sys.exit(DELETEERROR)
