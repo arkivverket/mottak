@@ -1,0 +1,15 @@
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Copy values-container.yaml to [test prod]'
+        required: true
+        options: ['test', 'prod']
+
+
+jobs:
+  printInputs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "env: ${{ github.event.inputs.env }}"
