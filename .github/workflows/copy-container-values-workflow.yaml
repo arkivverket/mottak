@@ -23,7 +23,7 @@ jobs:
             echo "Copying dev to test"
             mkdir -p values/test && cp values/dev/values-containers.yaml values/test/values-containers.yaml
           elif [ ${{ github.event.inputs.env }} == "prod"]; then
-            echo "Copying dev to test"
+            echo "Copying dev to prod"
             mkdir -p values/prod && cp values/dev/values-containers.yaml values/prod/values-containers.yaml
           else
             echo "${{ github.event.inputs.env }} is not supported as an environment"
