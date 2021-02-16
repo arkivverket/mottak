@@ -223,6 +223,7 @@ spec:
             archive:
               none: {}
 
+    # TODO Bestem hvordan object path skal se ut. ekstern_id. Send in ARKIVUTTREKK_OBJ_ID/TARGET_OBJECT_NAME til arkade5
     - name: arkade5
       container:
         image: arkivverket.azurecr.io/da-mottak/arkade5:e464174dceb158d403b741ea1c03373edb5f3e9b
@@ -234,22 +235,16 @@ spec:
             add:
               - SYS_ADMIN
         env:
-          - name: UUID
-            value: "{{workflow.parameters.UUID}}"
-          - name: ARCHIEVE_TYPE
-            value: "{{workflow.parameters.ARCHIEVE_TYPE}}"
-          - name: INVITATIONID
-            value: "{{workflow.parameters.INVITATIONID}}"
-          - name: OBJECTSTORE
-            value: abs
-          - name: BUCKET
-            value: "tusd-storage"
-          - name: AZURE_ACCOUNT
+          - name: ARCHIVE_BUCKET
+            value: "{{workflow.parameters.TARGET_BUCKET_NAME}}"
+          - name: ARKIV_TYPE
+            value: "{{workflow.parameters.ARKIV_TYPE}}"
+          # Application Goofys needs the env-variables to be on this slightly different form
+          - name: AZURE_STORAGE_ACCOUNT
             valueFrom:
               secretKeyRef:
                 name: storageaccount-name
                 key: storageaccount-name
-            # Not that the key is in a slightly different variable here.
           - name: AZURE_STORAGE_KEY
             valueFrom:
               secretKeyRef:
