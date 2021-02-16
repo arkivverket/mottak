@@ -17,5 +17,5 @@ jobs:
         with:
           repository: arkivverket/mottak-k8s-config
 
-      run: |
+      - run: |
         ls -la
