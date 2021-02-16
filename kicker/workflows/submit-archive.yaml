@@ -246,10 +246,10 @@ spec:
                 name: storageaccount-name
                 key: storageaccount-name
           - name: AZURE_STORAGE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: storageaccount-key
-                  key: storageaccount-key
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-key
+                key: storageaccount-key
       outputs:
         artifacts:
           - name: arkade-report
