@@ -7,10 +7,10 @@ import datetime
 import json
 import logging
 import os
-import uuid
 
 import magic
 import requests
+
 from _version import __version__
 
 try:
@@ -21,27 +21,27 @@ except ModuleNotFoundError:
 
 
 def get_mime(path):
-    """ Fetches the mine type of a file """
+    """ Fetches the mime type of a file """
     return magic.from_file(path, mime=True)
 
 
-def log(endpoint, token, arch_uuid, path, name, mime, condition, message):
+def log(endpoint, token, archive_obj_id, path, filename, mime, condition, message):
     """ Logs to the remote log api """
-    print(f'uuid: {arch_uuid}, path: {path}, name: {name}, mime: {mime}')
+    print(f'Archive object id: {archive_obj_id}, path: {path}, name: {filename}, mime: {mime}')
 
     # Note that we need a string, which is why it is encoded as utf.
     with open(path, 'rb') as myfile:
         content = base64.b64encode(myfile.read()).decode('utf-8')
 
     log_obj = {
-        'archuuid': arch_uuid,
+        'archive_obj_id': archive_obj_id,
         'sender': 'logger.py',
         'time_recorded': datetime.datetime.now().isoformat(),
         'message': message,
         'condition': condition,
         'attachment': content,
         'attachment_mime': mime,
-        'attachment_name': name
+        'attachment_name': filename
     }
     response = requests.post(endpoint,
                              headers={'access_token': token},
@@ -51,28 +51,29 @@ def log(endpoint, token, arch_uuid, path, name, mime, condition, message):
     # Bail if it fails.
     response.raise_for_status()
 
-    logging.info(f'{name} logged OK')
+    logging.info(f'{filename} logged OK')
 
 
 def main():
     """ main method. Run from here unless imported"""
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
+    logging.info("Starting artifact-logger")
     logging.info(f'{__file__} version {__version__} running')
 
     files = os.getenv('FILES').split(';')
-    arch_uuid = os.getenv('ARCHIVE_OBJ_ID')
+    archive_obj_id = os.getenv('ARCHIVE_OBJ_ID')
     condition = os.getenv('CONDITION', 'ok')
     message = os.getenv('MESSAGE', '')
     baseurl = os.getenv('BASEURL', 'http://localhost:8000/')
     endpoint = baseurl + 'ingest'
     token = os.getenv('TOKEN', 'test_token')
-    for lfile in files:
-        mime = get_mime(lfile)
-        name = os.path.basename(lfile)
+    for path in files:
+        mime = get_mime(path)
+        filename = os.path.basename(path)
         logging.info(
-            f'UUID({uuid}): Logging ({name}), type {mime} to {endpoint}')
-        log(endpoint, token, arch_uuid, lfile, name, mime, condition, message)
+            f'Archive object id({archive_obj_id}): Logging ({filename}), type ({mime}) to {endpoint}')
+        log(endpoint, token, archive_obj_id, path, filename, mime, condition, message)
 
 
 if __name__ == "__main__":
