@@ -34,6 +34,5 @@ Create a `.env` in root and add the needed env variables with correct values.
 Run the container with:
 
 ```shell
-docker run --privileged --env-file=.env <image>`
+docker run --privileged --env-file=.env <image>
 ```
-
