@@ -33,8 +33,7 @@ The values given here are examples
 Create a `.env` in root and add the needed env variables with correct values.
 Run the container with:
 
-[comment]: TODO add working docker command here
 ```shell
-docker run --privileged --env-file=.env <target_bucket_name>`
+docker run --privileged --env-file=.env <image>`
 ```
 
