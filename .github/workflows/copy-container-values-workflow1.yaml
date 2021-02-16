@@ -20,10 +20,10 @@ jobs:
           ssh-key: ${{ secrets.MOTTAK_K8S_CONFIG_SECRET }}
 
       - run: |
-          if [ "${{ github.event.inputs.env }}" == "test"]; then
+          if [ ${{ github.event.inputs.env }} == "test" ]; then
             echo "Copying dev to test"
             mkdir -p values/test && cp values/dev/values-containers.yaml values/dev/values-containers.yaml
-          elif [ "${{ github.event.inputs.env }}" == "prod"]; then
+          elif [ ${{ github.event.inputs.env }} == "prod"]; then
             echo "Copying dev to test"
             mkdir -p values/prod && cp values/dev/values-containers.yaml values/dev/values-containers.yaml
           else
