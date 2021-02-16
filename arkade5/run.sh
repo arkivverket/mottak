@@ -2,19 +2,19 @@
 
 set -e
 # set -x
-echo "Target Bucket Name:   $TARGET_BUCKET_NAME"
+echo "Archive bucket:       $ARCHIVE_BUCKET"
 echo "Archive type:         $ARKIV_TYPE"
-echo "Account               $AZURE_ACCOUNT"
+echo "Azure Storage Account $AZURE_STORAGE_ACCOUNT"
 
 STORE="/objectstore"
 TARGET="$STORE/content"  # TODO Update TARGET after structure of objectpath has been decided
-CONTAINER="$TARGET_BUCKET_NAME"
+CONTAINER="$ARCHIVE_BUCKET"
 
 
 mkdir -p /opt/output
 mkdir -p $STORE
 
-/usr/local/bin/goofys "wasb://${CONTAINER}@${AZURE_ACCOUNT}.blob.core.windows.net" "$STORE"
+/usr/local/bin/goofys "wasb://${CONTAINER}@${AZURE_STORAGE_ACCOUNT}.blob.core.windows.net" "$STORE"
 
 dotnet /opt/arkade5/Arkivverket.Arkade.CLI.dll \
     test \

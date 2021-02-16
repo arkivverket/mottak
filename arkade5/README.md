@@ -16,15 +16,17 @@ we'll quickly run out of storage if there are big files and 2) performance with 
 
 ### Environment variables
 
-* TARGET_BUCKET_NAME, the bucket/blob where the archive is stored
+* ARCHIVE_BUCKET, the bucket/container where the archive is stored
 * ARKIV_TYPE, supported [archive types](http://docs.arkade.arkivverket.no/no/latest/Brukerveiledning.html#innlasting)
-* AZURE_ACCOUNT, Azure Storage account
+* AZURE_STORAGE_ACCOUNT, Azure values used by [Goofys](https://github.com/kahing/goofys/blob/master/README-azure.md) to access stored archive
+* AZURE_STORAGE_KEY
 
 The values given here are examples
 ```yaml
-- TARGET_BUCKET_NAME=43c9ea13-afba-4e42-80e7-5d8deaa6edff-0
+- ARCHIVE_BUCKET=43c9ea13-afba-4e42-80e7-5d8deaa6edff-0
 - ARKIV_TYPE=SIARD
-- AZURE_ACCOUNT=myazureaccdev
+- AZURE_STORAGE_ACCOUNT=myazureaccdev
+- AZURE_STORAGE_KEY=<secret>
 ```
 
 ## Running locally

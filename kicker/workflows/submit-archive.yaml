@@ -235,15 +235,21 @@ spec:
             add:
               - SYS_ADMIN
         env:
-          - name: TARGET_BUCKET_NAME
+          - name: ARCHIVE_BUCKET
             value: "{{workflow.parameters.TARGET_BUCKET_NAME}}"
           - name: ARKIV_TYPE
             value: "{{workflow.parameters.ARKIV_TYPE}}"
-          - name: AZURE_ACCOUNT
+          # Application Goofys needs the env-variables to be on this slightly different form
+          - name: AZURE_STORAGE_ACCOUNT
             valueFrom:
               secretKeyRef:
                 name: storageaccount-name
                 key: storageaccount-name
+          - name: AZURE_STORAGE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: storageaccount-key
+                  key: storageaccount-key
       outputs:
         artifacts:
           - name: arkade-report
