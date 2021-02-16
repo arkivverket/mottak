@@ -1,4 +1,8 @@
-This thing picks up files from the local file systems and injects them into the log service. It is mainly ment for prototype use. 
+# Artifact-logger
+
+This container is not in use. TODO - Should we delete "artifact-logger" or update with new use case?
+
+This thing picks up files from the local file systems and injects them into the log service. It is mainly ment for prototype use.
 In production you should rather log directly from the service where the artifacts are created.
 
 Usage:
