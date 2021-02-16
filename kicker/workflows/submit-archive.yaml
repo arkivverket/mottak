@@ -279,8 +279,8 @@ spec:
             value: http://log-service.archive-log-service/
           - name: FILES
             value: "/tmp/unpacklog.txt;/tmp/avlog.txt;/tmp/arkade-report.html"
-          - name: UUID
-            value: "{{workflow.parameters.UUID}}"
+          - name: ARCHIVE_OBJ_ID
+            value: "{{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}"
           - name: CONDITION
             value: ok
           - name: MESSAGE
@@ -305,8 +305,8 @@ spec:
             value: http://log-service.archive-log-service/
           - name: FILES
             value: "/tmp/checksum.log"
-          - name: UUID
-            value: "{{workflow.parameters.UUID}}"
+          - name: ARCHIVE_OBJ_ID
+              value: "{{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}"
           - name: CONDITION
             value: ok
           - name: MESSAGE

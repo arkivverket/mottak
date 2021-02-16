@@ -61,7 +61,7 @@ def main():
     logging.info(f'{__file__} version {__version__} running')
 
     files = os.getenv('FILES').split(';')
-    arch_uuid = os.getenv('UUID')
+    arch_uuid = os.getenv('ARCHIVE_OBJ_ID')
     condition = os.getenv('CONDITION', 'ok')
     message = os.getenv('MESSAGE', '')
     baseurl = os.getenv('BASEURL', 'http://localhost:8000/')
