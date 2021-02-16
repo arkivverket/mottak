@@ -4,12 +4,18 @@ on:
       env:
         description: 'Copy values-container.yaml to [test prod]'
         required: true
-        options: ['test', 'prod']
 
 
 jobs:
-  printInputs:
+  copyFiles:
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo "env: ${{ github.event.inputs.env }}"
+
+      - uses: actions/checkout@v2
+        with:
+          repository: arkivverket/mottak-k8s-config
+
+      run: |
+        ls -la
