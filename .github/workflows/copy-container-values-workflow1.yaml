@@ -28,6 +28,7 @@ jobs:
             mkdir -p values/prod && cp values/dev/values-containers.yaml values/dev/values-containers.yaml
           else
             echo "${{ github.event.inputs.env }} is not supported as an environment"
+          fi
 
       - run: |
           git config user.name mottak-github-actions
