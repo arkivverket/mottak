@@ -31,10 +31,16 @@ jobs:
             echo "${{ github.event.inputs.env }} is not supported as an environment"
           fi
 
+      - name: Run Helm Template
+        run: |
+          echo "Running helm template with value files from values/${{ github.event.inputs.env }}/"
+          OUTPUT_FOLDER="k8s/output/${{ github.event.inputs.env }}"
+          helm template --values "values/${{ github.event.inputs.env }}/values.yaml" --values "values/${{ github.event.inputs.env }}/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
+
       - name: Commit and push changes to mottak-k8s-config
         run: |
           git config user.name mottak-github-actions
           git config user.email mottak-github-actions@github.com
           git add .
-          git commit -m "Copied container values to ${{ github.event.inputs.env }}"
-          git push
+          git commit -m "Updates ${{ github.event.inputs.env }} environment"
+#          git push
