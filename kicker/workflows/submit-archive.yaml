@@ -78,8 +78,8 @@ spec:
         imagePullPolicy: Always
 
         env:
-          - name: TUSD_OBJECT_NAME
-            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: TUSD_OBJEKT_NAVN
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
           - name: SJEKKSUM
             value: "{{workflow.parameters.SJEKKSUM}}"
           - name: OBJECTSTORE
@@ -145,8 +145,8 @@ spec:
         image: arkivverket.azurecr.io/mottak/s3-delete
         imagePullPolicy: Always
         env:
-          - name: TUSD_OBJECT_NAME
-            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: TUSD_OBJEKT_NAVN
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
@@ -168,8 +168,8 @@ spec:
 
         imagePullPolicy: Always
         env:
-          - name: TUSD_OBJECT_NAME
-            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: TUSD_OBJEKT_NAVN
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
           - name: OBJECTSTORE
             value: abs
           - name: BUCKET
@@ -198,8 +198,8 @@ spec:
         image: arkivverket.azurecr.io/da-mottak/s3-unpack:2a166b25a82733e74c6aeca6046a0f6622970dd3
         imagePullPolicy: Always
         env:
-          - name: TUSD_OBJECT_NAME
-            value: "{{workflow.parameters.TUSD_OBJECT_NAME}}"
+          - name: TUSD_OBJEKT_NAVN
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
           - name: TARGET_BUCKET_NAME
             value: "{{workflow.parameters.TARGET_BUCKET_NAME}}"
           - name: OBJECTSTORE

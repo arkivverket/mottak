@@ -61,7 +61,7 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
         'INVITATIONID': data_from_db.invitasjon_id,
         # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
         'TARGET_BUCKET_NAME': data_from_db.ekstern_id + ZERO_GENERATION,
-        'TUSD_OBJECT_NAME': hook_data.objekt_navn,
+        'TUSD_OBJEKT_NAVN': hook_data.objekt_navn,
         'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,
         'ARKIV_TYPE': data_from_db.arkiv_type,
