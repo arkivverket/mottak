@@ -20,7 +20,7 @@ def add_overforingspakke_to_db(conn, data_from_db: DataFromDatabase, hook_data: 
     try:
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, navn, storrelse, status) '  # TODO navn -> objekt_navn
+            'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, tusd_objekt_navn, storrelse, status) '
             'VALUES (%s, %s, %s, %s, %s)',
             (data_from_db.arkivuttrekk_id, hook_data.tusd_id, hook_data.objekt_navn, hook_data.transferred_bytes,
              OverforingspakkeStatus.STARTET))
@@ -57,7 +57,6 @@ def run():
 
     connection = my_connect(DBSTRING, logger=logging)
     data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logging)
-    my_disconnect(connection)
     if not data_from_db:
         logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
         exit(UNKNOWNEID)
@@ -67,6 +66,7 @@ def run():
     except Exception as exception:
         logging.error(f"Error while creating overforingspakke in database {exception}")
         exit(DBERROR)
+    my_disconnect(connection)
     exit(OK)
 
 
