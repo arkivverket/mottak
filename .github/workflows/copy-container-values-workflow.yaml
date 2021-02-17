@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  copyFiles:
+  deployToTestOrProd:
     runs-on: ubuntu-latest
     steps:
 
@@ -35,8 +35,7 @@ jobs:
         run: |
           echo "Running helm template with value files from values/${{ github.event.inputs.env }}/"
           OUTPUT_FOLDER="k8s/output/${{ github.event.inputs.env }}"
-          helm template --values "values/dev/values.yaml" --values "values/dev/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
-#          helm template --values "values/${{ github.event.inputs.env }}/values.yaml" --values "values/${{ github.event.inputs.env }}/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
+          helm template --values "values/${{ github.event.inputs.env }}/values.yaml" --values "values/${{ github.event.inputs.env }}/values-containers.yaml" --output-dir "$OUTPUT_FOLDER" k8s/
 
       - name: Commit and push changes to mottak-k8s-config
         run: |
@@ -44,4 +43,4 @@ jobs:
           git config user.email mottak-github-actions@github.com
           git add .
           git commit -m "Updates ${{ github.event.inputs.env }} environment"
-#          git push
+          git push
