@@ -18,13 +18,13 @@ QUEUE_NAME = os.getenv('QUEUE_NAME')
 # Edit the values in this method
 def get_params() -> dict:
     return {
-        'UUID': '8de75c05-744d-4622-af38-fad5b6f1dc30',  # invitasjon.ekstern_id
-        'OBJECT': '85a7d9cf0aac32393c82a70b20db5f9c',  # object name in Azure
-        'CHECKSUM': 'd35e6aa1aa46275ca825d1b5e3eb6c6442f91e1c1ad3153f354dd6467a759df1',  # arkivuttrekk.sjekksum
-        'ARCHIEVE_TYPE': 'Noark5',  # arkivuttrekk.type
-        'NAME': 'Kristoffer W',  # arkivuttrekk.avgiver_navn
-        'EMAIL': 'kriwal@arkivverket.no',  # arkivuttrekk.avgiver_epost
-        'INVITATIONID': 9  # invitasjon.id
+        'TARGET_BUCKET_NAME': '8de75c05-744d-4622-af38-fad5b6f1dc30-0',
+        'TUSD_OBJEKT_NAVN': '85a7d9cf0aac32393c82a70b20db5f9c',
+        'SJEKKSUM': 'd35e6aa1aa46275ca825d1b5e3eb6c6442f91e1c1ad3153f354dd6467a759df1',
+        'EKSTERN_ID': '8de75c05-744d-4622-af38-fad5b6f1dc30',
+        'ARKIV_TYPE': 'Noark5',
+        'KOORDINATOR_EPOST': 'kriwal@arkivverket.no',
+        'ARKIVUTTREKK_OBJ_ID': 'c8db1f06-4495-4c18-bfd4-ccb0a450cba5'
     }
 
 
