@@ -68,7 +68,6 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
         'AVGIVER_NAVN': data_from_db.avgiver_navn,
         'AVGIVER_EPOST': data_from_db.avgiver_epost,
         'KOORDINATOR_EPOST': data_from_db.koordinator_epost,
-        'INVITASJON_ID': data_from_db.invitasjon_id,
         'ARKIVUTTREKK_OBJ_ID': data_from_db.arkivuttrekk_obj_id
     }
     return params

@@ -11,8 +11,7 @@ mock_hook_data = HookData(tusd_id="9090fe36854e6761925e6e9ec475c17f",
                           transferred_bytes=440320,
                           objekt_navn="9090fe36854e6761925e6e9ec475c17f")
 
-mock_dbdata = DataFromDatabase(invitasjon_id=2,
-                               ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
+mock_dbdata = DataFromDatabase(ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
                                sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                avgiver_navn="Per Buer",
                                avgiver_epost="perbue@arkivverket.no",
