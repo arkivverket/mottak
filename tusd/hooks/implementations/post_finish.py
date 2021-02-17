@@ -52,21 +52,14 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'UUID': data_from_db.ekstern_id,
-        'OBJECT': hook_data.objekt_navn,
-        'CHECKSUM': data_from_db.sjekksum,  # THE ONLY PARAM WE KEEP AFTER MOL-284 CHANGES
-        'ARCHIEVE_TYPE': data_from_db.arkiv_type,
-        'NAME': data_from_db.avgiver_navn,
-        'EMAIL': data_from_db.avgiver_epost,
-        'INVITATIONID': data_from_db.invitasjon_id,
-        # THESE ARE NEW KEYS, REMOVE UNUSED AFTER ALL MOL-284 CHANGES ARE DONE IN KICKER AND ENTAILING COMPONENTS
         'TARGET_BUCKET_NAME': data_from_db.ekstern_id + ZERO_GENERATION,
         'TUSD_OBJEKT_NAVN': hook_data.objekt_navn,
         'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,
         'ARKIV_TYPE': data_from_db.arkiv_type,
-        'AVGIVER_NAVN': data_from_db.avgiver_navn,
-        'AVGIVER_EPOST': data_from_db.avgiver_epost,
+        # TODO - Update kicker (submit-archive) to also send email to avgiver after processing the uploaded tar-file
+        # 'AVGIVER_NAVN': data_from_db.avgiver_navn,
+        # 'AVGIVER_EPOST': data_from_db.avgiver_epost,
         'KOORDINATOR_EPOST': data_from_db.koordinator_epost,
         'ARKIVUTTREKK_OBJ_ID': data_from_db.arkivuttrekk_obj_id
     }
