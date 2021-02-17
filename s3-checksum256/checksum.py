@@ -36,6 +36,7 @@ def write_result(res):
         res_file.write(res)
 
 
+# TODO - Send inn bucket og objectname som parametere
 def get_object_stream():
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
