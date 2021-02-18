@@ -49,7 +49,7 @@ def get_data_from_db(conn, invitasjon_ekstern_id: str, logger) -> Optional[DataF
             'a.koordinator_epost    AS koordinator_epost, '
             'a.type                 AS arkiv_type, '
             'a.id                   AS arkivuttrekk_id, '
-            'a.obj_id               AS arkivuttrekk_obj_id '
+            'a.obj_id               AS arkivuttrekk_obj_id, '
             'a.storrelse            AS storrelse '
             'FROM invitasjon i LEFT JOIN arkivuttrekk a ON i.arkivuttrekk_id = a.id '
             'WHERE i.ekstern_id =%s', [invitasjon_ekstern_id])
