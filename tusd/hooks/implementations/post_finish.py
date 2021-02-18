@@ -129,7 +129,6 @@ def run():
 
     connection = my_connect(os.getenv('DBSTRING'), logger=logging)
     data_from_db = get_data_from_db(connection, hook_data.ekstern_id, logger=logging)
-    my_disconnect(connection)
     if not data_from_db:
         logging.error(f"Could not fetch metadata for invitasjon with ekstern_id={hook_data.ekstern_id} in the database")
         exit(UNKNOWNEID)
@@ -139,7 +138,7 @@ def run():
     except Exception as exception:
         logging.error(f"Error while updating database {exception}")
         exit(DBERROR)
-
+    my_disconnect(connection)
     params = gather_params(data_from_db, hook_data)
     argo_submit(params)
     exit(OK)
