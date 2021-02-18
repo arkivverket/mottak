@@ -5,7 +5,7 @@ description = "Container for kicking off argo workflows based on message queue."
 authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 azure-servicebus = "^0.50.2"
 requests = "^2.23.0"
 pytest = "^6.1.1"

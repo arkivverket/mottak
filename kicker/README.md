@@ -1,6 +1,15 @@
-# kicker
+# Kicker
 
-Kicker listens to the service bus is Azure and fires off the Argo client to initiate running the DAGs.
+This container listens on a queue where it receives messages from the Tusd container.
+A message is in essence a request to process an uploaded archive (tar-file) that is stored in the tusd container,
+by controlling for [virus](https://github.com/arkivverket/mottak/tree/develop/s3-scan-tar),
+checking that the [checksums](https://github.com/arkivverket/mottak/tree/develop/s3-checksum256) match before and after the transmission,
+and [unpack](https://github.com/arkivverket/mottak/tree/develop/s3-unpack) the tar-file into its original archive format and store it in Azure Blob Storage.
+Lastly it will also run the unpacked archive through [Arkade5](https://github.com/arkivverket/mottak/tree/develop/arkade5)
+to see if the archive is in accordance with the current archive standards.
+
+We use [Argo Workflows](https://argoproj.github.io/projects/argo) where each step in the DAG is done by invoking a container
+running a component from the [arkivverket/mottak](https://github.com/arkivverket/mottak) repo.
 
 Supported DAGs:
  - submit-archive
@@ -28,6 +37,11 @@ This decouples running the DAG.
 ## Testing in dev
 There is a small script [kicker-trigger](tests/kicker-trigger) that puts a message on the service bus queue in dev.
 This can be used to trigger kicker and argo in dev.
-Env variables needed:
-- `QUEUE_CLIENT_CONNECTION_STRING="Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>"`
-- `QUEUE_NAME="argo-workflow"`
+
+
+### Environment variables needed
+```yaml
+- QUEUE_CLIENT_CONNECTION_STRING=Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>
+- QUEUE_NAME=argo-workflow
+- WORKFLOW=
+```

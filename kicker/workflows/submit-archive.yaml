@@ -108,11 +108,8 @@ spec:
               none: {}
 
 
-
     # Kontainer som avviser et arkiv.
     # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
-    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
-    # TODO Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
     - name: checksum-error
       container:
         image: arkivverket.azurecr.io/mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
@@ -223,7 +220,6 @@ spec:
             archive:
               none: {}
 
-    # TODO Bestem hvordan object path skal se ut. ekstern_id. Send in ARKIVUTTREKK_OBJ_ID/TARGET_OBJECT_NAME til arkade5
     - name: arkade5
       container:
         image: arkivverket.azurecr.io/da-mottak/arkade5:4ff02cf91eaf792a0708460ea436643c1d4e8b6c
@@ -313,8 +309,6 @@ spec:
                 key: secret-value
 
 
-    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
-    # TODO Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
     - name: new-archive
       inputs:
         artifacts:

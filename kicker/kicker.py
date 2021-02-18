@@ -78,7 +78,7 @@ def runq():
         logging.error(exception)
         sys.exit(SBERROR)
 
-    logging.info('Service bus connection to {queue} is OK')
+    logging.info(f'Service bus connection to {queue} is OK')
 
     keep_running = True
     with queue_client.get_receiver() as queue_receiver:
