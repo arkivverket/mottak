@@ -9,11 +9,11 @@ import psycopg2
 import psycopg2.extras
 from azure.servicebus import QueueClient, Message
 
-from hooks.implementations.models.DataFromDatabase import DataFromDatabase
-from hooks.implementations.models.HookData import HookData
-from hooks.implementations.hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
-from hooks.implementations.return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK
-from hooks.implementations.status import OverforingspakkeStatus
+from .models.DataFromDatabase import DataFromDatabase
+from .models.HookData import HookData
+from .hooks_utils import read_tusd_event, my_connect, get_data_from_db, my_disconnect
+from .return_codes import SBERROR, JSONERROR, USAGEERROR, UNKNOWNEID, DBERROR, OK
+from .status import OverforingspakkeStatus
 
 try:
     from dotenv import load_dotenv
