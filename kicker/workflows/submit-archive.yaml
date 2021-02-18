@@ -74,7 +74,7 @@ spec:
 
     - name: checksum-check
       container:
-        image: arkivverket.azurecr.io/da-mottak/s3-checksum256:66668ebaf417dcaf0ef05529bd72923ded8941e7
+        image: arkivverket.azurecr.io/da-mottak/s3-checksum256:6d9fdaa67a68e7756cd3aa694f2aa86aedf92016
         imagePullPolicy: Always
 
         env:
@@ -222,7 +222,7 @@ spec:
 
     - name: arkade5
       container:
-        image: arkivverket.azurecr.io/da-mottak/arkade5:4ff02cf91eaf792a0708460ea436643c1d4e8b6c
+        image: arkivverket.azurecr.io/da-mottak/arkade5:53b10b008c346c4c582476efc64f929dbaefa49c
         imagePullPolicy: Always
         # We need this for FUSE / goofys
         securityContext:
