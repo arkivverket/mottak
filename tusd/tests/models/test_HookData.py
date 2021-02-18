@@ -1,4 +1,5 @@
 import pytest
+import json
 
 from hooks.implementations.models.HookData import HookData
 
@@ -45,6 +46,12 @@ def _hook_event_dict():
     }
 
 
+@pytest.fixture
+def _pre_create_hook_event_dict():
+    with open('tests/demo-data/pre-create.json') as json_file:
+        return json.load(json_file)
+
+
 def test_hook_data(_hook_event_dict):
     expected = HookData(tusd_id="d1485b17-388f-4ec3-915f-c1fd60d8ef98",
                         ekstern_id="e4397dc9-a659-4788-838e-91611a38fae2",
@@ -54,3 +61,10 @@ def test_hook_data(_hook_event_dict):
     assert actual == expected
 
 
+def test_hook_data_pre_create_hook(_pre_create_hook_event_dict):
+    expected = HookData(tusd_id='',
+                        ekstern_id='8de75c05-744d-4622-af38-fad5b6f1dc30',
+                        transferred_bytes=0,
+                        objekt_navn=None)
+    actual = HookData.init_from_dict(_pre_create_hook_event_dict)
+    assert actual == expected

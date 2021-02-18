@@ -33,7 +33,10 @@ class HookData:
         tusd_id = json_dict.get('Upload').get('ID')
         ekstern_id = json_dict.get('Upload').get('MetaData').get('invitasjonEksternId')
         transferred_bytes = json_dict.get('Upload').get('Offset')
-        objekt_navn = json_dict.get('Upload').get('Storage').get('Key')
+        if json_dict.get('Upload').get('Storage'):
+            objekt_navn = json_dict.get('Upload').get('Storage').get('Key')
+        else:
+            objekt_navn = None
 
         return HookData(tusd_id=tusd_id,
                         ekstern_id=ekstern_id,
