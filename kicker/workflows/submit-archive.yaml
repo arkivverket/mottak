@@ -235,6 +235,8 @@ spec:
             value: "{{workflow.parameters.TARGET_BUCKET_NAME}}"
           - name: ARKIV_TYPE
             value: "{{workflow.parameters.ARKIV_TYPE}}"
+          - name: ARKIVUTTREKK_OBJ_ID
+            value: "{{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}"
           # Application Goofys needs the env-variables to be on this slightly different form
           - name: AZURE_STORAGE_ACCOUNT
             valueFrom:

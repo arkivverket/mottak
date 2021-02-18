@@ -3,11 +3,12 @@
 set -e
 # set -x
 echo "Archive bucket:       $ARCHIVE_BUCKET"
+echo "Archive obj_id:"      $ARKIVUTTREKK_OBJ_ID
 echo "Archive type:         $ARKIV_TYPE"
 echo "Azure Storage Account $AZURE_STORAGE_ACCOUNT"
 
 STORE="/objectstore"
-TARGET="$STORE/content"  # TODO Update TARGET after structure of objectpath has been decided
+TARGET="$STORE/$ARKIVUTTREKK_OBJ_ID/content"  # TODO Update TARGET after structure of objectpath has been decided
 CONTAINER="$ARCHIVE_BUCKET"
 
 
