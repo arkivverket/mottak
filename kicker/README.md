@@ -14,7 +14,6 @@ running a component from the [arkivverket/mottak](https://github.com/arkivverket
 Supported DAGs:
  - submit-archive
 
---- TODO Find out if these DAGS are still relevant
 Planned dags:
  - deploy-decom
    - create an objectstore (container) named $UUID.tfstate
@@ -41,7 +40,6 @@ This can be used to trigger kicker and argo in dev.
 
 
 ### Environment variables needed
---- TODO find out what env.variabl WORKFLOW is suppose to be
 ```yaml
 - QUEUE_CLIENT_CONNECTION_STRING=Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>
 - QUEUE_NAME=argo-workflow

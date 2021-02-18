@@ -16,9 +16,6 @@ spec:
       dag:
         tasks:
           # Todo - make the condition less verbose so we don't have to state every condition. dont know how.
-          # TODO - Rydde opp i bruk av when {{task.task-checksum....}} != 'ok'
-          #        I en DAG skal vi fortsette fra en node til en annen. Trenger vel ikke å sjekke dette verdiet hele tiden?
-          #        task-delete kan f.eks. ha dependency til "task-checksum-error" isteden (kjøres nå parallelt med den)
           - name: task-checksum
             template: checksum-check
 #          - name: checksum-logging
@@ -75,9 +72,6 @@ spec:
                 - name: unpacklog
                   from: "{{tasks.task-unpack.outputs.artifacts.unpacklog}}"
 
-    # TODO Send in hardkodede verdier (OBJECTSTORE, BUCKET) med params fra TUSD.
-    #      Verdiene vi trenger finnes i hooks JSON dokumentet [UPLOAD][STORAGE][TYPE]/[BUCKET]
-    # TODO Hvordan skal vi håndtere hardkodede paths? Nå er path hardkodet i begge komponenter
     - name: checksum-check
       container:
         image: arkivverket.azurecr.io/da-mottak/s3-checksum256:66668ebaf417dcaf0ef05529bd72923ded8941e7
@@ -114,13 +108,8 @@ spec:
               none: {}
 
 
-
     # Kontainer som avviser et arkiv.
     # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
-    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
-    #      Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
-    # TODO Vurdere å ta i bruk exit-handler for å sende melding til koordinator/avsender med resultat.
-    #      Dvs. Fjern denne å send workflow.status (Succeded, Failed, Error) til mottaker til slutt uansett utfall av workflow.
     - name: checksum-error
       container:
         image: arkivverket.azurecr.io/mottak/mailer
@@ -231,7 +220,6 @@ spec:
             archive:
               none: {}
 
-    # TODO Bestem hvordan object path skal se ut. ekstern_id. Send in ARKIVUTTREKK_OBJ_ID/TARGET_OBJECT_NAME til arkade5
     - name: arkade5
       container:
         image: arkivverket.azurecr.io/da-mottak/arkade5:e464174dceb158d403b741ea1c03373edb5f3e9b
@@ -321,8 +309,6 @@ spec:
                 key: secret-value
 
 
-    # TODO Håndtere flere mottakere av epost (koordinator og avgiver)
-    # TODO Trenge å endre i flere komponenter for å få inn koordinators navn. Ta i bruk tester i db?
     - name: new-archive
       inputs:
         artifacts:
@@ -333,7 +319,7 @@ spec:
           - name: unpacklog
             path: /tmp/attachments/unpacklog.txt
           - name: message
-            path: /tmp/message  # TODO Hvorfor ikke sende inn melding slik som i checksum-error. Velg 1 måte
+            path: /tmp/message
             raw:
               data: |
                 Overføringspakke tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}

@@ -62,8 +62,7 @@ def argo_submit(workflowfile, params):
 
     os.remove(paramfile)
 
-# TODO Divide into smaller functions.
-#  Consider using AzureQueueReceiver class from mottak-arkiv-service in multiple components.
+
 def runq():
     """ The main loop that listens to the service bus"""
 
@@ -96,8 +95,7 @@ def runq():
                 # Here we actually look at the message and decide what to do with it.
                 if parsed["action"] == 'argo-submit':
                     logging.info('Got a argo submission. Submitting.')
-                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])  # TODO - hvor kommer env.variabel fra?
-                # TODO - find out if this code can be reached in current solution
+                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
                         logging.info('Ignoring shutdown message.')
