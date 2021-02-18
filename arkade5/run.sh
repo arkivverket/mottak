@@ -3,7 +3,7 @@
 set -e
 # set -x
 echo "Archive bucket:       $ARCHIVE_BUCKET"
-echo "Archive obj_id:"      $ARKIVUTTREKK_OBJ_ID
+echo "Archive obj_id:       $ARKIVUTTREKK_OBJ_ID"
 echo "Archive type:         $ARKIV_TYPE"
 echo "Azure Storage Account $AZURE_STORAGE_ACCOUNT"
 
