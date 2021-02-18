@@ -11,12 +11,11 @@ mock_hook_data = HookData(tusd_id="9090fe36854e6761925e6e9ec475c17f",
                           transferred_bytes=440320,
                           objekt_navn="9090fe36854e6761925e6e9ec475c17f")
 
-mock_dbdata = DataFromDatabase(invitasjon_id=2,
-                               ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
+mock_dbdata = DataFromDatabase(ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
                                sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                avgiver_navn="Per Buer",
                                avgiver_epost="perbue@arkivverket.no",
-                               koordinator_epost="marelm@arkivverket.no",
+                               koordinator_epost="laralv@arkivverket.no",
                                arkiv_type="Noark5",
                                arkivuttrekk_id=1,
                                storrelse=440320,
@@ -45,20 +44,17 @@ def test_update_overforingspakke_in_db_fail(mocker):
 
 
 def test_gather_params(mocker):
-    expected = {'UUID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'OBJECT': '9090fe36854e6761925e6e9ec475c17f',
-                'CHECKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
-                'ARCHIEVE_TYPE': 'Noark5', 'NAME': 'Per Buer', 'EMAIL': 'perbue@arkivverket.no', 'INVITATIONID': 2,
-                'TARGET_BUCKET_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2-0',
-                'TUSD_OBJECT_NAME': '9090fe36854e6761925e6e9ec475c17f',
+    expected = {'TARGET_BUCKET_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2-0',
+                'TUSD_OBJEKT_NAVN': '9090fe36854e6761925e6e9ec475c17f',
                 'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARKIV_TYPE': 'Noark5',
-                'AVGIVER_NAVN': 'Per Buer', 'AVGIVER_EPOST': 'perbue@arkivverket.no',
-                'KOORDINATOR_EPOST': 'marelm@arkivverket.no', 'INVITASJON_ID': 2,
-                'ARKIVUTTREKK_OBJ_ID':"ed889fdc-b4d0-49fe-bf4b-caa0834cab2d"}
+                # 'AVGIVER_NAVN': 'Per Buer', 'AVGIVER_EPOST': 'perbue@arkivverket.no',
+                'KOORDINATOR_EPOST': 'laralv@arkivverket.no',
+                'ARKIVUTTREKK_OBJ_ID': "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d"}
     # data = json.loads(post_event)
     # metadata = invitation_dict
     params = gather_params(hook_data=mock_hook_data, data_from_db=mock_dbdata)
-    assert (params['UUID'] == 'df53d1d8-39bf-4fea-a741-58d472664ce2')
-    assert (params['CHECKSUM'] == '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a')
-    assert (params['EMAIL'] == 'perbue@arkivverket.no')
+    assert (params['TARGET_BUCKET_NAME'] == 'df53d1d8-39bf-4fea-a741-58d472664ce2-0')
+    assert (params['SJEKKSUM'] == '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a')
+    assert (params['KOORDINATOR_EPOST'] == 'laralv@arkivverket.no')
     assert (params == expected)

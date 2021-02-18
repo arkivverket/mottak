@@ -42,8 +42,7 @@ def get_data_from_db(conn, invitasjon_ekstern_id: str, logger) -> Optional[DataF
     try:
         dict_cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         dict_cursor.execute(
-            'SELECT i.id            AS invitasjon_id, '
-            'i.ekstern_id           AS ekstern_id, '
+            'SELECT i.ekstern_id    AS ekstern_id, '
             'a.sjekksum_sha256      AS sjekksum, '
             'a.avgiver_navn         AS avgiver_navn, '
             'a.avgiver_epost        AS avgiver_epost, '
