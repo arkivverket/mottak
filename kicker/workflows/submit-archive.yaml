@@ -124,8 +124,8 @@ spec:
           - name: MAILGUN_API_KEY
             valueFrom:
               secretKeyRef:
-                name: mailgun
-                key: secret-value
+                name: mailgun-secret
+                key: mailgun-secret
           - name: NAME
             value: "Koordinator"  # {{workflow.parameters.KOORDINATOR_NAVN}}
           - name: RECIPIENT
@@ -338,7 +338,7 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: mailgun-secret
-                key: secret-value
+                key: mailgun-secret
           - name: NAME
             value: "Koordinator"  # "{{workflow.parameters.KOORDINATOR_NAVN}}"
           - name: RECIPIENT
