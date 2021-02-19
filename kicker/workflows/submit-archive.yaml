@@ -112,7 +112,7 @@ spec:
     # Her kan vi gjøre ting som å varsle arkivskaper om at jobben ikke avvist.
     - name: checksum-error
       container:
-        image: arkivverket.azurecr.io/mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
+        image: arkivverket.azurecr.io/da-mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
 
         imagePullPolicy: Always
         envFrom:
@@ -139,7 +139,7 @@ spec:
 
     - name: delete
       container:
-        image: arkivverket.azurecr.io/mottak/s3-delete:bbad7271dac7bc5031134ba4fdbe321a4e34ed6d
+        image: arkivverket.azurecr.io/da-mottak/s3-delete:bbad7271dac7bc5031134ba4fdbe321a4e34ed6d
         imagePullPolicy: Always
         env:
           - name: TUSD_OBJECT_NAME
@@ -329,7 +329,7 @@ spec:
                 Vedlagt denne e-post er rapporten fra Arkade5 og loggen fra antivirus-skanningen.
                 Vennligst se over.
       container:
-        image: arkivverket.azurecr.io/mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
+        image: arkivverket.azurecr.io/da-mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
         imagePullPolicy: Always
         env:
           - name: MAILGUN_DOMAIN
