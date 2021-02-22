@@ -14,7 +14,7 @@ requests = ">=2.0.0"
 
 [[package]]
 name = "alembic"
-version = "1.5.4"
+version = "1.5.5"
 description = "A database migration tool for SQLAlchemy."
 category = "main"
 optional = false
@@ -747,7 +747,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "88e033fafd9649e41a6e3b4bc1a1e6279d92992cb81060ca36a12e46275a51c3"
+content-hash = "50f42138720577db1f588b1cde63c0253b6fbc1c38a361f7b1fbfa7b61765e8b"
 
 [metadata.files]
 adal = [
@@ -755,7 +755,7 @@ adal = [
     {file = "adal-1.2.5.tar.gz", hash = "sha256:8003ba03ef04170195b3eddda8a5ab43649ef2c5f0287023d515affb1ccfcfc3"},
 ]
 alembic = [
-    {file = "alembic-1.5.4.tar.gz", hash = "sha256:e871118b6174681f7e9a9ea67cfcae954c6d18e05b49c6b17f662d2530c76bf5"},
+    {file = "alembic-1.5.5.tar.gz", hash = "sha256:df0028c19275a2cff137e39617a39cdcdbd1173733b87b6bfa257b7c0860213b"},
 ]
 apscheduler = [
     {file = "APScheduler-3.7.0-py2.py3-none-any.whl", hash = "sha256:c06cc796d5bb9eb3c4f77727f6223476eb67749e7eea074d1587550702a7fbe3"},
