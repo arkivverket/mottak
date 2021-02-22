@@ -1,4 +1,7 @@
 #!/bin/sh
+# Usage: zsh run_arkiv_downloader.sh <env> <image_tag>
+# <env> one of dev|test|prod
+# <image_tag> must be an image from arkivverket.azurecr.io/da-mottak/arkiv-downloader
 if [ -z $1 ] || [ -z $2 ]; then
     echo "Usage: zsh $0 <env> <image_tag>"
     exit 1
