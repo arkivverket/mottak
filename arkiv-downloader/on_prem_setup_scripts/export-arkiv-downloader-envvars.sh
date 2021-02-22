@@ -1,6 +1,6 @@
 #!/bin/sh
 # Used to add all environment variables needed to run arkiv-downloader
-# In this version the secrets are removed. These must be added before running the scripts
+# This version have the secrets removed. These must be added when runnning the scripts
 # Usage: source export-arkiv-downloader-envvars.sh
 export REQUEST_RECEIVER_DEV="Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-receiver;SharedAccessKey=<secret>"
 export REQUEST_RECEIVER_TEST="Endpoint=sb://da-mottak-test-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-receiver;SharedAccessKey=<secret>"
