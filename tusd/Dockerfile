@@ -1,15 +1,22 @@
-FROM golang:1.15-buster AS builder
+FROM golang:1.16-buster AS builder
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN mkdir -p /go/src/github.com/perbu/ && cd /go/src/github.com/perbu/ && git clone --depth 1 https://github.com/perbu/tusd.git
-WORKDIR /go/src/github.com/perbu/tusd/
-RUN go get -d -v ./...
+WORKDIR /go/src/github.com/arkivverket/tusd
 
-RUN version="$(git tag -l --points-at HEAD)" && \
-    commit=$(git log --format="%H" -n 1) && \
-    GOOS=linux GOARCH=amd64 go build \
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+RUN git clone https://github.com/arkivverket/tusd.git . \
+        --depth=1 \
+        --branch=azure-implementation
+
+RUN go get -d -v ./... \
+    && version="$(git tag -l --points-at HEAD)" \
+    && commit=$(git log --format="%H" -n 1) \
+    && go build \
         -ldflags="-X github.com/tus/tusd/cmd/tusd/cli.VersionName=${version} -X github.com/tus/tusd/cmd/tusd/cli.GitCommit=${commit} -X 'github.com/tus/tusd/cmd/tusd/cli.BuildDate=$(date --utc)'" \
-        -o "/go/bin/tusd" ./cmd/tusd/main.go && \
-        rm -r /go/src/*
+        -o "/go/bin/tusd" \
+        ./cmd/tusd/main.go
 
 
 FROM python:3.8-slim
