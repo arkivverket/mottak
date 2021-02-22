@@ -14,9 +14,9 @@ fi
 echo "AWS Region: ${AWS_REGION}"
 echo "GCS AUTH_TOKEN: ${AUTH_TOKEN}"
 
-echo "AZURE_ACCOUNT_NAME: ${AZURE_ACCOUNT_NAME}"
-if [ -n "$AZURE_ACCOUNT_KEY" ]; then
-    echo "AZURE_ACCOUNT_KEY is set (secret)"
+echo "AZURE_STORAGE_ACCOUNT: ${AZURE_STORAGE_ACCOUNT}"
+if [ -n "$AZURE_STORAGE_KEY" ]; then
+    echo "AZURE_STORAGE_KEY is set (secret)"
 fi
 
 echo "Mailgun domain: ${MAILGUN_DOMAIN}"
@@ -35,7 +35,7 @@ if [ "$OBJECTSTORE" == "gcs" ]; then
 elif [ "$OBJECTSTORE" == "azure" ]; then
     echo "Backend is Azure Blob Storage."
     #  Use Azure BlockBlob Storage with this container name as a storage backend
-    # (requires the AZURE_ACCOUNT_NAME and AZURE_ACCOUNT_KEY environment variable to be set)
+    # (requires the AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY environment variable to be set)
 
     TUSD_PARAMS="-hooks-dir /srv/hooks -behind-proxy -azure-storage ${BUCKET}"
 else
