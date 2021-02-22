@@ -32,7 +32,8 @@ eval status_sender=\$$env_status_sender
 
 echo "Starting container '$container_name' and store downloaded archives in folder '$target_location'"
 docker run --name=$container_name -d \
-    -v $ARCHIVE_TARGET_LOCATION:$target_location \
+    -v $target_location:$target_location \
+    -e ARCHIVE_TARGET_LOCATION=$target_location \
     -e ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING=$request_receiver \
     -e ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING=$status_sender \
     -it arkivverket.azurecr.io/da-mottak/arkiv-downloader:$TAG
