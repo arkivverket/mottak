@@ -21,11 +21,10 @@ Env variables needed:
 ## Incomming message example
 ````json
 {
-  "id": 1,
-  "arkivuttrekk_id": "c05a214c-fcc5-11ea-8558-acde48001122",
+  "arkivkopi_id": 1,
   "storage_account": "damottakdevsa",
-  "container":
-  "blob_sas_url": "https://<storage_account>.blob.core.windows.net/<container>?<sas_token>"
+  "container": "<container name>",
+  "sas_token": "<sas_token>"
 }
 ````
 
@@ -36,4 +35,5 @@ Env variables needed:
   "obj_id": "c05a214c-fcc5-11ea-8558-acde48001122",
   "status": "TRANSFERING",
   "statusCreatedTime": "2020-09-22 13:32:20.612712"
+}
 ````
