@@ -24,7 +24,7 @@ The container is usually the ekstern_id from an invitasjon with "-GENERATION_NR"
 {
   "arkivkopi_id": 1,
   "storage_account": "damottakdevsa",
-  "container": ",<UUID>-0",
+  "container": ",<container name>",
   "sas_token": "<sas_token>"
 }
 ````
