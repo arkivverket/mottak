@@ -2,7 +2,6 @@ import logging
 import os
 import subprocess
 from typing import Optional
-from uuid import UUID
 
 from typing import List
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiver, ServiceBusSender
@@ -87,7 +86,7 @@ def run(queue_client_downloader: ServiceBusReceiver, queue_client_status: Servic
     """ The main loop that listens to the service bus queue"""
     keep_running = True
     with queue_client_downloader as receiver:
-        logging.info(f"Starting receiving messages on queue {receiver}")
+        logging.info(f"Starting receiving messages on queue {receiver.entity_path}")
         while keep_running:
             messages = receiver.receive_messages(max_wait_time=3, max_message_count=1)  # reads 1 messages then waits for 3 seconds
             for message in messages:
@@ -95,7 +94,7 @@ def run(queue_client_downloader: ServiceBusReceiver, queue_client_status: Servic
                 receiver.complete_message(message)
                 if arkivkopi_request:
                     download_arkivkopi(arkivkopi_request, queue_client_status, storage_location)
-    logging.info(f"Closing receiver")
+        logging.info(f"Closing receiver {receiver.entity_path}")
 
 
 def create_queue_client(queue_client_string: str) -> ServiceBusClient:
@@ -103,11 +102,11 @@ def create_queue_client(queue_client_string: str) -> ServiceBusClient:
 
 
 def create_queue_sender_client(queue_client_string: str, queue_name: str) -> ServiceBusSender:
-    return ServiceBusClient.from_connection_string(queue_client_string).get_queue_sender(queue_name)
+    return create_queue_client(queue_client_string).get_queue_sender(queue_name)
 
 
 def create_queue_receiver_client(queue_client_string: str, queue_name: str) -> ServiceBusReceiver:
-    return ServiceBusClient.from_connection_string(queue_client_string).get_queue_receiver(queue_name)
+    return create_queue_client(queue_client_string).get_queue_receiver(queue_name)
 
 
 if __name__ == '__main__':
