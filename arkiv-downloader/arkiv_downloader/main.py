@@ -42,7 +42,8 @@ def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str)
     """ Returns the command to download a blob using azcopy."""
     # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
     if arkivkopi_request.object_name:
-        return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path]  # Docker container
+        target_file = save_path + os.path.sep + arkivkopi_request.object_name
+        return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), target_file]  # Docker container
     else:
         return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
 
@@ -69,12 +70,12 @@ def send_status_message(arkivkopi_id: int, status: ArkivkopiStatus, client: Serv
     status_obj = ArkivkopiStatusResponse(arkivkopi_id, status)
     message = ServiceBusMessage(status_obj.as_json_str())
     client.send_messages(message)
+    logger.info(f'Status message sent {status_obj.as_json_str()}')
 
 
 def download_arkivkopi(arkivkopi_request: ArkivkopiRequest,
                        queue_client_status: ServiceBusSender,
                        storage_location: str) -> None:
-    logger.info(f'Got download request for container {arkivkopi_request.container} and blob {arkivkopi_request.object_name}')
     send_status_message(arkivkopi_request.arkivkopi_id, ArkivkopiStatus.STARTET, queue_client_status)
     status = download_blob(arkivkopi_request, storage_location)
     send_status_message(arkivkopi_request.arkivkopi_id, status, queue_client_status)
@@ -85,7 +86,11 @@ def process_message(message: ServiceBusMessage) -> Optional[ArkivkopiRequest]:
     logger.info('Got a message on the service bus')
     message_str = str(message)
     arkivkopi_request = ArkivkopiRequest.from_string(message_str)  # logs error if it fails to parse
-    return arkivkopi_request if arkivkopi_request else None
+    if arkivkopi_request:
+        logger.info(f'Received download request {arkivkopi_request.as_safe_json_str()}')
+        return arkivkopi_request
+    else:
+        return None
 
 
 def run(queue_client_downloader: ServiceBusReceiver, queue_client_status: ServiceBusSender, storage_location: str):

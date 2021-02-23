@@ -67,6 +67,11 @@ class ArkivkopiRequest:
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
 
+    def as_safe_json_str(self):
+        as_dict = self.__dict__.copy()
+        as_dict["sas_token"] = "<secret>"
+        return json.dumps(as_dict, cls=UUIDEncoder, default=str)
+
 
 class ArkivkopiStatusResponse:
     def __init__(self, arkivkopi_id: int, status: ArkivkopiStatus):
