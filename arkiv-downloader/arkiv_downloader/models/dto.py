@@ -38,18 +38,21 @@ class ArkivkopiRequest:
                  arkivkopi_id: int,
                  storage_account: str,
                  container: str,
-                 sas_token: str):
+                 sas_token: str,
+                 object_name: Optional[str] = None):
         self.arkivkopi_id = arkivkopi_id
         self.storage_account = storage_account
         self.container = container
         self.sas_token = sas_token
+        self.object_name = object_name
 
     def __eq__(self, other):
         if isinstance(other, ArkivkopiRequest):
             return self.arkivkopi_id == other.arkivkopi_id and \
                    self.storage_account == other.storage_account and \
                    self.container == other.container and \
-                   self.sas_token == other.sas_token
+                   self.sas_token == other.sas_token and \
+                   self.object_name == other.object_name
         return False
 
     @staticmethod
