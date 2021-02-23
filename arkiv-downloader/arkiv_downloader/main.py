@@ -38,11 +38,6 @@ def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
         return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
 
 
-def get_save_path(write_location: str) -> str:
-    """ Returns the path to where the downloaded blob should be saved"""
-    return write_location + os.path.sep
-
-
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
     """ Returns the command to download a blob using azcopy."""
     # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
@@ -52,10 +47,9 @@ def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str)
         return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
 
 
-def download_blob(arkivuttrekk: ArkivkopiRequest, write_location: str) -> ArkivkopiStatus:
-    save_path = get_save_path(write_location)
-    azcopy_command = generate_azcopy_command(arkivuttrekk, save_path)
-    logger.info(f'Starting transfer of arkivkopi {arkivuttrekk.arkivkopi_id} to {save_path}')
+def download_blob(arkivuttrekk: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
+    azcopy_command = generate_azcopy_command(arkivuttrekk, storage_location)
+    logger.info(f'Starting transfer of arkivkopi {arkivuttrekk.arkivkopi_id} to {storage_location}')
     try:
         response = subprocess.check_output(
             azcopy_command,

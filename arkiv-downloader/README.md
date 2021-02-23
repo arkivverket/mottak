@@ -23,8 +23,9 @@ Env variables needed:
 {
   "arkivkopi_id": 1,
   "storage_account": "damottakdevsa",
-  "container": "<container>",
-  "sas_token": "st=2021-02-23T06%3A56%3A45Z&se=2021-02-24T07%3A11%3A45Z&sp=rl&sv=2020-02-10&sr=c&sig=<secret>"
+  "container": "<container name>",
+  "sas_token": "<sas_token>",
+  "object_name" : "Optional[object name]"
 }
 ````
 
