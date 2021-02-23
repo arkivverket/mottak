@@ -19,7 +19,6 @@ Env variables needed:
 
 
 ## Incomming message example
-The container is usually the ekstern_id from an invitasjon with "-GENERATION_NR" at the end (usually -0)
 ````json
 {
   "arkivkopi_id": 1,
