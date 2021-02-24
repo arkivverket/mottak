@@ -104,7 +104,7 @@ def run(queue_client_downloader: ServiceBusReceiver, queue_client_status: Servic
     with queue_client_downloader as receiver:
         logger.info(f"Starting receiving messages on queue {receiver.entity_path}")
         while keep_running:
-            messages = receiver.receive_messages(max_wait_time=3, max_message_count=1)  # reads 1 messages then waits for 3 seconds
+            messages = receiver.receive_messages(max_message_count=1)  # reads 1 message at the time
             for message in messages:
                 arkivkopi_request = process_message(message)
                 receiver.complete_message(message)
