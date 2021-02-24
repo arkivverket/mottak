@@ -22,33 +22,38 @@ logging.getLogger('uamqp').setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
-# ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request'
-ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'kriwal-test-receive'
+ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request'
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
-# ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status'
-ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'kriwal-test'
+ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME = 'archive-download-status'
 ARCHIVE_TARGET_LOCATION = os.getenv('ARCHIVE_TARGET_LOCATION')
 
 
 def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
     """ Returns the URL of the blob to be downloaded."""
-    if arkivkopi_request.object_name:
-        return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}/{arkivkopi_request.object_name}?{arkivkopi_request.sas_token}"
+    if arkivkopi_request.blob_info:
+        return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}/{arkivkopi_request.blob_info.source_name}?{arkivkopi_request.sas_token}"
     else:
         return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
+
+
+def get_target(arkivkopi_request: ArkivkopiRequest, save_path: str) -> str:
+    """
+    Generates target location and filename `save_path/target_file.extension` if source in an object, otherwise save_path
+    """
+    if arkivkopi_request.blob_info:
+        return save_path + arkivkopi_request.blob_info.target_name
+    else:
+        return save_path
 
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
     """ Returns the command to download a blob using azcopy."""
     # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
-    if arkivkopi_request.object_name:
-        target_file = save_path + os.path.sep + arkivkopi_request.object_name
-        return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), target_file]  # Docker container
-    else:
-        return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
+    target_file = get_target(arkivkopi_request, save_path)
+    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), target_file, '--recursive']  # Docker container
 
 
-def download_blob(arkivuttrekk: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
+def download(arkivuttrekk: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
     azcopy_command = generate_azcopy_command(arkivuttrekk, storage_location)
     logger.info(f'Starting transfer of arkivkopi {arkivuttrekk.arkivkopi_id} to {storage_location}')
     try:
@@ -77,7 +82,7 @@ def download_arkivkopi(arkivkopi_request: ArkivkopiRequest,
                        queue_client_status: ServiceBusSender,
                        storage_location: str) -> None:
     send_status_message(arkivkopi_request.arkivkopi_id, ArkivkopiStatus.STARTET, queue_client_status)
-    status = download_blob(arkivkopi_request, storage_location)
+    status = download(arkivkopi_request, storage_location)
     send_status_message(arkivkopi_request.arkivkopi_id, status, queue_client_status)
 
 

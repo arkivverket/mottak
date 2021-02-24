@@ -28,6 +28,22 @@ class ArkivkopiStatus(str, Enum):
             return members.pop()
 
 
+class ArkivkopiRequestBlobInfo:
+    """
+    Optional object included in ArkivkopiRequest if the request is to download a single object from a
+    Azure Blob Storage container.
+    """
+
+    def __init__(self, source_name: str, target_name: str):
+        self.source_name = source_name
+        self.target_name = target_name
+
+    def __eq__(self, other):
+        if isinstance(other, ArkivkopiRequestBlobInfo):
+            return self.source_name == other.source_name and \
+                   self.target_name == other.target_name
+
+
 class ArkivkopiRequest:
     """
     The information needed to make a copy of an archive from cloud to on-prem.
@@ -39,12 +55,12 @@ class ArkivkopiRequest:
                  storage_account: str,
                  container: str,
                  sas_token: str,
-                 object_name: Optional[str] = None):
+                 blob_info: Optional[dict] = None):
         self.arkivkopi_id = arkivkopi_id
         self.storage_account = storage_account
         self.container = container
         self.sas_token = sas_token
-        self.object_name = object_name
+        self.blob_info = ArkivkopiRequestBlobInfo(**blob_info) if blob_info else None
 
     def __eq__(self, other):
         if isinstance(other, ArkivkopiRequest):
@@ -52,7 +68,7 @@ class ArkivkopiRequest:
                    self.storage_account == other.storage_account and \
                    self.container == other.container and \
                    self.sas_token == other.sas_token and \
-                   self.object_name == other.object_name
+                   self.blob_info == other.blob_info
         return False
 
     @staticmethod
@@ -65,12 +81,12 @@ class ArkivkopiRequest:
             return None
 
     def as_json_str(self):
-        return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
+        return json.dumps(self.__dict__, cls=UUIDEncoder, default=lambda o: o.__dict__)
 
     def as_safe_json_str(self):
         as_dict = self.__dict__.copy()
         as_dict["sas_token"] = "<secret>"
-        return json.dumps(as_dict, cls=UUIDEncoder, default=str)
+        return json.dumps(as_dict, cls=UUIDEncoder, default=lambda o: o.__dict__)
 
 
 class ArkivkopiStatusResponse:
@@ -79,4 +95,4 @@ class ArkivkopiStatusResponse:
         self.status = status
 
     def as_json_str(self) -> str:
-        return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
+        return json.dumps(self.__dict__, cls=UUIDEncoder, default=lambda o: o.__dict__)
