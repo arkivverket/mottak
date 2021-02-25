@@ -6,11 +6,11 @@ authors = ["Kristoffer Waløen <kriwal@arkivverket.no>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-azure-servicebus = "^0.50.3"
+azure-servicebus = "^7.0.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
-python-dotenv = "^0.14.0"
+pytest = "^6.2.2"
+python-dotenv = "^0.15.0"
 
 [build-system]
 requires = ["poetry>=0.12"]

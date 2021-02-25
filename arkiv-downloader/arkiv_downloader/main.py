@@ -2,10 +2,9 @@ import logging
 import os
 import subprocess
 from typing import Optional
-from uuid import UUID
 
 from typing import List
-from azure.servicebus import QueueClient, Message
+from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiver, ServiceBusSender
 
 from arkiv_downloader.models.dto import ArkivkopiStatus, ArkivkopiRequest, ArkivkopiStatusResponse
 
@@ -18,6 +17,10 @@ try:
 except ImportError:
     pass
 
+logging.basicConfig(level=logging.INFO, format='%(name)s | %(levelname)s | %(message)s')
+logging.getLogger('uamqp').setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
+
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING')
 ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME = 'archive-download-request'
 ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING = os.getenv('ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING')
@@ -27,7 +30,20 @@ ARCHIVE_TARGET_LOCATION = os.getenv('ARCHIVE_TARGET_LOCATION')
 
 def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
     """ Returns the URL of the blob to be downloaded."""
-    return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
+    if arkivkopi_request.blob_info:
+        return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}/{arkivkopi_request.blob_info.source_name}?{arkivkopi_request.sas_token}"
+    else:
+        return f"https://{arkivkopi_request.storage_account}.blob.core.windows.net/{arkivkopi_request.container}?{arkivkopi_request.sas_token}"
+
+
+def get_target(arkivkopi_request: ArkivkopiRequest, save_path: str) -> str:
+    """
+    Generates target location and filename `save_path/target_file.extension` if source is an object, otherwise save_path
+    """
+    if arkivkopi_request.blob_info:
+        return save_path + arkivkopi_request.blob_info.target_name
+    else:
+        return save_path
 
 
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
@@ -36,76 +52,88 @@ def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str)
     return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
 
 
-def download_blob(arkivuttrekk: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
-    azcopy_command = generate_azcopy_command(arkivuttrekk, storage_location)
-    logging.info(f'Starting transfer of container {arkivuttrekk.container} to {storage_location}')
+def download(arkivkopi_request: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
+    target = get_target(arkivkopi_request, storage_location)
+    azcopy_command = generate_azcopy_command(arkivkopi_request, target)
+    logger.info(f'Starting transfer of arkivkopi {arkivkopi_request.arkivkopi_id} to {target}')
     try:
         response = subprocess.check_output(
             azcopy_command,
             stderr=subprocess.STDOUT
         )
-        logging.info(response.decode('utf-8'))
+        logger.info(response.decode('utf-8'))
         return ArkivkopiStatus.OK
     except subprocess.CalledProcessError as e:
-        logging.error(e.output.decode('utf-8'))
+        logger.error(e.output.decode('utf-8'))
         return ArkivkopiStatus.FEILET
     except FileNotFoundError as e:
-        logging.error('Could not find azcopy', e)
+        logger.error('Could not find azcopy', e)
         return ArkivkopiStatus.FEILET
 
 
-def send_status_message(arkivkopi_id: int, status: ArkivkopiStatus, client: QueueClient):
+def send_status_message(arkivkopi_id: int, status: ArkivkopiStatus, client: ServiceBusSender):
     status_obj = ArkivkopiStatusResponse(arkivkopi_id, status)
-    message = Message(status_obj.as_json_str())
-    client.send(message)
+    message = ServiceBusMessage(status_obj.as_json_str())
+    client.send_messages(message)
+    logger.info(f'Status message sent {status_obj.as_json_str()}')
 
 
 def download_arkivkopi(arkivkopi_request: ArkivkopiRequest,
-                       queue_client_status: QueueClient,
+                       queue_client_status: ServiceBusSender,
                        storage_location: str) -> None:
-    logging.info(f'Got download request for container with container name: {arkivkopi_request.container}')
     send_status_message(arkivkopi_request.arkivkopi_id, ArkivkopiStatus.STARTET, queue_client_status)
-    status = download_blob(arkivkopi_request, storage_location)
+    status = download(arkivkopi_request, storage_location)
     send_status_message(arkivkopi_request.arkivkopi_id, status, queue_client_status)
 
 
-def process_message(message: Message) -> Optional[ArkivkopiRequest]:
+def process_message(message: ServiceBusMessage) -> Optional[ArkivkopiRequest]:
     """ Method that process a message containing an ArkivkopiRequest."""
-    logging.info('Got a message on the service bus')
+    logger.info('Got a message on the service bus')
     message_str = str(message)
     arkivkopi_request = ArkivkopiRequest.from_string(message_str)  # logs error if it fails to parse
-    message.complete()
-    return arkivkopi_request if arkivkopi_request else None
+    if arkivkopi_request:
+        logger.info(f'Received download request {arkivkopi_request.as_safe_json_str()}')
+        return arkivkopi_request
+    else:
+        return None
 
 
-def run(queue_client_downloader: QueueClient, queue_client_status: QueueClient, storage_location: str):
+def run(queue_client_downloader: ServiceBusReceiver, queue_client_status: ServiceBusSender, storage_location: str):
     """ The main loop that listens to the service bus queue"""
     keep_running = True
-    with queue_client_downloader.get_receiver() as receiver:
-        logging.info(f"Starting receiving messages on queue {queue_client_downloader.name}")
+    with queue_client_downloader as receiver:
+        logger.info(f"Starting receiving messages on queue {receiver.entity_path}")
         while keep_running:
-            messages = receiver.fetch_next(timeout=3, max_batch_size=1)  # reads 1 messages then waits for 3 seconds
+            messages = receiver.receive_messages(max_message_count=1)  # reads 1 message at the time
             for message in messages:
                 arkivkopi_request = process_message(message)
+                receiver.complete_message(message)
                 if arkivkopi_request:
                     download_arkivkopi(arkivkopi_request, queue_client_status, storage_location)
-    logging.info(f"Closing receiver {queue_client_downloader.name}")
+        logger.info(f"Closing receiver {receiver.entity_path}")
 
 
-def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClient:
-    return QueueClient.from_connection_string(queue_client_string, queue_name)
+def create_queue_client(queue_client_string: str) -> ServiceBusClient:
+    return ServiceBusClient.from_connection_string(queue_client_string)
+
+
+def create_queue_sender_client(queue_client_string: str, queue_name: str) -> ServiceBusSender:
+    return create_queue_client(queue_client_string).get_queue_sender(queue_name)
+
+
+def create_queue_receiver_client(queue_client_string: str, queue_name: str) -> ServiceBusReceiver:
+    return create_queue_client(queue_client_string).get_queue_receiver(queue_name)
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    logging.info('arkiv_downloader starting up')
-    logging.getLogger('uamqp').setLevel(logging.WARNING)  # Reducing noise in the logs from overly verbose logger
+    logger.info('arkiv_downloader starting up')
 
     # create queues
-    _request_receiver = create_queue_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING,
-                                            ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME)
-    _status_sender = create_queue_client(ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING,
-                                         ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME)
+    _request_receiver = create_queue_receiver_client(ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_SB_CON_STRING,
+                                                     ARCHIVE_DOWNLOAD_REQUEST_RECEIVER_QUEUE_NAME)
+
+    _status_sender = create_queue_sender_client(ARCHIVE_DOWNLOAD_STATUS_SENDER_SB_CON_STRING,
+                                                ARCHIVE_DOWNLOAD_STATUS_SENDER_QUEUE_NAME)
 
     # start main loop
     run(_request_receiver, _status_sender, ARCHIVE_TARGET_LOCATION)

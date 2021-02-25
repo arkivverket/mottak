@@ -1,5 +1,4 @@
 import logging
-from uuid import UUID
 
 import pytest
 
@@ -38,7 +37,7 @@ def test_arkivkopirequest_as_json_str(testobj_arkivkopi_request):
     """
     expected = '{"arkivkopi_id": 1, ' \
                '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
-               '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"}'
+               '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature", "blob_info": null}'
     actual = testobj_arkivkopi_request.as_json_str()
     assert actual == expected
 
@@ -53,3 +52,29 @@ def test_arkivkopistatus_as_json_str(_arkivkopi_status_response):
     actual = _arkivkopi_status_response.as_json_str()
     assert actual == expected
 
+
+def test_arkivkopirequest_as_safe_json_str(testobj_arkivkopi_request):
+    """
+    GIVEN   an ArkivkopiRequest object
+    WHEN    calling the method as__safe_json_str() on the ArkivkopiRequest object
+    THEN    controll that the returned json is correct without sas_token
+    """
+    expected = '{"arkivkopi_id": 1, ' \
+               '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
+               '"<secret>", "blob_info": null}'
+    actual = testobj_arkivkopi_request.as_safe_json_str()
+    assert actual == expected
+
+
+def test_arkivkopirequest_with_blob_info_as_json_str(testobj_arkivkopi_request_with_blob_info):
+    """
+    GIVEN   an ArkivkopiRequest object
+    WHEN    calling the method as_json_str() on the ArkivkopiRequest object
+    THEN    controll that the returned json is correct
+    """
+    expected = '{"arkivkopi_id": 1, ' \
+               '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
+               '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature", '\
+               '"blob_info": {"source_name": "some/random/file", "target_name": "target_filename.tar"}}'
+    actual = testobj_arkivkopi_request_with_blob_info.as_json_str()
+    assert actual == expected
