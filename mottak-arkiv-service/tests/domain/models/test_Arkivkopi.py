@@ -1,53 +1,30 @@
 import logging
+from datetime import datetime
 
-import pytest
-
-from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse
-from app.domain.models.Arkivkopi import ArkivkopiStatus
+from app.connectors.sas_generator.models import SASResponse
+from app.domain.models.Arkivkopi import ArkivkopiStatus, Arkivkopi
 
 logging.disable(logging.CRITICAL)
 
 
-@pytest.fixture
-def teststr_json_string() -> str:
-    return '{"arkivkopi_id": 1, "status": "Startet"}'
-
-
-@pytest.fixture
-def testobj_arkivkopi_request() -> ArkivkopiRequest:
-    return ArkivkopiRequest(
-        arkivkopi_id=1,
+def test_arkivkopi_from_id_and_token():
+    """
+    GIVEN   an arkivuttrekk_id and a SASResponse (token)
+    WHEN    calling the method from_id_and_token() in Arkivkopi
+    THEN    control that the returned Arkivkopi is correct
+    """
+    expected = Arkivkopi(arkivuttrekk_id=1,
+                         status=ArkivkopiStatus.BESTILT,
+                         storage_account="storage_account_test",
+                         container="container_test",
+                         sas_token_start=datetime.fromisoformat("2021-02-23T15:22:11+01:00"),
+                         sas_token_slutt=datetime.fromisoformat("2021-02-23T16:37:11+01:00"))
+    sas_token = SASResponse(
         storage_account="storage_account_test",
         container="container_test",
-        sas_token="se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"
-    )
-
-
-@pytest.fixture
-def _arkivkopi_status_response() -> ArkivkopiStatusResponse:
-    return ArkivkopiStatusResponse(arkivkopi_id=1,
-                                   status=ArkivkopiStatus.STARTET)
-
-
-def test_arkivkopirequest_as_json_str(testobj_arkivkopi_request):
-    """
-    GIVEN   an ArkivkopiRequest object
-    WHEN    calling the method as_json_str() on the ArkivkopiRequest object
-    THEN    control that the returned json is correct
-    """
-    expected = '{"arkivkopi_id": 1, ' \
-               '"storage_account": "storage_account_test", "container": "container_test", "sas_token": ' \
-               '"se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"}'
-    actual = testobj_arkivkopi_request.as_json_str()
-    assert actual == expected
-
-
-def test_arkivkopirequest_from_string(teststr_json_string):
-    """
-    GIVEN   a json string containing an ArkivkopiStatusResponse
-    WHEN    calling the method from_string() in ArkivkopiStatusResponse
-    THEN    control that the returned ArkivkopiStatusResponse is correct
-    """
-    expected = ArkivkopiStatusResponse(arkivkopi_id=1, status=ArkivkopiStatus.STARTET)
-    actual = ArkivkopiStatusResponse.from_string(teststr_json_string)
+        sas_token="st=2021-02-23T14%3A22%3A11Z&se=2021-02-23T15%3A37%3A11Z&sp=rl&sv=2020-02-10&sr=c&sig=someSignature")
+    actual = Arkivkopi.from_id_and_token(arkivuttrekk_id=1, sas_token=sas_token)
+    assert actual.arkivuttrekk_id == expected.arkivuttrekk_id
+    assert actual.storage_account == expected.storage_account
+    assert actual.container == expected.container
     assert actual == expected
