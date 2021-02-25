@@ -46,6 +46,19 @@ class Arkivkopi:
         self.opprettet = opprettet
         self.endret = endret
 
+    def __eq__(self, other):
+        if isinstance(other, Arkivkopi):
+            return self.id == other.id and \
+                   self.arkivuttrekk_id == other.arkivuttrekk_id and \
+                   self.status == other.status and \
+                   self.storage_account == other.storage_account and \
+                   self.container == other.container and \
+                   self.sas_token_start == other.sas_token_start and \
+                   self.sas_token_slutt == other.sas_token_slutt and \
+                   self.opprettet == other.opprettet and \
+                   self.endret == other.endret
+        return False
+
     @staticmethod
     def from_id_and_token(arkivuttrekk_id: int, sas_token: SASResponse) -> Arkivkopi:
         query_string = parse_qs(sas_token.sas_token)
@@ -58,5 +71,3 @@ class Arkivkopi:
                          container=sas_token.container,
                          sas_token_start=sas_token_start,
                          sas_token_slutt=sas_token_slutt)
-
-
