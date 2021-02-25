@@ -11,7 +11,7 @@ To create a new workflow you need to add a new service/component name to
 new workflows for all the services added to the script.
 
 ### Changing a workflow
-Change the template file [python-workflow-template.yaml](python-workflow-template.yaml) and
+Change the template file [python-workflow-template.yaml](templates/python-workflow-template.yaml) and
 run the bash script to generate new workflows.
 
 ### Adding support for new languages
