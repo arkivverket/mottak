@@ -38,7 +38,7 @@ def get_sas_url(arkivkopi_request: ArkivkopiRequest) -> str:
 
 def get_target(arkivkopi_request: ArkivkopiRequest, save_path: str) -> str:
     """
-    Generates target location and filename `save_path/target_file.extension` if source in an object, otherwise save_path
+    Generates target location and filename `save_path/target_file.extension` if source is an object, otherwise save_path
     """
     if arkivkopi_request.blob_info:
         return save_path + arkivkopi_request.blob_info.target_name
