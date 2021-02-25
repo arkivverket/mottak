@@ -49,13 +49,13 @@ def get_target(arkivkopi_request: ArkivkopiRequest, save_path: str) -> str:
 def generate_azcopy_command(arkivkopi_request: ArkivkopiRequest, save_path: str) -> List[str]:
     """ Returns the command to download a blob using azcopy."""
     # return ['azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # For local test
-    target_file = get_target(arkivkopi_request, save_path)
-    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), target_file, '--recursive']  # Docker container
+    return ['./azcopy/azcopy', 'cp', get_sas_url(arkivkopi_request), save_path, '--recursive']  # Docker container
 
 
-def download(arkivuttrekk: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
-    azcopy_command = generate_azcopy_command(arkivuttrekk, storage_location)
-    logger.info(f'Starting transfer of arkivkopi {arkivuttrekk.arkivkopi_id} to {storage_location}')
+def download(arkivkopi_request: ArkivkopiRequest, storage_location: str) -> ArkivkopiStatus:
+    target = get_target(arkivkopi_request, storage_location)
+    azcopy_command = generate_azcopy_command(arkivkopi_request, target)
+    logger.info(f'Starting transfer of arkivkopi {arkivkopi_request.arkivkopi_id} to {target}')
     try:
         response = subprocess.check_output(
             azcopy_command,
