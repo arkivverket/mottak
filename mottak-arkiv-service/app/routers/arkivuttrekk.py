@@ -91,3 +91,24 @@ async def router_get_download_status(id: int, db: Session = Depends(get_db_sessi
         return await arkivuttrekk_service.get_arkivkopi_status(id, db)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+
+
+@router.post('/{id}/overforingspakke/bestill_nedlasting',
+             status_code=status.HTTP_200_OK,
+             response_model=Arkivkopi,
+             summary='Bestiller en nedlastning av overforingspakken fra arkiv downloader')
+async def request_download(id: int, db: Session = Depends(get_db_session),
+                           archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
+                           sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
+    try:
+        result = await arkivuttrekk_service.request_overforingspakke_download(id,
+                                                                              db,
+                                                                              archive_download_request_client,
+                                                                              sas_generator_client)
+    except ArkivuttrekkNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+    except ArkivkopiRequestFailed as err:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
+
+    return result
+
