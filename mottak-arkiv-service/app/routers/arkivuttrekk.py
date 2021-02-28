@@ -70,10 +70,10 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
                            archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
                            sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
     try:
-        result = await arkivuttrekk_service.request_download(id,
-                                                             db,
-                                                             archive_download_request_client,
-                                                             sas_generator_client)
+        result = await arkivuttrekk_service.request_download_of_archive(id,
+                                                                        db,
+                                                                        archive_download_request_client,
+                                                                        sas_generator_client)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
     except ArkivkopiRequestFailed as err:
@@ -101,10 +101,10 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
                            archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
                            sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
     try:
-        result = await arkivuttrekk_service.request_overforingspakke_download(id,
-                                                                              db,
-                                                                              archive_download_request_client,
-                                                                              sas_generator_client)
+        result = await arkivuttrekk_service.request_download_of_overforingspakke(id,
+                                                                                 db,
+                                                                                 archive_download_request_client,
+                                                                                 sas_generator_client)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
     except ArkivkopiRequestFailed as err:

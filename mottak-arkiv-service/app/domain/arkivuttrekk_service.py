@@ -52,9 +52,9 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
 
-async def request_download(arkivuttrekk_id: int, db: Session,
-                           archive_download_request_client: ArchiveDownloadRequestSender,
-                           sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
+async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
+                                      archive_download_request_client: ArchiveDownloadRequestSender,
+                                      sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
     container_id = await _get_container_id(arkivuttrekk_id, db)
     sas_token = await sas_generator_client.request_sas(container_id)
     if not sas_token:
@@ -106,3 +106,22 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Ar
     if not results:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
     return results
+
+
+async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,
+                                               archive_download_request_client: ArchiveDownloadRequestSender,
+                                               sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
+    # container_id = OVERFORINGSPAKKE_CONTAINER
+    # sas_token = await sas_generator_client.request_sas(container_id)
+    # if not sas_token:
+    #     raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
+    #
+    # arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
+    #
+    # request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
+    # if not request_sent:
+    #     arkivkopi_repository.delete(db, arkivkopi)
+    #     raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
+    #
+    # return arkivkopi
+    pass
