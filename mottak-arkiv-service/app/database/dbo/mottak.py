@@ -102,6 +102,7 @@ class Arkivkopi(Base):
     """A request to copy an archive to on-prem storage."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
     arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=False)
+    filnavn = Column(String(), nullable=False)
     status = Column(Enum('Bestilt', 'Startet', 'OK', 'Feilet', name='arkivkopi_status_type', create_type=True),
                     nullable=False)
     storage_account = Column(String(), nullable=False)

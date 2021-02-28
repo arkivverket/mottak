@@ -18,6 +18,7 @@ class ArkivkopiStatus(str, Enum):
 class Arkivkopi:
     id: int
     arkivuttrekk_id: int
+    filnavn: str
     status: ArkivkopiStatus
     storage_account: str
     container: str
@@ -29,6 +30,7 @@ class Arkivkopi:
     def __init__(self,
                  id_=None,
                  arkivuttrekk_id=None,
+                 filnavn=None,
                  status=None,
                  storage_account=None,
                  container=None,
@@ -38,6 +40,7 @@ class Arkivkopi:
                  endret=None):
         self.id = id_
         self.arkivuttrekk_id = arkivuttrekk_id
+        self.filnavn = filnavn
         self.status = status
         self.storage_account = storage_account
         self.container = container
@@ -50,6 +53,7 @@ class Arkivkopi:
         if isinstance(other, Arkivkopi):
             return self.id == other.id and \
                    self.arkivuttrekk_id == other.arkivuttrekk_id and \
+                   self.filnavn == other.filnavn and \
                    self.status == other.status and \
                    self.storage_account == other.storage_account and \
                    self.container == other.container and \
@@ -66,6 +70,20 @@ class Arkivkopi:
         sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
 
         return Arkivkopi(arkivuttrekk_id=arkivuttrekk_id,
+                         status=ArkivkopiStatus.BESTILT,
+                         storage_account=sas_token.storage_account,
+                         container=sas_token.container,
+                         sas_token_start=sas_token_start,
+                         sas_token_slutt=sas_token_slutt)
+
+    @staticmethod
+    def from_id_filename_and_token(arkivuttrekk_id: int, filename: str, sas_token: SASResponse) -> Arkivkopi:
+        query_string = parse_qs(sas_token.sas_token)
+        sas_token_start = convert_string_to_datetime(query_string["st"][0])
+        sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
+
+        return Arkivkopi(arkivuttrekk_id=arkivuttrekk_id,
+                         filnavn=filename,
                          status=ArkivkopiStatus.BESTILT,
                          storage_account=sas_token.storage_account,
                          container=sas_token.container,
