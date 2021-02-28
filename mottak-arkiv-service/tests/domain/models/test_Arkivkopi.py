@@ -24,7 +24,4 @@ def test_arkivkopi_from_id_and_token():
         container="container_test",
         sas_token="st=2021-02-23T14%3A22%3A11Z&se=2021-02-23T15%3A37%3A11Z&sp=rl&sv=2020-02-10&sr=c&sig=someSignature")
     actual = Arkivkopi.from_id_and_token(arkivuttrekk_id=1, sas_token=sas_token)
-    assert actual.arkivuttrekk_id == expected.arkivuttrekk_id
-    assert actual.storage_account == expected.storage_account
-    assert actual.container == expected.container
     assert actual == expected
