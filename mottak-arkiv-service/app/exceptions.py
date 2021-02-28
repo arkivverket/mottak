@@ -91,20 +91,20 @@ class ArkivkopiNotFound(Exception):
         return self.message
 
 
-class ArkivkopiRequestFailed(Exception):
+class ArkivkopiOfArchiveRequestFailed(Exception):
     """
-    Exception raised when ordering an arkivkopi fails
+    Exception raised when ordering an arkivkopi of an archive fails
 
     Attributes:
-        id -- Integer ID for the arkivuttrekk in the database
-        invitasjon_id -- UUID used as reference when uploading an arkivuttrekk. Also used as container_id later on.
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        container_id -- string used to identify the container in which the archive to be copied is stored.
         message -- explanation of the error
     """
 
-    def __init__(self, arkivuttrekk_id: int, invitasjon_ekstern_id: UUID):
+    def __init__(self, arkivuttrekk_id: int, container_id: str):
         self.arkivuttrekk_id = arkivuttrekk_id
-        self.invitasjon_ekstern_id = invitasjon_ekstern_id
-        self.message = f"Bestilling av nedlasting feilet for invitasjon med ekstern_id={self.invitasjon_ekstern_id} " \
+        self.container_id = container_id
+        self.message = f"Bestilling av nedlasting feilet for arkiv i container med id={self.container_id} " \
                        f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
         super().__init__(self.message)
 

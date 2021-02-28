@@ -13,7 +13,9 @@ from app.database.repositories import arkivkopi_repository, arkivuttrekk_reposit
 from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed
+
+ZERO_GENERATION = "0"
 
 logger = logging.getLogger(__name__)
 
@@ -58,19 +60,19 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     container_id = await _get_container_id(arkivuttrekk_id, db)
     sas_token = await sas_generator_client.request_sas(container_id)
     if not sas_token:
-        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
+        raise ArkivkopiOfArchiveRequestFailed(arkivuttrekk_id, container_id)
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
     request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
     if not request_sent:
         arkivkopi_repository.delete(db, arkivkopi)
-        raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
+        raise ArkivkopiOfArchiveRequestFailed(arkivuttrekk_id, container_id)
 
     return arkivkopi
 
 
-async def _get_container_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
+async def _get_container_id(arkivuttrekk_id: int, db: Session) -> str:
     """
     Private function that returns the container_id associated with the given arkivuttrekk.
 
@@ -79,10 +81,11 @@ async def _get_container_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
 
     In the current implementation we will assume that for every arkivuttrekk there is only one active invitasjon.
     It is assumed that the active invitasjon is the most recently created invitasjon.
-    In other words, it is possible for an arkivuttrekk to have multiple associated invitasjon,
+    In other words, it is possible for an arkivuttrekk to have multiple associated invitasjons,
     but when requesting to download an arkivuttrekk to on-prem the most recently created invitasjon will be used.
 
-    The container_id will be a string representation of the ekstern_id created in the method _send_invitation.
+    The container_id will be a string representation of the ekstern_id created in the method _send_invitation,
+    and the generation of the archive, which for mottaksløsningen will always be the first (zero) generation.
     The container_id will be used as the target_container_name when unpacking the tar-file to an azure container
     during the argo-workflow step s3-unpack.
 
@@ -90,7 +93,7 @@ async def _get_container_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
     ____________________________________________________________________________________________________________________
     """
     invitasjon = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
-    return invitasjon.ekstern_id
+    return f'{invitasjon.ekstern_id}-{ZERO_GENERATION}'
 
 
 def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> Optional[Arkivkopi_DBO]:
