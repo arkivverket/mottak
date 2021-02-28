@@ -64,19 +64,6 @@ class Arkivkopi:
         return False
 
     @staticmethod
-    def from_id_and_token(arkivuttrekk_id: int, sas_token: SASResponse) -> Arkivkopi:
-        query_string = parse_qs(sas_token.sas_token)
-        sas_token_start = convert_string_to_datetime(query_string["st"][0])
-        sas_token_slutt = convert_string_to_datetime(query_string["se"][0])
-
-        return Arkivkopi(arkivuttrekk_id=arkivuttrekk_id,
-                         status=ArkivkopiStatus.BESTILT,
-                         storage_account=sas_token.storage_account,
-                         container=sas_token.container,
-                         sas_token_start=sas_token_start,
-                         sas_token_slutt=sas_token_slutt)
-
-    @staticmethod
     def from_id_filename_and_token(arkivuttrekk_id: int, filename: str, sas_token: SASResponse) -> Arkivkopi:
         query_string = parse_qs(sas_token.sas_token)
         sas_token_start = convert_string_to_datetime(query_string["st"][0])
