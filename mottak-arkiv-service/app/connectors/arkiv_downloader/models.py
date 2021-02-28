@@ -63,11 +63,20 @@ class ArkivkopiRequest:
         return False
 
     @staticmethod
-    def from_id_and_token(arkivkopi_id: int, sas_token: SASResponse) -> ArkivkopiRequest:
+    def for_archive_download(arkivkopi_id: int, sas_token: SASResponse) -> ArkivkopiRequest:
         return ArkivkopiRequest(arkivkopi_id=arkivkopi_id,
                                 storage_account=sas_token.storage_account,
                                 container=sas_token.container,
                                 sas_token=sas_token.sas_token)
+
+    @staticmethod
+    def for_object_download(arkivkopi_id: int, sas_token: SASResponse, target_name: str,
+                            source_name: str) -> ArkivkopiRequest:
+        return ArkivkopiRequest(arkivkopi_id=arkivkopi_id,
+                                storage_account=sas_token.storage_account,
+                                container=sas_token.container,
+                                sas_token=sas_token.sas_token,
+                                blob_info={"target_name": target_name, "source_name": source_name})
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)

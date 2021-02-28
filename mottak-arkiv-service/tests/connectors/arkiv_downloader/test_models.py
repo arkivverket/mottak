@@ -36,10 +36,16 @@ def test_arkivkopirequest_not_equals(testobj_arkivkopi_request):
     assert testobj_arkivkopi_request != arkivkopi_request_2
 
 
-def test_arkivkopirequest_from_id_and_token(testobj_arkivkopi_request):
+def test_arkivkopirequest_for_archive_download(testobj_arkivkopi_request):
     sas_response = SASResponse(storage_account, container, sas_token)
-    result = ArkivkopiRequest.from_id_and_token(arkivkopi_id, sas_response)
+    result = ArkivkopiRequest.for_archive_download(arkivkopi_id, sas_response)
     assert testobj_arkivkopi_request == result
+
+
+def test_arkivkopirequest_for_object_download(testobj_arkivkopi_request_with_blob):
+    sas_response = SASResponse(storage_account, container, sas_token)
+    result = ArkivkopiRequest.for_object_download(arkivkopi_id, sas_response, target_name, source_name)
+    assert testobj_arkivkopi_request_with_blob == result
 
 
 def test_arkivkopirequest_as_json(testobj_arkivkopi_request):
