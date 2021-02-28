@@ -153,7 +153,7 @@ def main():
     # Get the max file size for clamd. Default is 1023 MiB
     scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES  # TODO Find out why the limit is 1023?
 
-    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {scan_limit} MiB')
+    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {scan_limit} bytes')
 
     storage = ArkivverketObjectStorage()
     obj = storage.download_stream(bucket, objectname)
