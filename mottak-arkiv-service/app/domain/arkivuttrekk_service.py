@@ -18,6 +18,7 @@ from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed
     ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed
 
 ZERO_GENERATION = "0"
+OVERFORINGSPAKKE_CONTAINER = "tusd-storage"
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
-    request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
+    request_sent = await archive_download_request_client.send_archive_download_request(sas_token, arkivkopi.id)
     if not request_sent:
         arkivkopi_repository.delete(db, arkivkopi)
         raise ArkivkopiOfArchiveRequestFailed(arkivuttrekk_id, container_id)
@@ -130,17 +131,25 @@ def _get_source_name(arkivuttrekk_id: int, db: Session):
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,
                                                archive_download_request_client: ArchiveDownloadRequestSender,
                                                sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
-    # container_id = OVERFORINGSPAKKE_CONTAINER
-    # sas_token = await sas_generator_client.request_sas(container_id)
-    # if not sas_token:
-    #     raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
-    #
-    # arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
-    #
-    # request_sent = await archive_download_request_client.send_download_request(sas_token, arkivkopi.id)
-    # if not request_sent:
-    #     arkivkopi_repository.delete(db, arkivkopi)
-    #     raise ArkivkopiRequestFailed(arkivuttrekk_id, container_id)
-    #
-    # return arkivkopi
-    pass
+    container_id = OVERFORINGSPAKKE_CONTAINER
+    sas_token = await sas_generator_client.request_sas(container_id)
+    if not sas_token:
+        raise SASTokenPreconditionFailed(container_id)
+
+    target_name = _get_target_name(arkivuttrekk_id, db)
+    source_name = _get_source_name(arkivuttrekk_id, db)
+
+    arkivkopi = arkivkopi_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not arkivkopi:
+        arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_filename_and_token(arkivuttrekk_id,
+                                                                                         target_name,
+                                                                                         sas_token))
+
+    request_sent = await archive_download_request_client.send_object_download_request(sas_token,
+                                                                                      arkivkopi.id,
+                                                                                      target_name,
+                                                                                      source_name)
+    if not request_sent:
+        arkivkopi_repository.delete(db, arkivkopi)
+        raise ArkivkopiOfOverforingspakkeRequestFailed(arkivuttrekk_id, container_id)
+    return arkivkopi

@@ -13,7 +13,7 @@ class ArchiveDownloadRequestSender(AzureQueueSender):
     def __init__(self, connection_string: str):
         super().__init__(connection_string=connection_string, queue_name=REQUEST_SENDER_QUEUE_NAME)
 
-    async def send_download_request(self, sas_token: SASResponse, arkivkopi_id: int) -> bool:
+    async def send_archive_download_request(self, sas_token: SASResponse, arkivkopi_id: int) -> bool:
         """
         Sends a archive download request on queue
         :param sas_token: SAS token containing information about what to download, including access key
@@ -29,7 +29,7 @@ class ArchiveDownloadRequestSender(AzureQueueSender):
         Sends a download request for an object on queue
         :param sas_token: SAS token containing information about what to download, including access key
         :param arkivkopi_id: id of this download request
-        :param target_name: the name of the object when uploaded to on-prem
+        :param target_name: the name of the object when uploaded to on-prem (a.k.a. filnavn in Arkivkopi)
         :param source_name: the name of the object on cloud storage
         :return: True if message added to queue, else False
         """
