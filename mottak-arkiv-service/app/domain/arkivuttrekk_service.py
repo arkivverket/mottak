@@ -9,11 +9,13 @@ from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
-from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository
+from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository, \
+    overforingspakke_repository
 from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
+    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound
 
 ZERO_GENERATION = "0"
 
@@ -109,6 +111,20 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Ar
     if not results:
         raise ArkivuttrekkNotFound(arkivuttrekk_id)
     return results
+
+
+def _get_target_name(arkivuttrekk_id: int, db: Session) -> Optional[str]:
+    arkivuttrekk = get_by_id(arkivuttrekk_id, db)
+    target_name = f"{arkivuttrekk.obj_id}.tar"
+    return target_name
+
+
+def _get_source_name(arkivuttrekk_id: int, db: Session):
+    overforingspakke = overforingspakke_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not overforingspakke:
+        raise OverforingspakkeNotFound(arkivuttrekk_id)
+    source_name = overforingspakke.tusd_objekt_navn
+    return source_name
 
 
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,
