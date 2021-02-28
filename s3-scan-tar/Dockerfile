@@ -28,7 +28,6 @@ RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
         clamav-daemon \
         clamav-freshclam \
-        wait-for-it \
     \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -42,8 +41,7 @@ RUN mkdir /var/run/clamav \
     && chown clamav:clamav /var/run/clamav \
     && chmod 750 /var/run/clamav
 
-COPY start.sh /start.sh
 
 # If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
 # COPY gcs.json /opt
-CMD ["/start.sh"]
+CMD ["/app/scanner.py"]

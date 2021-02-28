@@ -7,6 +7,8 @@ import sys
 import logging
 import io
 import tarfile
+import socket
+import time
 from typing import Tuple
 from collections import namedtuple
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
@@ -63,6 +65,26 @@ class BinaryFileLimitedOnSize(io.RawIOBase):
 
     def seek(self, pos: int, **kwargs) -> int:
         raise io.UnsupportedOperation
+
+def wait_for_port(port, host='localhost', timeout=5.0):
+    """Wait until a port starts accepting TCP connections.
+    Args:
+        port (int): Port number.
+        host (str): Host address on which the port should exist.
+        timeout (float): In seconds. How long to wait before raising errors.
+    Raises:
+        TimeoutError: The port isn't accepting connection after time specified in `timeout`.
+    """
+    start_time = time.perf_counter()
+    while True:
+        try:
+            with socket.create_connection((host, port), timeout=timeout):
+                break
+        except OSError as ex:
+            time.sleep(0.01)
+            if time.perf_counter() - start_time >= timeout:
+                raise TimeoutError('Waited too long for the port {} on host {} to start accepting '
+                                   'connections.'.format(port, host)) from ex
 
 # TODO - Use parameters instead of environment variables in functions
 def get_clam():
@@ -145,6 +167,20 @@ def main():
     logging.basicConfig(level=logging.INFO, filename='/tmp/avlog',
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
+
+    logging.info("Refreshing ClamAV signatures")
+    os.system("freshclam")
+
+    logging.info("Starting ClamAV")
+    os.system("clamd &")
+
+    try:
+        logging.info("Waiting for clamd to be ready")
+        wait_for_port(3310, timeout=30.0)
+    except TimeoutError as exception:
+        logging.error(exception)
+        sys.exit(CLAMAVERROR)
+
     logging.info("Starting s3-scan-tar")
     logging.info(f'{__file__} version {__version__} running')
 
