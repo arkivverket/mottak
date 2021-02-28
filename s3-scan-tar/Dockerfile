@@ -1,5 +1,5 @@
 FROM python:3.8-slim-buster
-RUN apt-get update && apt-get install -y --no-install-recommends python3 git clamav-daemon clamav-freshclam && \
+RUN apt-get update && apt-get install -y --no-install-recommends python3 git clamav-daemon clamav-freshclam wait-for-it && \
     apt-get clean && \
     freshclam && \
     pip install poetry && \
