@@ -7,6 +7,7 @@ import sys
 import logging
 import io
 import tarfile
+from typing import Tuple
 from collections import namedtuple
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 import pyclamd
@@ -91,7 +92,7 @@ def stream_tar(stream):
     return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket, limit) -> (int, int, int):
+def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
