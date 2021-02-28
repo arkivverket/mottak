@@ -66,9 +66,9 @@ class SASTokenPreconditionFailed(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, container_id: UUID):
+    def __init__(self, container_id: str):
         self.container_id = container_id
-        self.message = f"The container '{container_id}' does not exist"
+        self.message = f"Fant ikke container med id={self.container_id} ved generering av SAS token"
         super().__init__(self.message)
 
     def __str__(self) -> str:

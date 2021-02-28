@@ -15,7 +15,7 @@ from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
-    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound
+    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed
 
 ZERO_GENERATION = "0"
 
@@ -62,7 +62,7 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     container_id = await _get_container_id(arkivuttrekk_id, db)
     sas_token = await sas_generator_client.request_sas(container_id)
     if not sas_token:
-        raise ArkivkopiOfArchiveRequestFailed(arkivuttrekk_id, container_id)
+        raise SASTokenPreconditionFailed(container_id)
 
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id, sas_token))
 
