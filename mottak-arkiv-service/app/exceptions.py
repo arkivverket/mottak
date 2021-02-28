@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from app.connectors.arkiv_downloader.models import ArkivkopiRequestBlobInfo
+
 
 class MetadatafilNotFound(Exception):
     """
@@ -106,6 +108,45 @@ class ArkivkopiOfArchiveRequestFailed(Exception):
         self.container_id = container_id
         self.message = f"Bestilling av nedlasting feilet for arkiv i container med id={self.container_id} " \
                        f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class ArkivkopiOfOverforingspakkeRequestFailed(Exception):
+    """
+    Exception raised when ordering an arkivkopi of an overforingspakke fails.
+
+    Attributes:
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        container_id -- string used to identify the container in which the overforingspakke to be copied is stored
+        message -- explanation of the error
+    """
+
+    def __init__(self, arkivuttrekk_id: int, container_id: str):
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.container_id = container_id
+        self.message = f"Bestilling av nedlasting feilet for overforingspakke i container {container_id} " \
+                       f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class OverforingspakkeNotFound(Exception):
+    """
+    Exception raised when overforingspakke doesn't exist in database
+
+    Attributes:
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, arkivuttrekk_id: int):
+        self.id = arkivuttrekk_id
+        self.message = f"Fant ikke overforingspakke assosiert med arkivuttrekk_id={arkivuttrekk_id}"
         super().__init__(self.message)
 
     def __str__(self):
