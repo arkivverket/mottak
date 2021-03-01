@@ -86,6 +86,15 @@ def wait_for_port(port, host='localhost', timeout=5.0):
                 raise TimeoutError('Waited too long for the port {} on host {} to start accepting '
                                    'connections.'.format(port, host)) from ex
 
+
+def sizeof_fmt(num, suffix='B'):
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
+
+
 # TODO - Use parameters instead of environment variables in functions
 def get_clam():
     """Establish connection with Clamd
@@ -127,7 +136,8 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
             continue
         handle = BinaryFileLimitedOnSize(tar_member, limit)
         try:
-            logging.info(f'Scanning {member.name}...')
+            # member_size = int(member.size /1024 /1024)
+            logging.info(f'Scanning {member.name} at {sizeof_fmt(member.size)}...')
             result = clamd_socket.scan_stream(handle)
 
             # No virus found
@@ -189,7 +199,7 @@ def main():
     # Get the max file size for clamd. Default is 1023 MiB
     scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES  # TODO Find out why the limit is 1023?
 
-    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {scan_limit} bytes')
+    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {sizeof_fmt(scan_limit)} bytes')
 
     storage = ArkivverketObjectStorage()
     obj = storage.download_stream(bucket, objectname)
