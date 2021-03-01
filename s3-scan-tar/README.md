@@ -19,7 +19,7 @@ The values given here are examples or hints to proper variables.
 - TUSD_OBJECT_NAME=ok63e2f0-39bf-4fea-a741-58d472664ce2
 - AVLOG=/tmp/avlog
 - CLAMD_SOCK=/var/run/clamav/clamd.ctl
-- MAXSIZE=1023
+- MAXFILESIZE=1023
 - OBJECTSTORE=abs
 - BUCKET=bucket-storage
 - AZURE_ACCOUNT=myazureaccdev
