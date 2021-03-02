@@ -1,4 +1,4 @@
-FROM python:3.8 AS prepare
+FROM python:3.8-slim AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -9,7 +9,12 @@ ENV \
 	#
 	PATH=/opt/poetry/bin:${PATH}
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+        curl \
+        git \
+    \
+    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 
 WORKDIR /app
 COPY poetry.lock /app
