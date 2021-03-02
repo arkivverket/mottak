@@ -1,6 +1,0 @@
-on:
-  workflow_dispatch:
-    inputs:
-      image:
-        description: 'Dummy'
-        required: true
