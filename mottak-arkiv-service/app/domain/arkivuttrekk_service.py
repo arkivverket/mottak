@@ -74,7 +74,8 @@ async def _generate_sas_token(container_id, sas_generator_client):
 async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
                                       archive_download_request_client: ArchiveDownloadRequestSender,
                                       sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
-    container_id = await _get_container_id(arkivuttrekk_id, db)
+    invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
+    container_id = await _get_container_id(invitasjon_id, db)
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
     arkivkopi = _get_or_create_arkivkopi(arkivuttrekk_id, db, sas_token)
@@ -87,9 +88,9 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     return arkivkopi
 
 
-async def _get_container_id(arkivuttrekk_id: int, db: Session) -> str:
+def _get_container_id(invitasjons_id: int, db: Session) -> str:
     """
-    Private function that returns the container_id associated with the given arkivuttrekk.
+    Private function that returns the container_id associated with the given invitasjon.
 
     ____________________________________________________________________________________________________________________
     Documentation of container_id in the current implementation of mottak.
@@ -107,7 +108,7 @@ async def _get_container_id(arkivuttrekk_id: int, db: Session) -> str:
     In other words, the end result of uploading an archive can be found in an azure container named container_id.
     ____________________________________________________________________________________________________________________
     """
-    invitasjon = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    invitasjon = invitasjon_repository.get_by_id(db, invitasjons_id)
     return f'{invitasjon.ekstern_id}-{ZERO_GENERATION}'
 
 
