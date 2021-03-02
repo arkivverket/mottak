@@ -14,7 +14,6 @@ def test_arkivkopi_from_id_filnavn_and_token():
     THEN    control that the returned Arkivkopi is correct
     """
     expected = Arkivkopi(arkivuttrekk_id=1,
-                         filnavn="filnavn_test.tar",
                          status=ArkivkopiStatus.BESTILT,
                          storage_account="storage_account_test",
                          container="container_test",
@@ -24,5 +23,5 @@ def test_arkivkopi_from_id_filnavn_and_token():
         storage_account="storage_account_test",
         container="container_test",
         sas_token="st=2021-02-23T14%3A22%3A11Z&se=2021-02-23T15%3A37%3A11Z&sp=rl&sv=2020-02-10&sr=c&sig=someSignature")
-    actual = Arkivkopi.from_id_filename_and_token(arkivuttrekk_id=1, filename="filnavn_test.tar", sas_token=sas_token)
+    actual = Arkivkopi.from_id_and_token(arkivuttrekk_id=1, sas_token=sas_token)
     assert actual == expected

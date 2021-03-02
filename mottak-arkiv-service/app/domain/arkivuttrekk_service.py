@@ -165,7 +165,6 @@ def _get_or_create_arkivkopi(arkivuttrekk_id: int, db: Session, sas_token: SASRe
     if not arkivkopi:
         if not filnavn:
             filnavn = _get_filnavn(arkivuttrekk_id, db)
-        arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_filename_and_token(arkivuttrekk_id,
-                                                                                         filnavn,
-                                                                                         sas_token))
+        arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id,
+                                                                                sas_token))
     return arkivkopi
