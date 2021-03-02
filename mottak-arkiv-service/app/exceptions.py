@@ -151,3 +151,22 @@ class OverforingspakkeNotFound(Exception):
 
     def __str__(self):
         return self.message
+
+
+class InvitasjonNotFound(Exception):
+    """
+    Exception raised when invitasjon doesn't exist in database
+
+    Attributes:
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, arkivuttrekk_id: int):
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.message = f"Fant ikke invitasjon assosiert med arkivuttrekk_id={self.arkivuttrekk_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+

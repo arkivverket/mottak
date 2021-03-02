@@ -16,7 +16,7 @@ from app.domain.models.Arkivkopi import Arkivkopi
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
-    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed
+    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound
 
 ZERO_GENERATION = "0"
 OVERFORINGSPAKKE_CONTAINER = "tusd-storage"
@@ -57,6 +57,12 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 
     return invitasjon_repository.create(db, arkivuttrekk.id, arkivuttrekk.avgiver_epost, status, invitasjon_ekstern_id)
 
+
+def _get_invitasjon_id(arkivuttrekk_id, db):
+    invitasjon = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not invitasjon:
+        raise InvitasjonNotFound(arkivuttrekk_id)
+    return invitasjon.id
 
 async def _generate_sas_token(container_id, sas_generator_client):
     sas_token = await sas_generator_client.request_sas(container_id)
