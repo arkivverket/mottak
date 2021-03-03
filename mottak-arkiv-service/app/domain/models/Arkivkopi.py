@@ -15,6 +15,24 @@ class ArkivkopiStatus(str, Enum):
     FEILET = 'Feilet'
 
 
+class ArkivkopiRequestParameters:
+    arkivkopi_id: int
+    sas_token: SASResponse
+    source_name: str
+    target_name: str
+
+    def __init__(self,
+                 arkivkopi_id=None,
+                 sas_token=None,
+                 source_name=None,
+                 target_name=None):
+        self.arkivkopi_id = arkivkopi_id
+        self.sas_token = sas_token
+        self.source_name = source_name
+        self.target_name = target_name
+
+
+
 class Arkivkopi:
     id: int
     invitasjon_id: int
