@@ -24,10 +24,10 @@ RUN poetry config virtualenvs.in-project true \
 
 FROM python:3.8-slim
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
 WORKDIR /app
+
 ENV PATH=/app/.venv/bin:${PATH}
-COPY --from=prepare /app/.venv /app/.venv
+COPY --chown=clamav --from=prepare /app/.venv /app/.venv
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
@@ -38,14 +38,15 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && freshclam
 
-COPY conf/clamd.conf /etc/clamav/clamd.conf
 
 # permission juggling because we don't use clamd as a service
 RUN mkdir /var/run/clamav \
     && chown clamav:clamav /var/run/clamav \
     && chmod 750 /var/run/clamav
-COPY scanner.py /app/
+COPY --chown=clamav scanner.py /app/
+COPY --chown=clamav conf/ /etc/clamav/
 
+USER clamav
 
 # If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
 # COPY gcs.json /opt
