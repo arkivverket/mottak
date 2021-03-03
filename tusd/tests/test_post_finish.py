@@ -5,19 +5,18 @@ from hooks.implementations.post_finish import gather_params, update_overforingsp
 from hooks.implementations.models.DataFromDatabase import DataFromDatabase
 from hooks.implementations.models.HookData import HookData
 
-
 mock_hook_data = HookData(tusd_id="9090fe36854e6761925e6e9ec475c17f",
                           ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
                           transferred_bytes=440320,
                           objekt_navn="9090fe36854e6761925e6e9ec475c17f")
 
-mock_dbdata = DataFromDatabase(ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
+mock_dbdata = DataFromDatabase(invitasjon_id=1,
+                               ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
                                sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                avgiver_navn="Per Buer",
                                avgiver_epost="perbue@arkivverket.no",
                                koordinator_epost="laralv@arkivverket.no",
                                arkiv_type="Noark5",
-                               arkivuttrekk_id=1,
                                storrelse=440320,
                                arkivuttrekk_obj_id="ed889fdc-b4d0-49fe-bf4b-caa0834cab2d")
 

@@ -43,7 +43,6 @@ class Arkivuttrekk(Base):
     # Backrefs. These create virtual columns on the other side of the relation.
     invitasjoner = relationship('Invitasjon', backref='arkivuttrekk')
     lokasjoner = relationship('Lokasjon', backref='arkivuttrekk')
-    overforingspakker = relationship('Overforingspakke', backref='arkivuttrekk')
     testere = relationship('Tester', backref='arkivuttrekk')
     arkivkopi = relationship('Arkivkopi', backref='arkivuttrekk')
 
@@ -59,6 +58,9 @@ class Invitasjon(Base):
     avgiver_epost = Column(String(), nullable=False)
     status = Column(Enum('Sendt', 'Feilet', name='invitasjon_status_type', create_type=True), nullable=False)
     opprettet = Column(DateTime(), server_default=func.now(), nullable=False)
+
+    # Backrefs. These create virtual columns on the other side of the relation.
+    overforingspakker = relationship('Overforingspakke', backref='invitasjon')
 
 
 class Lokasjon(Base):
@@ -81,7 +83,7 @@ class Overforingspakke(Base):
     """When we accept an upload we create a 'overforingspakke' object that points to the object which
     contains the tar file."""
     id = Column(Integer(), autoincrement=True, nullable=False, primary_key=True, unique=True)
-    arkivuttrekk_id = Column(Integer(), ForeignKey('arkivuttrekk.id'), nullable=False, unique=True)
+    invitasjon_id = Column(Integer(), ForeignKey('invitasjon.id'), nullable=False, unique=True)
     tusd_id = Column(String(length=60), nullable=False, unique=True, index=True)
     tusd_objekt_navn = Column(String(), nullable=False)
     storrelse = Column(BigInteger(), nullable=False)

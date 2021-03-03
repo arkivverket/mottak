@@ -20,9 +20,9 @@ def add_overforingspakke_to_db(conn, data_from_db: DataFromDatabase, hook_data: 
     try:
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO overforingspakke (arkivuttrekk_id, tusd_id, tusd_objekt_navn, storrelse, status) '
+            'INSERT INTO overforingspakke (invitasjon_id, tusd_id, tusd_objekt_navn, storrelse, status) '
             'VALUES (%s, %s, %s, %s, %s)',
-            (data_from_db.arkivuttrekk_id, hook_data.tusd_id, hook_data.objekt_navn, hook_data.transferred_bytes,
+            (data_from_db.invitasjon_id, hook_data.tusd_id, hook_data.objekt_navn, hook_data.transferred_bytes,
              OverforingspakkeStatus.STARTET))
         conn.commit()
     except psycopg2.Error as exception:
