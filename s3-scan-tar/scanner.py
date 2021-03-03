@@ -21,8 +21,6 @@ try:
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
 
-from _version import __version__
-
 MEGABYTES = 1024 ** 2
 
 # Exit values
@@ -136,7 +134,6 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
             continue
         handle = BinaryFileLimitedOnSize(tar_member, limit)
         try:
-            # member_size = int(member.size /1024 /1024)
             logging.info(f'Scanning {member.name} at {sizeof_fmt(member.size)}...')
             result = clamd_socket.scan_stream(handle)
 
@@ -192,7 +189,6 @@ def main():
         sys.exit(CLAMAVERROR)
 
     logging.info("Starting s3-scan-tar")
-    logging.info(f'{__file__} version {__version__} running')
 
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')

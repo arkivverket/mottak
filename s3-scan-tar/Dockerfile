@@ -38,13 +38,13 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && freshclam
 
-COPY scanner.py _version.py /app/
 COPY conf/clamd.conf /etc/clamav/clamd.conf
 
 # permission juggling because we don't use clamd as a service
 RUN mkdir /var/run/clamav \
     && chown clamav:clamav /var/run/clamav \
     && chmod 750 /var/run/clamav
+COPY scanner.py /app/
 
 
 # If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
