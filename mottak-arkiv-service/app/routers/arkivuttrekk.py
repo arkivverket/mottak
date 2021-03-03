@@ -9,7 +9,7 @@ from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiNotFound
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
@@ -89,7 +89,7 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
 async def router_get_download_status(id: int, db: Session = Depends(get_db_session)):
     try:
         return await arkivuttrekk_service.get_arkivkopi_status(id, db)
-    except ArkivuttrekkNotFound as err:
+    except ArkivkopiNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 

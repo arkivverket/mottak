@@ -15,7 +15,8 @@ from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequestParameters
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
-    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound
+    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
+    ArkivkopiNotFound
 
 ZERO_GENERATION = "0"
 OVERFORINGSPAKKE_CONTAINER = "tusd-storage"
@@ -138,10 +139,12 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
 
 
 async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
-    results = arkivkopi_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
+    results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon_id)
     if not results:
-        raise ArkivuttrekkNotFound(arkivuttrekk_id)
-    return results
+        raise ArkivkopiNotFound(invitasjon_id)
+    arkivkopi_arkiv = [arkivkopi for arkivkopi in results if not arkivkopi.is_object]
+    return arkivkopi_arkiv.pop() if arkivkopi_arkiv else None
 
 
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,

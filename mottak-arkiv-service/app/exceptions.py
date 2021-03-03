@@ -80,13 +80,13 @@ class ArkivkopiNotFound(Exception):
     Exception raised when arkivkopi doesn't exist in database
 
     Attributes:
-        id -- Integer ID for the arkivuttrekk in the database
+        invitasjon_id -- Integer ID for the invitasjon in the database
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int):
-        self.id_ = id_
-        self.message = f"Fant ikke arkivkopi med id={self.id_}"
+    def __init__(self, invitasjon_id: int):
+        self.invitasjon_id = invitasjon_id
+        self.message = f"Fant ikke arkivkopi med invitasjon_id={self.invitasjon_id}"
         super().__init__(self.message)
 
     def __str__(self):
