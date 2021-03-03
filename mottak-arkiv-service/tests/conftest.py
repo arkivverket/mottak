@@ -47,5 +47,5 @@ def testobj_arkivkopi_request() -> ArkivkopiRequest:
         storage_account="storage_account_test",
         container="container_test",
         sas_token="se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature",
-        blob_info=None
+        blob_info={"source_name": None, "target_name": "target_folder/"}
     )

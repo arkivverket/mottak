@@ -2,16 +2,17 @@ import json
 import pytest
 from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse, ArkivkopiRequestBlobInfo
 from app.connectors.sas_generator.models import SASResponse
-from app.domain.models.Arkivkopi import ArkivkopiStatus
-
+from app.domain.models.Arkivkopi import ArkivkopiStatus, ArkivkopiRequestParameters
 
 arkivkopi_id = 1
 storage_account = "storage_account_test"
 container = "container_test"
 sas_token = "se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"
 source_name = "some/random/file"
-target_name = "target_filename.tar"
+target_name_object = "target_filename.tar"
+target_name_archive = "target_folder/"
 status = ArkivkopiStatus.BESTILT
+blob_info = {"source_name": None, "target_name": target_name_archive}
 
 
 @pytest.fixture
@@ -27,7 +28,7 @@ def arkivkopi_status_response():
 
 
 def test_arkivkopirequest_equals(testobj_arkivkopi_request):
-    result = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
+    result = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token, blob_info)
     assert result == testobj_arkivkopi_request
 
 
@@ -36,15 +37,18 @@ def test_arkivkopirequest_not_equals(testobj_arkivkopi_request):
     assert testobj_arkivkopi_request != arkivkopi_request_2
 
 
-def test_arkivkopirequest_for_archive_download(testobj_arkivkopi_request):
+def test_arkivkopirequest_from_parameters_when_archive(testobj_arkivkopi_request):
     sas_response = SASResponse(storage_account, container, sas_token)
-    result = ArkivkopiRequest.for_archive_download(arkivkopi_id, sas_response)
+    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response, target_name=target_name_archive)
+    result = ArkivkopiRequest.from_parameters(parameters)
     assert testobj_arkivkopi_request == result
 
 
-def test_arkivkopirequest_for_object_download(testobj_arkivkopi_request_with_blob):
+def test_arkivkopirequest_from_parameters_when_object(testobj_arkivkopi_request_with_blob):
     sas_response = SASResponse(storage_account, container, sas_token)
-    result = ArkivkopiRequest.for_object_download(arkivkopi_id, sas_response, target_name, source_name)
+    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response,
+                                            source_name=source_name, target_name=target_name_object)
+    result = ArkivkopiRequest.from_parameters(parameters)
     assert testobj_arkivkopi_request_with_blob == result
 
 
@@ -52,12 +56,6 @@ def test_arkivkopirequest_as_json(testobj_arkivkopi_request):
     result = testobj_arkivkopi_request.as_json_str()
     expected = json.dumps(testobj_arkivkopi_request.__dict__)
     assert expected == result
-
-
-def test_arkivkopirequest_with_blob_info(testobj_arkivkopi_request_with_blob):
-    blob_info = {"source_name": source_name, "target_name": target_name}
-    expected = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token, blob_info)
-    assert expected == testobj_arkivkopi_request_with_blob
 
 
 def test_arkivkopistatus_response_equals(arkivkopi_status_response):

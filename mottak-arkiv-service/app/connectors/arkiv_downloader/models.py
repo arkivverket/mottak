@@ -5,8 +5,7 @@ import logging
 from typing import Optional
 from uuid import UUID
 
-from app.connectors.sas_generator.models import SASResponse
-from app.domain.models.Arkivkopi import ArkivkopiStatus
+from app.domain.models.Arkivkopi import ArkivkopiStatus, ArkivkopiRequestParameters
 
 logger = logging.getLogger(__name__)
 
@@ -63,20 +62,14 @@ class ArkivkopiRequest:
         return False
 
     @staticmethod
-    def for_archive_download(arkivkopi_id: int, sas_token: SASResponse) -> ArkivkopiRequest:
-        return ArkivkopiRequest(arkivkopi_id=arkivkopi_id,
-                                storage_account=sas_token.storage_account,
-                                container=sas_token.container,
-                                sas_token=sas_token.sas_token)
-
-    @staticmethod
-    def for_object_download(arkivkopi_id: int, sas_token: SASResponse, target_name: str,
-                            source_name: str) -> ArkivkopiRequest:
-        return ArkivkopiRequest(arkivkopi_id=arkivkopi_id,
+    def from_parameters(parameters: ArkivkopiRequestParameters) -> ArkivkopiRequest:
+        sas_token = parameters.sas_token
+        return ArkivkopiRequest(arkivkopi_id=parameters.arkivkopi_id,
                                 storage_account=sas_token.storage_account,
                                 container=sas_token.container,
                                 sas_token=sas_token.sas_token,
-                                blob_info={"target_name": target_name, "source_name": source_name})
+                                blob_info={"source_name": parameters.source_name,
+                                           "target_name": parameters.target_name})
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
