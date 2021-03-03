@@ -22,7 +22,7 @@ def upgrade():
                'SET invitasjon_id=( SELECT id '
                '                    FROM invitasjon '
                '                    WHERE overforingspakke.arkivuttrekk_id=invitasjon.arkivuttrekk_id '
-               '                    ORDER BY opprettet DESC limit 1)')
+               '                    ORDER BY invitasjon.opprettet DESC limit 1)')
     op.alter_column('overforingspakke', 'invitasjon_id', nullable=False)
     op.create_foreign_key('overforingspakke_invitasjon_id_fkey', 'overforingspakke', 'invitasjon', ['invitasjon_id'], ['id'], )
 
@@ -37,7 +37,7 @@ def downgrade():
                'SET arkivuttrekk_id=( SELECT arkivuttrekk_id '
                '                      FROM invitasjon '
                '                      WHERE overforingspakke.invitasjon_id=invitasjon.id '
-               '                      ORDER BY opprettet DESC limit 1)')
+               '                      ORDER BY invitasjon.opprettet DESC limit 1)')
     op.alter_column('overforingspakke', 'arkivuttrekk_id', nullable=False)
     op.create_foreign_key('overforingspakke_arkivuttrekk_id_fkey', 'overforingspakke', 'arkivuttrekk', ['arkivuttrekk_id'],
                           ['id'], )
