@@ -140,13 +140,13 @@ class OverforingspakkeNotFound(Exception):
     Exception raised when overforingspakke doesn't exist in database
 
     Attributes:
-        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        invitasjon_id -- Integer ID for the invitasjon in the database
         message -- explanation of the error
     """
 
-    def __init__(self, arkivuttrekk_id: int):
-        self.id = arkivuttrekk_id
-        self.message = f"Fant ikke overforingspakke assosiert med arkivuttrekk_id={arkivuttrekk_id}"
+    def __init__(self, invitasjon_id: int):
+        self.invitasjon_id = invitasjon_id
+        self.message = f"Fant ikke overforingspakke assosiert med invitasjon_id={self.invitasjon_id}"
         super().__init__(self.message)
 
     def __str__(self):

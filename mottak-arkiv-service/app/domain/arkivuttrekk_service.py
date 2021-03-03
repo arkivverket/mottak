@@ -159,12 +159,12 @@ async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session
     return arkivkopi
 
 
-def _get_or_create_arkivkopi(arkivuttrekk_id: int, db: Session, sas_token: SASResponse,
-                             filnavn: str = None) -> Arkivkopi_DBO:
-    arkivkopi = arkivkopi_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
-    if not arkivkopi:
-        if not filnavn:
-            filnavn = _get_filnavn(arkivuttrekk_id, db)
-        arkivkopi = arkivkopi_repository.create(db, Arkivkopi.from_id_and_token(arkivuttrekk_id,
-                                                                                sas_token))
-    return arkivkopi
+def _get_source_name(invitasjon_id: int, db: Session) -> str:
+    """
+    Returns the source name which is the name of the object stored in the tusd_container.
+    """
+    overforingspakke = overforingspakke_repository.get_by_invitasjon_id(db, invitasjon_id)
+    if not overforingspakke:
+        raise OverforingspakkeNotFound(invitasjon_id)
+    source_name = overforingspakke.tusd_objekt_navn
+    return source_name
