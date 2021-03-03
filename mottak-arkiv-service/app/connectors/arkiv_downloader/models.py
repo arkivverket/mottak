@@ -72,7 +72,7 @@ class ArkivkopiRequest:
                                            "target_name": parameters.target_name})
 
     def as_json_str(self):
-        return json.dumps(self.__dict__, cls=UUIDEncoder, default=str)
+        return json.dumps(self.__dict__, cls=UUIDEncoder, default=lambda o: o.__dict__)
 
 
 class ArkivkopiStatusResponse:

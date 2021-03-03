@@ -54,7 +54,7 @@ def test_arkivkopirequest_from_parameters_when_object(testobj_arkivkopi_request_
 
 def test_arkivkopirequest_as_json(testobj_arkivkopi_request):
     result = testobj_arkivkopi_request.as_json_str()
-    expected = json.dumps(testobj_arkivkopi_request.__dict__)
+    expected = json.dumps(testobj_arkivkopi_request.__dict__, default=lambda o: o.__dict__)
     assert expected == result
 
 
