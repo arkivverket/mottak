@@ -32,7 +32,6 @@ class ArkivkopiRequestParameters:
         self.target_name = target_name
 
 
-
 class Arkivkopi:
     id: int
     invitasjon_id: int

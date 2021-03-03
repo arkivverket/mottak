@@ -12,7 +12,7 @@ source_name = "some/random/file"
 target_name_object = "target_filename.tar"
 target_name_archive = "target_folder/"
 status = ArkivkopiStatus.BESTILT
-blob_info = {"source_name": None, "target_name": target_name_archive}
+blob_info = ArkivkopiRequestBlobInfo(source_name=None, target_name=target_name_archive)
 
 
 @pytest.fixture

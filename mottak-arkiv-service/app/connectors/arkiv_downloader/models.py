@@ -23,8 +23,10 @@ class ArkivkopiRequestBlobInfo:
     Optional object included in ArkivkopiRequest if the request is to download a single object from a
     Azure Blob Storage container.
     """
+    source_name: Optional[str]
+    target_name: str
 
-    def __init__(self, source_name: str, target_name: str):
+    def __init__(self, source_name=None, target_name=None):
         self.source_name = source_name
         self.target_name = target_name
 
@@ -39,18 +41,23 @@ class ArkivkopiRequest:
     The information needed to make a copy of an archive from cloud to on-prem.
     These objects are transferred by the the queue ARCHIVE_DOWNLOAD_REQUEST_SENDER.
     """
+    arkivkopi_id: int
+    storage_account: str
+    container: str
+    sas_token: str
+    blob_info: ArkivkopiRequestBlobInfo
 
     def __init__(self,
-                 arkivkopi_id: int,
-                 storage_account: str,
-                 container: str,
-                 sas_token: str,
-                 blob_info: Optional[dict] = None):
+                 arkivkopi_id=None,
+                 storage_account=None,
+                 container=None,
+                 sas_token=None,
+                 blob_info=None):
         self.arkivkopi_id = arkivkopi_id
         self.storage_account = storage_account
         self.container = container
         self.sas_token = sas_token
-        self.blob_info = ArkivkopiRequestBlobInfo(**blob_info) if blob_info else None
+        self.blob_info = blob_info
 
     def __eq__(self, other):
         if isinstance(other, ArkivkopiRequest):
@@ -64,12 +71,13 @@ class ArkivkopiRequest:
     @staticmethod
     def from_parameters(parameters: ArkivkopiRequestParameters) -> ArkivkopiRequest:
         sas_token = parameters.sas_token
+        blob_info = ArkivkopiRequestBlobInfo(source_name=parameters.source_name,
+                                             target_name=parameters.target_name)
         return ArkivkopiRequest(arkivkopi_id=parameters.arkivkopi_id,
                                 storage_account=sas_token.storage_account,
                                 container=sas_token.container,
                                 sas_token=sas_token.sas_token,
-                                blob_info={"source_name": parameters.source_name,
-                                           "target_name": parameters.target_name})
+                                blob_info=blob_info)
 
     def as_json_str(self):
         return json.dumps(self.__dict__, cls=UUIDEncoder, default=lambda o: o.__dict__)
