@@ -7,14 +7,16 @@ from app.domain.models.Arkivkopi import ArkivkopiStatus, Arkivkopi
 logging.disable(logging.CRITICAL)
 
 
-def test_arkivkopi_from_id_filnavn_and_token():
+def test_arkivkopi_create_from():
     """
-    GIVEN   an arkivuttrekk_id, filename and a SASResponse (token)
-    WHEN    calling the method from_id_filename_and_token() in Arkivkopi
+    GIVEN   an invitasjon_id, SASResponse (token) and a target_name
+    WHEN    calling the method create_from() in Arkivkopi
     THEN    control that the returned Arkivkopi is correct
     """
-    expected = Arkivkopi(arkivuttrekk_id=1,
+    expected = Arkivkopi(invitasjon_id=1,
                          status=ArkivkopiStatus.BESTILT,
+                         is_object=False,
+                         target_name="target_name_test",
                          storage_account="storage_account_test",
                          container="container_test",
                          sas_token_start=datetime.fromisoformat("2021-02-23T15:22:11+01:00"),
@@ -23,5 +25,5 @@ def test_arkivkopi_from_id_filnavn_and_token():
         storage_account="storage_account_test",
         container="container_test",
         sas_token="st=2021-02-23T14%3A22%3A11Z&se=2021-02-23T15%3A37%3A11Z&sp=rl&sv=2020-02-10&sr=c&sig=someSignature")
-    actual = Arkivkopi.from_id_and_token(arkivuttrekk_id=1, sas_token=sas_token)
+    actual = Arkivkopi.create_from(invitasjon_id=1, sas_token=sas_token, target_name="target_name_test")
     assert actual == expected
