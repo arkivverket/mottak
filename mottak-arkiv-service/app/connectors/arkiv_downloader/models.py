@@ -48,11 +48,11 @@ class ArkivkopiRequest:
     blob_info: ArkivkopiRequestBlobInfo
 
     def __init__(self,
-                 arkivkopi_id=None,
-                 storage_account=None,
-                 container=None,
-                 sas_token=None,
-                 blob_info=None):
+                 arkivkopi_id: int,
+                 storage_account: str,
+                 container: str,
+                 sas_token: str,
+                 blob_info: Optional[ArkivkopiRequestBlobInfo] = None):
         self.arkivkopi_id = arkivkopi_id
         self.storage_account = storage_account
         self.container = container
@@ -71,8 +71,10 @@ class ArkivkopiRequest:
     @staticmethod
     def from_parameters(parameters: ArkivkopiRequestParameters) -> ArkivkopiRequest:
         sas_token = parameters.sas_token
-        blob_info = ArkivkopiRequestBlobInfo(source_name=parameters.source_name,
-                                             target_name=parameters.target_name)
+        blob_info = None
+        if parameters.source_name and parameters.target_name:
+            blob_info = ArkivkopiRequestBlobInfo(source_name=parameters.source_name,
+                                                 target_name=parameters.target_name)
         return ArkivkopiRequest(arkivkopi_id=parameters.arkivkopi_id,
                                 storage_account=sas_token.storage_account,
                                 container=sas_token.container,

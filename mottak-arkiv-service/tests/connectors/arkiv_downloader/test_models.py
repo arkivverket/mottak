@@ -26,9 +26,13 @@ def testobj_arkivkopi_request_with_blob(testobj_arkivkopi_request) -> ArkivkopiR
 def arkivkopi_status_response():
     return ArkivkopiStatusResponse(arkivkopi_id, status)
 
+@pytest.fixture
+def sas_response():
+    return SASResponse(storage_account, container, sas_token)
+
 
 def test_arkivkopirequest_equals(testobj_arkivkopi_request):
-    result = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token, blob_info)
+    result = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
     assert result == testobj_arkivkopi_request
 
 
@@ -37,19 +41,25 @@ def test_arkivkopirequest_not_equals(testobj_arkivkopi_request):
     assert testobj_arkivkopi_request != arkivkopi_request_2
 
 
-def test_arkivkopirequest_from_parameters_when_archive(testobj_arkivkopi_request):
-    sas_response = SASResponse(storage_account, container, sas_token)
-    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response, target_name=target_name_archive)
+def test_arkivkopirequest_from_parameters_when_archive(testobj_arkivkopi_request, sas_response):
+    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response)
     result = ArkivkopiRequest.from_parameters(parameters)
     assert testobj_arkivkopi_request == result
 
 
-def test_arkivkopirequest_from_parameters_when_object(testobj_arkivkopi_request_with_blob):
-    sas_response = SASResponse(storage_account, container, sas_token)
+def test_arkivkopirequest_from_parameters_when_object(testobj_arkivkopi_request_with_blob, sas_response):
     parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response,
                                             source_name=source_name, target_name=target_name_object)
     result = ArkivkopiRequest.from_parameters(parameters)
     assert testobj_arkivkopi_request_with_blob == result
+
+
+def test_arkivkopirequest_from_parameters_no_blob_info_when_missing_parameter(testobj_arkivkopi_request,
+                                                                              sas_response):
+    parameters_without_source_name = ArkivkopiRequestParameters(arkivkopi_id, sas_response,
+                                            source_name=None, target_name=target_name_object)
+    request_without_blob_info = ArkivkopiRequest.from_parameters(parameters_without_source_name)
+    assert testobj_arkivkopi_request == request_without_blob_info
 
 
 def test_arkivkopirequest_as_json(testobj_arkivkopi_request):
