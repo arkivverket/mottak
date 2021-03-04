@@ -110,7 +110,10 @@ def stream_tar(stream):
         logging.error("Could not open file.")
         raise Exception('Could not get object handle')
     try:
-        t_f = tarfile.open(fileobj=stream, mode='r|')
+        # @TODO: Check if latin1 encoding will cause issues later down the line
+        # Perhaps it is possible to extract a file-list, and check for issues,
+        # and then decide on the encoding?
+        t_f = tarfile.open(fileobj=stream, mode='r|', encoding='latin1')
         tar_iterator = TarfileIterator(t_f)
     except Exception as exception:
         logging.error(f'Failed to open stream to object {stream}')
