@@ -11,6 +11,7 @@ import socket
 import time
 from typing import Tuple
 from collections import namedtuple
+from libcloud.storage.types import ObjectDoesNotExistError
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 import pyclamd
 
@@ -106,9 +107,6 @@ def get_clam():
 def stream_tar(stream):
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
-    if stream is None:
-        logging.error("Could not open file.")
-        raise Exception('Could not get object handle')
     try:
         # @TODO: Check if latin1 encoding will cause issues later down the line
         # Perhaps it is possible to extract a file-list, and check for issues,
@@ -185,12 +183,23 @@ def main():
 
     logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {sizeof_fmt(scan_limit)} bytes')
 
-    storage = ArkivverketObjectStorage()
-    obj = storage.download_stream(bucket, objectname)
-    object_stream = MakeIterIntoFile(obj)
-    # If you wanna test this on local files do something like this:
-    # object_stream = open(objectname,'br')
-    # print("Local File opened:", object_stream)
+    try:
+        storage = ArkivverketObjectStorage()
+        obj = storage.download_stream(bucket, objectname)
+        object_stream = MakeIterIntoFile(obj)
+        # If you wanna test this on local files do something like this:
+        # object_stream = open(objectname,'br')
+        # print("Local File opened:", object_stream)
+    except ObjectDoesNotExistError as exception:
+        logging.error(f'An error occured while getting the object handle {objectname}')
+        sys.exit(CLAMAVERROR)
+    except IOError as exception:
+        logging.error(f'An error occuder while loading the file {objectname}')
+        sys.exit(CLAMAVERROR)
+    except Exception as exception:
+        logging.error("Unkown error occured while getting the object")
+        logging.error(exception)
+        sys.exit(CLAMAVERROR)
 
     logging.info("Refreshing ClamAV signatures")
     os.system("freshclam -d")
