@@ -2,6 +2,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from enum import Enum
+from typing import Optional
 from urllib.parse import parse_qs
 
 from app.connectors.sas_generator.models import SASResponse
@@ -16,16 +17,14 @@ class ArkivkopiStatus(str, Enum):
 
 
 class ArkivkopiRequestParameters:
-    arkivkopi_id: int
-    sas_token: SASResponse
-    source_name: str
-    target_name: str
-
+    """
+    A parameter class used to transfer information about a request to download an archive or object to on-prem storage
+    """
     def __init__(self,
-                 arkivkopi_id=None,
-                 sas_token=None,
-                 source_name=None,
-                 target_name=None):
+                 arkivkopi_id: int,
+                 sas_token: SASResponse,
+                 source_name: Optional[str] = None,
+                 target_name: Optional[str] = None):
         self.arkivkopi_id = arkivkopi_id
         self.sas_token = sas_token
         self.source_name = source_name
