@@ -176,19 +176,6 @@ def main():
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
 
-    logging.info("Refreshing ClamAV signatures")
-    os.system("freshclam")
-
-    logging.info("Starting ClamAV")
-    os.system("clamd &")
-
-    try:
-        logging.info("Waiting for clamd to be ready")
-        wait_for_port(3310, timeout=30.0)
-    except TimeoutError as exception:
-        logging.error(exception)
-        sys.exit(CLAMAVERROR)
-
     logging.info("Starting s3-scan-tar")
 
     bucket = os.getenv('BUCKET')
@@ -204,6 +191,19 @@ def main():
     # If you wanna test this on local files do something like this:
     # object_stream = open(objectname,'br')
     # print("Local File opened:", object_stream)
+
+    logging.info("Refreshing ClamAV signatures")
+    os.system("freshclam -d")
+
+    logging.info("Starting ClamAV")
+    os.system("clamd &")
+
+    try:
+        logging.info("Waiting for clamd to be ready")
+        wait_for_port(3310, timeout=30.0)
+    except TimeoutError as exception:
+        logging.error(exception)
+        sys.exit(CLAMAVERROR)
 
     try:
         clamd_socket = get_clam()
