@@ -70,10 +70,9 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     target_name = _get_target_name(arkivuttrekk_id, db)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
-                                                                      target_name,
-                                                                      is_object=False))
+                                                                      target_name))
 
-    parameters = ArkivkopiRequestParameters(arkivkopi_id=arkivkopi.id, sas_token=sas_token, target_name=target_name)
+    parameters = ArkivkopiRequestParameters(arkivkopi_id=arkivkopi.id, sas_token=sas_token)
     request_sent = await archive_download_request_client.send_download_request(parameters)
 
     if not request_sent:
@@ -155,12 +154,12 @@ async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
     target_name = _get_target_name(arkivuttrekk_id, db)
+    source_name = _get_source_name(invitasjon_id, db)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
                                                                       target_name,
                                                                       is_object=True))
 
-    source_name = _get_source_name(invitasjon_id, db)
     parameters = ArkivkopiRequestParameters(arkivkopi_id=arkivkopi.id, sas_token=sas_token,
                                             target_name=target_name, source_name=source_name)
     request_sent = await archive_download_request_client.send_download_request(parameters)
