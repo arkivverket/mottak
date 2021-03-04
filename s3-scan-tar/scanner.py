@@ -156,7 +156,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
                 'clamd reset the connection. Increase max scan size for clamd.')
             logging.warning('Flushing the file.')
             handle.read_flush()
-            logging.warning(f'SKIPPED (File to big) - {member.name}')
+            logging.warning(f'SKIPPED (File too big) - {member.name}')
             skipped += 1
         except Exception as exception:
             logging.error(f"Failed to scan {member.name}")
