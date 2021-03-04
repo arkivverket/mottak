@@ -93,14 +93,12 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
-# TODO - Use parameters instead of environment variables in functions
 def get_clam():
     """Establish connection with Clamd
     :return: pyclamd socket object
     There is no try/except here as we want this error to propagate up.
     """
-    socket = os.getenv('CLAMD_SOCK', default='/var/run/clamav/clamd.ctl')
-    csock = pyclamd.ClamdUnixSocket(socket)
+    csock = pyclamd.ClamdUnixSocket()
     csock.ping()
     return csock
 

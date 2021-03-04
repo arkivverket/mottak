@@ -38,11 +38,6 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && freshclam
 
-
-# permission juggling because we don't use clamd as a service
-RUN mkdir /var/run/clamav \
-    && chown clamav:clamav /var/run/clamav \
-    && chmod 750 /var/run/clamav
 COPY --chown=clamav scanner.py /app/
 COPY --chown=clamav conf/ /etc/clamav/
 
