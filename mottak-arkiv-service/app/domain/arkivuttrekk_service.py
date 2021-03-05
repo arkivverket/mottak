@@ -120,7 +120,7 @@ async def _generate_sas_token(container_id, sas_generator_client):
 
 def _get_target_name(arkivuttrekk_id: int, db: Session, is_object: bool) -> str:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    target_name = arkivuttrekk.obj_id
+    target_name = str(arkivuttrekk.obj_id)
     if is_object:
         target_name = target_name + TAR_SUFFIX
     else:
