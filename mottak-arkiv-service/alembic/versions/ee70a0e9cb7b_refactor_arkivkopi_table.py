@@ -1,4 +1,4 @@
-"""refactor arkivkopi table
+"""refactor arkivkopi table by adding invitasjon_id and target_name, and removing arkivuttrekk_id
 
 Revision ID: ee70a0e9cb7b
 Revises: bff48d665557
