@@ -49,3 +49,10 @@ def get_status_con_str() -> str:
     Gets env variable for ServiceBus archive_download_status_receiver connection string
     """
     return os.environ['ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING']
+
+
+def get_tusd_download_location_container() -> str:
+    """
+    Gets env variable for TUSD container which is where overforingspakker are stored.
+    """
+    return os.environ['TUSD_DOWNLOAD_LOCATION_CONTAINER']

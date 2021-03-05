@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.queues.ArchiveDownloadRequestSender import ArchiveDownloadRequestSender
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
-from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
+from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url, \
+    get_tusd_download_location_container
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
@@ -104,11 +105,11 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
         result = await arkivuttrekk_service.request_download_of_overforingspakke(id,
                                                                                  db,
                                                                                  archive_download_request_client,
-                                                                                 sas_generator_client)
+                                                                                 sas_generator_client,
+                                                                                 get_tusd_download_location_container())
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
     except ArkivkopiOfArchiveRequestFailed as err:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
     return result
-

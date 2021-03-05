@@ -15,6 +15,7 @@ The values given here are examples. Please adjust to your local database.
 - MAILGUN_DOMAIN: `<some_id>.mailgun.org`
 - MAILGUN_SECRET: `<secret used for auth againt mailgun>`
 - TUSD_URL: `<public url to tusd>`
+- TUSD_DOWNLOAD_LOCATION_CONTAINER: `<container_id for objects uploaded throught tusd>`
 - ARCHIVE_DOWNLOAD_REQUEST_SENDER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-request-sender;SharedAccessKey=<some_secret_key>`
 - ARCHIVE_DOWNLOAD_STATUS_RECEIVER_SB_CON_STRING: `Endpoint=sb://av-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=archive-download-status-receiver;SharedAccessKey=<some_secret_key>`
 - SAS_GENERATOR_HOST: `<base url for sas generator>`

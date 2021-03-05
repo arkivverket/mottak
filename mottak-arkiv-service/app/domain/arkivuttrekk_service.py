@@ -19,7 +19,6 @@ from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed
     ArkivkopiNotFound
 
 ZERO_GENERATION = "0"
-OVERFORINGSPAKKE_CONTAINER = "tusd-storage"
 TAR_SUFFIX = ".tar"
 FOLDER_SUFFIX = "/"
 
@@ -148,9 +147,10 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Ar
 
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,
                                                archive_download_request_client: ArchiveDownloadRequestSender,
-                                               sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
+                                               sas_generator_client: SASGeneratorClient,
+                                               tusd_download_location_container: str) -> Optional[Arkivkopi_DBO]:
     invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
-    container_id = OVERFORINGSPAKKE_CONTAINER
+    container_id = tusd_download_location_container
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
     target_name = _get_target_name(arkivuttrekk_id, db)
