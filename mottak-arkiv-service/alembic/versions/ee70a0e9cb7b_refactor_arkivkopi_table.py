@@ -38,7 +38,7 @@ def upgrade():
                "SET target_name=CONCAT(target_name, '/')")
     op.alter_column('arkivkopi', 'target_name', nullable=False)
 
-    # add is_object, assumes all rows are archives
+    # add is_object, assumes all rows are containers
     op.add_column('arkivkopi', sa.Column('is_object', sa.Boolean(), nullable=True))
     op.execute('UPDATE arkivkopi SET is_object=false')
     op.alter_column('arkivkopi', 'is_object', nullable=False)
