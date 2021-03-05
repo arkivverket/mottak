@@ -23,10 +23,9 @@ class ArkivkopiRequestBlobInfo:
     Optional object included in ArkivkopiRequest if the request is to download a single object from a
     Azure Blob Storage container.
     """
-    source_name: Optional[str]
-    target_name: str
-
-    def __init__(self, source_name=None, target_name=None):
+    def __init__(self,
+                 source_name: str,
+                 target_name: str):
         self.source_name = source_name
         self.target_name = target_name
 
@@ -41,12 +40,6 @@ class ArkivkopiRequest:
     The information needed to make a copy of an archive from cloud to on-prem.
     These objects are transferred by the the queue ARCHIVE_DOWNLOAD_REQUEST_SENDER.
     """
-    arkivkopi_id: int
-    storage_account: str
-    container: str
-    sas_token: str
-    blob_info: ArkivkopiRequestBlobInfo
-
     def __init__(self,
                  arkivkopi_id: int,
                  storage_account: str,
