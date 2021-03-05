@@ -28,43 +28,6 @@ MEGABYTES = 1024 ** 2
 CLAMAVERROR = 10
 
 
-class BinaryFileLimitedOnSize(io.RawIOBase):
-    """ Subclassing the file/RawIOBase class to impose limits on file size by returning short reads
-    when we cross the limit. Used to handle the 4GB limit in clamav."""
-
-    def __init__(self, filehandle, maxsize=None):
-        super().__init__()
-        self.maxsize = maxsize
-        self.filehandle = filehandle
-        self.restricted = False
-
-    def write(self, s) -> int:
-        raise NotImplementedError("write() not supported")
-
-    def read(self, read_length: int) -> bytes:
-        if self.maxsize:
-            if not read_length:
-                # no lenght given, not sure we if can read this without going over the limit
-                raise NotImplementedError("Unlimited read requested. Not supported")
-            if self.filehandle.tell() + read_length > self.maxsize:
-                logging.warning(
-                    "Restricting file object and discarding the rest of the contents")
-                self.restricted = True
-                self.read_flush()
-                return b''
-        return self.filehandle.read(read_length)
-
-    def read_flush(self):
-        """ Read and discard the rest of the file. """
-        while len(self.filehandle.read(MEGABYTES)) > 0:  # read big chunks...
-            pass
-
-    def tell(self):
-        return self.filehandle.tell()
-
-    def seek(self, pos: int, **kwargs) -> int:
-        raise io.UnsupportedOperation
-
 def wait_for_port(port, host='localhost', timeout=5.0):
     """Wait until a port starts accepting TCP connections.
     Args:
@@ -126,27 +89,26 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
     clean, virus, skipped = 0, 0, 0
     tar_stream, tar_file = stream_tar(tar_file)
     for member in tar_stream:
+        # The file is larger that the limit
+        if member.size > limit:
+            logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(member.size)} file size limit')
+            tar_file.next()
+            skipped += 1
+            continue
+
         tar_member = tar_file.extractfile(member)
         if tar_member is None:
             # Handle is none - likely a directory.
             logging.debug("Handle is none. Skipping...")
             continue
-        handle = BinaryFileLimitedOnSize(tar_member, limit)
         try:
             logging.info(f'Scanning {member.name} at {sizeof_fmt(member.size)}...')
-            result = clamd_socket.scan_stream(handle)
+            result = clamd_socket.scan_stream(tar_member)
 
             # No virus found
             if result is None:
-                # but the scan was not completed.
-                if handle.restricted:
-                    logging.warning(
-                        'Scan was restricted by size limit. Scan incomplete.')
-                    skipped += 1
-                else:
-                    # the scan WAS completed
-                    logging.info(f'clean - {member.name}')
-                    clean += 1
+                logging.info(f'clean - {member.name}')
+                clean += 1
             else:
                 logging.warning(
                     f'Virus found! {result["stream"][1]} in {member.name}')
@@ -156,7 +118,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
             logging.error(
                 'clamd reset the connection. Increase max scan size for clamd.')
             logging.warning('Flushing the file.')
-            handle.read_flush()
+            tar_file.next()
             logging.warning(f'SKIPPED (File too big) - {member.name}')
             skipped += 1
         except Exception as exception:
