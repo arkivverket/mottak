@@ -67,9 +67,10 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
              status_code=status.HTTP_200_OK,
              response_model=Arkivkopi,
              summary='Bestiller en nedlastning fra arkiv downloader')
-async def request_download(id: int, db: Session = Depends(get_db_session),
-                           archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
-                           sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
+async def request_download_of_archive(id: int, db: Session = Depends(get_db_session),
+                                      archive_download_request_client: ArchiveDownloadRequestSender = Depends(
+                                          get_request_sender),
+                                      sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
     try:
         result = await arkivuttrekk_service.request_download_of_archive(id,
                                                                         db,
@@ -98,9 +99,10 @@ async def router_get_download_status(id: int, db: Session = Depends(get_db_sessi
              status_code=status.HTTP_200_OK,
              response_model=Arkivkopi,
              summary='Bestiller en nedlastning av overforingspakken fra arkiv downloader')
-async def request_download(id: int, db: Session = Depends(get_db_session),
-                           archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
-                           sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
+async def request_download_of_overforingspakke(
+        id: int, db: Session = Depends(get_db_session),
+        archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
+        sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
     try:
         result = await arkivuttrekk_service.request_download_of_overforingspakke(id,
                                                                                  db,
