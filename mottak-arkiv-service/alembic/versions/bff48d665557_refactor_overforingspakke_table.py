@@ -1,4 +1,4 @@
-"""refactor overforingspakke table
+"""refactor overforingspakke table by adding invitasjon_id with a foreign key constraint to invitasjon table and removes arkivuttrekk_id
 
 Revision ID: bff48d665557
 Revises: f2d569907a5c
