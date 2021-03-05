@@ -25,3 +25,13 @@ updates:
     directory: "/mottak-arkiv-web"
     schedule:
       interval: "daily"
+
+  # s3-scan-tar
+  - package-ecosystem: "docker"
+    directory: "/s3-scan-tar"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    directory: "/s3-scan-tar"
+    schedule:
+      interval: "daily"
