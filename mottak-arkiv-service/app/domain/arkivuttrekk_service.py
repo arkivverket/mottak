@@ -177,5 +177,4 @@ def _get_source_name(invitasjon_id: int, db: Session) -> str:
     overforingspakke = overforingspakke_repository.get_by_invitasjon_id(db, invitasjon_id)
     if not overforingspakke:
         raise OverforingspakkeNotFound(invitasjon_id)
-    source_name = overforingspakke.tusd_objekt_navn
-    return source_name
+    return overforingspakke.tusd_objekt_navn
