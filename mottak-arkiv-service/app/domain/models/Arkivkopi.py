@@ -32,7 +32,7 @@ class ArkivkopiRequestParameters:
 
 
 class Arkivkopi:
-    id: int
+    id: Optional[int]
     invitasjon_id: int
     status: ArkivkopiStatus
     is_object: bool
@@ -41,22 +41,21 @@ class Arkivkopi:
     container: str
     sas_token_start: datetime
     sas_token_slutt: datetime
-    opprettet: datetime
-    endret: datetime
+    opprettet: Optional[datetime]
+    endret: Optional[datetime]
 
     def __init__(self,
+                 invitasjon_id,
+                 status,
+                 is_object,
+                 target_name,
+                 storage_account,
+                 container,
+                 sas_token_start,
+                 sas_token_slutt,
                  id_=None,
-                 invitasjon_id=None,
-                 status=None,
-                 is_object=None,
-                 target_name=None,
-                 storage_account=None,
-                 container=None,
-                 sas_token_start=None,
-                 sas_token_slutt=None,
                  opprettet=None,
                  endret=None):
-        self.id = id_
         self.invitasjon_id = invitasjon_id
         self.status = status
         self.is_object = is_object
@@ -65,6 +64,7 @@ class Arkivkopi:
         self.container = container
         self.sas_token_start = sas_token_start
         self.sas_token_slutt = sas_token_slutt
+        self.id = id_
         self.opprettet = opprettet
         self.endret = endret
 
