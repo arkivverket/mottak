@@ -66,7 +66,7 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     container_id = _get_container_id(invitasjon_id, db)
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(arkivuttrekk_id, db)
+    target_name = _get_target_name(arkivuttrekk_id, db, is_object=False)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
                                                                       target_name))
@@ -118,7 +118,7 @@ async def _generate_sas_token(container_id, sas_generator_client):
     return sas_token
 
 
-def _get_target_name(arkivuttrekk_id: int, db: Session, is_object: bool = False) -> str:
+def _get_target_name(arkivuttrekk_id: int, db: Session, is_object: bool) -> str:
     arkivuttrekk = get_by_id(arkivuttrekk_id, db)
     target_name = arkivuttrekk.obj_id
     if is_object:
@@ -153,7 +153,7 @@ async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session
     container_id = tusd_download_location_container
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(arkivuttrekk_id, db)
+    target_name = _get_target_name(arkivuttrekk_id, db, is_object=True)
     source_name = _get_source_name(invitasjon_id, db)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
