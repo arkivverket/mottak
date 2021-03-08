@@ -27,7 +27,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /app
 
 ENV PATH=/app/.venv/bin:${PATH}
-COPY --chown=clamav --from=prepare /app/.venv /app/.venv
 
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y \
@@ -38,6 +37,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && freshclam
 
+COPY --chown=clamav --from=prepare /app/.venv /app/.venv
 COPY --chown=clamav scanner.py /app/
 COPY --chown=clamav conf/ /etc/clamav/
 
