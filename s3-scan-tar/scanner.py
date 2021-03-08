@@ -89,7 +89,6 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
         if member.size > limit:
             skipped += 1
             logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(limit)} file size limit')
-            tar_file.next()
             continue
 
         tar_member = tar_file.extractfile(member)
@@ -114,9 +113,8 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
             skipped += 1
             logging.error(
                 'clamd reset the connection. Increase max scan size for clamd.')
-            logging.warning('Flushing the file.')
-            tar_file.next()
             logging.warning(f'SKIPPED (File too big) - {member.name}')
+            continue
         except Exception as exception:
             logging.error(f"Failed to scan {member.name}")
             logging.error(f'Error: {exception}')
