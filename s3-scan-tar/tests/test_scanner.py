@@ -103,12 +103,12 @@ def test_scan_archive():
     magic_socket = Mock()
     magic_socket.scan_stream = _scan_stream
     # Set the restriction to 301 bytes.
-    # This should make the 60,120,180,240 and VIRUS pass
-    # 300, 360, 420, 480, 540, 600 should be skipped.
-    ret = scanner.scan_archive(fh, magic_socket, 301)
-    assert ret.clean == 4
+    # This should make the 60,120,180,240,300 and VIRUS pass
+    # 360, 420, 480, 540, 600 should be skipped.
+    ret = scanner.scan_archive(fh, magic_socket, 300)
+    assert ret.clean == 5
     assert ret.virus == 1
-    assert ret.skipped == 6
+    assert ret.skipped == 5
 
 
 def test_scan_archive_reset():

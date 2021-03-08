@@ -84,6 +84,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
     tar_stream, tar_file = stream_tar(tar_file)
+
     for member in tar_stream:
         # The file is larger that the limit
         if member.size > limit:
@@ -119,6 +120,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
             logging.error(f"Failed to scan {member.name}")
             logging.error(f'Error: {exception}')
             raise exception
+
     logging.debug(f'clean: {clean}, virus: {virus}, skipped: {skipped}')
     ret = namedtuple("scan", ["clean", "virus", "skipped"])
     return ret(clean, virus, skipped)
