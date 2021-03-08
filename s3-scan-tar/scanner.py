@@ -52,7 +52,7 @@ def wait_for_port(port, host='localhost', timeout=5.0):
 def sizeof_fmt(num, suffix='B'):
     for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
         if abs(num) < 1024.0:
-            return "%3.1f%s%s" % (num, unit, suffix)
+            return "%3.1f %s%s" % (num, unit, suffix)
         num /= 1024.0
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
@@ -140,10 +140,10 @@ def main():
 
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
-    # Get the max file size for clamd. Default is 1023 MiB
-    scan_limit = int(os.getenv('MAXFILESIZE', '1023')) * MEGABYTES  # TODO Find out why the limit is 1023?
 
-    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {sizeof_fmt(scan_limit)} bytes')
+    # Max file size for ClamAV is 4GiB, or UINT_MAX, or 4294967295 bytes (2^32-1)
+    scan_limit = 2**32-1
+    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {sizeof_fmt(scan_limit)}')
 
     try:
         storage = ArkivverketObjectStorage()
