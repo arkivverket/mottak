@@ -11,7 +11,7 @@
     "test:watch": "yarn test --watch",
     "eject": "react-scripts eject",
     "lint": "yarn lint:eslint",
-    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'  --cache --report-unused-disable-directives",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}' --cache --rule 'react-hooks/exhaustive-deps: off'",
     "generate-env": "./env.sh"
   },
   "browserslist": {
