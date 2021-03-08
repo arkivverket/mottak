@@ -17,7 +17,7 @@ def create(db: Session, arkivuttrekk_id: int, avgiver_epost: str, status: Invita
 
 
 def get_by_id(db: Session, id_: int) -> Invitasjon_DBO:
-    db.query(Invitasjon_DBO).get(id_)
+    return db.query(Invitasjon_DBO).get(id_)
 
 
 def get_by_arkivuttrekk_id_newest(db: Session, arkivuttrekk_id) -> Invitasjon_DBO:
