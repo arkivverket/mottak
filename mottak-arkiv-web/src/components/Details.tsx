@@ -43,6 +43,7 @@ const Details: React.FC = (): JSX.Element => {
 
 	const [downloadStatus, setDownloadStatus] = useState<DownloadStatusState>('Ikke bestilt')
 	const [disableBestillingButton, setDisableBestillingButton] = useState<boolean>(false)
+	const [disableOverforingspakkeButton, setDisableOverforingspakkeButton] = useState<boolean>(false)
 
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
@@ -59,6 +60,13 @@ const Details: React.FC = (): JSX.Element => {
 		performRequest: performRequestArkivkopi,
 	} = useRequest<ArkivkopiStatusRequest>()
 
+	const {
+		data: dataOverforingspakke,
+		loading: loadingOverforingspakke,
+		error: errorOverforingspakke,
+		performRequest: performRequestOverforingspakke,
+	} = useRequest<ArkivkopiStatusRequest>()
+
 	// Disabled the "Bestill nedlastning" button, and send a request to the backend
 	const requestArkivkopi = useCallback(async () => {
 		// If someone re-enables the button manually, return early
@@ -70,6 +78,17 @@ const Details: React.FC = (): JSX.Element => {
 			method: 'POST',
 		})
 	}, [disableBestillingButton, id, performRequestArkivkopi])
+
+	const requestOverforingspakke = useCallback(async () => {
+		// If someone re-enables the button manually, return early
+		if (disableOverforingspakkeButton) return
+
+		setDisableOverforingspakkeButton(true)
+		await performRequestOverforingspakke({
+			url: `/arkivuttrekk/${id}/overforingspakke/bestill_nedlasting`,
+			method: 'POST',
+		})
+	}, [disableOverforingspakkeButton, id, performRequestOverforingspakke])
 
 	/**
 	 * Collective error handling
@@ -93,7 +112,17 @@ const Details: React.FC = (): JSX.Element => {
 			// Reset order button
 			setDisableBestillingButton(false)
 		}
-	}, [error, errorArkivkopi, setAlertContent])
+
+		if (errorOverforingspakke) {
+			setAlertContent({
+				msg: errorOverforingspakke?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
+				type: 'error',
+			})
+
+			// Reset button
+			setDisableOverforingspakkeButton(false)
+		}
+	}, [error, errorArkivkopi, setAlertContent, errorOverforingspakke])
 
 	useLayoutEffect(() => {
 		getArkivkopiStatus({
@@ -224,6 +253,28 @@ const Details: React.FC = (): JSX.Element => {
 								</Button>
 								{loadingArkivkopi && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
+						</Grid>
+						<Grid item xs={4}>
+							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
+								Overføringspakke
+							</Typography>
+
+							<div className={classes.loadingButtonWrapper} style={{ margin: 0 }}>
+								<Button
+									variant="contained"
+									color="primary"
+									disabled={disableOverforingspakkeButton}
+									onClick={requestOverforingspakke}
+								>
+									Last ned overføringspakke
+								</Button>
+								{loadingOverforingspakke && <CircularProgress className={classes.buttonProgress} size={22} />}
+							</div>
+
+							{/* @TODO: Replace status with correct key for path. */}
+							{dataOverforingspakke && (
+								<p>Overføringspakken vil bli tilgjengelig her: {dataOverforingspakke.status}</p>
+							)}
 						</Grid>
 					</Grid>
 				</>
