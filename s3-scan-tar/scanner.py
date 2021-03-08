@@ -87,9 +87,9 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
     for member in tar_stream:
         # The file is larger that the limit
         if member.size > limit:
+            skipped += 1
             logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(member.size)} file size limit')
             tar_file.next()
-            skipped += 1
             continue
 
         tar_member = tar_file.extractfile(member)
@@ -103,20 +103,20 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
 
             # No virus found
             if result is None:
-                logging.info(f'clean - {member.name}')
                 clean += 1
+                logging.info(f'clean - {member.name}')
             else:
+                virus += 1
                 logging.warning(
                     f'Virus found! {result["stream"][1]} in {member.name}')
-                virus += 1
 
         except ConnectionResetError:
+            skipped += 1
             logging.error(
                 'clamd reset the connection. Increase max scan size for clamd.')
             logging.warning('Flushing the file.')
             tar_file.next()
             logging.warning(f'SKIPPED (File too big) - {member.name}')
-            skipped += 1
         except Exception as exception:
             logging.error(f"Failed to scan {member.name}")
             logging.error(f'Error: {exception}')
