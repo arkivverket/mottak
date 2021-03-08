@@ -47,29 +47,29 @@ const Details: React.FC = (): JSX.Element => {
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
 	const {
-		data: arkivkopiStatusResponse,
+		data: dataArkivkopiStatus,
 		loading: loadingArkivkopiStatus,
 		performRequest: getArkivkopiStatus,
 	} = useRequest<ArkivkopiStatusRequest>()
 
 	const {
-		data: arkivkopiRequestReponse,
-		loading: loadingArkivkopiRequest,
-		error: errorArkivkopiRequest,
-		performRequest: requestArkivkopi,
-	} = useRequest<true>()
+		data: dataArkivkopi,
+		loading: loadingArkivkopi,
+		error: errorArkivkopi,
+		performRequest: performRequestArkivkopi,
+	} = useRequest<ArkivkopiStatusRequest>()
 
 	// Disabled the "Bestill nedlastning" button, and send a request to the backend
-	const bestillNedlastning = useCallback(async () => {
+	const requestArkivkopi = useCallback(async () => {
 		// If someone re-enables the button manually, return early
 		if (disableBestillingButton) return
 
 		setDisableBestillingButton(true)
-		await requestArkivkopi({
+		await performRequestArkivkopi({
 			url: `/arkivuttrekk/${id}/bestill_nedlasting`,
 			method: 'POST',
 		})
-	}, [disableBestillingButton, id, requestArkivkopi])
+	}, [disableBestillingButton, id, performRequestArkivkopi])
 
 	/**
 	 * Collective error handling
@@ -84,16 +84,16 @@ const Details: React.FC = (): JSX.Element => {
 			})
 		}
 
-		if (errorArkivkopiRequest) {
+		if (errorArkivkopi) {
 			setAlertContent({
-				msg: errorArkivkopiRequest?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
+				msg: errorArkivkopi?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
 				type: 'error',
 			})
 
 			// Reset order button
 			setDisableBestillingButton(false)
 		}
-	}, [error, errorArkivkopiRequest, setAlertContent])
+	}, [error, errorArkivkopi, setAlertContent])
 
 	useLayoutEffect(() => {
 		getArkivkopiStatus({
@@ -104,8 +104,8 @@ const Details: React.FC = (): JSX.Element => {
 	}, [])
 
 	useLayoutEffect(() => {
-		if (!arkivkopiStatusResponse) return
-		const { status } = arkivkopiStatusResponse
+		if (!dataArkivkopiStatus) return
+		const { status } = dataArkivkopiStatus
 
 		// Validate the incoming status. We'll set it to "Ukjent status" if the status is not yet implemented in ArkivkopiStatus
 		setDownloadStatus(validateArkivopiStatus(status) ? status : 'Ukjent status')
@@ -119,16 +119,15 @@ const Details: React.FC = (): JSX.Element => {
 				setDisableBestillingButton(true)
 				break
 		}
-	}, [arkivkopiStatusResponse])
+	}, [dataArkivkopiStatus])
 
 	/**
 	 * This is triggered after pressing the Bestill Nedlastning button.
-	 * arkivkopiRequestReponse is true if the request went through nicely, otherwise it is null
 	 */
 	useLayoutEffect(() => {
-		if (!arkivkopiRequestReponse) return
+		if (!dataArkivkopi) return
 		setDownloadStatus(ArkivkopiStatus.BESTILT)
-	}, [arkivkopiRequestReponse])
+	}, [dataArkivkopi])
 
 	return (
 		<>
@@ -214,16 +213,16 @@ const Details: React.FC = (): JSX.Element => {
 								</span>
 							</Typography>
 
-							<div className={classes.loadingButtonWrapper}>
+							<div className={classes.loadingButtonWrapper} style={{ margin: 0 }}>
 								<Button
 									variant="contained"
 									color="primary"
 									disabled={disableBestillingButton}
-									onClick={bestillNedlastning}
+									onClick={requestArkivkopi}
 								>
 									Bestill nedlastning
 								</Button>
-								{loadingArkivkopiRequest && <CircularProgress className={classes.buttonProgress} size={22} />}
+								{loadingArkivkopi && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
 						</Grid>
 					</Grid>
