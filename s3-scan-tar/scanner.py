@@ -88,7 +88,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
         # The file is larger that the limit
         if member.size > limit:
             skipped += 1
-            logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(member.size)} file size limit')
+            logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(limit)} file size limit')
             tar_file.next()
             continue
 
