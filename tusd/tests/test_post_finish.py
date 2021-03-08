@@ -43,7 +43,7 @@ def test_update_overforingspakke_in_db_fail(mocker):
 
 
 def test_gather_params(mocker):
-    expected = {'TARGET_BUCKET_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2-0',
+    expected = {'TARGET_BUCKET_NAME': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
                 'TUSD_OBJEKT_NAVN': '9090fe36854e6761925e6e9ec475c17f',
                 'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2', 'ARKIV_TYPE': 'Noark5',
@@ -53,7 +53,7 @@ def test_gather_params(mocker):
     # data = json.loads(post_event)
     # metadata = invitation_dict
     params = gather_params(hook_data=mock_hook_data, data_from_db=mock_dbdata)
-    assert (params['TARGET_BUCKET_NAME'] == 'df53d1d8-39bf-4fea-a741-58d472664ce2-0')
+    assert (params['TARGET_BUCKET_NAME'] == 'df53d1d8-39bf-4fea-a741-58d472664ce2')
     assert (params['SJEKKSUM'] == '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a')
     assert (params['KOORDINATOR_EPOST'] == 'laralv@arkivverket.no')
     assert (params == expected)

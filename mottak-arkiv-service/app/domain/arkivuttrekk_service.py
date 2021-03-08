@@ -66,7 +66,7 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     container_id = _get_container_id(invitasjon_id, db)
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(arkivuttrekk_id, db, is_object=False)
+    target_name = _get_target_name(invitasjon_id, db, is_object=False)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
                                                                       target_name))
@@ -99,8 +99,7 @@ def _get_container_id(invitasjons_id: int, db: Session) -> str:
     In other words, it is possible for an arkivuttrekk to have multiple associated invitasjons,
     but when requesting to download an arkivuttrekk to on-prem the most recently created invitasjon will be used.
 
-    The container_id will be a string representation of the ekstern_id created in the method _send_invitation,
-    and the generation of the archive, which for mottaksløsningen will always be the first (zero) generation.
+    The container_id will be a string representation of the ekstern_id created in the method _send_invitation.
     The container_id will be used as the target_container_name when unpacking the tar-file to an azure container
     during the argo-workflow step s3-unpack.
 
@@ -108,7 +107,7 @@ def _get_container_id(invitasjons_id: int, db: Session) -> str:
     ____________________________________________________________________________________________________________________
     """
     invitasjon = invitasjon_repository.get_by_id(db, invitasjons_id)
-    return f'{invitasjon.ekstern_id}-{ZERO_GENERATION}'
+    return str(invitasjon.ekstern_id)
 
 
 async def _generate_sas_token(container_id, sas_generator_client):
@@ -118,9 +117,9 @@ async def _generate_sas_token(container_id, sas_generator_client):
     return sas_token
 
 
-def _get_target_name(arkivuttrekk_id: int, db: Session, is_object: bool) -> str:
-    arkivuttrekk = get_by_id(arkivuttrekk_id, db)
-    target_name = str(arkivuttrekk.obj_id)
+def _get_target_name(invitasjons_id: int, db: Session, is_object: bool) -> str:
+    invitasjon = invitasjon_repository.get_by_id(db, invitasjons_id)
+    target_name = str(invitasjon.ekstern_id)
     if is_object:
         target_name = target_name + TAR_SUFFIX
     else:
@@ -153,7 +152,7 @@ async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session
     container_id = tusd_download_location_container
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(arkivuttrekk_id, db, is_object=True)
+    target_name = _get_target_name(invitasjon_id, db, is_object=True)
     source_name = _get_source_name(invitasjon_id, db)
     arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
                                                                       sas_token,
