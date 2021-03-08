@@ -139,7 +139,7 @@ def main():
 
     # Max file size for ClamAV is 4GiB, or UINT_MAX, or 4294967295 bytes (2^32-1)
     scan_limit = 2**32-1
-    logging.info(f'Intializing scan on {bucket}/{objectname} with scan limit {sizeof_fmt(scan_limit)}')
+    logging.info(f'Intializing scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(scan_limit)}')
 
     try:
         storage = ArkivverketObjectStorage()
