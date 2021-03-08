@@ -57,31 +57,6 @@ def _generate_tarfile() -> io.BytesIO:
     return fh
 
 
-def test_binary_size_limit0():
-    """ The the BinaryFileLimitedOnSize class"""
-    SHORT_READ = 10
-    LONG_READ = 300
-    CHUNKS = 10
-
-    fh_base = io.BytesIO(BIN_DATA60 * CHUNKS)  # Create a 600 bytes long file.
-    fh_limited = scanner.BinaryFileLimitedOnSize(fh_base, maxsize=LONG_READ)
-
-    chunk = fh_limited.read(SHORT_READ)
-    assert chunk == BIN_DATA60[:SHORT_READ]
-    assert fh_limited.restricted is False
-    assert fh_limited.tell() == SHORT_READ
-
-    # Do a bigger read to trigger the restriction...
-    chunk = fh_limited.read(LONG_READ)
-    assert chunk == b''
-    assert fh_limited.restricted is True
-    assert fh_limited.tell() == len(BIN_DATA60) * CHUNKS
-
-    # Seeks throws UnsupportedOperation
-    with pytest.raises(io.UnsupportedOperation):
-        fh_limited.seek(0)
-
-
 def test_stream_tar():
     """ Tests if we can stream tar files and unpack them """
     fh = _generate_tarfile()
