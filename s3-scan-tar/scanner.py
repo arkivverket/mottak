@@ -5,7 +5,6 @@
 import os
 import sys
 import logging
-import io
 import tarfile
 import socket
 import time
