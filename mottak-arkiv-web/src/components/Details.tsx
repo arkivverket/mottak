@@ -272,9 +272,12 @@ const Details: React.FC = (): JSX.Element => {
 								{loadingOverforingspakke && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
 
-							{/* @TODO: Replace status with correct key for path. */}
 							{dataOverforingspakke && (
-								<p>Overføringspakken vil bli tilgjengelig her: {dataOverforingspakke.status}</p>
+								<p>
+									Overføringspakken vil bli tilgjengelig her:
+									<br />
+									{dataOverforingspakke.target_name}
+								</p>
 							)}
 						</Grid>
 					</Grid>
