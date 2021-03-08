@@ -70,10 +70,7 @@ def stream_tar(stream):
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     try:
-        # @TODO: Check if latin1 encoding will cause issues later down the line
-        # Perhaps it is possible to extract a file-list, and check for issues,
-        # and then decide on the encoding?
-        t_f = tarfile.open(fileobj=stream, mode='r|', encoding='latin1')
+        t_f = tarfile.open(fileobj=stream, mode='r|')
         tar_iterator = TarfileIterator(t_f)
     except Exception as exception:
         logging.error(f'Failed to open stream to object {stream}')
