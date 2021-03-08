@@ -54,5 +54,6 @@ export enum ArkivkopiStatus {
 }
 
 export interface ArkivkopiStatusRequest {
+	id: number
 	status: ArkivkopiStatus
 }
