@@ -10,7 +10,8 @@ from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiNotFound
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiNotFound, \
+    SASTokenPreconditionFailed
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
@@ -78,6 +79,8 @@ async def request_download_of_archive(id: int, db: Session = Depends(get_db_sess
                                                                         sas_generator_client)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+    except SASTokenPreconditionFailed as err:
+        raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail=err.message)
     except ArkivkopiOfArchiveRequestFailed as err:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
@@ -111,6 +114,8 @@ async def request_download_of_overforingspakke(
                                                                                  get_tusd_download_location_container())
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+    except SASTokenPreconditionFailed as err:
+        raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail=err.message)
     except ArkivkopiOfArchiveRequestFailed as err:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
