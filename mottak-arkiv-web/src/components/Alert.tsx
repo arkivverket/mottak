@@ -23,11 +23,19 @@ const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 	},
 	icon: {
+		alignSelf: 'center',
 		marginRight: theme.spacing(1),
 	},
 	message: {
 		display: 'flex',
 		alignItems: 'center',
+	},
+	snackbarRoot: {
+		display: 'flex',
+	},
+
+	snackbarMessage: {
+		flex: 1,
 	},
 }))
 
@@ -67,6 +75,10 @@ const Alert: React.FC<AlertContent> = ({ msg, type }): JSX.Element => {
 						<span className={classes.message}>{msg}</span>
 					</div>
 				}
+				classes={{
+					root: classes.snackbarRoot,
+					message: classes.snackbarMessage,
+				}}
 				action={[
 					<IconButton key="close" aria-label="Close" color="inherit" onClick={handleClose}>
 						<Icon>close</Icon>
