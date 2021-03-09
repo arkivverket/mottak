@@ -61,6 +61,7 @@ def get_clam():
     :return: pyclamd socket object
     There is no try/except here as we want this error to propagate up.
     """
+    # ClamdUnixSocket finds the clamd socket by itself, by reading the /etc/clamav/clamd.conf file
     csock = pyclamd.ClamdUnixSocket()
     csock.ping()
     return csock
@@ -85,6 +86,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
     clean, virus, skipped = 0, 0, 0
     tar_stream, tar_file = stream_tar(tar_file)
 
+    # By using continue, we technically use the tarfile.next() function via the TarfileIterator wrapper
     for member in tar_stream:
         # The file is larger that the limit
         if member.size > limit:
@@ -107,13 +109,11 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
                 logging.info(f'clean - {member.name}')
             else:
                 virus += 1
-                logging.warning(
-                    f'Virus found! {result["stream"][1]} in {member.name}')
+                logging.warning(f'Virus found! {result["stream"][1]} in {member.name}')
 
         except ConnectionResetError:
             skipped += 1
-            logging.error(
-                'clamd reset the connection. Increase max scan size for clamd.')
+            logging.error('clamd reset the connection. Increase max scan size for clamd.')
             logging.warning(f'SKIPPED (File too big) - {member.name}')
             continue
         except Exception as exception:
@@ -128,19 +128,19 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
 
 def main():
     """ Run from here, really """
-    logging.basicConfig(level=logging.INFO, filename='/tmp/avlog',
-                        filemode='w', format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(level=logging.INFO, filename='/tmp/avlog', filemode='w',
+                        format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
-
-    logging.info("Starting s3-scan-tar")
-
-    bucket = os.getenv('BUCKET')
-    objectname = os.getenv('TUSD_OBJECT_NAME')
 
     # Max file size for ClamAV is 4GiB, or UINT_MAX, or 4294967295 bytes (2^32-1)
     scan_limit = 2**32-1
+    bucket = os.getenv('BUCKET')
+    objectname = os.getenv('TUSD_OBJECT_NAME')
+
+    logging.info("Starting s3-scan-tar")
     logging.info(f'Intializing scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(scan_limit)}')
 
+    # Test the access to the object stream, so we can return early if there are any issues
     try:
         storage = ArkivverketObjectStorage()
         obj = storage.download_stream(bucket, objectname)
@@ -149,7 +149,7 @@ def main():
         # object_stream = open(objectname,'br')
         # print("Local File opened:", object_stream)
     except ObjectDoesNotExistError:
-        logging.error(f'An error occured while getting the object handle {objectname}')
+        logging.error(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
         sys.exit(CLAMAVERROR)
     except IOError:
         logging.error(f'An error occuder while loading the file {objectname}')
@@ -159,9 +159,11 @@ def main():
         logging.error(exception)
         sys.exit(CLAMAVERROR)
 
+    # Starts freshclamd daemon, which allows the databases to be updated while running, if the scanning takes a while
     logging.info("Refreshing ClamAV signatures")
     os.system("freshclam -d")
 
+    # Starts clamd in the background (eventhough we run clamd in the foreground)
     logging.info("Starting ClamAV")
     os.system("clamd &")
 
