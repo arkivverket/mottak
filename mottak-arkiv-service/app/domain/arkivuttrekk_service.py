@@ -8,12 +8,12 @@ from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
-from app.database.dbo.mottak import Invitasjon, Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
+from app.database.dbo.mottak import Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
 from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository, \
     overforingspakke_repository
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequestParameters
 from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Invitasjon import InvitasjonStatus
+from app.domain.models.Invitasjon import InvitasjonStatus, Invitasjon
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
     ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
     ArkivkopiNotFound
@@ -62,14 +62,14 @@ async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_
 async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
                                       archive_download_request_client: ArchiveDownloadRequestSender,
                                       sas_generator_client: SASGeneratorClient) -> Optional[Arkivkopi_DBO]:
-    invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
-    container_id = _get_container_id(invitasjon_id, db)
+    invitasjon = _get_invitasjon(arkivuttrekk_id, db)
+    container_id = _get_container_id(invitasjon.ekstern_id)
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(invitasjon_id, db, is_object=False)
-    arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
-                                                                      sas_token,
-                                                                      target_name))
+    target_name = _get_target_name(ekstern_id=invitasjon.ekstern_id, is_object=False)
+    arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id=invitasjon.id,
+                                                                      sas_token=sas_token,
+                                                                      target_name=target_name))
 
     parameters = ArkivkopiRequestParameters(arkivkopi_id=arkivkopi.id, sas_token=sas_token)
     request_sent = await archive_download_request_client.send_download_request(parameters)
@@ -80,14 +80,15 @@ async def request_download_of_archive(arkivuttrekk_id: int, db: Session,
     return arkivkopi
 
 
-def _get_invitasjon_id(arkivuttrekk_id, db):
-    invitasjon = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
-    if not invitasjon:
+def _get_invitasjon(arkivuttrekk_id, db) -> Invitasjon:
+    invitasjon_dbo = invitasjon_repository.get_by_arkivuttrekk_id_newest(db, arkivuttrekk_id)
+    if not invitasjon_dbo:
         raise InvitasjonNotFound(arkivuttrekk_id)
-    return invitasjon.id
+    return Invitasjon(id_=invitasjon_dbo.id,
+                      ekstern_id=invitasjon_dbo.ekstern_id)
 
 
-def _get_container_id(invitasjons_id: int, db: Session) -> str:
+def _get_container_id(ekstern_id: uuid.UUID) -> str:
     """
     Private function that returns the container_id associated with the given invitasjon.
 
@@ -106,8 +107,7 @@ def _get_container_id(invitasjons_id: int, db: Session) -> str:
     In other words, the end result of uploading an archive can be found in an azure container named container_id.
     ____________________________________________________________________________________________________________________
     """
-    invitasjon = invitasjon_repository.get_by_id(db, invitasjons_id)
-    return str(invitasjon.ekstern_id)
+    return str(ekstern_id)
 
 
 async def _generate_sas_token(container_id, sas_generator_client):
@@ -117,9 +117,8 @@ async def _generate_sas_token(container_id, sas_generator_client):
     return sas_token
 
 
-def _get_target_name(invitasjons_id: int, db: Session, is_object: bool) -> str:
-    invitasjon = invitasjon_repository.get_by_id(db, invitasjons_id)
-    target_name = str(invitasjon.ekstern_id)
+def _get_target_name(ekstern_id: uuid.UUID, is_object: bool) -> str:
+    target_name = str(ekstern_id)
     if is_object:
         target_name = target_name + TAR_SUFFIX
     else:
@@ -136,10 +135,10 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
 
 
 async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
-    invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
-    results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon_id)
+    invitasjon = _get_invitasjon(arkivuttrekk_id, db)
+    results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon.id)
     if not results:
-        raise ArkivkopiNotFound(invitasjon_id)
+        raise ArkivkopiNotFound(invitasjon.id)
     arkivkopi_arkiv = [arkivkopi for arkivkopi in results if not arkivkopi.is_object]
     return arkivkopi_arkiv.pop() if arkivkopi_arkiv else None
 
@@ -148,15 +147,15 @@ async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session
                                                archive_download_request_client: ArchiveDownloadRequestSender,
                                                sas_generator_client: SASGeneratorClient,
                                                tusd_download_location_container: str) -> Optional[Arkivkopi_DBO]:
-    invitasjon_id = _get_invitasjon_id(arkivuttrekk_id, db)
+    invitasjon = _get_invitasjon(arkivuttrekk_id, db)
     container_id = tusd_download_location_container
     sas_token = await _generate_sas_token(container_id, sas_generator_client)
 
-    target_name = _get_target_name(invitasjon_id, db, is_object=True)
-    source_name = _get_source_name(invitasjon_id, db)
-    arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id,
-                                                                      sas_token,
-                                                                      target_name,
+    target_name = _get_target_name(ekstern_id=invitasjon.ekstern_id, is_object=True)
+    source_name = _get_source_name(invitasjon.id, db)
+    arkivkopi = arkivkopi_repository.create(db, Arkivkopi.create_from(invitasjon_id=invitasjon.id,
+                                                                      sas_token=sas_token,
+                                                                      target_name=target_name,
                                                                       is_object=True))
 
     parameters = ArkivkopiRequestParameters(arkivkopi_id=arkivkopi.id, sas_token=sas_token,
