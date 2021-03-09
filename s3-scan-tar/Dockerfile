@@ -6,7 +6,7 @@ ENV \
     POETRY_HOME="/opt/poetry" \
     # do not ask any interactive question
     POETRY_NO_INTERACTION=1 \
-	#
+	# Adds poetry bin to $PATH, so we don't need to link it to /usr/local/bin
 	PATH=/opt/poetry/bin:${PATH}
 
 RUN apt-get update \
