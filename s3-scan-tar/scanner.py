@@ -8,11 +8,13 @@ import logging
 import tarfile
 import socket
 import time
-from typing import Tuple
+
 from collections import namedtuple
 from libcloud.storage.types import ObjectDoesNotExistError
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
-import pyclamd
+from pyclamd import ClamdUnixSocket
+from pyclamd.pyclamd import ConnectionError
+from typing import Tuple
 
 try:
     from dotenv import load_dotenv
@@ -62,7 +64,7 @@ def get_clam():
     There is no try/except here as we want this error to propagate up.
     """
     # ClamdUnixSocket finds the clamd socket by itself, by reading the /etc/clamav/clamd.conf file
-    csock = pyclamd.ClamdUnixSocket()
+    csock = ClamdUnixSocket()
     csock.ping()
     return csock
 
@@ -182,7 +184,7 @@ def main():
         logging.error("Could not find a clamd socket")
         logging.error(exception)
         sys.exit(CLAMAVERROR)
-    except pyclamd.pyclamd.ConnectionError as exception:
+    except ConnectionError as exception:
         logging.error("Could not connect to clamd socket")
         logging.error(exception)
         sys.exit(CLAMAVERROR)
