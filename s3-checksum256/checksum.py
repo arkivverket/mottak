@@ -6,7 +6,6 @@ import logging
 import os
 
 from py_objectstore import ArkivverketObjectStorage
-from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -50,7 +49,6 @@ def main():
                         filemode='w', format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info(f'Starting s3-checksum256')
-    logging.info(f'{__file__} version {__version__} running')
 
     try:
         obj = get_object_stream()
