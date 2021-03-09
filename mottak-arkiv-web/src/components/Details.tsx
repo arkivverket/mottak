@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		fontWeight: 'bold',
 	},
 	loadingButtonWrapper: {
-		margin: theme.spacing(1),
+		margin: 0,
 		position: 'relative',
 		display: 'inline-block',
 	},
@@ -243,7 +243,7 @@ const Details: React.FC = (): JSX.Element => {
 								</span>
 							</Typography>
 
-							<div className={classes.loadingButtonWrapper} style={{ margin: 0 }}>
+							<div className={classes.loadingButtonWrapper}>
 								<Button
 									variant="contained"
 									color="primary"
@@ -260,7 +260,7 @@ const Details: React.FC = (): JSX.Element => {
 								Overføringspakke
 							</Typography>
 
-							<div className={classes.loadingButtonWrapper} style={{ margin: 0 }}>
+							<div className={classes.loadingButtonWrapper}>
 								<Button
 									variant="contained"
 									color="primary"
