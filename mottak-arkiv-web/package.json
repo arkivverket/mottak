@@ -11,7 +11,7 @@
     "test:watch": "yarn test --watch",
     "eject": "react-scripts eject",
     "lint": "yarn lint:eslint",
-    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'  --cache --report-unused-disable-directives",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}' --cache --rule 'react-hooks/exhaustive-deps: off'",
     "generate-env": "./env.sh"
   },
   "browserslist": {
@@ -49,7 +49,6 @@
     "@types/react-dom": "^17.0.2",
     "@types/react-router-dom": "^5.1.7",
     "@types/testing-library__jest-dom": "^5.9.5",
-    "@types/testing-library__react": "^10.2.0",
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
