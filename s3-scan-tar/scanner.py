@@ -49,7 +49,7 @@ def wait_for_port(port, host='localhost', timeout=5.0):
 
 
 def sizeof_fmt(num, suffix='B'):
-    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
         if abs(num) < 1024.0:
             return "%3.1f %s%s" % (num, unit, suffix)
         num /= 1024.0
@@ -148,10 +148,10 @@ def main():
         # If you wanna test this on local files do something like this:
         # object_stream = open(objectname,'br')
         # print("Local File opened:", object_stream)
-    except ObjectDoesNotExistError as exception:
+    except ObjectDoesNotExistError:
         logging.error(f'An error occured while getting the object handle {objectname}')
         sys.exit(CLAMAVERROR)
-    except IOError as exception:
+    except IOError:
         logging.error(f'An error occuder while loading the file {objectname}')
         sys.exit(CLAMAVERROR)
     except Exception as exception:
