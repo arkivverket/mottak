@@ -5,11 +5,13 @@ from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.queues.ArchiveDownloadRequestSender import ArchiveDownloadRequestSender
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
-from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url
+from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url, \
+    get_tusd_download_location_container
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiRequestFailed
+from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiNotFound, \
+    SASTokenPreconditionFailed
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
@@ -66,17 +68,20 @@ async def router_send_email(id: int, db: Session = Depends(get_db_session)):
              status_code=status.HTTP_200_OK,
              response_model=Arkivkopi,
              summary='Bestiller en nedlastning fra arkiv downloader')
-async def request_download(id: int, db: Session = Depends(get_db_session),
-                           archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
-                           sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
+async def request_download_of_archive(id: int, db: Session = Depends(get_db_session),
+                                      archive_download_request_client: ArchiveDownloadRequestSender = Depends(
+                                          get_request_sender),
+                                      sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
     try:
-        result = await arkivuttrekk_service.request_download(id,
-                                                             db,
-                                                             archive_download_request_client,
-                                                             sas_generator_client)
+        result = await arkivuttrekk_service.request_download_of_archive(id,
+                                                                        db,
+                                                                        archive_download_request_client,
+                                                                        sas_generator_client)
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
-    except ArkivkopiRequestFailed as err:
+    except SASTokenPreconditionFailed as err:
+        raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail=err.message)
+    except ArkivkopiOfArchiveRequestFailed as err:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
     return result
@@ -89,5 +94,29 @@ async def request_download(id: int, db: Session = Depends(get_db_session),
 async def router_get_download_status(id: int, db: Session = Depends(get_db_session)):
     try:
         return await arkivuttrekk_service.get_arkivkopi_status(id, db)
+    except ArkivkopiNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+
+
+@router.post('/{id}/overforingspakke/bestill_nedlasting',
+             status_code=status.HTTP_200_OK,
+             response_model=Arkivkopi,
+             summary='Bestiller en nedlastning av overforingspakken fra arkiv downloader')
+async def request_download_of_overforingspakke(
+        id: int, db: Session = Depends(get_db_session),
+        archive_download_request_client: ArchiveDownloadRequestSender = Depends(get_request_sender),
+        sas_generator_client: SASGeneratorClient = Depends(get_sas_generator_client)):
+    try:
+        result = await arkivuttrekk_service.request_download_of_overforingspakke(id,
+                                                                                 db,
+                                                                                 archive_download_request_client,
+                                                                                 sas_generator_client,
+                                                                                 get_tusd_download_location_container())
     except ArkivuttrekkNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+    except SASTokenPreconditionFailed as err:
+        raise HTTPException(status_code=status.HTTP_412_PRECONDITION_FAILED, detail=err.message)
+    except ArkivkopiOfArchiveRequestFailed as err:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
+
+    return result

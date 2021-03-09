@@ -22,8 +22,6 @@ try:
 except:
     print('dotenv not loaded')
 
-ZERO_GENERATION = "-0"
-
 # Todo: check that the uploader URL has not been tampered with - add some crypto
 # Todo: improve error handling.
 # Todo: this should have tests.
@@ -52,7 +50,7 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
     """ create dict with the relevant data from metadata (from DB) and from data (from stdin) """
     # define en workflow parameters
     params = {
-        'TARGET_BUCKET_NAME': data_from_db.ekstern_id + ZERO_GENERATION,
+        'TARGET_BUCKET_NAME': data_from_db.ekstern_id,
         'TUSD_OBJEKT_NAVN': hook_data.objekt_navn,
         'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,

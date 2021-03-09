@@ -9,6 +9,7 @@ class Arkivkopi(BaseModel):
     """
     id: int
     status: ArkivkopiStatus
+    target_name: str
 
     class Config:
         orm_mode = True

@@ -1,44 +1,70 @@
 import json
 import pytest
-from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse
+from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiStatusResponse, ArkivkopiRequestBlobInfo
 from app.connectors.sas_generator.models import SASResponse
-from app.domain.models.Arkivkopi import ArkivkopiStatus
-
+from app.domain.models.Arkivkopi import ArkivkopiStatus, ArkivkopiRequestParameters
 
 arkivkopi_id = 1
-storage_account = "dasaccdev"
-container = "33e8d091-48fd-4718-9c7a-abb9a266ee8f"
-sas_token = "st=2021-01-28T12%3A44%3A26Z&se=2021-01-29T00%3A59%3A26Z&sp=rl&sv=2020-02-10&sr=c&sig=IGAxVlPEF1Y%2B6Xh9mCEa90Dtq8VXP3GVJaa2f/5P%2BMA%3D"
+storage_account = "storage_account_test"
+container = "container_test"
+sas_token = "se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature"
+source_name = "some/random/file"
+target_name_object = "target_filename.tar"
+target_name_archive = "target_folder/"
 status = ArkivkopiStatus.BESTILT
+blob_info = ArkivkopiRequestBlobInfo(source_name=None, target_name=target_name_archive)
 
-@pytest.fixture()
-def arkivkopi_request():
-    return ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
 
-@pytest.fixture()
+@pytest.fixture
+def testobj_arkivkopi_request_with_blob(testobj_arkivkopi_request) -> ArkivkopiRequest:
+    blob_info = ArkivkopiRequestBlobInfo(source_name="some/random/file", target_name="target_filename.tar")
+    testobj_arkivkopi_request.blob_info = blob_info
+    return testobj_arkivkopi_request
+
+
+@pytest.fixture
 def arkivkopi_status_response():
     return ArkivkopiStatusResponse(arkivkopi_id, status)
 
+@pytest.fixture
+def sas_response():
+    return SASResponse(storage_account, container, sas_token)
 
-def test_arkivkopirequest_equals(arkivkopi_request):
-    expected = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
-    assert expected == arkivkopi_request
+
+def test_arkivkopirequest_equals(testobj_arkivkopi_request):
+    result = ArkivkopiRequest(arkivkopi_id, storage_account, container, sas_token)
+    assert result == testobj_arkivkopi_request
 
 
-def test_arkivkopirequest_not_equals(arkivkopi_request):
+def test_arkivkopirequest_not_equals(testobj_arkivkopi_request):
     arkivkopi_request_2 = ArkivkopiRequest(arkivkopi_id+1, storage_account, container, sas_token)
-    assert arkivkopi_request != arkivkopi_request_2
+    assert testobj_arkivkopi_request != arkivkopi_request_2
 
 
-def test_arkivkopirequest_from_id_and_token(arkivkopi_request):
-    sas_response = SASResponse(storage_account, container, sas_token)
-    result = ArkivkopiRequest.from_id_and_token(arkivkopi_id, sas_response)
-    assert arkivkopi_request == result
+def test_arkivkopirequest_from_parameters_when_archive(testobj_arkivkopi_request, sas_response):
+    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response)
+    result = ArkivkopiRequest.from_parameters(parameters)
+    assert testobj_arkivkopi_request == result
 
 
-def test_arkivkopirequest_as_json(arkivkopi_request):
-    result = arkivkopi_request.as_json_str()
-    expected = json.dumps(arkivkopi_request.__dict__)
+def test_arkivkopirequest_from_parameters_when_object(testobj_arkivkopi_request_with_blob, sas_response):
+    parameters = ArkivkopiRequestParameters(arkivkopi_id, sas_response,
+                                            source_name=source_name, target_name=target_name_object)
+    result = ArkivkopiRequest.from_parameters(parameters)
+    assert testobj_arkivkopi_request_with_blob == result
+
+
+def test_arkivkopirequest_from_parameters_no_blob_info_when_missing_parameter(testobj_arkivkopi_request,
+                                                                              sas_response):
+    parameters_without_source_name = ArkivkopiRequestParameters(arkivkopi_id, sas_response,
+                                            source_name=None, target_name=target_name_object)
+    request_without_blob_info = ArkivkopiRequest.from_parameters(parameters_without_source_name)
+    assert testobj_arkivkopi_request == request_without_blob_info
+
+
+def test_arkivkopirequest_as_json(testobj_arkivkopi_request):
+    result = testobj_arkivkopi_request.as_json_str()
+    expected = json.dumps(testobj_arkivkopi_request.__dict__, default=lambda o: o.__dict__)
     assert expected == result
 
 

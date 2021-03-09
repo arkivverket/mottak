@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from app.connectors.arkiv_downloader.models import ArkivkopiRequestBlobInfo
+
 
 class MetadatafilNotFound(Exception):
     """
@@ -64,9 +66,9 @@ class SASTokenPreconditionFailed(Exception):
         message -- explanation of the error
     """
 
-    def __init__(self, container_id: UUID):
+    def __init__(self, container_id: str):
         self.container_id = container_id
-        self.message = f"The container '{container_id}' does not exist"
+        self.message = f"Fant ikke container med id={self.container_id} ved generering av SAS token"
         super().__init__(self.message)
 
     def __str__(self) -> str:
@@ -78,35 +80,93 @@ class ArkivkopiNotFound(Exception):
     Exception raised when arkivkopi doesn't exist in database
 
     Attributes:
-        id -- Integer ID for the arkivuttrekk in the database
+        invitasjon_id -- Integer ID for the invitasjon in the database
         message -- explanation of the error
     """
 
-    def __init__(self, id_: int):
-        self.id_ = id_
-        self.message = f"Fant ikke arkivkopi med id={self.id_}"
+    def __init__(self, invitasjon_id: int):
+        self.invitasjon_id = invitasjon_id
+        self.message = f"Fant ikke arkivkopi med invitasjon_id={self.invitasjon_id}"
         super().__init__(self.message)
 
     def __str__(self):
         return self.message
 
 
-class ArkivkopiRequestFailed(Exception):
+class ArkivkopiOfArchiveRequestFailed(Exception):
     """
-    Exception raised when ordering an arkivkopi fails
+    Exception raised when ordering an arkivkopi of an archive fails
 
     Attributes:
-        id -- Integer ID for the arkivuttrekk in the database
-        invitasjon_id -- UUID used as reference when uploading an arkivuttrekk. Also used as container_id later on.
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        container_id -- string used to identify the container in which the archive to be copied is stored.
         message -- explanation of the error
     """
 
-    def __init__(self, arkivuttrekk_id: int, invitasjon_ekstern_id: UUID):
+    def __init__(self, arkivuttrekk_id: int, container_id: str):
         self.arkivuttrekk_id = arkivuttrekk_id
-        self.invitasjon_ekstern_id = invitasjon_ekstern_id
-        self.message = f"Bestilling av nedlasting feilet for invitasjon med ekstern_id={self.invitasjon_ekstern_id} " \
+        self.container_id = container_id
+        self.message = f"Bestilling av nedlasting feilet for arkiv i container med id={self.container_id} " \
                        f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
         super().__init__(self.message)
 
     def __str__(self):
         return self.message
+
+
+class ArkivkopiOfOverforingspakkeRequestFailed(Exception):
+    """
+    Exception raised when ordering an arkivkopi of an overforingspakke fails.
+
+    Attributes:
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        container_id -- string used to identify the container in which the overforingspakke to be copied is stored
+        message -- explanation of the error
+    """
+
+    def __init__(self, arkivuttrekk_id: int, container_id: str):
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.container_id = container_id
+        self.message = f"Bestilling av nedlasting feilet for overforingspakke i container {container_id} " \
+                       f"assosiert med arkivuttrekk med id={self.arkivuttrekk_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class OverforingspakkeNotFound(Exception):
+    """
+    Exception raised when overforingspakke doesn't exist in database
+
+    Attributes:
+        invitasjon_id -- Integer ID for the invitasjon in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, invitasjon_id: int):
+        self.invitasjon_id = invitasjon_id
+        self.message = f"Fant ikke overforingspakke assosiert med invitasjon_id={self.invitasjon_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
+class InvitasjonNotFound(Exception):
+    """
+    Exception raised when invitasjon doesn't exist in database
+
+    Attributes:
+        arkivuttrekk_id -- Integer ID for the arkivuttrekk in the database
+        message -- explanation of the error
+    """
+
+    def __init__(self, arkivuttrekk_id: int):
+        self.arkivuttrekk_id = arkivuttrekk_id
+        self.message = f"Fant ikke invitasjon assosiert med arkivuttrekk_id={self.arkivuttrekk_id}"
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+

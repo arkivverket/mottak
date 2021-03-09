@@ -3,16 +3,13 @@ from __future__ import annotations
 import json
 import logging
 from typing import Optional
-from uuid import UUID
 
 logger = logging.getLogger(__name__)
 
-ZERO_GENERATION = '0'
-
 
 class SASTokenRequest:
-    def __init__(self, container: UUID, duration_hours: int):
-        self.container = f'{str(container)}-{ZERO_GENERATION}'
+    def __init__(self, container_id: str, duration_hours: int):
+        self.container = container_id
         self.duration_hours = duration_hours
 
     def as_json(self) -> str:

@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 from fastapi import UploadFile
 
+from app.connectors.arkiv_downloader.models import ArkivkopiRequest, ArkivkopiRequestBlobInfo
 from app.domain.models.Metadatafil import Metadatafil, MetadataType
 from app.utils import get_project_root
 
@@ -37,3 +38,12 @@ def testfile_metadatfil(testfile_content) -> Metadatafil:
         innhold=testfile_content,
         opprettet=datetime.fromisoformat('2020-02-02 00:00:00')
     )
+
+
+@pytest.fixture
+def testobj_arkivkopi_request() -> ArkivkopiRequest:
+    return ArkivkopiRequest(
+        arkivkopi_id=1,
+        storage_account="storage_account_test",
+        container="container_test",
+        sas_token="se=2020-12-05T14%3A40%3A54Z&sp=r&sv=2020-02-10&sr=c&sig=someSignature")
