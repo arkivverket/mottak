@@ -3,7 +3,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends python3 git lib
 RUN pip install poetry
 RUN mkdir -p /opt
 WORKDIR /opt
-COPY logger.py _version.py start.sh pyproject.toml poetry.lock /opt/
+COPY logger.py start.sh pyproject.toml poetry.lock /opt/
 RUN poetry install
 # If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
 # COPY gcs.json /opt
