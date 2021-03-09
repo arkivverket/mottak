@@ -12,7 +12,7 @@ python-multipart = "^0.0.5"
 alembic = "^1.5.5"
 psycopg2 = "^2.8.6"
 httpx = "^0.16.1"
-azure-servicebus = "^0.50.3"
+azure-servicebus = "^7.0.1"
 pytz = "^2021.1"
 APScheduler = "^3.7.0"
 
