@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 	},
 	icon: {
+		alignSelf: 'center',
 		marginRight: theme.spacing(1),
 	},
 	message: {
