@@ -22,3 +22,7 @@ The values given here are examples or hints to proper variables.
 - AZURE_KEY=secret
 ```
 
+### Running locally
+If you are running Docker for Mac locally, you have to assign the Docker VM more memory and/or SWAP space.
+
+Recommended is 4 GB SWAP and 4 GB up with memory, `clamd` is memory heavy whilst starting up, as it's loading its databases to memory.
