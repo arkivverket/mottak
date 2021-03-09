@@ -85,7 +85,11 @@ def _get_invitasjon(arkivuttrekk_id, db) -> Invitasjon:
     if not invitasjon_dbo:
         raise InvitasjonNotFound(arkivuttrekk_id)
     return Invitasjon(id_=invitasjon_dbo.id,
-                      ekstern_id=invitasjon_dbo.ekstern_id)
+                      ekstern_id=invitasjon_dbo.ekstern_id,
+                      arkivuttrekk_id=invitasjon_dbo.arkivuttrekk_id,
+                      avgiver_epost=invitasjon_dbo.avgiver_epost,
+                      status=invitasjon_dbo.status,
+                      opprettet=invitasjon_dbo.opprettet)
 
 
 def _get_container_id(ekstern_id: uuid.UUID) -> str:
