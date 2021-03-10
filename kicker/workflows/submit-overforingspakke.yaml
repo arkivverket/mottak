@@ -16,7 +16,7 @@ spec:
 
     - name: avscan
       container:
-        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:0d1afda2a3f3ee14423732da09c40f43274700cd
+        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:"{{workflow.parameters.AVSCAN_TAG}}"
 
         imagePullPolicy: Always
         env:
@@ -51,7 +51,7 @@ spec:
           - name: avlog
             path: /tmp/avlog
       container:
-        image: arkivverket.azurecr.io/da-mottak/mailer:94274e0895ccba9a780a981a887d3f31ff0d9a4a
+        image: arkivverket.azurecr.io/da-mottak/mailer:"{{workflow.parameters.MAILER_TAG}}"
 
         imagePullPolicy: Always
         env:

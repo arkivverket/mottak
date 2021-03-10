@@ -45,4 +45,6 @@ This can be used to trigger kicker and argo in dev.
 - QUEUE_NAME=argo-workflow
 - WORKFLOW=/opt/workflows/<name-of-workflow>
 - NAMESPACE=da-mottak-<env>
+- AVSCAN_TAG=<image tag for component 's3-scan-tar'>
+- MAILER_TAG=<image tag for component 'mailer'>
 ```
