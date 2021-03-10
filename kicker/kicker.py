@@ -93,8 +93,8 @@ def runq():
                 parsed = json.loads(msg)
 
                 # Here we actually look at the message and decide what to do with it.
-                if parsed["action"] == 'argo-submit':
-                    logging.info('Got a argo submission. Submitting.')
+                if parsed["action"] == 'argo-submit-overforingspakke':
+                    logging.info('Got an argo submission of an overforingspakke. Submitting.')
                     argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
