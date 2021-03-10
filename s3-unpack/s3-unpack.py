@@ -6,7 +6,6 @@ import hashlib
 import tarfile
 
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
-from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -116,7 +115,6 @@ def main():
     # Also log to STDERR so k8s understands what is going on.
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info("Starting s3-unpack")
-    logging.info(f'{__file__} version {__version__} running')
 
     logging.info(f"Unpacking {objectname} into container {target_bucket_name}")
     target_container = create_target(target_bucket_name)
