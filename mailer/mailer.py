@@ -7,8 +7,6 @@ import logging
 import glob
 import requests
 
-from _version import __version__
-
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -70,7 +68,6 @@ def main():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
     logging.info(f'Starting mailer')
-    logging.info(f'{__file__} version {__version__} running')
     # Check that we got what we need to run:
     verify_environment()
 
