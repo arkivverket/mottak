@@ -47,7 +47,7 @@ async def create_invitasjon(arkivuttrekk_id: int, db: Session, mailgun_client: M
 
 async def _send_invitasjon(arkivuttrekk: Arkivuttrekk_DBO, db: Session, mailgun_client: MailgunClient):
     invitasjon_ekstern_id = uuid.uuid4()
-    resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id,
+    resp = await mailgun_client.send_invitasjon([arkivuttrekk.avgiver_epost], arkivuttrekk.obj_id, arkivuttrekk.tittel,
                                                 invitasjon_ekstern_id)
 
     if resp.status_code == 200:
