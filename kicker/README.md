@@ -41,8 +41,8 @@ This can be used to trigger kicker and argo in dev.
 
 ### Environment variables needed
 ```yaml
-- QUEUE_CLIENT_CONNECTION_STRING=Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>
-- QUEUE_NAME=argo-workflow
+- AZ_SB_CON_KICKER=Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>
+- AZ_SB_QUEUE=argo-workflow
 - WORKFLOW=/opt/workflows/<name-of-workflow>
 - NAMESPACE=da-mottak-<env>
 - AVSCAN_TAG=<image tag for component 's3-scan-tar'>
