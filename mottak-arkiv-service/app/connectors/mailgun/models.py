@@ -1,5 +1,8 @@
 import json
+import pathlib
 import base64
+import chevron
+import markdown
 from uuid import UUID
 from typing import List
 from abc import ABC
@@ -54,59 +57,16 @@ class InvitasjonEmail(MailgunEmail):
 
     def __init__(self, mailgun_domain: str, to: List[str], arkivuttrekk_obj_id: UUID, arkivuttrekk_tittel: str,
                  upload_url: str):
+        body = InvitasjonEmail.get_body(arkivuttrekk_obj_id, arkivuttrekk_tittel, upload_url)
+        # print(markdown.markdown(body, extensions=['markdown.extensions.tables', 'markdown.extensions.sane_lists']))
         super().__init__(self.__subject,
                          to,
                          f'Mottak Digitalarkivet <donotreply@{mailgun_domain}>',
-                         InvitasjonEmail.__body_as_text(arkivuttrekk_obj_id, arkivuttrekk_tittel, upload_url),
-                         InvitasjonEmail.__body_as_html(arkivuttrekk_obj_id, arkivuttrekk_tittel, upload_url))
+                         body,
+                         markdown.markdown(body, extensions=['markdown.extensions.tables']))
 
     @staticmethod
-    def __body_as_text(obj_id: UUID, tittel: str, upload_url: str) -> str:
-        return f"""Du mottar denne eposten fordi du har bestilt lenke til opplasting i Digitalarkivet. Det gjelder opplasting av følgende arkiv:
-
-Tittel: {tittel}
-Fil: {obj_id}.tar
-
-Dersom du ikke har bestilt lenke for opplasting kan du se bort fra denne eposten.
-
-Trinnvis beskrivelse av hvordan du laster opp et arkiv:
-- Siste versjon av program for å laste opp arkivuttrekk finnes her: https://uploader.digitalisering.arkivverket.no
-- Start applikasjonen
-- Trykk på invitasjons url’en i slutten av eposten (starter med dpldr://)
-- Velg tar fila som skal lastes opp
-
-Invitasjonslenken:
-{upload_url}
-"""
-
-    @staticmethod
-    def __body_as_html(obj_id: UUID, tittel: str, upload_url: str) -> str:
-        return f"""Du mottar denne eposten fordi du har bestilt lenke til opplasting i Digitalarkivet. Det gjelder opplasting av følgende arkiv:
-<table style="text-align:left">
-    <tr>
-        <th>Tittel:</th>
-        <td>{tittel}</td>
-    </tr>
-    <tr>
-        <th>Fil:</th>
-        <td>{obj_id}.tar</td>
-    </tr>
-<table>
-<br>
-Dersom du ikke har bestilt lenke for opplasting kan du se bort fra denne eposten.
-<br>
-<br>
-
-Trinnvis beskrivelse av hvordan du laster opp et arkiv:
-<br>
-<ul>
-    <li>Siste versjon av program for å laste opp arkivuttrekk finnes her: <a href=https://uploader.digitalisering.arkivverket.no>https://uploader.digitalisering.arkivverket.no</a></li>
-    <li>Start applikasjonen</li>
-    <li>Trykk på invitasjonslenken i slutten av eposten (starter med dpldr://)</li>
-    <li>Velg tar fila som skal lastes opp</li>
-</ul>
-
-Invitasjonslenken:
-<br>
-<a href={upload_url}>{upload_url}</a>
-"""
+    def get_body(obj_id: UUID, tittel: str, upload_url: str):
+        current_location = str(pathlib.Path(__file__).parent.absolute())
+        with open(current_location + '/bodies/invitasjon.md', 'r') as f:
+            return chevron.render(f, {'obj_id': obj_id, 'tittel': tittel, 'upload_url': upload_url})
