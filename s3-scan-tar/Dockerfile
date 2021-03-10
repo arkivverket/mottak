@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS prepare
+FROM python:3.9.2-slim AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -22,7 +22,7 @@ COPY pyproject.toml /app
 RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev
 
-FROM python:3.8-slim
+FROM python:3.9.2-slim
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /app
 
