@@ -22,7 +22,7 @@ class MailgunEmail(ABC):
                 'html': self.__html}
 
 
-class InvitasjonMelding:
+class InvitasjonUploadUrl:
     """
     Creating invitasjon json object in expected structure for the archive-uploader
     """
