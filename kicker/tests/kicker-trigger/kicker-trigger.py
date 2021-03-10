@@ -11,26 +11,23 @@ try:
 except ImportError:
     pass
 
-QUEUE_CLIENT_CONNECTION_STRING = os.getenv('QUEUE_CLIENT_CONNECTION_STRING')
-QUEUE_NAME = os.getenv('QUEUE_NAME')
+AZ_SB_CON_KICKER = os.getenv('AZ_SB_CON_KICKER')
+AZ_SB_QUEUE = os.getenv('AZ_SB_QUEUE')
 
 
 # Edit the values in this method
 def get_params() -> dict:
     return {
-        'TARGET_BUCKET_NAME': '8de75c05-744d-4622-af38-fad5b6f1dc30-0',
-        'TUSD_OBJEKT_NAVN': '85a7d9cf0aac32393c82a70b20db5f9c',
-        'SJEKKSUM': 'd35e6aa1aa46275ca825d1b5e3eb6c6442f91e1c1ad3153f354dd6467a759df1',
-        'EKSTERN_ID': '8de75c05-744d-4622-af38-fad5b6f1dc30',
-        'ARKIV_TYPE': 'Noark5',
-        'KOORDINATOR_EPOST': 'kriwal@arkivverket.no',
-        'ARKIVUTTREKK_OBJ_ID': 'c8db1f06-4495-4c18-bfd4-ccb0a450cba5'
+        'TUSD_OBJEKT_NAVN': "6bf65f3c3700f1152d4429f3d6599e8c",
+        'EKSTERN_ID': "c574653e-f58c-4efe-b670-afe6fabea715",
+        'KOORDINATOR_EPOST': "marelm@arkivverket.no",
+        'ARKIVUTTREKK_OBJ_ID': "38da4005-92de-4aea-81ac-2262f90d0f5b"
     }
 
 
 def create_message(params: dict) -> dict:
     return {
-        'action': 'argo-submit',
+        'action': 'argo-submit-overforingspakke',
         'params': params,
     }
 
@@ -45,8 +42,8 @@ def create_queue_client(queue_client_string: str, queue_name: str) -> QueueClien
 
 
 if __name__ == '__main__':
-    print(f'Creating queue client for {QUEUE_NAME}')
-    client = create_queue_client(QUEUE_CLIENT_CONNECTION_STRING, QUEUE_NAME)
+    print(f'Creating queue client for {AZ_SB_QUEUE}')
+    client = create_queue_client(AZ_SB_CON_KICKER, AZ_SB_QUEUE)
     message = create_message(get_params())
     print(f'Publishing {message} to kicker queue')
     send_message(message)
