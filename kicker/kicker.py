@@ -41,11 +41,11 @@ def create_param_file(params):
         print(f"{key}: {params[key]}", file=tmpfile)
     return tmpfile.name
 
-
-def argo_submit(workflowfile, params):
+# TODO få inn en .env variabel for miljø her. da-mottak-dev er hardkodet
+def argo_submit(workflowfile, params, namespace):
     """ Submit a job to argo. Takes a YAML file as parameter """
     paramfile = create_param_file(params)
-    argocmd = ["argo", "submit", "--namespace", "da-mottak-dev", "--parameter-file", paramfile, workflowfile]
+    argocmd = ["argo", "submit", "--namespace", namespace, "--parameter-file", paramfile, workflowfile]
     logging.info(f"Argo cmd line: {argocmd}")
     try:
         submit = subprocess.run(argocmd, timeout=20, check=True, stdout=PIPE, stderr=PIPE)
@@ -68,6 +68,7 @@ def runq():
 
     conn_str = os.getenv('AZ_SB_CON_KICKER')
     queue = os.getenv('AZ_SB_QUEUE')
+    namespace = os.getenv('NAMESPACE')
     try:
         # Note: This is lazy.
         queue_client = QueueClient.from_connection_string(
@@ -95,7 +96,7 @@ def runq():
                 # Here we actually look at the message and decide what to do with it.
                 if parsed["action"] == 'argo-submit-overforingspakke':
                     logging.info('Got an argo submission of an overforingspakke. Submitting.')
-                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])
+                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'], namespace=namespace)
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
                         logging.info('Ignoring shutdown message.')

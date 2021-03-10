@@ -43,5 +43,6 @@ This can be used to trigger kicker and argo in dev.
 ```yaml
 - QUEUE_CLIENT_CONNECTION_STRING=Endpoint=sb://da-mottak-dev-servicebus.servicebus.windows.net/;SharedAccessKeyName=argo-kicker;SharedAccessKey=<secret>
 - QUEUE_NAME=argo-workflow
-- WORKFLOW=
+- WORKFLOW=/opt/workflows/<name-of-workflow>
+- NAMESPACE=da-mottak-<env>
 ```
