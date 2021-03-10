@@ -13,6 +13,10 @@ spec:
           - name: task-notify-coordinator
             template: notify-coordinator
             dependencies: [ task-avscan ]
+            arguments:
+              artifacts:
+                - name: avlog
+                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
 
     - name: avscan
       container:
@@ -41,7 +45,7 @@ spec:
       outputs:
         artifacts:
           - name: avlog
-            path: /tmp/avlog
+            path: /tmp/avlog.txt
             archive:
               none: { }
 
@@ -49,7 +53,7 @@ spec:
       inputs:
         artifacts:
           - name: avlog
-            path: /tmp/avlog
+            path: /tmp/attachments/avlog.txt
       container:
         image: arkivverket.azurecr.io/da-mottak/mailer:"{{workflow.parameters.MAILER_TAG}}"
 
@@ -67,7 +71,7 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Arkiv avvist"
+            value: "Overforingspakke skannet"
           - name: MESSAGE
             value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
                     tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
@@ -75,4 +79,4 @@ spec:
                     Vedlagt denne e-posten er loggen fra antivirus-skanningen.
                     Vennligst se over."
           - name: ATTACHMENTS
-            value:
+            value: /tmp/attachments
