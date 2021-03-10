@@ -3,7 +3,6 @@ import os
 import sys
 import logging
 from av_objectstore import ArkivverketObjectStorage
-from _version import __version__
 
 try:
     from dotenv import load_dotenv
@@ -21,7 +20,6 @@ objectname = os.getenv('TUSD_OBJECT_NAME')
 logging.basicConfig(level=logging.INFO,
                     filemode='w', format='%(asctime)s %(levelname)s %(message)s')
 logging.info("Starting s3-delete")
-logging.info(f'{__file__} version {__version__} running')
 
 storage = ArkivverketObjectStorage()
 if storage.delete(bucket, objectname):

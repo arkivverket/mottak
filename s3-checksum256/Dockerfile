@@ -7,7 +7,7 @@ RUN pip install poetry
 # Install the helper module:
 RUN useradd --home-dir /opt mol
 WORKDIR /opt
-COPY checksum.py _version.py pyproject.toml poetry.lock /opt/
+COPY checksum.py pyproject.toml poetry.lock /opt/
 RUN chown -R mol /opt
 USER mol
 RUN poetry install
