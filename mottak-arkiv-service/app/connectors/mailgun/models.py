@@ -65,7 +65,7 @@ class InvitasjonEmail(MailgunEmail):
         return f"""Du mottar denne eposten fordi du har bestilt lenke til opplasting i Digitalarkivet. Det gjelder opplasting av følgende arkiv:
 
 Tittel: {tittel}
-Object id: {obj_id}
+Fil: {obj_id}.tar
 
 Dersom du ikke har bestilt lenke for opplasting kan du se bort fra denne eposten.
 
@@ -88,8 +88,8 @@ Invitasjonslenken:
         <td>{tittel}</td>
     </tr>
     <tr>
-        <th>Object id:</th>
-        <td>{obj_id}</td>
+        <th>Fil:</th>
+        <td>{obj_id}.tar</td>
     </tr>
 <table>
 <br>
