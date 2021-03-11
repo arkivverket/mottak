@@ -58,14 +58,13 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
-def get_clam():
-    """Establish connection with Clamd
+def get_clam() -> ClamdUnixSocket:
+    """Establishes a connection with clamd
     :return: pyclamd socket object
     There is no try/except here as we want this error to propagate up.
     """
     # ClamdUnixSocket finds the clamd socket by itself, by reading the /etc/clamav/clamd.conf file
     csock = ClamdUnixSocket()
-    csock.ping()
     return csock
 
 
