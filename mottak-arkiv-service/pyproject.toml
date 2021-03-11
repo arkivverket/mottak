@@ -15,6 +15,9 @@ httpx = "^0.16.1"
 azure-servicebus = "^0.50.3"
 pytz = "^2021.1"
 APScheduler = "^3.7.0"
+chevron = "^0.14.0"
+Markdown = "^3.3.4"
+beautifulsoup4 = "^4.9.3"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.7.2"

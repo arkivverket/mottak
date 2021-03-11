@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import logging
+import os
 
 from fastapi import FastAPI, status
-
 from app.jobs.schedule_status_receiver_job import init_scheduled_job
 from app.routers import arkivuttrekk, metadatafil
 
@@ -18,6 +18,9 @@ try:
     load_dotenv()
 except ModuleNotFoundError:
     pass
+
+RUN_SCHEDULER = os.getenv('RUN_SCHEDULER', 'True').lower() == 'true'
+
 
 app = FastAPI(
     title="Mottak-arkiv-service",
@@ -49,15 +52,19 @@ app.include_router(
 
 @app.on_event("startup")
 async def init_jobs():
-    app.scheduler = await init_scheduled_job()
-    logger.info("Starting scheduler")
-    app.scheduler.start()
+    if RUN_SCHEDULER:
+        app.scheduler = await init_scheduled_job()
+        logger.info("Starting scheduler")
+        app.scheduler.start()
+    else:
+        logger.info("Not starting scheduler")
 
 
 @app.on_event("shutdown")
 async def teardown_jobs():
-    logger.info("Shutting down scheduler")
-    app.scheduler.shutdown()
+    if RUN_SCHEDULER:
+        logger.info("Shutting down scheduler")
+        app.scheduler.shutdown()
 
 
 if __name__ == '__main__':
