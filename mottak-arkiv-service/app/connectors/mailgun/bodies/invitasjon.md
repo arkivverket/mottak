@@ -1,7 +1,7 @@
 Du mottar denne eposten fordi du har bestilt lenke til opplasting i Digitalarkivet. Det gjelder opplasting av følgende arkiv:
 
 | <!-- -->    | <!-- -->            |
-| ---         | ---                 |
+| --------    | --------            |
 |**Tittel:**  | {{ tittel }}        |
 |**Fil:**     | {{ obj_id }}.tar    |
 

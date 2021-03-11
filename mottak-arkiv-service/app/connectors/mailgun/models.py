@@ -6,6 +6,7 @@ import markdown
 from uuid import UUID
 from typing import List
 from abc import ABC
+from bs4 import BeautifulSoup
 
 
 class MailgunEmail(ABC):
@@ -57,16 +58,17 @@ class InvitasjonEmail(MailgunEmail):
 
     def __init__(self, mailgun_domain: str, to: List[str], arkivuttrekk_obj_id: UUID, arkivuttrekk_tittel: str,
                  upload_url: str):
-        body = InvitasjonEmail.get_body(arkivuttrekk_obj_id, arkivuttrekk_tittel, upload_url)
-        # print(markdown.markdown(body, extensions=['markdown.extensions.tables', 'markdown.extensions.sane_lists']))
+        md_body = InvitasjonEmail.get_markdown_body(arkivuttrekk_obj_id, arkivuttrekk_tittel, upload_url)
+        html_body = markdown.markdown(md_body, extensions=['markdown.extensions.tables'])
+        txt_body = ''.join(BeautifulSoup(html_body, features="html.parser").find_all(text=True))
         super().__init__(self.__subject,
                          to,
                          f'Mottak Digitalarkivet <donotreply@{mailgun_domain}>',
-                         body,
-                         markdown.markdown(body, extensions=['markdown.extensions.tables']))
+                         txt_body,
+                         html_body)
 
     @staticmethod
-    def get_body(obj_id: UUID, tittel: str, upload_url: str):
+    def get_markdown_body(obj_id: UUID, tittel: str, upload_url: str) -> str:
         current_location = str(pathlib.Path(__file__).parent.absolute())
         with open(current_location + '/bodies/invitasjon.md', 'r') as f:
             return chevron.render(f, {'obj_id': obj_id, 'tittel': tittel, 'upload_url': upload_url})
