@@ -140,7 +140,7 @@ def main():
     objectname = os.getenv('TUSD_OBJECT_NAME')
 
     logging.info("Starting s3-scan-tar")
-    logging.info(f'Intializing scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(scan_limit)}')
+    logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(scan_limit)}')
 
     # Test the access to the object stream, so we can return early if there are any issues
     try:
