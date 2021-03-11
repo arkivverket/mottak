@@ -12,7 +12,10 @@ We use [Argo Workflows](https://argoproj.github.io/projects/argo) where each ste
 running a component from the [arkivverket/mottak](https://github.com/arkivverket/mottak) repo.
 
 Supported DAGs:
- - submit-archive
+ - submit-overforingspakke
+
+Disabled DAGs:
+- submit-archive
 
 Planned dags:
  - deploy-decom
