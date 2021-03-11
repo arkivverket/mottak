@@ -1,13 +1,48 @@
-FROM python:3.8-slim-buster
-RUN apt-get update && apt-get install -y --no-install-recommends python3 git clamav-daemon clamav-freshclam && \
-    apt-get clean && \
-    freshclam && \
-    pip install poetry && \
-    mkdir -p /opt
-WORKDIR /opt
-COPY scanner.py _version.py start.sh pyproject.toml poetry.lock /opt/
-COPY conf/clamd.conf /etc/clamav/clamd.conf
-RUN poetry install
+FROM python:3.8-slim AS prepare
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+ENV \
+    # make poetry install to this location
+    POETRY_HOME="/opt/poetry" \
+    # do not ask any interactive question
+    POETRY_NO_INTERACTION=1 \
+	# Adds poetry bin to $PATH, so we don't need to link it to /usr/local/bin
+	PATH=/opt/poetry/bin:${PATH}
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+        curl \
+        git \
+    \
+    && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+
+WORKDIR /app
+COPY poetry.lock /app
+COPY pyproject.toml /app
+RUN poetry config virtualenvs.in-project true \
+	&& poetry install --no-dev
+
+FROM python:3.8-slim
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+WORKDIR /app
+
+ENV PATH=/app/.venv/bin:${PATH}
+
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
+        clamav-daemon \
+        clamav-freshclam \
+    \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && freshclam
+
+COPY --chown=clamav --from=prepare /app/.venv /app/.venv
+COPY --chown=clamav scanner.py /app/
+COPY --chown=clamav conf/ /etc/clamav/
+
+USER clamav
+
 # If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
 # COPY gcs.json /opt
-CMD ["/opt/start.sh"]
+CMD ["/app/scanner.py"]

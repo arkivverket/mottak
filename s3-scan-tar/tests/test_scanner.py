@@ -57,31 +57,6 @@ def _generate_tarfile() -> io.BytesIO:
     return fh
 
 
-def test_binary_size_limit0():
-    """ The the BinaryFileLimitedOnSize class"""
-    SHORT_READ = 10
-    LONG_READ = 300
-    CHUNKS = 10
-
-    fh_base = io.BytesIO(BIN_DATA60 * CHUNKS)  # Create a 600 bytes long file.
-    fh_limited = scanner.BinaryFileLimitedOnSize(fh_base, maxsize=LONG_READ)
-
-    chunk = fh_limited.read(SHORT_READ)
-    assert chunk == BIN_DATA60[:SHORT_READ]
-    assert fh_limited.restricted is False
-    assert fh_limited.tell() == SHORT_READ
-
-    # Do a bigger read to trigger the restriction...
-    chunk = fh_limited.read(LONG_READ)
-    assert chunk == b''
-    assert fh_limited.restricted is True
-    assert fh_limited.tell() == len(BIN_DATA60) * CHUNKS
-
-    # Seeks throws UnsupportedOperation
-    with pytest.raises(io.UnsupportedOperation):
-        fh_limited.seek(0)
-
-
 def test_stream_tar():
     """ Tests if we can stream tar files and unpack them """
     fh = _generate_tarfile()
@@ -128,12 +103,12 @@ def test_scan_archive():
     magic_socket = Mock()
     magic_socket.scan_stream = _scan_stream
     # Set the restriction to 301 bytes.
-    # This should make the 60,120,180,240 and VIRUS pass
-    # 300, 360, 420, 480, 540, 600 should be skipped.
-    ret = scanner.scan_archive(fh, magic_socket, 301)
-    assert ret.clean == 4
+    # This should make the 60,120,180,240,300 and VIRUS pass
+    # 360, 420, 480, 540, 600 should be skipped.
+    ret = scanner.scan_archive(fh, magic_socket, 300)
+    assert ret.clean == 5
     assert ret.virus == 1
-    assert ret.skipped == 6
+    assert ret.skipped == 5
 
 
 def test_scan_archive_reset():

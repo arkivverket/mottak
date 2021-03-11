@@ -11,8 +11,6 @@ import os
 import magic
 import requests
 
-from _version import __version__
-
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -59,7 +57,6 @@ def main():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
     logging.info("Starting artifact-logger")
-    logging.info(f'{__file__} version {__version__} running')
 
     files = os.getenv('FILES').split(';')
     archive_obj_id = os.getenv('ARCHIVE_OBJ_ID')
