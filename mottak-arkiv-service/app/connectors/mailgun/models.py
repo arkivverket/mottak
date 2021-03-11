@@ -3,6 +3,7 @@ import pathlib
 import base64
 import chevron
 import markdown
+import os
 from uuid import UUID
 from typing import List
 from abc import ABC
@@ -70,5 +71,6 @@ class InvitasjonEmail(MailgunEmail):
     @staticmethod
     def get_markdown_body(obj_id: UUID, tittel: str, upload_url: str) -> str:
         current_location = str(pathlib.Path(__file__).parent.absolute())
-        with open(current_location + '/bodies/invitasjon.md', 'r') as f:
+        invitasjon_template_file_path = os.path.join(current_location, 'bodies', 'invitasjon.md')
+        with open(invitasjon_template_file_path, 'r') as f:
             return chevron.render(f, {'obj_id': obj_id, 'tittel': tittel, 'upload_url': upload_url})
