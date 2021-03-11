@@ -38,7 +38,7 @@ RUN apt-get update \
     && freshclam
 
 COPY --chown=clamav --from=prepare /app/.venv /app/.venv
-COPY --chown=clamav scanner.py /app/
+COPY --chown=clamav app/ /app/
 COPY --chown=clamav conf/ /etc/clamav/
 
 USER clamav
