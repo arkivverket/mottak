@@ -76,8 +76,8 @@ def stream_tar(stream):
         t_f = tarfile.open(fileobj=stream, mode='r|')
         tar_iterator = TarfileIterator(t_f)
     except Exception as exception:
-        logging.error(f'Failed to open stream to object {stream}')
-        logging.error(f'Error: {exception}')
+        logging.critical(f'Failed to open stream to object {stream}')
+        logging.critical(f'Error: {exception}')
         raise exception
     return tar_iterator, t_f
 
@@ -111,7 +111,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
                 logging.info(f'clean - {member.name}')
             else:
                 virus += 1
-                logging.warning(f'Virus found! {result["stream"][1]} in {member.name}')
+                logging.critical(f'Virus found! {result["stream"][1]} in {member.name}')
 
         except ConnectionResetError:
             skipped += 1
@@ -151,14 +151,14 @@ def main():
         # object_stream = open(objectname,'br')
         # print("Local File opened:", object_stream)
     except ObjectDoesNotExistError:
-        logging.error(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
+        logging.critical(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
         sys.exit(CLAMAVERROR)
     except IOError:
-        logging.error(f'An error occuder while loading the file {objectname}')
+        logging.critical(f'An error occuder while loading the file {objectname}')
         sys.exit(CLAMAVERROR)
     except Exception as exception:
-        logging.error("Unkown error occured while getting the object")
-        logging.error(exception)
+        logging.critical("Unkown error occured while getting the object")
+        logging.critical(exception)
         sys.exit(CLAMAVERROR)
 
     # Starts freshclamd daemon, which allows the databases to be updated while running, if the scanning takes a while
@@ -173,7 +173,7 @@ def main():
         logging.info("Waiting for clamd to be ready")
         wait_for_port(3310, timeout=30.0)
     except TimeoutError as exception:
-        logging.error(exception)
+        logging.critical(exception)
         sys.exit(CLAMAVERROR)
 
     try:
@@ -181,12 +181,12 @@ def main():
         clam_ver = clamd_socket.version()
         logging.info(f'Connected to Clamd {clam_ver}')
     except FileNotFoundError as exception:
-        logging.error("Could not find a clamd socket")
-        logging.error(exception)
+        logging.critical("Could not find a clamd socket")
+        logging.critical(exception)
         sys.exit(CLAMAVERROR)
     except ConnectionError as exception:
-        logging.error("Could not connect to clamd socket")
-        logging.error(exception)
+        logging.critical("Could not connect to clamd socket")
+        logging.critical(exception)
         sys.exit(CLAMAVERROR)
     scan_ret = scan_archive(
         object_stream, clamd_socket, scan_limit)
