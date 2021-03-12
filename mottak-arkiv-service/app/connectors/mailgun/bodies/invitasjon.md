@@ -11,7 +11,7 @@ Trinnvis beskrivelse av hvordan du laster opp et arkiv:
 
 * Siste versjon av program for å laste opp arkivuttrekk finnes her: [https://uploader.digitalisering.arkivverket.no](https://uploader.digitalisering.arkivverket.no)
 * Start applikasjonen
-* Trykk på invitasjons url’en i slutten av eposten (starter med dpldr://)
+* Kopier invitasjons url’en i slutten av eposten inn i en nettleser (starter med dpldr://)
 * Velg tar fila som skal lastes opp
 
 Invitasjonslenken:
