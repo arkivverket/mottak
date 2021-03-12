@@ -16,7 +16,7 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus, Invitasjon
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
     ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
-    ArkivkopiOfOverforingspakkeNotFound
+    ArkivkopiOfOverforingspakkeNotFound, ArkivkopiOfArchiveNotFound
 
 ZERO_GENERATION = "0"
 TAR_SUFFIX = ".tar"
@@ -140,11 +140,10 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
 
 async def get_arkivkopi_status_of_archive(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
-    results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon.id)
-    if not results:
-        raise ArkivkopiNotFound(invitasjon.id)
-    arkivkopi_arkiv = [arkivkopi for arkivkopi in results if not arkivkopi.is_object]
-    return arkivkopi_arkiv.pop() if arkivkopi_arkiv else None
+    arkivkopi = arkivkopi_repository.get_archive_by_invitasjonId_newest(db, invitasjon.id)
+    if not arkivkopi:
+        raise ArkivkopiOfArchiveNotFound(invitasjon.id)
+    return arkivkopi
 
 
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,

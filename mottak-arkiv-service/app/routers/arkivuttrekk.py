@@ -94,7 +94,7 @@ async def request_download_of_archive(id: int, db: Session = Depends(get_db_sess
 async def router_get_download_status_of_archive(id: int, db: Session = Depends(get_db_session)):
     try:
         return await arkivuttrekk_service.get_arkivkopi_status_of_archive(id, db)
-    except ArkivkopiNotFound as err:
+    except ArkivkopiOfArchiveNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
