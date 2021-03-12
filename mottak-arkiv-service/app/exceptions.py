@@ -75,24 +75,6 @@ class SASTokenPreconditionFailed(Exception):
         return self.message
 
 
-class ArkivkopiNotFound(Exception):
-    """
-    Exception raised when arkivkopi doesn't exist in database
-
-    Attributes:
-        invitasjon_id -- Integer ID for the invitasjon in the database
-        message -- explanation of the error
-    """
-
-    def __init__(self, invitasjon_id: int):
-        self.invitasjon_id = invitasjon_id
-        self.message = f"Fant ikke arkivkopi med invitasjon_id={self.invitasjon_id}"
-        super().__init__(self.message)
-
-    def __str__(self):
-        return self.message
-
-
 class ArkivkopiOfArchiveNotFound(Exception):
     """
       Exception raised when arkivkopi of an archive doesn't exist in database for the given invitasjon id
