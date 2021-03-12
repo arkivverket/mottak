@@ -21,6 +21,14 @@ def get_all_by_invitasjon_id(db: Session, invitasjon_id: int) -> List[Arkivkopi_
     return db.query(Arkivkopi_DBO).filter(Arkivkopi_DBO.invitasjon_id == invitasjon_id).all()
 
 
+def get_overforingspakke_by_invitasjonId_newest(db: Session, invitasjon_id: int) -> Optional[Arkivkopi_DBO]:
+    return db.query(Arkivkopi_DBO)\
+        .filter(Arkivkopi_DBO.invitasjon_id == invitasjon_id)\
+        .filter(Arkivkopi_DBO.is_object is True)\
+        .order_by(desc(Arkivkopi_DBO.endret))\
+        .first()
+
+
 def delete(db: Session, arkivkopi: Arkivkopi):
     db.delete(arkivkopi)
     db.commit()
