@@ -138,7 +138,7 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
     return result
 
 
-async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+async def get_arkivkopi_status_of_archive(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
     results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon.id)
     if not results:
@@ -180,3 +180,7 @@ def _get_source_name(invitasjon_id: int, db: Session) -> str:
     if not overforingspakke:
         raise OverforingspakkeNotFound(invitasjon_id)
     return overforingspakke.tusd_objekt_navn
+
+
+async def get_arkivkopi_status_of_overforingspakke(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+    pass

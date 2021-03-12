@@ -90,10 +90,10 @@ async def request_download_of_archive(id: int, db: Session = Depends(get_db_sess
 @router.get('/{id}/bestill_nedlasting/status',
             status_code=status.HTTP_200_OK,
             response_model=Arkivkopi,
-            summary='Hent status for siste nedlasting av arkiv')
-async def router_get_download_status(id: int, db: Session = Depends(get_db_session)):
+            summary='Hent status for nedlasting av arkiv for siste utsendte invitasjon')
+async def router_get_download_status_of_archive(id: int, db: Session = Depends(get_db_session)):
     try:
-        return await arkivuttrekk_service.get_arkivkopi_status(id, db)
+        return await arkivuttrekk_service.get_arkivkopi_status_of_archive(id, db)
     except ArkivkopiNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
@@ -120,3 +120,15 @@ async def request_download_of_overforingspakke(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=err.message)
 
     return result
+
+
+@router.get('/{id}/overforingspakke/bestill_nedlasting/status',
+            status_code=status.HTTP_200_OK,
+            response_model=Arkivkopi,
+            summary='Hent status for nedlasting av overforingspakke for siste utsendte invitasjon')
+async def router_get_download_status_of_overforingspakke(id: int, db: Session = Depends(get_db_session)):
+    try:
+        return await arkivuttrekk_service.get_arkivkopi_status_of_overforingspakke(id, db)
+    except ArkivkopiNotFound as err:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
+
