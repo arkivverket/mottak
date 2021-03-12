@@ -89,8 +89,7 @@ class ArkivkopiOfArchiveNotFound(Exception):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
         self.message = f"Fant ikke arkivkopi av et arkiv: " \
-                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id}" \
-                       f"invitasjon_id={self.invitasjon_id}"
+                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id} - invitasjon_id={self.invitasjon_id}"
         super().__init__(self.message)
 
     def __str__(self):
@@ -111,8 +110,7 @@ class ArkivkopiOfOverforingspakkeNotFound(Exception):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
         self.message = f"Fant ikke arkivkopi av en overføringspakke: " \
-                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id}" \
-                       f"invitasjon_id={self.invitasjon_id}"
+                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id} - invitasjon_id={self.invitasjon_id}"
         super().__init__(self.message)
 
     def __str__(self):
