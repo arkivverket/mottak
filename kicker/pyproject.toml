@@ -9,12 +9,12 @@ python = "^3.8"
 azure-servicebus = "^0.50.2"
 requests = "^2.23.0"
 pytest = "^6.1.1"
-python-dotenv = "^0.14.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"
 autopep8 = "^1.5"
 pudb = "^2019.2"
+python-dotenv = "^0.14.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
