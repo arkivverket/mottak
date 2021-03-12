@@ -1,0 +1,82 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: verify-overforingspakke-
+spec:
+  entrypoint: verify-overforingspakke
+  templates:
+    - name: verify-overforingspakke
+      dag:
+        tasks:
+          - name: task-avscan
+            template: avscan
+          - name: task-notify-coordinator
+            template: notify-coordinator
+            dependencies: [ task-avscan ]
+            arguments:
+              artifacts:
+                - name: avlog
+                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+
+    - name: avscan
+      container:
+        image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:{{workflow.parameters.AVSCAN_TAG}}
+
+        imagePullPolicy: Always
+        env:
+          - name: TUSD_OBJECT_NAME
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "tusd-storage"
+          - name: AZURE_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
+          - name: AZURE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-key
+                key: storageaccount-key
+          - name: AVLOG
+            value: /tmp/avlog
+      outputs:
+        artifacts:
+          - name: avlog
+            path: /tmp/avlog
+            archive:
+              none: {}  # no compression, default is tar+gzip compression
+
+    - name: notify-coordinator
+      inputs:
+        artifacts:
+          - name: avlog
+            path: /tmp/attachments/avlog.txt
+      container:
+        image: arkivverket.azurecr.io/da-mottak/mailer:{{workflow.parameters.MAILER_TAG}}
+
+        imagePullPolicy: Always
+        env:
+          - name: MAILGUN_DOMAIN
+            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+          - name: MAILGUN_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mailgun-secret
+                key: mailgun-secret
+          - name: NAME
+            value: "Koordinator"  # {{workflow.parameters.KOORDINATOR_NAVN}}
+          - name: RECIPIENT
+            value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
+          - name: SUBJECT
+            value: "Overforingspakke skannet"
+          - name: MESSAGE
+            value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
+                    tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
+                    har blitt skannet for virus.
+                    Vedlagt denne e-posten er loggen fra antivirus-skanningen.
+                    Vennligst se over."
+          - name: ATTACHMENTS
+            value: /tmp/attachments

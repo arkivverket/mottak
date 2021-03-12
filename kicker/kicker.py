@@ -28,6 +28,9 @@ UUIDERROR = 10
 ARGOERROR = 11
 SBERROR = 12
 
+AVSCAN_TAG = "AVSCAN_TAG"
+MAILER_TAG = "MAILER_TAG"
+
 
 def create_param_file(params):
     """ Create a parameter YAML-file for Argo to ingest.
@@ -42,10 +45,10 @@ def create_param_file(params):
     return tmpfile.name
 
 
-def argo_submit(workflowfile, params):
+def argo_submit(workflowfile, params, namespace):
     """ Submit a job to argo. Takes a YAML file as parameter """
     paramfile = create_param_file(params)
-    argocmd = ["argo", "submit", "--namespace", "da-mottak-dev", "--parameter-file", paramfile, workflowfile]
+    argocmd = ["argo", "submit", "--namespace", namespace, "--parameter-file", paramfile, workflowfile]
     logging.info(f"Argo cmd line: {argocmd}")
     try:
         submit = subprocess.run(argocmd, timeout=20, check=True, stdout=PIPE, stderr=PIPE)
@@ -63,11 +66,25 @@ def argo_submit(workflowfile, params):
     os.remove(paramfile)
 
 
+def get_workflow_parameters(avscan_tag: str, mailer_tag: str, params_from_message: dict) -> dict:
+    """
+    Functions that gets workflow parameters from the received message
+    and appends image_tags of the containers used in the workflow
+    """
+    params = params_from_message
+    params[AVSCAN_TAG] = avscan_tag
+    params[MAILER_TAG] = mailer_tag
+    return params
+
+
 def runq():
     """ The main loop that listens to the service bus"""
 
     conn_str = os.getenv('AZ_SB_CON_KICKER')
     queue = os.getenv('AZ_SB_QUEUE')
+    namespace = os.getenv('NAMESPACE')
+    avscan_tag = os.getenv('AVSCAN_TAG')
+    mailer_tag = os.getenv('MAILER_TAG')
     try:
         # Note: This is lazy.
         queue_client = QueueClient.from_connection_string(
@@ -93,9 +110,10 @@ def runq():
                 parsed = json.loads(msg)
 
                 # Here we actually look at the message and decide what to do with it.
-                if parsed["action"] == 'argo-submit':
-                    logging.info('Got a argo submission. Submitting.')
-                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=parsed['params'])
+                if parsed["action"] == 'argo-verify-overforingspakke':
+                    logging.info('Got an argo submission of an overforingspakke. Submitting.')
+                    params = get_workflow_parameters(avscan_tag, mailer_tag, parsed['params'])
+                    argo_submit(workflowfile=os.getenv('WORKFLOW'), params=params, namespace=namespace)
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
                         logging.info('Ignoring shutdown message.')
