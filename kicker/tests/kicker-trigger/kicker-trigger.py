@@ -27,7 +27,7 @@ def get_params() -> dict:
 
 def create_message(params: dict) -> dict:
     return {
-        'action': 'argo-submit-overforingspakke',
+        'action': 'argo-verify-overforingspakke',
         'params': params,
     }
 

@@ -74,7 +74,7 @@ def argo_submit(params):
     conn_str = os.getenv('AZ_SB_CON_KICKER')
     queue = os.getenv('AZ_SB_QUEUE')
     message = {
-        'action': 'argo-submit-overforingspakke',
+        'action': 'argo-verify-overforingspakke',
         'params': params,
     }
     qsender = get_sb_sender(conn_str, queue)

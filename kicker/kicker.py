@@ -110,7 +110,7 @@ def runq():
                 parsed = json.loads(msg)
 
                 # Here we actually look at the message and decide what to do with it.
-                if parsed["action"] == 'argo-submit-overforingspakke':
+                if parsed["action"] == 'argo-verify-overforingspakke':
                     logging.info('Got an argo submission of an overforingspakke. Submitting.')
                     params = get_workflow_parameters(avscan_tag, mailer_tag, parsed['params'])
                     argo_submit(workflowfile=os.getenv('WORKFLOW'), params=params, namespace=namespace)

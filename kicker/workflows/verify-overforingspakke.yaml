@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: process-overforingspakke-
+  generateName: verify-overforingspakke-
 spec:
   entrypoint: verify-overforingspakke
   templates:
