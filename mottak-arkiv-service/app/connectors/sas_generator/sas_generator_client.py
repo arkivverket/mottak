@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 from httpx import AsyncClient, HTTPError
-from uuid import UUID
 
 from app.connectors.sas_generator.models import SASResponse, SASTokenRequest
 
