@@ -4,14 +4,14 @@ from fastapi import APIRouter, status, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.connectors.arkiv_downloader.queues.ArchiveDownloadRequestSender import ArchiveDownloadRequestSender
-from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_secret, get_tusd_url, \
     get_tusd_download_location_container
 from app.connectors.mailgun.mailgun_client import MailgunClient
+from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.domain import arkivuttrekk_service
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiNotFound, \
-    SASTokenPreconditionFailed
+    SASTokenPreconditionFailed, ArkivkopiOfArchiveNotFound, ArkivkopiOfOverforingspakkeNotFound
 from app.routers.dto.Arkivkopi import Arkivkopi
 from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
 from app.routers.dto.Invitasjon import Invitasjon
@@ -129,6 +129,6 @@ async def request_download_of_overforingspakke(
 async def router_get_download_status_of_overforingspakke(id: int, db: Session = Depends(get_db_session)):
     try:
         return await arkivuttrekk_service.get_arkivkopi_status_of_overforingspakke(id, db)
-    except ArkivkopiNotFound as err:
+    except ArkivkopiOfOverforingspakkeNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
