@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """ Scans a tar archive stored in a objectstore """
-# pylint: disable=logging-fstring-interpolation
 
 import os
 import sys
@@ -26,6 +26,9 @@ MEGABYTES = 1024 ** 2
 UINT_MAX = 2**32-1
 
 # Exit values
+UNKNOWNERROR = 1
+AZUREERROR = 2
+OBJECTERROR = 3
 CLAMAVERROR = 10
 
 
@@ -36,7 +39,7 @@ def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
         t_f = tarfile.open(fileobj=stream, mode='r|')
         tar_iterator = TarfileIterator(t_f)
     except Exception as exception:
-        logging.critical(f'Failed to open stream to object {stream}')
+        logging.critical(f'Failed to open stream to object {stream.client.container_name}/{stream.client.blob_name}')
         logging.critical(f'Error: {exception}')
         raise exception
     return tar_iterator, t_f
@@ -69,7 +72,7 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
                 f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
             result = clamd_socket.scan_stream(tar_member)
 
-            # No virus found
+            # No viruses found
             if result is None:
                 clean += 1
                 logging.info(f'clean - {file_name}')
@@ -97,17 +100,16 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
 def main():
     """ Run from here, really """
     logging.basicConfig(level=logging.INFO, filename='/tmp/avlog', filemode='w',
-                        format='%(asctime)s %(levelname)s %(message)s')
+                        format='%(asctime)s | %(levelname)s | %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info("Starting s3-scan-tar")
 
+    # Also known as a Contaienr in Azure Blob Storage
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
 
-    logging.info("Starting s3-scan-tar")
-    logging.info(
-        f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
-
     # Test the access to the object stream, so we can return early if there are any issues
+    logging.info('Initialising connection to Azure Blob Storage')
     try:
         storage = ArkivverketObjectStorage()
         obj = storage.download_stream(bucket, objectname)
@@ -116,17 +118,15 @@ def main():
         # object_stream = open(objectname,'br')
         # print("Local File opened:", object_stream)
     except ObjectDoesNotExistError:
-        logging.critical(
-            f'An error occured while getting the object handle {objectname} in bucket {bucket}')
-        sys.exit(CLAMAVERROR)
+        logging.critical(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
+        sys.exit(OBJECTERROR)
     except IOError:
-        logging.critical(
-            f'An error occuder while loading the file {objectname}')
-        sys.exit(CLAMAVERROR)
+        logging.critical(f'An error occuder while loading the file {objectname}')
+        sys.exit(OBJECTERROR)
     except Exception as exception:
         logging.critical("Unkown error occured while getting the object")
         logging.critical(exception)
-        sys.exit(CLAMAVERROR)
+        sys.exit(UNKNOWNERROR)
 
     # Starts freshclamd daemon, which allows the databases to be updated while running, if the scanning takes a while
     logging.info("Refreshing ClamAV signatures")
@@ -136,16 +136,14 @@ def main():
     logging.info("Starting ClamAV")
     os.system("clamd &")
 
+    logging.info('Initialising connection to clamd')
     try:
-        logging.info("Waiting for clamd to be ready")
         wait_for_port(3310)
+        clamd_socket = ClamdUnixSocket()
+        logging.info(f'Connected to clamd version {clamd_socket.version()}')
     except TimeoutError as exception:
         logging.critical(exception)
         sys.exit(CLAMAVERROR)
-
-    try:
-        clamd_socket = ClamdUnixSocket()
-        logging.info(f'Connected to Clamd {clamd_socket.version()}')
     except FileNotFoundError as exception:
         logging.critical("Could not find a clamd socket")
         logging.critical(exception)
@@ -154,6 +152,8 @@ def main():
         logging.critical("Could not connect to clamd socket")
         logging.critical(exception)
         sys.exit(CLAMAVERROR)
+
+    logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
     scan_ret = scan_archive(object_stream, clamd_socket)
 
     logging.info(f"{scan_ret.clean} files scanned and found clean")
