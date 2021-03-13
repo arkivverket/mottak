@@ -24,7 +24,6 @@ RUN poetry config virtualenvs.in-project true \
 
 FROM python:3.8-slim
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-WORKDIR /app
 
 ENV PATH=/app/.venv/bin:${PATH}
 
@@ -42,7 +41,4 @@ COPY --chown=clamav app/ /app/
 COPY --chown=clamav conf/ /etc/clamav/
 
 USER clamav
-
-# If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
-# COPY gcs.json /opt
-CMD ["/app/scanner.py"]
+CMD ["python", "-m", "app.scanner"]
