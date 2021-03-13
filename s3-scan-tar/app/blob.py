@@ -7,6 +7,10 @@ from azure.storage.blob import BlobClient
 from azure.core.exceptions import ResourceNotFoundError
 
 DEFAULT_BUFFER_SIZE = 32 * 1024 ** 2
+WHENCE_START = 0
+WHENCE_CURRENT = 1
+WHENCE_END = 2
+WHENCE_CHOICES = (WHENCE_START, WHENCE_CURRENT, WHENCE_END)
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +140,7 @@ class Blob(io.BufferedIOBase):
         self._reader = None
 
     # io.BufferedIOBase methods.
-    def seek(self, offset, whence=0):
+    def seek(self, offset, whence=WHENCE_START):
         """Seek to the specified position.
 
         :param int offset: The offset in bytes.
@@ -145,11 +149,11 @@ class Blob(io.BufferedIOBase):
         Returns the position after seeking."""
         logger.debug(f"seeking to offset: {offset} whence: {whence}")
         if whence not in (0, 1, 2):
-            raise ValueError(f"invalid whence {whence}, expected one of (0, 1, 2)")
+            raise ValueError(f"invalid whence {whence}, expected one of {WHENCE_CHOICES}")
 
-        if whence == 0:
+        if whence == WHENCE_START:
             new_position = offset
-        elif whence == 1:
+        elif whence == WHENCE_CURRENT:
             new_position = self._position + offset
         else:
             new_position = self.size + offset
