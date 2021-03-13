@@ -23,7 +23,6 @@ RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev
 
 FROM python:3.8-slim
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV PATH=/app/.venv/bin:${PATH}
 
