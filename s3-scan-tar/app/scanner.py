@@ -89,9 +89,9 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
             continue
 
         tar_member = tar_file.extractfile(member)
-        if tar_member is None:
+        if tar_member is None or member.size == 0:
             # Handle is none - likely a directory.
-            logging.debug("Handle is none. Skipping...")
+            logging.debug(f"Handle ({member.name}) is none. Skipping...")
             continue
         try:
             logging.info(f'Scanning {member.name} at {sizeof_fmt(member.size)}...')
