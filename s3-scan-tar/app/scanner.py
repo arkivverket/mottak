@@ -14,7 +14,7 @@ from libcloud.storage.types import ObjectDoesNotExistError
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
-from typing import Tuple
+from typing import Any, Tuple
 
 try:
     from dotenv import load_dotenv
@@ -68,7 +68,7 @@ def get_clam() -> ClamdUnixSocket:
     return csock
 
 
-def stream_tar(stream):
+def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     try:
@@ -81,7 +81,7 @@ def stream_tar(stream):
     return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
+def scan_archive(tar_file, clamd_socket: ClamdUnixSocket, limit: int) -> Tuple[int, int, int]:
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
