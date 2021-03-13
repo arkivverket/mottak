@@ -68,9 +68,8 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
             logging.debug(f"Handle ({file_name}) is none. Skipping...")
             continue
         try:
-            logging.info(
-                f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
-            result = clamd_socket.scan_stream(tar_member)
+            logging.info(f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
+            result = clamd_socket.scan_stream(stream=tar_member, chunk_size=buffer_size)
 
             # No viruses found
             if result is None:
