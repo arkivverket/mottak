@@ -10,7 +10,7 @@ import tarfile
 from collections import namedtuple
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
-from typing import Any, Tuple
+from typing import Tuple
 from azure.storage.blob import BlobClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 
@@ -34,50 +34,25 @@ OBJECTERROR = 3
 CLAMAVERROR = 10
 
 
-class TarfileIterator:
-    """
-    Creates an iteratable object from a tarfile. Used for syntactical sugar, mostly.
-    Example:
-    tf = tarfile.open(fileobj=file_stream, mode='r|')
-    mytfi = iter(TarfileIterator(tf))
-    for file in mytfi:
-        handle = tf.extractfile(member)
-    """
-
-    def __init__(self, tarfileobject):
-        self.tarfileobject = tarfileobject
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        nextmember = self.tarfileobject.next()
-        if nextmember:
-            return nextmember
-        raise StopIteration
-
-
-def stream_tar(stream: Blob) -> Tuple[Any, tarfile.TarFile]:
+def stream_tar(stream: Blob) -> tarfile.TarFile:
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     try:
-        t_f = tarfile.open(fileobj=stream, mode='r|')
-        tar_iterator = TarfileIterator(t_f)
+        tar_file = tarfile.open(fileobj=stream, mode='r|')
     except Exception as exception:
         logging.critical(f'Failed to open stream to object {stream.client.container_name}/{stream.client.blob_name}')
         logging.critical(f'Error: {exception}')
         raise exception
-    return tar_iterator, t_f
+    return tar_file
 
 
 def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) -> Tuple[int, int, int]:
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
-    tar_stream, tar_file = stream_tar(blob)
+    tar_file = stream_tar(blob)
 
-    # By using continue, we technically use the tarfile.next() function via the TarfileIterator wrapper
-    for member in tar_stream:
+    for member in tar_file:
         file_name = fix_encoding(member.name)
         # The file is larger than the ClamAV max file size (4GiB)
         if member.size > UINT_MAX:
