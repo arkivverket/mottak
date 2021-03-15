@@ -73,46 +73,33 @@ class SASTokenPreconditionFailed(Exception):
         return self.message
 
 
-class ArkivkopiOfArchiveNotFound(Exception):
+class ArkivkopiNotFound(Exception):
     """
-      Exception raised when arkivkopi of an archive doesn't exist in database for the given invitasjon id
+    Exception raised when arkivkopi of an archive doesn't exist in database for the given invitasjon id
 
-      Attributes:
-          arkivuttrekk_obj_id -- UUID of the arkivuttrekk object id
-          invitasjon_id -- Integer ID for the invitasjon in the database
-          message -- explanation of the error
-      """
-
-    def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int):
+    Attributes:
+        arkivuttrekk_obj_id -- UUID of the arkivuttrekk object id
+        invitasjon_id -- Integer ID for the invitasjon in the database
+        is_object -- Boolean flag indicating if this arkivkopi is a copy of a whole archive (is_object=False)
+                     or an overforingspakke (is_object=True)
+        message -- explanation of the error
+    """
+    def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int, is_object: bool):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
-        self.message = f"Fant ikke arkivkopi av et arkiv: " \
-                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id} - invitasjon_id={self.invitasjon_id}"
-        super().__init__(self.message)
+        self.is_object = is_object
+        self.message = self.get_message()
 
     def __str__(self):
         return self.message
 
-
-class ArkivkopiOfOverforingspakkeNotFound(Exception):
-    """
-      Exception raised when arkivkopi of an overforingspakke doesn't exist in database for the given invitasjon id
-
-      Attributes:
-          arkivuttrekk_obj_id -- UUID of the arkivuttrekk object id
-          invitasjon_id -- Integer ID for the invitasjon in the database
-          message -- explanation of the error
-      """
-
-    def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int):
-        self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
-        self.invitasjon_id = invitasjon_id
-        self.message = f"Fant ikke arkivkopi av en overføringspakke: " \
-                       f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id} - invitasjon_id={self.invitasjon_id}"
-        super().__init__(self.message)
-
-    def __str__(self):
-        return self.message
+    def get_message(self) -> str:
+        if self.is_object:
+            message = "Fant ikke arkivkopi av en overforingspakke: "
+        else:
+            message = "Fant ikke arkivkopi av et arkiv: "
+        message += f"arkivuttrekk objekt id={self.arkivuttrekk_obj_id} - invitasjon_id={self.invitasjon_id}"
+        return message
 
 
 class ArkivkopiOfArchiveRequestFailed(Exception):
