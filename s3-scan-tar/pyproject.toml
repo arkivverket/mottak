@@ -6,8 +6,8 @@ authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
 pyClamd = "^0.4.0"
+azure-storage-blob = "^12.8.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"

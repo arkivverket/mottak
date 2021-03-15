@@ -8,11 +8,13 @@ import logging
 import tarfile
 
 from collections import namedtuple
-from libcloud.storage.types import ObjectDoesNotExistError
-from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
 from typing import Any, Tuple
+from azure.storage.blob import BlobClient
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+
+from app.blob import Blob, DEFAULT_BUFFER_SIZE
 from app.utils import sizeof_fmt, wait_for_port, fix_encoding
 
 try:
@@ -32,7 +34,30 @@ OBJECTERROR = 3
 CLAMAVERROR = 10
 
 
-def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
+class TarfileIterator:
+    """
+    Creates an iteratable object from a tarfile. Used for syntactical sugar, mostly.
+    Example:
+    tf = tarfile.open(fileobj=file_stream, mode='r|')
+    mytfi = iter(TarfileIterator(tf))
+    for file in mytfi:
+        handle = tf.extractfile(member)
+    """
+
+    def __init__(self, tarfileobject):
+        self.tarfileobject = tarfileobject
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        nextmember = self.tarfileobject.next()
+        if nextmember:
+            return nextmember
+        raise StopIteration
+
+
+def stream_tar(stream: Blob) -> Tuple[Any, tarfile.TarFile]:
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     try:
@@ -45,16 +70,16 @@ def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
     return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int]:
+def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) -> Tuple[int, int, int]:
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
-    tar_stream, tar_file = stream_tar(tar_file)
+    tar_stream, tar_file = stream_tar(blob)
 
     # By using continue, we technically use the tarfile.next() function via the TarfileIterator wrapper
     for member in tar_stream:
         file_name = fix_encoding(member.name)
-        # The file is larger that the limit
+        # The file is larger than the ClamAV max file size (4GiB)
         if member.size > UINT_MAX:
             skipped += 1
             logging.warning(
@@ -102,27 +127,32 @@ def main():
     logging.basicConfig(level=logging.INFO, filename='/tmp/avlog', filemode='w',
                         format='%(asctime)s | %(levelname)s | %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
+    logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.ERROR)
     logging.info("Starting s3-scan-tar")
 
     # Also known as a Contaienr in Azure Blob Storage
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
+    buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
 
     # Test the access to the object stream, so we can return early if there are any issues
     logging.info('Initialising connection to Azure Blob Storage')
     try:
-        storage = ArkivverketObjectStorage()
-        obj = storage.download_stream(bucket, objectname)
-        object_stream = MakeIterIntoFile(obj)
-        # If you wanna test this on local files do something like this:
-        # object_stream = open(objectname,'br')
-        # print("Local File opened:", object_stream)
-    except ObjectDoesNotExistError:
+        blob = Blob(
+            BlobClient.from_connection_string(
+                conn_str=os.getenv("AZURE_STORAGE_CONNECTION_STRING"),
+                container_name=bucket,
+                blob_name=objectname
+            ),
+            buffer_size,
+        )
+        logging.info(f'Connected to Azure with API version {blob.client.api_version}')
+    except ResourceNotFoundError:
         logging.critical(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
         sys.exit(OBJECTERROR)
-    except IOError:
-        logging.critical(f'An error occuder while loading the file {objectname}')
-        sys.exit(OBJECTERROR)
+    except ClientAuthenticationError:
+        logging.critical('An error occured while connecting to Azure, please check the credentials')
+        sys.exit(AZUREERROR)
     except Exception as exception:
         logging.critical("Unkown error occured while getting the object")
         logging.critical(exception)
@@ -154,7 +184,8 @@ def main():
         sys.exit(CLAMAVERROR)
 
     logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
-    scan_ret = scan_archive(object_stream, clamd_socket)
+    logging.info(f'Buffer size is set to {sizeof_fmt(buffer_size)}')
+    scan_ret = scan_archive(blob, clamd_socket, buffer_size)
 
     logging.info(f"{scan_ret.clean} files scanned and found clean")
     logging.info(f"{scan_ret.virus} viruses found")
