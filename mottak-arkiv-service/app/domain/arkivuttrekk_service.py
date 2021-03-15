@@ -16,7 +16,7 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus, Invitasjon
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
     ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
-    ArkivkopiOfOverforingspakkeNotFound, ArkivkopiOfArchiveNotFound
+    ArkivkopiOfOverforingspakkeNotFound, ArkivkopiOfArchiveNotFound, ArkivkopiNotFound
 
 ZERO_GENERATION = "0"
 TAR_SUFFIX = ".tar"
@@ -138,12 +138,12 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
     return result
 
 
-async def get_arkivkopi_status_of_archive(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session, is_object: bool) -> Arkivkopi_DBO:
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
-    arkivkopi = arkivkopi_repository.get_archive_by_invitasjonId_newest(db, invitasjon.id)
+    arkivkopi = arkivkopi_repository.get_by_invitasjon_id_and_is_object_newest(db, invitasjon.id, is_object)
     if not arkivkopi:
         obj_id = _get_obj_id(arkivuttrekk_id, db)
-        raise ArkivkopiOfArchiveNotFound(obj_id, invitasjon.id)
+        raise ArkivkopiNotFound(obj_id, invitasjon.id, is_object)
     return arkivkopi
 
 
@@ -184,12 +184,3 @@ def _get_source_name(invitasjon_id: int, db: Session) -> str:
 
 def _get_obj_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
     return arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id).obj_id
-
-
-async def get_arkivkopi_status_of_overforingspakke(arkivuttrekk_id: int, db: Session) -> Arkivkopi_DBO:
-    invitasjon = _get_invitasjon(arkivuttrekk_id, db)
-    arkivkopi = arkivkopi_repository.get_overforingspakke_by_invitasjonId_newest(db, invitasjon.id)
-    if not arkivkopi:
-        obj_id = _get_obj_id(arkivuttrekk_id, db)
-        raise ArkivkopiOfOverforingspakkeNotFound(obj_id, invitasjon.id)
-    return arkivkopi
