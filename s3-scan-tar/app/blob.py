@@ -6,7 +6,7 @@ import logging
 from azure.storage.blob import BlobClient
 from azure.core.exceptions import ResourceNotFoundError
 
-DEFAULT_BUFFER_SIZE = 32 * 1024 ** 2
+DEFAULT_BUFFER_SIZE = 4 * 1024 ** 2
 WHENCE_START = 0
 WHENCE_CURRENT = 1
 WHENCE_END = 2
