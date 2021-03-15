@@ -142,8 +142,8 @@ async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session, is_object: boo
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
     arkivkopi = arkivkopi_repository.get_by_invitasjon_id_and_is_object_newest(db, invitasjon.id, is_object)
     if not arkivkopi:
-        obj_id = arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id).obj_id
-        raise ArkivkopiNotFound(obj_id, invitasjon.id, is_object)
+        arkivuttrekk = arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id)
+        raise ArkivkopiNotFound(arkivuttrekk.obj_id, invitasjon.id, is_object)
     return arkivkopi
 
 
