@@ -12,6 +12,7 @@ spec:
             template: checksum-check
           - name: task-avscan
             template: avscan
+            dependencies: [ task-checksum ]
           - name: task-notify-coordinator
             template: notify-coordinator
             dependencies: [ task-avscan ]
