@@ -108,6 +108,7 @@ def main():
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
     buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
+    max_concurrency = int(os.getenv("MAX_CONCURRENCY", 32))
 
     # Test the access to the object stream, so we can return early if there are any issues
     logging.info('Initialising connection to Azure Blob Storage')
@@ -118,6 +119,7 @@ def main():
                 container_name=bucket,
                 blob_name=objectname
             ),
+            max_concurrency,
             buffer_size,
         )
         logging.info(f'Connected to Azure with API version {blob.client.api_version}')

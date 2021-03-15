@@ -18,10 +18,11 @@ logger = logging.getLogger(__name__)
 class _Reader:
     """Read an Azure Blob Storage file."""
 
-    def __init__(self, client: BlobClient, size: int) -> None:
+    def __init__(self, client: BlobClient, size: int, concurrency: int) -> None:
         self._client = client
         self._size = size
         self._position = 0
+        self._concurrency = concurrency
 
     def seek(self, position: int) -> int:
         self._position = position
@@ -39,10 +40,11 @@ class _Reader:
         if self._size == self._position:
             return b""
         elif size == -1:
-            stream = self._client.download_blob(offset=self._position)
+            stream = self._client.download_blob(offset=self._position, max_concurrency=self._concurrency)
         else:
             stream = self._client.download_blob(
                 offset=self._position,
+                max_concurrency=self._concurrency,
                 length=size,
             )
 
@@ -118,6 +120,7 @@ class Blob(io.BufferedIOBase):
     def __init__(
         self,
         client: BlobClient,
+        concurrency: int,
         buffer_size: int = DEFAULT_BUFFER_SIZE,
     ):
         self.client = client
@@ -129,7 +132,7 @@ class Blob(io.BufferedIOBase):
         except KeyError:
             self.size = 0
 
-        self._reader = _Reader(self.client, self.size)
+        self._reader = _Reader(self.client, self.size, concurrency)
         self._position = 0
         self._buffer = _Buffer(buffer_size)
 
