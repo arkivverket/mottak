@@ -8,6 +8,8 @@ spec:
     - name: verify-overforingspakke
       dag:
         tasks:
+          - name: task-checksum
+            template: checksum-check
           - name: task-avscan
             template: avscan
           - name: task-notify-coordinator
@@ -17,6 +19,40 @@ spec:
               artifacts:
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+
+    - name: checksum-check
+      container:
+        image: arkivverket.azurecr.io/da-mottak/s3-checksum256:{{workflow.parameters.CHECKSUM_TAG}}
+        imagePullPolicy: Always
+        env:
+          - name: TUSD_OBJECT_NAME
+            value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
+          - name: SJEKKSUM
+            value: "{{workflow.parameters.SJEKKSUM}}"
+          - name: OBJECTSTORE
+            value: abs
+          - name: BUCKET
+            value: "tusd-storage"
+          - name: AZURE_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-name
+                key: storageaccount-name
+          - name: AZURE_KEY
+            valueFrom:
+              secretKeyRef:
+                name: storageaccount-key
+                key: storageaccount-key
+      outputs:
+        parameters:
+          - name: checksum_result
+            valueFrom:
+              path: /tmp/result
+        artifacts:
+          - name: checksumlog
+            path: "/tmp/checksum.log"
+            archive:
+              none: {}
 
     - name: avscan
       container:
