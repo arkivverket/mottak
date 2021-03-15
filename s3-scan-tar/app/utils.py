@@ -12,7 +12,7 @@ def sizeof_fmt(size: int) -> str:
         if abs(size) < 1024.0:
             return "%3.1f %s%s" % (size, unit, "B")
         size /= 1024.0
-    return "%.1f%s%s" % (size, "Yi", "B")
+    return "%.1f %s%s" % (size, "Yi", "B")
 
 
 def wait_for_port(port: int, host: str = "localhost", timeout: float = 30.0):
