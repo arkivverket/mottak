@@ -116,9 +116,8 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
 
 def main() -> None:
     """ Run from here, really """
-    logging.basicConfig(
-        level=logging.INFO, filename="/tmp/avlog", filemode="w", format="%(asctime)s | %(levelname)s | %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, filename=os.getenv("AVLOG", "/tmp/avlog"),
+                        filemode="w", format="%(asctime)s | %(levelname)s | %(message)s")
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
     logging.info("Starting s3-scan-tar")
