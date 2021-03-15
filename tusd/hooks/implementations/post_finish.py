@@ -51,6 +51,7 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
     # define en workflow parameters
     params = {
         'TUSD_OBJEKT_NAVN': hook_data.objekt_navn,
+        'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,
         'KOORDINATOR_EPOST': data_from_db.koordinator_epost,
         'ARKIVUTTREKK_OBJ_ID': data_from_db.arkivuttrekk_obj_id
