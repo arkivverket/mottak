@@ -1,3 +1,6 @@
+__blobstorage__/**
+__azurite_db_blob__.json
+__azurite_db_blob_extent__.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
