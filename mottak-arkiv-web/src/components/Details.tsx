@@ -1,15 +1,12 @@
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect } from 'react'
 import { Divider, Grid, List, ListItem, CircularProgress, Typography, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
 
 import { AlertContext } from './WorkArea'
-import { ArkivUttrekk, ArkivkopiStatus, ArkivkopiStatusRequest } from '../types/sharedTypes'
-import { useGetOnMount, useRequest } from 'src/hooks'
-import { validateArkivopiStatus } from 'src/utils'
-
-type DownloadStatusState = ArkivkopiStatus | 'Ukjent status' | 'Ikke bestilt'
+import { ArkivUttrekk, ArkivkopiStatus } from '../types/sharedTypes'
+import { useGetOnMount, useArkivkopi } from 'src/hooks'
 
 const useStyles = makeStyles((theme) => ({
 	list: {
@@ -43,61 +40,30 @@ const Details: React.FC = (): JSX.Element => {
 
 	const statusInterval = 10 * 1000
 
-	const [downloadStatus, setDownloadStatus] = useState<DownloadStatusState>('Ikke bestilt')
-	const [overforingspakkeStatus, setOverforingspakkeStatus] = useState<DownloadStatusState>('Ikke bestilt')
-	const [disableBestillingButton, setDisableBestillingButton] = useState<boolean>(false)
-	const [disableOverforingspakkeButton, setDisableOverforingspakkeButton] = useState<boolean>(false)
-
-	const [loadingArkivkopiStatus, setLoadingArkivkopiStatus] = useState<boolean>(false)
-	const [loadingOverforingspakkeStatus, setLoadingOverforingspakkeStatus] = useState<boolean>(false)
-
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
-	const { data: dataArkivkopiStatus, performRequest: getArkivkopiStatus } = useRequest<ArkivkopiStatusRequest>()
-
 	const {
-		data: dataOverforingspakkeStatus,
-		performRequest: getOverforingspakkeStatus,
-	} = useRequest<ArkivkopiStatusRequest>()
-
-	const {
-		data: dataArkivkopi,
+		status: downloadStatus,
 		loading: loadingArkivkopi,
+		disable: disableBestillingButton,
 		error: errorArkivkopi,
-		performRequest: performRequestArkivkopi,
-	} = useRequest<ArkivkopiStatusRequest>()
+		performRequest: requestArkivkopi,
+	} = useArkivkopi({
+		url: `/arkivuttrekk/${id}/bestill_nedlasting`,
+		statusInterval,
+	})
 
 	const {
 		data: dataOverforingspakke,
+		status: overforingspakkeStatus,
 		loading: loadingOverforingspakke,
+		disable: disableOverforingspakkeButton,
 		error: errorOverforingspakke,
-		performRequest: performRequestOverforingspakke,
-	} = useRequest<ArkivkopiStatusRequest>()
-
-	// Disabled the "Bestill nedlastning" button, and send a request to the backend
-	const requestArkivkopi = useCallback(async () => {
-		// If someone re-enables the button manually, return early
-		if (disableBestillingButton) return
-
-		setDisableBestillingButton(true)
-		setLoadingArkivkopiStatus(true)
-		await performRequestArkivkopi({
-			url: `/arkivuttrekk/${id}/bestill_nedlasting`,
-			method: 'POST',
-		})
-	}, [disableBestillingButton, id, performRequestArkivkopi])
-
-	const requestOverforingspakke = useCallback(async () => {
-		// If someone re-enables the button manually, return early
-		if (disableOverforingspakkeButton) return
-
-		setDisableOverforingspakkeButton(true)
-		setLoadingOverforingspakkeStatus(false)
-		await performRequestOverforingspakke({
-			url: `/arkivuttrekk/${id}/overforingspakke/bestill_nedlasting`,
-			method: 'POST',
-		})
-	}, [disableOverforingspakkeButton, id, performRequestOverforingspakke])
+		performRequest: requestOverforingspakke,
+	} = useArkivkopi({
+		url: `/arkivuttrekk/${id}/overforingspakke/bestill_nedlasting`,
+		statusInterval,
+	})
 
 	/**
 	 * Collective error handling
@@ -117,10 +83,6 @@ const Details: React.FC = (): JSX.Element => {
 				msg: errorArkivkopi?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
 				type: 'error',
 			})
-
-			// Reset order button
-			setDisableBestillingButton(false)
-			setLoadingArkivkopiStatus(false)
 		}
 
 		if (errorOverforingspakke) {
@@ -128,86 +90,8 @@ const Details: React.FC = (): JSX.Element => {
 				msg: errorOverforingspakke?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
 				type: 'error',
 			})
-
-			// Reset button
-			setDisableOverforingspakkeButton(false)
-			setLoadingOverforingspakkeStatus(false)
 		}
-	}, [error, errorArkivkopi, setAlertContent, errorOverforingspakke])
-
-	useLayoutEffect(() => {
-		getArkivkopiStatus({
-			url: `/arkivuttrekk/${id}/bestill_nedlasting/status`,
-		})
-
-		getOverforingspakkeStatus({
-			url: `/arkivuttrekk/${id}/overforingspakke/bestill_nedlasting/status`,
-		})
-
-		const interval = setInterval(() => {
-			getArkivkopiStatus({
-				url: `/arkivuttrekk/${id}/bestill_nedlasting/status`,
-			})
-
-			getOverforingspakkeStatus({
-				url: `/arkivuttrekk/${id}/overforingspakke/bestill_nedlasting/status`,
-			})
-		}, statusInterval)
-
-		return () => {
-			clearInterval(interval)
-		}
-
-		// @TODO: Figure out why useRequest causes infinte requests
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	useLayoutEffect(() => {
-		if (!dataArkivkopiStatus) return
-		const { status } = dataArkivkopiStatus
-
-		// Validate the incoming status. We'll set it to "Ukjent status" if the status is not yet implemented in ArkivkopiStatus
-		setDownloadStatus(validateArkivopiStatus(status) ? status : 'Ukjent status')
-		setLoadingArkivkopiStatus(false)
-
-		switch (status) {
-			case ArkivkopiStatus.FEILET:
-				setDisableBestillingButton(false)
-				break
-
-			default:
-				setDisableBestillingButton(true)
-				break
-		}
-	}, [dataArkivkopiStatus])
-
-	useLayoutEffect(() => {
-		if (!dataOverforingspakkeStatus) return
-		const { status } = dataOverforingspakkeStatus
-
-		// Validate the incoming status. We'll set it to "Ukjent status" if the status is not yet implemented in ArkivkopiStatus
-		setOverforingspakkeStatus(validateArkivopiStatus(status) ? status : 'Ukjent status')
-		setLoadingOverforingspakkeStatus(false)
-
-		switch (status) {
-			case ArkivkopiStatus.FEILET:
-				setDisableOverforingspakkeButton(false)
-				break
-
-			default:
-				setDisableOverforingspakkeButton(true)
-				break
-		}
-	}, [dataOverforingspakkeStatus])
-
-	/**
-	 * This is triggered after pressing the Bestill Nedlastning button.
-	 */
-	useLayoutEffect(() => {
-		if (!dataArkivkopi) return
-		setDownloadStatus(ArkivkopiStatus.BESTILT)
-		setLoadingArkivkopiStatus(false)
-	}, [dataArkivkopi])
+	}, [error, setAlertContent, errorArkivkopi, errorOverforingspakke])
 
 	return (
 		<>
@@ -289,7 +173,7 @@ const Details: React.FC = (): JSX.Element => {
 							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
 								Nedlastnings status:{' '}
 								<span style={{ fontWeight: 400 }}>
-									{loadingArkivkopiStatus ? <CircularProgress size="1rem" /> : downloadStatus.toLowerCase()}
+									{loadingArkivkopi ? <CircularProgress size="1rem" /> : downloadStatus.toLowerCase()}
 								</span>
 							</Typography>
 
@@ -310,7 +194,7 @@ const Details: React.FC = (): JSX.Element => {
 							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
 								Overføringspakke:{' '}
 								<span style={{ fontWeight: 400 }}>
-									{loadingOverforingspakkeStatus ? (
+									{loadingOverforingspakke ? (
 										<CircularProgress size="1rem" />
 									) : (
 										overforingspakkeStatus.toLowerCase()
