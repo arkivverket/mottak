@@ -15,7 +15,7 @@ def sizeof_fmt(size: int) -> str:
     return "%.1f%s%s" % (size, "Yi", "B")
 
 
-def wait_for_port(port, host="localhost", timeout=30.0):
+def wait_for_port(port: int, host: str = "localhost", timeout: float = 30.0):
     """Wait until a port starts accepting TCP connections.
     Args:
         port (int): Port number.

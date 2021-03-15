@@ -122,7 +122,7 @@ class Blob(io.BufferedIOBase):
         client: BlobClient,
         concurrency: int,
         buffer_size: int = DEFAULT_BUFFER_SIZE,
-    ):
+    ) -> None:
         self.client = client
         if self.client.exists() is False:
             raise ResourceNotFoundError(f"blob {self.client.blob_name} not found in {self.client.container_name}")
@@ -141,15 +141,15 @@ class Blob(io.BufferedIOBase):
         self._buffer = _Buffer(buffer_size)
 
     # Override some methods from io.IOBase.
-    def close(self):
-        """Flush and close this stream."""
+    def close(self) -> None:
+        """Break the blob lease, flush and close this stream."""
         self._blob_lease.break_lease()
         self._blob_lease = None
         self.client = None
         self._reader = None
 
     # io.BufferedIOBase methods.
-    def seek(self, offset, whence=WHENCE_START):
+    def seek(self, offset: int, whence: int = WHENCE_START) -> int:
         """Seek to the specified position.
 
         :param int offset: The offset in bytes.
@@ -173,11 +173,11 @@ class Blob(io.BufferedIOBase):
         self._buffer.empty()
         return self._position
 
-    def tell(self):
+    def tell(self) -> int:
         """Return the current position within the file."""
         return self._position
 
-    def read(self, size=-1):
+    def read(self, size: int = -1) -> bytes:
         """Read up to size bytes from the object and return them."""
         if size == 0:
             return b""
@@ -196,7 +196,7 @@ class Blob(io.BufferedIOBase):
         return self._read_from_buffer(size)
 
     # Internal methods.
-    def _read_from_buffer(self, size=-1):
+    def _read_from_buffer(self, size: int = -1) -> bytes:
         """Remove at most size bytes from our buffer and return them."""
         # logger.debug(f'reading {size} bytes from {len(self._buffer)} byte-long buffer')
         size = size if size >= 0 else len(self._buffer)
@@ -216,15 +216,15 @@ class Blob(io.BufferedIOBase):
                 logger.debug("reached EOF while filling buffer")
                 return True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"({self.__class__.__name__}, {self.client.container_name}, {self.client.blob_name})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}(container={self.client.container_name}, blob={self.client.blob_name})"
 
     # Allows usage in a `with` statement
     def __enter__(self):
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self.close()

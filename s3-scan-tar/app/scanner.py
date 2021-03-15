@@ -94,7 +94,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
     return ret(clean, virus, skipped)
 
 
-def main():
+def main() -> None:
     """ Run from here, really """
     logging.basicConfig(
         level=logging.INFO, filename="/tmp/avlog", filemode="w", format="%(asctime)s | %(levelname)s | %(message)s"
