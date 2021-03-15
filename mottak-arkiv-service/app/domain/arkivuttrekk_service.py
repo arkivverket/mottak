@@ -16,7 +16,7 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk
 from app.domain.models.Invitasjon import InvitasjonStatus, Invitasjon
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
     ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
-    ArkivkopiOfOverforingspakkeNotFound, ArkivkopiOfArchiveNotFound, ArkivkopiNotFound
+    ArkivkopiNotFound
 
 ZERO_GENERATION = "0"
 TAR_SUFFIX = ".tar"
