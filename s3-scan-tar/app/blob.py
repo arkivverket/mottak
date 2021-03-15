@@ -112,10 +112,7 @@ class _Buffer:
 
 
 class Blob(io.BufferedIOBase):
-    """Reads bytes from Azure Blob Storage.
-
-    :raises azure.core.exceptions.ResourceNotFoundError: Raised when the blob to read from does not exist.
-    """
+    """Reads bytes from Azure Blob Storage"""
 
     def __init__(
         self,
@@ -123,6 +120,16 @@ class Blob(io.BufferedIOBase):
         concurrency: int,
         buffer_size: int = DEFAULT_BUFFER_SIZE,
     ) -> None:
+        """Reads bytes from Azure Blob Storage
+
+        :param azure.storage.blob.BlobClient client:
+        :param int concurrency
+
+        :optional int buffer_size: how much of the stream to store in memory
+
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised when the blob to read from does not exist.
+        """
+
         self.client = client
         if self.client.exists() is False:
             raise ResourceNotFoundError(f"blob {self.client.blob_name} not found in {self.client.container_name}")
@@ -198,7 +205,7 @@ class Blob(io.BufferedIOBase):
     # Internal methods.
     def _read_from_buffer(self, size: int = -1) -> bytes:
         """Remove at most size bytes from our buffer and return them."""
-        # logger.debug(f'reading {size} bytes from {len(self._buffer)} byte-long buffer')
+        logger.debug(f"reading {size} bytes from {len(self._buffer)} byte-long buffer")
         size = size if size >= 0 else len(self._buffer)
         part = self._buffer.read(size)
         self._position += len(part)

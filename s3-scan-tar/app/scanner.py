@@ -35,8 +35,14 @@ CLAMAVERROR = 10
 
 
 def stream_tar(stream: Blob) -> tarfile.TarFile:
-    """Takes a stream and created both a tarfile object
-    as well as a TarfileIterator using the stream"""
+    """Takes a Blob stream and opens it as a tarfile
+
+    :param Blob stream: the incoming
+
+    :returns TarFile: opened tarfile ready for interaction
+
+    :raises Exception: if an error is encountered
+    """
     try:
         tar_file = tarfile.open(fileobj=stream, mode="r")
     except Exception as exception:
@@ -47,8 +53,22 @@ def stream_tar(stream: Blob) -> tarfile.TarFile:
 
 
 def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) -> Tuple[int, int, int]:
-    """Takes a tar_file typically a cloud storage object) and scans
-    it. Returns the named tuple (clean, virus, skipped)"""
+    """Takes a Blob stream and opens it as a tarfile and iterates over the files.
+    Each file is passed on to clamd for antivirus scan. If the the files is greater
+    than the 4GB limit, it is skipped, and the Blob stream is fast-forwarded to
+    the next file
+
+    A larger buffer_size might slow down the scanning, as it has to download more
+    of each file if they are >4GB before it can iterate further
+
+    :param Blob blob: the incoming blob stream
+    :param ClamdUnixSocket clamd_socket: ClamAV socket to connect to
+    :param int buffer_size: how much of the stream to store in memory
+
+    :returns Tuple[int, int, int]: a named tuple of the scan resutls (clean, virus, skippd)
+
+    :raises Exception: when an unkown error is encountered
+    """
     clean, virus, skipped = 0, 0, 0
     tar_file = stream_tar(blob)
 

@@ -6,7 +6,7 @@ def sizeof_fmt(size: int) -> str:
     """Convert bytes to human readable units using binary prefix (KiB, MiB), divisble by 1024
 
     :param int size: size in bytes
-    :returns Human readable size
+    :returns str: Human readable size
     """
     for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
         if abs(size) < 1024.0:
@@ -17,12 +17,12 @@ def sizeof_fmt(size: int) -> str:
 
 def wait_for_port(port: int, host: str = "localhost", timeout: float = 30.0):
     """Wait until a port starts accepting TCP connections.
-    Args:
-        port (int): Port number.
-        host (str): Host address on which the port should exist.
-        timeout (float): In seconds. How long to wait before raising errors.
-    Raises:
-        TimeoutError: The port isn't accepting connection after time specified in `timeout`.
+
+    :param int port: port number
+    :param str host: host address on which the port should exist
+    :param float timeout: in seconds, how long to wait before raising errors
+
+    :raises TimeoutError: when the port ins't accepting connection after time specified in `timeout`
     """
     start_time = time.perf_counter()
     while True:
@@ -38,6 +38,12 @@ def wait_for_port(port: int, host: str = "localhost", timeout: float = 30.0):
 
 
 def fix_encoding(string: str) -> str:
+    """Fixes æøåÆØÅ erros encountered if the file name is latin1 encoding in UTF-8
+
+    :param str string: the string to fix
+
+    :returns str: fixed UTF-8 string
+    """
     string.encode(encoding="UTF-8", errors="backslashreplace").decode("utf-8")
 
     replace_table = {}
