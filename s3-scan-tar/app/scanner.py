@@ -58,16 +58,6 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
-def get_clam() -> ClamdUnixSocket:
-    """Establishes a connection with clamd
-    :return: pyclamd socket object
-    There is no try/except here as we want this error to propagate up.
-    """
-    # ClamdUnixSocket finds the clamd socket by itself, by reading the /etc/clamav/clamd.conf file
-    csock = ClamdUnixSocket()
-    return csock
-
-
 def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
@@ -176,9 +166,8 @@ def main():
         sys.exit(CLAMAVERROR)
 
     try:
-        clamd_socket = get_clam()
-        clam_ver = clamd_socket.version()
-        logging.info(f'Connected to Clamd {clam_ver}')
+        clamd_socket = ClamdUnixSocket()
+        logging.info(f'Connected to Clamd {clamd_socket.version()}')
     except FileNotFoundError as exception:
         logging.critical("Could not find a clamd socket")
         logging.critical(exception)
