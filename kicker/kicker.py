@@ -28,6 +28,7 @@ UUIDERROR = 10
 ARGOERROR = 11
 SBERROR = 12
 
+CHECKSUM_TAG = "CHECKSUM_TAG"
 AVSCAN_TAG = "AVSCAN_TAG"
 MAILER_TAG = "MAILER_TAG"
 
@@ -66,12 +67,13 @@ def argo_submit(workflowfile, params, namespace):
     os.remove(paramfile)
 
 
-def get_workflow_parameters(avscan_tag: str, mailer_tag: str, params_from_message: dict) -> dict:
+def get_workflow_parameters(checksum_tag: str, avscan_tag: str, mailer_tag: str, params_from_message: dict) -> dict:
     """
     Functions that gets workflow parameters from the received message
     and appends image_tags of the containers used in the workflow
     """
     params = params_from_message
+    params[CHECKSUM_TAG] = checksum_tag
     params[AVSCAN_TAG] = avscan_tag
     params[MAILER_TAG] = mailer_tag
     return params
@@ -83,6 +85,7 @@ def runq():
     conn_str = os.getenv('AZ_SB_CON_KICKER')
     queue = os.getenv('AZ_SB_QUEUE')
     namespace = os.getenv('NAMESPACE')
+    checksum_tag = os.getenv('CHECKSUM_TAG')
     avscan_tag = os.getenv('AVSCAN_TAG')
     mailer_tag = os.getenv('MAILER_TAG')
     try:
@@ -112,7 +115,7 @@ def runq():
                 # Here we actually look at the message and decide what to do with it.
                 if parsed["action"] == 'argo-verify-overforingspakke':
                     logging.info('Got an argo submission of an overforingspakke. Submitting.')
-                    params = get_workflow_parameters(avscan_tag, mailer_tag, parsed['params'])
+                    params = get_workflow_parameters(checksum_tag, avscan_tag, mailer_tag, parsed['params'])
                     argo_submit(workflowfile=os.getenv('WORKFLOW'), params=params, namespace=namespace)
                 elif parsed["action"] == 'shutdown':
                     if not MQ_SHUTDOWN:
