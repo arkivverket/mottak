@@ -142,7 +142,7 @@ async def get_arkivkopi_status_of_archive(arkivuttrekk_id: int, db: Session) -> 
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
     arkivkopi = arkivkopi_repository.get_archive_by_invitasjonId_newest(db, invitasjon.id)
     if not arkivkopi:
-        obj_id = _get_obj_id_as_str(arkivuttrekk_id, db)
+        obj_id = _get_obj_id(arkivuttrekk_id, db)
         raise ArkivkopiOfArchiveNotFound(obj_id, invitasjon.id)
     return arkivkopi
 
@@ -182,15 +182,14 @@ def _get_source_name(invitasjon_id: int, db: Session) -> str:
     return overforingspakke.tusd_objekt_navn
 
 
-def _get_obj_id_as_str(arkivuttrekk_id: int, db: Session) -> str:
-    arkivuttrekk = arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id)
-    return str(arkivuttrekk.obj_id)
+def _get_obj_id(arkivuttrekk_id: int, db: Session) -> uuid.UUID:
+    return arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id).obj_id
 
 
 async def get_arkivkopi_status_of_overforingspakke(arkivuttrekk_id: int, db: Session) -> Arkivkopi_DBO:
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
     arkivkopi = arkivkopi_repository.get_overforingspakke_by_invitasjonId_newest(db, invitasjon.id)
     if not arkivkopi:
-        obj_id = _get_obj_id_as_str(arkivuttrekk_id, db)
+        obj_id = _get_obj_id(arkivuttrekk_id, db)
         raise ArkivkopiOfOverforingspakkeNotFound(obj_id, invitasjon.id)
     return arkivkopi

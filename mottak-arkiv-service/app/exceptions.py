@@ -1,7 +1,5 @@
 from uuid import UUID
 
-from app.connectors.arkiv_downloader.models import ArkivkopiRequestBlobInfo
-
 
 class MetadatafilNotFound(Exception):
     """
@@ -80,12 +78,12 @@ class ArkivkopiOfArchiveNotFound(Exception):
       Exception raised when arkivkopi of an archive doesn't exist in database for the given invitasjon id
 
       Attributes:
-          arkivuttrekk_obj_id -- String of the arkivuttrekk object id
+          arkivuttrekk_obj_id -- UUID of the arkivuttrekk object id
           invitasjon_id -- Integer ID for the invitasjon in the database
           message -- explanation of the error
       """
 
-    def __init__(self, arkivuttrekk_obj_id: str, invitasjon_id: int):
+    def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
         self.message = f"Fant ikke arkivkopi av et arkiv: " \
@@ -101,12 +99,12 @@ class ArkivkopiOfOverforingspakkeNotFound(Exception):
       Exception raised when arkivkopi of an overforingspakke doesn't exist in database for the given invitasjon id
 
       Attributes:
-          arkivuttrekk_obj_id -- String of the arkivuttrekk object id
+          arkivuttrekk_obj_id -- UUID of the arkivuttrekk object id
           invitasjon_id -- Integer ID for the invitasjon in the database
           message -- explanation of the error
       """
 
-    def __init__(self, arkivuttrekk_obj_id: str, invitasjon_id: int):
+    def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
         self.message = f"Fant ikke arkivkopi av en overføringspakke: " \
