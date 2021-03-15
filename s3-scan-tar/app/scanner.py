@@ -59,6 +59,23 @@ def sizeof_fmt(num, suffix='B'):
     return "%.1f%s%s" % (num, 'Yi', suffix)
 
 
+def fix_encoding(string: str) -> str:
+    string.encode(encoding="UTF-8", errors='backslashreplace').decode('utf-8')
+
+    replace_table = {}
+    replace_table['\udce6'] = 'æ'
+    replace_table['\udcf8'] = 'ø'
+    replace_table['\udce5'] = 'å'
+    replace_table['\udcc6'] = 'Æ'
+    replace_table['\udcd8'] = 'Ø'
+    replace_table['\udcc5'] = 'Å'
+
+    for search, replace in replace_table.items():
+        string = string.replace(search, replace)
+
+    return string
+
+
 def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
     """ Takes a stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
@@ -80,38 +97,39 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
 
     # By using continue, we technically use the tarfile.next() function via the TarfileIterator wrapper
     for member in tar_stream:
+        file_name = fix_encoding(member.name)
         # The file is larger that the limit
         if member.size > UINT_MAX:
             skipped += 1
             logging.warning(
-                f'Skipping {member.name} ({sizeof_fmt(member.size)}) because it exceeds the {sizeof_fmt(UINT_MAX)} size limit'
+                f'Skipping {file_name} ({sizeof_fmt(member.size)}) because it exceeds the {sizeof_fmt(UINT_MAX)} size limit'
             )
             continue
 
         tar_member = tar_file.extractfile(member)
         if tar_member is None or member.size == 0:
             # Handle is none - likely a directory.
-            logging.debug(f"Handle ({member.name}) is none. Skipping...")
+            logging.debug(f"Handle ({file_name}) is none. Skipping...")
             continue
         try:
-            logging.info(f'Scanning {member.name} at {sizeof_fmt(member.size)}...')
+            logging.info(f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
             result = clamd_socket.scan_stream(tar_member)
 
             # No virus found
             if result is None:
                 clean += 1
-                logging.info(f'clean - {member.name}')
+                logging.info(f'clean - {file_name}')
             else:
                 virus += 1
-                logging.critical(f'Virus found! {result["stream"][1]} in {member.name}')
+                logging.critical(f'Virus found! {result["stream"][1]} in {file_name}')
 
         except ConnectionResetError:
             skipped += 1
             logging.error('clamd reset the connection. Increase max scan size for clamd.')
-            logging.warning(f'SKIPPED (File too big) - {member.name}')
+            logging.warning(f'SKIPPED (File too big) - {file_name}')
             continue
         except Exception as exception:
-            logging.error(f"Failed to scan {member.name}")
+            logging.error(f"Failed to scan {file_name}")
             logging.error(f'Error: {exception}')
             raise exception
 
