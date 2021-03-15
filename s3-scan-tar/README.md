@@ -20,7 +20,33 @@ The values given here are examples or hints to proper variables.
 - AZURE_STORAGE_CONNECTION_STRING=***
 ```
 
-### Running locally
+### Running locally (docker)
 If you are running Docker for Mac locally, you have to assign the Docker VM more memory and/or SWAP space.
 
 Recommended is 4 GB SWAP and 4 GB up with memory, `clamd` is memory heavy whilst starting up, as it's loading its databases to memory.
+
+
+### Running locally (without clamd installed)
+Add this snippet to [`scanner.py`](app/scanner.py), which mocks the `ClamdUnixSocket` class and the `wait_for_port`. This allows to test the blob downlaod stream.
+
+```python
+class ClamdUnixSocket:
+    def __init__(*args, **kwargs) -> None:
+        """Mocks pylclamd.ClamdUnixSocket"""
+        pass
+
+    def scan_stream(*args, **kwargs) -> None:
+        return None
+
+    def version(*args, **kwargs) -> str:
+        return "1.0.0"
+
+
+def wait_for_port(*args):
+    pass
+```
+
+And start the scanner with this command
+```
+python -m app.scanner
+```
