@@ -6,8 +6,6 @@ import os
 import sys
 import logging
 import tarfile
-import socket
-import time
 
 from collections import namedtuple
 from libcloud.storage.types import ObjectDoesNotExistError
@@ -15,6 +13,7 @@ from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIt
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
 from typing import Any, Tuple
+from app.utils import sizeof_fmt, wait_for_port, fix_encoding
 
 try:
     from dotenv import load_dotenv
@@ -28,52 +27,6 @@ UINT_MAX = 2**32-1
 
 # Exit values
 CLAMAVERROR = 10
-
-
-def wait_for_port(port, host='localhost', timeout=5.0):
-    """Wait until a port starts accepting TCP connections.
-    Args:
-        port (int): Port number.
-        host (str): Host address on which the port should exist.
-        timeout (float): In seconds. How long to wait before raising errors.
-    Raises:
-        TimeoutError: The port isn't accepting connection after time specified in `timeout`.
-    """
-    start_time = time.perf_counter()
-    while True:
-        try:
-            with socket.create_connection((host, port), timeout=timeout):
-                break
-        except OSError as ex:
-            time.sleep(0.01)
-            if time.perf_counter() - start_time >= timeout:
-                raise TimeoutError('Waited too long for the port {} on host {} to start accepting '
-                                   'connections.'.format(port, host)) from ex
-
-
-def sizeof_fmt(num, suffix='B'):
-    for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-        if abs(num) < 1024.0:
-            return "%3.1f %s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return "%.1f%s%s" % (num, 'Yi', suffix)
-
-
-def fix_encoding(string: str) -> str:
-    string.encode(encoding="UTF-8", errors='backslashreplace').decode('utf-8')
-
-    replace_table = {}
-    replace_table['\udce6'] = 'æ'
-    replace_table['\udcf8'] = 'ø'
-    replace_table['\udce5'] = 'å'
-    replace_table['\udcc6'] = 'Æ'
-    replace_table['\udcd8'] = 'Ø'
-    replace_table['\udcc5'] = 'Å'
-
-    for search, replace in replace_table.items():
-        string = string.replace(search, replace)
-
-    return string
 
 
 def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
@@ -112,7 +65,8 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
             logging.debug(f"Handle ({file_name}) is none. Skipping...")
             continue
         try:
-            logging.info(f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
+            logging.info(
+                f'Scanning {file_name} at {sizeof_fmt(member.size)}...')
             result = clamd_socket.scan_stream(tar_member)
 
             # No virus found
@@ -121,11 +75,13 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int
                 logging.info(f'clean - {file_name}')
             else:
                 virus += 1
-                logging.critical(f'Virus found! {result["stream"][1]} in {file_name}')
+                logging.critical(
+                    f'Virus found! {result["stream"][1]} in {file_name}')
 
         except ConnectionResetError:
             skipped += 1
-            logging.error('clamd reset the connection. Increase max scan size for clamd.')
+            logging.error(
+                'clamd reset the connection. Increase max scan size for clamd.')
             logging.warning(f'SKIPPED (File too big) - {file_name}')
             continue
         except Exception as exception:
@@ -148,7 +104,8 @@ def main():
     objectname = os.getenv('TUSD_OBJECT_NAME')
 
     logging.info("Starting s3-scan-tar")
-    logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
+    logging.info(
+        f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
 
     # Test the access to the object stream, so we can return early if there are any issues
     try:
@@ -159,10 +116,12 @@ def main():
         # object_stream = open(objectname,'br')
         # print("Local File opened:", object_stream)
     except ObjectDoesNotExistError:
-        logging.critical(f'An error occured while getting the object handle {objectname} in bucket {bucket}')
+        logging.critical(
+            f'An error occured while getting the object handle {objectname} in bucket {bucket}')
         sys.exit(CLAMAVERROR)
     except IOError:
-        logging.critical(f'An error occuder while loading the file {objectname}')
+        logging.critical(
+            f'An error occuder while loading the file {objectname}')
         sys.exit(CLAMAVERROR)
     except Exception as exception:
         logging.critical("Unkown error occured while getting the object")
@@ -179,7 +138,7 @@ def main():
 
     try:
         logging.info("Waiting for clamd to be ready")
-        wait_for_port(3310, timeout=30.0)
+        wait_for_port(3310)
     except TimeoutError as exception:
         logging.critical(exception)
         sys.exit(CLAMAVERROR)
