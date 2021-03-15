@@ -127,6 +127,10 @@ class Blob(io.BufferedIOBase):
         if self.client.exists() is False:
             raise ResourceNotFoundError(f"blob {self.client.blob_name} not found in {self.client.container_name}")
 
+        # Acquire a lease on the blob, so that it can not be modified or deleted while we stream it
+        # The duration is set to 15 seconds, so if the process were to halt mid-way, the lease will automatically expire
+        self._blob_lease = self.client.acquire_lease(lease_duration=15)
+
         try:
             self.size = self.client.get_blob_properties()["size"]
         except KeyError:
@@ -139,6 +143,8 @@ class Blob(io.BufferedIOBase):
     # Override some methods from io.IOBase.
     def close(self):
         """Flush and close this stream."""
+        self._blob_lease.break_lease()
+        self._blob_lease = None
         self.client = None
         self._reader = None
 
@@ -200,6 +206,9 @@ class Blob(io.BufferedIOBase):
         return part
 
     def _fill_buffer(self, size=-1):
+        # Renew the lease for another 15 seconds
+        self._blob_lease.renew()
+
         size = max(size, self._buffer._chunk_size)
         while len(self._buffer) < size and not self._position == self.size:
             bytes_read = self._buffer.fill(self._reader)
