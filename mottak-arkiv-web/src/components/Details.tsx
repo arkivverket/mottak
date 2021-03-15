@@ -41,17 +41,16 @@ const Details: React.FC = (): JSX.Element => {
 	const { setAlertContent } = useContext(AlertContext)
 	const { id } = useParams<{ id: string }>()
 
+	const statusInterval = 10 * 1000
+
 	const [downloadStatus, setDownloadStatus] = useState<DownloadStatusState>('Ikke bestilt')
 	const [disableBestillingButton, setDisableBestillingButton] = useState<boolean>(false)
 	const [disableOverforingspakkeButton, setDisableOverforingspakkeButton] = useState<boolean>(false)
 
+	const [loadingArkivkopiStatus, setLoadingArkivkopiStatus] = useState<boolean>(false)
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
-	const {
-		data: dataArkivkopiStatus,
-		loading: loadingArkivkopiStatus,
-		performRequest: getArkivkopiStatus,
-	} = useRequest<ArkivkopiStatusRequest>()
+	const { data: dataArkivkopiStatus, performRequest: getArkivkopiStatus } = useRequest<ArkivkopiStatusRequest>()
 
 	const {
 		data: dataArkivkopi,
@@ -73,6 +72,7 @@ const Details: React.FC = (): JSX.Element => {
 		if (disableBestillingButton) return
 
 		setDisableBestillingButton(true)
+		setLoadingArkivkopiStatus(true)
 		await performRequestArkivkopi({
 			url: `/arkivuttrekk/${id}/bestill_nedlasting`,
 			method: 'POST',
@@ -111,6 +111,7 @@ const Details: React.FC = (): JSX.Element => {
 
 			// Reset order button
 			setDisableBestillingButton(false)
+			setLoadingArkivkopiStatus(false)
 		}
 
 		if (errorOverforingspakke) {
@@ -129,6 +130,16 @@ const Details: React.FC = (): JSX.Element => {
 			url: `/arkivuttrekk/${id}/bestill_nedlasting/status`,
 		})
 
+		const interval = setInterval(() => {
+			getArkivkopiStatus({
+				url: `/arkivuttrekk/${id}/bestill_nedlasting/status`,
+			})
+		}, statusInterval)
+
+		return () => {
+			clearInterval(interval)
+		}
+
 		// @TODO: Figure out why useRequest causes infinte requests
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
@@ -139,6 +150,7 @@ const Details: React.FC = (): JSX.Element => {
 
 		// Validate the incoming status. We'll set it to "Ukjent status" if the status is not yet implemented in ArkivkopiStatus
 		setDownloadStatus(validateArkivopiStatus(status) ? status : 'Ukjent status')
+		setLoadingArkivkopiStatus(false)
 
 		switch (status) {
 			case ArkivkopiStatus.FEILET:
@@ -157,6 +169,7 @@ const Details: React.FC = (): JSX.Element => {
 	useLayoutEffect(() => {
 		if (!dataArkivkopi) return
 		setDownloadStatus(ArkivkopiStatus.BESTILT)
+		setLoadingArkivkopiStatus(false)
 	}, [dataArkivkopi])
 
 	return (
