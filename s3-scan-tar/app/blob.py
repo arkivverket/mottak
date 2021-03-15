@@ -52,10 +52,10 @@ class _Reader:
 
 
 class _Buffer:
-    def __init__(self, chunk_size: int) -> None:
-        """Create a _Buffer instance that reads chunk_size bytes when filled."""
+    def __init__(self, buffer_size: int) -> None:
+        """Create a _Buffer instance that reads buffer_size bytes when filled."""
 
-        self._chunk_size = chunk_size
+        self._buffer_size = buffer_size
         self.empty()
 
     def __len__(self) -> int:
@@ -105,7 +105,7 @@ class _Buffer:
         if not hasattr(source, "read"):
             raise io.UnsupportedOperation(f"{self.__class__.__name__}.fill() source needs read attribute")
         else:
-            new_bytes = source.read(self._chunk_size)
+            new_bytes = source.read(self._buffer_size)
 
         self._bytes += new_bytes
         return len(new_bytes)
@@ -216,7 +216,7 @@ class Blob(io.BufferedIOBase):
         # Renew the lease for another 15 seconds
         self._blob_lease.renew()
 
-        size = max(size, self._buffer._chunk_size)
+        size = max(size, self._buffer._buffer_size)
         while len(self._buffer) < size and not self._position == self.size:
             bytes_read = self._buffer.fill(self._reader)
             if bytes_read == 0:
