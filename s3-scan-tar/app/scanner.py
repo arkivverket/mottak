@@ -24,6 +24,7 @@ except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
 
 MEGABYTES = 1024 ** 2
+UINT_MAX = 2**32-1
 
 # Exit values
 CLAMAVERROR = 10
@@ -71,7 +72,7 @@ def stream_tar(stream) -> Tuple[Any, tarfile.TarFile]:
     return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket: ClamdUnixSocket, limit: int) -> Tuple[int, int, int]:
+def scan_archive(tar_file, clamd_socket: ClamdUnixSocket) -> Tuple[int, int, int]:
     """ Takes a tar_file typically a cloud storage object) and scans
     it. Returns the named tuple (clean, virus, skipped)"""
     clean, virus, skipped = 0, 0, 0
@@ -80,9 +81,11 @@ def scan_archive(tar_file, clamd_socket: ClamdUnixSocket, limit: int) -> Tuple[i
     # By using continue, we technically use the tarfile.next() function via the TarfileIterator wrapper
     for member in tar_stream:
         # The file is larger that the limit
-        if member.size > limit:
+        if member.size > UINT_MAX:
             skipped += 1
-            logging.warning(f'Skipping {member.name} because it exceeds the {sizeof_fmt(limit)} file size limit')
+            logging.warning(
+                f'Skipping {member.name} ({sizeof_fmt(member.size)}) because it exceeds the {sizeof_fmt(UINT_MAX)} size limit'
+            )
             continue
 
         tar_member = tar_file.extractfile(member)
@@ -123,13 +126,11 @@ def main():
                         format='%(asctime)s %(levelname)s %(message)s')
     logging.getLogger().addHandler(logging.StreamHandler())
 
-    # Max file size for ClamAV is 4GiB, or UINT_MAX, or 4294967295 bytes (2^32-1)
-    scan_limit = 2**32-1
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
 
     logging.info("Starting s3-scan-tar")
-    logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(scan_limit)}')
+    logging.info(f'Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}')
 
     # Test the access to the object stream, so we can return early if there are any issues
     try:
@@ -176,8 +177,7 @@ def main():
         logging.critical("Could not connect to clamd socket")
         logging.critical(exception)
         sys.exit(CLAMAVERROR)
-    scan_ret = scan_archive(
-        object_stream, clamd_socket, scan_limit)
+    scan_ret = scan_archive(object_stream, clamd_socket)
 
     logging.info(f"{scan_ret.clean} files scanned and found clean")
     logging.info(f"{scan_ret.virus} viruses found")
