@@ -31,7 +31,7 @@ The values given here are examples. Please adjust to your local database.
   - Install postgres: `brew install postgres` (macOS)
   - Set up database:
     - Run `psql postgres` to connect to postgres. This will open a new editor inside your terminal.
-      - Run `CREATE DATABASE mottak;` to create the database and `exit` to quit psql
+      - Run `CREATE DATABASE mottak;` to create the database and `exit;` to quit psql
 - Create a `.env` file in [root folder](.) containing env variables
   - Use `.env.default` as a template
   - If using local database based on setup above: `DBSTRING=postgresql://localhost:5432/mottak`
