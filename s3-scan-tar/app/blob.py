@@ -28,27 +28,21 @@ class _Reader:
         self._position = position
         return self._position
 
-    def read(self, size: int = -1) -> bytes:
+    def read(self, size=None) -> bytes:
         if self._position >= self._size:
             return b""
 
-        binary = self._download_blob_chunk(size)
+        if size < 0:
+            size = None
+
+        binary = self._client.download_blob(
+            offset=self._position,
+            max_concurrency=self._concurrency,
+            length=size,
+        ).readall()
+
         self._position += len(binary)
         return binary
-
-    def _download_blob_chunk(self, size: int) -> bytes:
-        if self._size == self._position:
-            return b""
-        elif size == -1:
-            stream = self._client.download_blob(offset=self._position, max_concurrency=self._concurrency)
-        else:
-            stream = self._client.download_blob(
-                offset=self._position,
-                max_concurrency=self._concurrency,
-                length=size,
-            )
-
-        return stream.readall()
 
 
 class _Buffer:
