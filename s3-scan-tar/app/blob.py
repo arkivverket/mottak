@@ -71,23 +71,11 @@ class _Buffer:
 
         :returns bytes
         """
-        part = self.peek(size)
-        self._pos += len(part)
-        return part
-
-    def peek(self, size: int = -1) -> bytes:
-        """Get bytes from the buffer without advancing the read position.
-        Returns the bytes in a bytestring.
-
-        :optional int size: maximum number of bytes to read.
-            If negative or not supplied, read all unread bytes in the buffer
-
-        :returns bytes
-        """
         if size < 0 or size > len(self):
             size = len(self)
 
         part = self._bytes[self._pos: self._pos + size]
+        self._pos += len(part)
         return part
 
     def empty(self) -> None:
