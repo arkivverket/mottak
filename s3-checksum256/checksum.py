@@ -68,7 +68,6 @@ def main():
     else:
         logging.warning(f"Expected checksum {expected} doesn't match calculated {checksum}")
         write_result('mismatch')
-        exit(CHECKSUMERROR)
 
 
 if __name__ == "__main__":
