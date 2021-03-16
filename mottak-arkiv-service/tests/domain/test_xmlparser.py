@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 
-from app.domain.metadatafil_service import metadatafil_mapper
+from app.routers.services.metadatafil_service import metadatafil_mapper
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
 from app.domain.models.Metadatafil import Metadatafil
 from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold, _get_all_namespaces, _get_title, \
@@ -71,7 +71,7 @@ def test__get_objekt_id(_root):
                           ("Fagsystem", ArkivuttrekkType.FAGSYSTEM),
                           ("SIARD-arkivuttrekk fra sak- arkivløsningen ePhorte fra Utdanningsdirektoratet 2004-2017.",
                            ArkivuttrekkType.SIARD),
-                          ("Feilaktig verdi som inneholder tallet 5", '')])
+                          ("Feilaktig verdi som inneholder tallet 5", None)])
 def test__str_2_arkivuttrekk_type(_input, expected):
     """
     GIVEN   a tuple of _input, expected output
@@ -99,7 +99,7 @@ def test_get_arkivtype_failure(_root_errors, _ns):
     WHEN    calling the method _get_arkivtype()
     THEN    check that the returned string is None
     """
-    execpected = ""
+    execpected = None
     actual = _get_arkivtype(_root_errors, _ns)
     assert actual == execpected
 

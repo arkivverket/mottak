@@ -25,19 +25,21 @@ The values given here are examples. Please adjust to your local database.
 - [`poetry`](https://python-poetry.org/docs/)
 
 ### Running locally
-- Run `poetry install` to [install the project dependencies](https://python-poetry.org/docs/cli/#install)
-- Run `poetry shell` to [load the virtual enviroment created by poetry](https://python-poetry.org/docs/cli/#shell)
-- Setup local database
-  - Install postgres: `brew install postgres` (macOS)
-  - Set up database:
-    - Run `psql postgres` to connect to postgres. This will open a new editor inside your terminal.
-      - Run `CREATE DATABASE mottak;` to create the database and `exit;` to quit psql
-- Create a `.env` file in [root folder](.) containing env variables
-  - Use `.env.default` as a template
-  - If using local database based on setup above: `DBSTRING=postgresql://localhost:5432/mottak`
+1. Run `poetry install` to [install the project dependencies](https://python-poetry.org/docs/cli/#install)
+2. Run `poetry shell` to [load the virtual enviroment created by poetry](https://python-poetry.org/docs/cli/#shell)
+3. Setup local database
+   - Install postgres: `brew install postgres` (macOS)
+   - Set up database:
+     - Run `psql postgres` to connect to postgres. This will open a new editor inside your terminal.
+     - Run `CREATE DATABASE mottak;` to create the database and `exit;` to quit psql
+4. Create a `.env` file in [root folder](.) containing env variables
+   - Use `.env.default` as a template
+   - If using local database based on setup above: `DBSTRING=postgresql://localhost:5432/mottak`
+   - If working with [`mottak-arkiv-web`](../mottak-arkiv-web/) you need to set `PYTHON_ENV` to `local` to add a CORS middleware
 
-- Initiate the database by running `alembic upgrade head`
-- Run `uvicorn app.main:app --reload`
+5. Initiate the database by running `alembic upgrade head`
+6. Run `uvicorn app.main:app --reload`
+   - Alternatively, if you did not set `PYTHON_ENV=local` in `.env`, you can run `PYTHON_ENV=local uvicorn app.main:app --reload`
 
 ### Swagger
 local = http://localhost:8000/docs

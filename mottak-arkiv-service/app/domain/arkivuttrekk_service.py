@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import Optional, List
+from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -8,15 +8,14 @@ from app.connectors.arkiv_downloader.models import ArkivkopiStatusResponse
 from app.connectors.arkiv_downloader.queues import ArchiveDownloadRequestSender
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
-from app.database.dbo.mottak import Arkivuttrekk as Arkivuttrekk_DBO, Arkivkopi as Arkivkopi_DBO
-from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository, \
+from app.database.dbo.mottak import Arkivkopi as Arkivkopi_DBO, Arkivuttrekk as Arkivuttrekk_DBO
+from app.database.repositories import arkivkopi_repository, arkivuttrekk_repository, invitasjon_repository,\
     overforingspakke_repository
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequestParameters
-from app.domain.models.Arkivuttrekk import Arkivuttrekk
-from app.domain.models.Invitasjon import InvitasjonStatus, Invitasjon
-from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, \
-    ArkivkopiOfOverforingspakkeRequestFailed, OverforingspakkeNotFound, SASTokenPreconditionFailed, InvitasjonNotFound, \
-    ArkivkopiNotFound
+from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkType
+from app.domain.models.Invitasjon import Invitasjon, InvitasjonStatus
+from app.exceptions import ArkivkopiNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiOfOverforingspakkeRequestFailed, ArkivuttrekkNotFound, InvitasjonNotFound,\
+    OverforingspakkeNotFound, SASTokenPreconditionFailed
 
 ZERO_GENERATION = "0"
 TAR_SUFFIX = ".tar"
@@ -124,9 +123,9 @@ async def _generate_sas_token(container_id, sas_generator_client):
 def _get_target_name(ekstern_id: uuid.UUID, is_object: bool) -> str:
     target_name = str(ekstern_id)
     if is_object:
-        target_name = target_name + TAR_SUFFIX
+        target_name = target_name+TAR_SUFFIX
     else:
-        target_name = target_name + FOLDER_SUFFIX
+        target_name = target_name+FOLDER_SUFFIX
     return target_name
 
 
@@ -180,3 +179,7 @@ def _get_source_name(invitasjon_id: int, db: Session) -> str:
     if not overforingspakke:
         raise OverforingspakkeNotFound(invitasjon_id)
     return overforingspakke.tusd_objekt_navn
+
+
+def get_all_types() -> List[str]:
+    return list(ArkivuttrekkType)

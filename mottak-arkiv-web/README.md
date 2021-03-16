@@ -17,6 +17,7 @@ The values given here are examples. Please adjust to your local API url.
 - Create a `.env` file in [root folder](.) containing env variables
 - Run `yarn start` (or optionally `API_BASEURL=http://api.somewhere.local/api/path yarn start`)
 - Open the web ui [http://localhost:3000](http://localhost:3000) in a browser
+   - Remember to start [`mottak-arkiv-service`](../mottak-arkiv-service/) with `PYTHON_ENV=local` to enable the correct CORS headers
 
 
 ### Building and running in a Docker container

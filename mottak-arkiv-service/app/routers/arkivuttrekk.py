@@ -9,6 +9,7 @@ from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.domain import arkivuttrekk_service
+from app.domain.models.Arkivuttrekk import ArkivuttrekkType
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, SASTokenPreconditionFailed, \
     ArkivkopiNotFound
@@ -26,6 +27,14 @@ router = APIRouter()
              summary="Lagre et arkivuttrekk ut fra redigerbare felter")
 async def router_create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
     return arkivuttrekk_service.create(arkivuttrekk.to_domain(), db)
+
+
+@router.get("/typer",
+            status_code=status.HTTP_200_OK,
+            response_model=List[str],
+            summary="Hent ut alle støttede arkivtyper")
+async def router_get_parsed_content():
+    return arkivuttrekk_service._get_all_types()
 
 
 @router.get("/{id}",

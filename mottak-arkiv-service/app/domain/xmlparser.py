@@ -7,7 +7,6 @@ from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, Ark
 
 NOT_PRESENT_RETURN_VALUE = ''
 
-
 def _recursive_ns(elem: ET.Element, ns: dict) -> dict:
     """
     Method that returns a dictionary containing the namespaces used
@@ -44,7 +43,7 @@ def _get_objekt_id(root: ET.Element) -> UUID:
 
 def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
     """
-    Method that converts a str to a ArkivuttrekkType Enum value or returns a ValueError
+    Method that converts a str to a ArkivuttrekkType Enum value or returns None
     """
     if "Noark" in arkivuttrekk_str and "5" in arkivuttrekk_str:
         return ArkivuttrekkType.NOARK5
@@ -54,7 +53,7 @@ def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
         return ArkivuttrekkType.FAGSYSTEM
     if "SIARD" in arkivuttrekk_str:
         return ArkivuttrekkType.SIARD
-    return NOT_PRESENT_RETURN_VALUE
+    return None
 
 
 def _get_arkivtype(root: ET.Element, ns: dict) -> str:
@@ -64,7 +63,7 @@ def _get_arkivtype(root: ET.Element, ns: dict) -> str:
         arkivtype = [alt for alt in alt_record_ids
                      if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
     except IndexError:
-        return NOT_PRESENT_RETURN_VALUE
+        return None
     else:
         return _str_2_arkivuttrekk_type(arkivtype)
 

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException, Response
 from sqlalchemy.orm import Session
 
-from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
+from app.routers.mappers.metadafil import to_metadata
+from app.routers.services.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
 from app.exceptions import MetadatafilNotFound, InvalidContentType
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
+from app.routers.dto.Arkivuttrekk import Metadata
 from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.router_dependencies import get_db_session
 
@@ -34,10 +35,12 @@ async def router_get_content(id: int, db: Session = Depends(get_db_session)):
 
 @router.get("/{id}/parsed",
             status_code=status.HTTP_200_OK,
-            response_model=ArkivuttrekkBase,
+            response_model=Metadata,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
 async def router_get_parsed_content(id: int, db: Session = Depends(get_db_session)):
     try:
-        return get_parsed_content(id, db)
+        metadatafil = get_parsed_content(id, db)
+        metadata_object = to_metadata(metadatafil)
+        return metadata_object
     except MetadatafilNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
