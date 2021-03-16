@@ -28,12 +28,13 @@ class _Reader:
         self._position = position
         return self._position
 
-    def read(self, size=None) -> bytes:
+    def read(self, size: int) -> bytes:
         if self._position >= self._size:
             return b""
 
-        if size < 0:
-            size = None
+        # Size (length) is recommended for better performance for downlaoding chunks
+        if size <= 0 or size is None:
+            raise io.UnsupportedOperation(f"{self.__class__.__name__}.read() needs size greater than 0")
 
         binary = self._client.download_blob(
             offset=self._position,
@@ -166,13 +167,10 @@ class Blob(io.BufferedIOBase):
         """Return the current position within the file."""
         return self._position
 
-    def read(self, size: int = -1) -> bytes:
+    def read(self, size: int) -> bytes:
         """Read up to size bytes from the object and return them."""
         if size == 0:
             return b""
-        elif size < 0:
-            self._position = self.size
-            return self._read_from_buffer() + self._reader.read()
 
         # Return unused data first
         if len(self._buffer) >= size:
