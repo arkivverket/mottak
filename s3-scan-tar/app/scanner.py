@@ -15,7 +15,7 @@ from azure.storage.blob import BlobClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 
 from app.blob import Blob, DEFAULT_BUFFER_SIZE
-from app.utils import sizeof_fmt, wait_for_port, fix_encoding
+from app.utils import sizeof_format, wait_for_port, fix_encoding
 
 try:
     from dotenv import load_dotenv
@@ -78,7 +78,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
         if member.size > UINT_MAX:
             skipped += 1
             logging.warning(
-                f"Skipping {file_name} ({sizeof_fmt(member.size)}) because it exceeds the {sizeof_fmt(UINT_MAX)} size limit"
+                f"Skipping {file_name} ({sizeof_format(member.size)}) because it exceeds the {sizeof_format(UINT_MAX)} size limit"
             )
             continue
 
@@ -88,7 +88,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
             logging.debug(f"Handle ({file_name}) is none. Skipping...")
             continue
         try:
-            logging.info(f"Scanning {file_name} at {sizeof_fmt(member.size)}...")
+            logging.info(f"Scanning {file_name} at {sizeof_format(member.size)}...")
             result = clamd_socket.scan_stream(stream=tar_member, chunk_size=buffer_size)
 
             # No viruses found
@@ -177,8 +177,8 @@ def main() -> None:
         logging.critical(exception)
         sys.exit(CLAMAVERROR)
 
-    logging.info(f"Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_fmt(UINT_MAX)}")
-    logging.info(f"Buffer size is set to {sizeof_fmt(buffer_size)}")
+    logging.info(f"Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_format(UINT_MAX)}")
+    logging.info(f"Buffer size is set to {sizeof_format(buffer_size)}")
     scan_ret = scan_archive(blob, clamd_socket, buffer_size)
 
     logging.info(f"{scan_ret.clean} files scanned and found clean")

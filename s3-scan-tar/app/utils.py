@@ -2,7 +2,7 @@ import socket
 import time
 
 
-def sizeof_fmt(size: int) -> str:
+def sizeof_format(size: int) -> str:
     """Convert bytes to human readable units using binary prefix (KiB, MiB), divisble by 1024
 
     :param int size: size in bytes

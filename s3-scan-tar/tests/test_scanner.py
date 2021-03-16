@@ -13,7 +13,7 @@ from unittest.mock import Mock
 
 
 from app.scanner import scan_archive, stream_tar
-from app.utils import fix_encoding, sizeof_fmt
+from app.utils import fix_encoding, sizeof_format
 from app.blob import DEFAULT_BUFFER_SIZE
 
 BIN_DATA60 = b'012345678901234567890123456789012345678901234567890123456789'
@@ -78,11 +78,11 @@ def test_stream_tar():
         assert content == BIN_DATA60 + BIN_DATA60 * position
 
 
-def test_sizeof_fmt():
-    assert sizeof_fmt(1000) == '1000.0 B'
-    assert sizeof_fmt(1024) == '1.0 KiB'
-    assert sizeof_fmt(255058498) == '243.2 MiB'
-    assert sizeof_fmt(1.930892582e24) == '1.6 YiB'
+def test_sizeof_format():
+    assert sizeof_format(1000) == '1000.0 B'
+    assert sizeof_format(1024) == '1.0 KiB'
+    assert sizeof_format(255058498) == '243.2 MiB'
+    assert sizeof_format(1.930892582e24) == '1.6 YiB'
 
 
 def test_fix_encoding():
