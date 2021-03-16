@@ -28,6 +28,8 @@ spec:
             when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
             arguments:
               artifacts:
+                - name: checksumlog
+                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
 
@@ -126,6 +128,8 @@ spec:
     - name: notify-coordinator
       inputs:
         artifacts:
+          - name: checksumlog
+            path: /tmp/attachments/checksum.log
           - name: avlog
             path: /tmp/attachments/avlog.txt
       container:
@@ -144,12 +148,12 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Overforingspakke skannet"
+            value: "Overforingspakke behandlet"
           - name: MESSAGE
             value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
                     tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
-                    har blitt skannet for virus.
-                    Vedlagt denne e-posten er loggen fra antivirus-skanningen.
+                    har verifisert korrekt sjekksum og blitt skannet for virus.
+                    Vedlagt denne e-posten er loggen fra kontroll av sjekksum og antivirus-skanningen.
                     Vennligst se over."
           - name: ATTACHMENTS
             value: /tmp/attachments
