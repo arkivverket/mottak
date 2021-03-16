@@ -138,13 +138,13 @@ def update_arkivkopi_status(arkivkopi: ArkivkopiStatusResponse, db: Session) -> 
     return result
 
 
-async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session) -> Optional[Arkivkopi_DBO]:
+async def get_arkivkopi_status(arkivuttrekk_id: int, db: Session, is_object: bool) -> Arkivkopi_DBO:
     invitasjon = _get_invitasjon(arkivuttrekk_id, db)
-    results = arkivkopi_repository.get_all_by_invitasjon_id(db, invitasjon.id)
-    if not results:
-        raise ArkivkopiNotFound(invitasjon.id)
-    arkivkopi_arkiv = [arkivkopi for arkivkopi in results if not arkivkopi.is_object]
-    return arkivkopi_arkiv.pop() if arkivkopi_arkiv else None
+    arkivkopi = arkivkopi_repository.get_by_invitasjon_id_and_is_object_newest(db, invitasjon.id, is_object)
+    if not arkivkopi:
+        arkivuttrekk = arkivuttrekk_repository.get_by_id(db, arkivuttrekk_id)
+        raise ArkivkopiNotFound(arkivuttrekk.obj_id, invitasjon.id, is_object)
+    return arkivkopi
 
 
 async def request_download_of_overforingspakke(arkivuttrekk_id: int, db: Session,
