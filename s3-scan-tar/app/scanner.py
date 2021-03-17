@@ -122,7 +122,7 @@ def main() -> None:
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
     logging.info("Starting s3-scan-tar")
 
-    # Also known as a Contaienr in Azure Blob Storage
+    # Also known as a Container in Azure Blob Storage
     bucket = os.getenv("BUCKET")
     objectname = os.getenv("TUSD_OBJECT_NAME")
     buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
