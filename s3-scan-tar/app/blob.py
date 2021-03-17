@@ -147,7 +147,7 @@ class Blob(io.BufferedIOBase):
 
         Returns the position after seeking."""
         logger.debug(f"seeking to offset: {offset} whence: {whence}")
-        if whence not in (0, 1, 2):
+        if whence not in WHENCE_CHOICES:
             raise ValueError(f"invalid whence {whence}, expected one of {WHENCE_CHOICES}")
 
         if whence == WHENCE_START:
