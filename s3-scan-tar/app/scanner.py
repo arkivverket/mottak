@@ -134,12 +134,18 @@ def main() -> None:
     buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
     max_concurrency = int(os.getenv("MAX_CONCURRENCY", 4))
 
+    conn_str = os.getenv("AZURE_STORAGE_CONNECTION_STRING", None)
+    if conn_str is None:
+        account_name = os.getenv("AZURE_ACCOUNT")
+        account_key = os.getenv("AZURE_KEY")
+        conn_str = f"DefaultEndpointsProtocol=https;AccountName={account_name};AccountKey={account_key};EndpointSuffix=core.windows.net"
+
     # Test the access to the object stream, so we can return early if there are any issues
     logging.info("Initialising connection to Azure Blob Storage")
     try:
         blob = Blob(
             BlobClient.from_connection_string(
-                conn_str=os.getenv("AZURE_STORAGE_CONNECTION_STRING"),
+                conn_str=conn_str,
                 container_name=bucket,
                 blob_name=objectname,
             ),

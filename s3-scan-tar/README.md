@@ -17,8 +17,12 @@ The values given here are examples or hints to proper variables.
 - TUSD_OBJECT_NAME=ok63e2f0-39bf-4fea-a741-58d472664ce2
 - AVLOG=/tmp/avlog
 - BUCKET=bucket-storage
+- AZURE_ACCOUNT=myazureaccdev
+- AZURE_KEY=secret
 - AZURE_STORAGE_CONNECTION_STRING=***
 ```
+
+`AZURE_STORAGE_CONNECTION_STRING` is preferred if you have the connection string
 
 ### Testing
 
