@@ -129,6 +129,7 @@ def main() -> None:
 
     # Also known as a Container in Azure Blob Storage
     bucket = os.getenv("BUCKET")
+    # 'TUSD_' can be removed in the future, as we can scan any tar file, not just TUSD objects
     objectname = os.getenv("TUSD_OBJECT_NAME")
     buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
     max_concurrency = int(os.getenv("MAX_CONCURRENCY", 4))
