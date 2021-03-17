@@ -9,7 +9,7 @@ import tarfile
 
 from collections import namedtuple
 from pyclamd import ClamdUnixSocket
-from pyclamd.pyclamd import ConnectionError
+from pyclamd.pyclamd import ConnectionError, BufferTooLongError
 from typing import Tuple
 from azure.storage.blob import BlobClient
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
@@ -99,10 +99,15 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
                 virus += 1
                 logging.critical(f'Virus found! {result["stream"][1]} in {file_name}')
 
-        except ConnectionResetError:
+        except BufferTooLongError:
             skipped += 1
             logging.error("clamd reset the connection. Increase max scan size for clamd.")
             logging.warning(f"SKIPPED (File too big) - {file_name}")
+            continue
+        except ConnectionError as exception:
+            skipped += 1
+            logging.critical(f"A connection error occured with clamd while scanning {file_name}")
+            logging.critical(exception)
             continue
         except Exception as exception:
             logging.error(f"Failed to scan {file_name}")
