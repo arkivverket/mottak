@@ -8,11 +8,11 @@ def sizeof_format(size: int) -> str:
     :param int size: size in bytes
     :returns str: Human readable size
     """
-    for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+    for unit in ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"]:
         if abs(size) < 1024.0:
-            return "%3.1f %s%s" % (size, unit, "B")
+            return f"{size:.1f} {unit}"
         size /= 1024.0
-    return "%.1f %s%s" % (size, "Yi", "B")
+    return f"{size:.1f} YiB"
 
 
 def wait_for_port(port: int, host: str = "localhost", timeout: float = 30.0):
