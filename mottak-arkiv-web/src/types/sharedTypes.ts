@@ -53,8 +53,13 @@ export enum ArkivkopiStatus {
 	FEILET = 'Feilet',
 }
 
-export interface ArkivkopiStatusRequest {
+export type ArkivkopiStatusRequest = {
 	id: number
 	status: ArkivkopiStatus
 	target_name: string
+}
+
+export type DownloadStatusState = {
+	status: ArkivkopiStatus | 'Ukjent status' | 'Ikke bestilt'
+	target_name: string | null
 }
