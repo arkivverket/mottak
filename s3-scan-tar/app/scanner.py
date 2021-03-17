@@ -94,7 +94,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
             # No viruses found
             if result is None:
                 clean += 1
-                logging.info(f"clean - {file_name}")
+                logging.info(f"clean  - {file_name}")
             else:
                 virus += 1
                 logging.critical(f'Virus found! {result["stream"][1]} in {file_name}')
@@ -106,7 +106,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
             continue
         except Exception as exception:
             logging.error(f"Failed to scan {file_name}")
-            logging.error(f"Error: {exception}")
+            logging.error(exception)
             raise exception
 
     logging.debug(f"clean: {clean}, virus: {virus}, skipped: {skipped}")
