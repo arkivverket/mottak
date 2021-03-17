@@ -1,11 +1,11 @@
-import { useContext, useEffect, useLayoutEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { Divider, Grid, List, ListItem, CircularProgress, Typography, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
 
 import { AlertContext } from './WorkArea'
-import { ArkivUttrekk, ArkivkopiStatus } from '../types/sharedTypes'
+import { ArkivUttrekk } from '../types/sharedTypes'
 import { useGetOnMount, useArkivkopi } from 'src/hooks'
 
 const useStyles = makeStyles((theme) => ({
