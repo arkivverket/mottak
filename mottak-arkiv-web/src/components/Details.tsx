@@ -54,7 +54,6 @@ const Details: React.FC = (): JSX.Element => {
 	})
 
 	const {
-		data: dataOverforingspakke,
 		status: overforingspakkeStatus,
 		loading: loadingOverforingspakke,
 		disable: disableOverforingspakkeButton,
@@ -173,7 +172,7 @@ const Details: React.FC = (): JSX.Element => {
 							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
 								Nedlastnings status:{' '}
 								<span style={{ fontWeight: 400 }}>
-									{loadingArkivkopi ? <CircularProgress size="1rem" /> : downloadStatus.toLowerCase()}
+									{loadingArkivkopi ? <CircularProgress size="1rem" /> : downloadStatus.status.toLowerCase()}
 								</span>
 							</Typography>
 
@@ -188,6 +187,14 @@ const Details: React.FC = (): JSX.Element => {
 								</Button>
 								{loadingArkivkopi && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
+
+							{downloadStatus?.target_name && (
+								<p>
+									Arkivutrekket vil bli tilgjengelig her:
+									<br />
+									{downloadStatus.target_name}
+								</p>
+							)}
 						</Grid>
 
 						<Grid item xs={4}>
@@ -197,7 +204,7 @@ const Details: React.FC = (): JSX.Element => {
 									{loadingOverforingspakke ? (
 										<CircularProgress size="1rem" />
 									) : (
-										overforingspakkeStatus.toLowerCase()
+										overforingspakkeStatus.status.toLowerCase()
 									)}
 								</span>
 							</Typography>
@@ -214,11 +221,11 @@ const Details: React.FC = (): JSX.Element => {
 								{loadingOverforingspakke && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
 
-							{dataOverforingspakke && (
+							{overforingspakkeStatus?.target_name && (
 								<p>
 									Overføringspakken vil bli tilgjengelig her:
 									<br />
-									{dataOverforingspakke.target_name}
+									{overforingspakkeStatus.target_name}
 								</p>
 							)}
 						</Grid>

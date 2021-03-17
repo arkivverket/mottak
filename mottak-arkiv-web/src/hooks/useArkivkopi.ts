@@ -6,7 +6,10 @@ import { validateArkivopiStatus } from 'src/utils'
 import { ArkivkopiStatusRequest, ArkivkopiStatus } from 'src/types/sharedTypes'
 
 type ExecuteType = () => void
-type DownloadStatusState = ArkivkopiStatus | 'Ukjent status' | 'Ikke bestilt'
+interface DownloadStatusState {
+	status: ArkivkopiStatus | 'Ukjent status' | 'Ikke bestilt'
+	target_name: string | null
+}
 
 interface State {
 	data: ArkivkopiStatusRequest | null
@@ -25,7 +28,11 @@ interface Props {
 const useArkivkopi = ({ url, statusInterval }: Props): State => {
 	const [disable, setDisable] = useState<boolean>(false)
 	const [loading, setLoading] = useState<boolean>(false)
-	const [status, setStatus] = useState<DownloadStatusState>('Ikke bestilt')
+	const [status, setStatus] = useState<DownloadStatusState>({
+		status: 'Ikke bestilt',
+		target_name: null,
+	})
+
 	const { data, error, performRequest: request } = useRequest<ArkivkopiStatusRequest>()
 	const { data: dataStatus, performRequest: getStatus } = useRequest<ArkivkopiStatusRequest>()
 
@@ -43,12 +50,32 @@ const useArkivkopi = ({ url, statusInterval }: Props): State => {
 		})
 	}, [disable, url, request])
 
-	useLayoutEffect(() => {
+	const updateStatus = useCallback((data) => {
 		setLoading(false)
-
 		if (!data) return
-		setStatus(ArkivkopiStatus.BESTILT)
-	}, [data])
+
+		const { status, target_name } = data
+
+		setStatus({
+			status: validateArkivopiStatus(status) ? status : 'Ukjent status',
+			target_name,
+		})
+
+		switch (status) {
+			case ArkivkopiStatus.FEILET:
+				setDisable(false)
+				break
+
+			default:
+				setDisable(true)
+				break
+		}
+	}, [])
+
+	useLayoutEffect(() => {
+		if (!data) return
+		updateStatus(data)
+	}, [updateStatus, data])
 
 	useLayoutEffect(() => {
 		setDisable(false)
@@ -72,21 +99,8 @@ const useArkivkopi = ({ url, statusInterval }: Props): State => {
 
 	useLayoutEffect(() => {
 		if (!dataStatus) return
-		const { status } = dataStatus
-
-		setStatus(validateArkivopiStatus(status) ? status : 'Ukjent status')
-		setLoading(false)
-
-		switch (status) {
-			case ArkivkopiStatus.FEILET:
-				setDisable(false)
-				break
-
-			default:
-				setDisable(true)
-				break
-		}
-	}, [dataStatus])
+		updateStatus(dataStatus)
+	}, [updateStatus, dataStatus])
 
 	return { data, status, error, disable, loading, performRequest }
 }
