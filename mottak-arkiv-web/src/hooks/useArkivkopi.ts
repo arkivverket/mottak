@@ -3,13 +3,10 @@ import { useLayoutEffect, useCallback, useState } from 'react'
 import { useRequest } from 'src/hooks'
 import { validateArkivopiStatus } from 'src/utils'
 
-import { ArkivkopiStatusRequest, ArkivkopiStatus } from 'src/types/sharedTypes'
+import type { ArkivkopiStatusRequest, DownloadStatusState } from 'src/types/sharedTypes'
+import { ArkivkopiStatus } from 'src/types/sharedTypes'
 
 type ExecuteType = () => void
-interface DownloadStatusState {
-	status: ArkivkopiStatus | 'Ukjent status' | 'Ikke bestilt'
-	target_name: string | null
-}
 
 interface State {
 	data: ArkivkopiStatusRequest | null

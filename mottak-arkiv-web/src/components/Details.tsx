@@ -1,11 +1,13 @@
-import { useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { Divider, Grid, List, ListItem, CircularProgress, Typography, Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
 import { useParams } from 'react-router'
 
-import { AlertContext } from './WorkArea'
-import { ArkivUttrekk } from '../types/sharedTypes'
+import type { ArkivUttrekk, DownloadStatusState } from 'src/types/sharedTypes'
+import { ArkivkopiStatus } from 'src/types/sharedTypes'
+
+import { AlertContext } from 'src/components/WorkArea'
 import { useGetOnMount, useArkivkopi } from 'src/hooks'
 
 const useStyles = makeStyles((theme) => ({
@@ -91,6 +93,29 @@ const Details: React.FC = (): JSX.Element => {
 			})
 		}
 	}, [error, setAlertContent, errorArkivkopi, errorOverforingspakke])
+
+	const showDownloadLocation = useCallback((type: string, download: DownloadStatusState): null | JSX.Element => {
+		const { status, target_name } = download
+		let text = ''
+
+		switch (status) {
+			case ArkivkopiStatus.OK:
+				text = `${type} ble lastet ned til`
+				break
+
+			case ArkivkopiStatus.BESTILT:
+				text = `${type} vil bli tilgjengelig her`
+				break
+		}
+
+		return !text ? null : (
+			<p>
+				{text}:
+				<br />
+				{target_name}
+			</p>
+		)
+	}, [])
 
 	return (
 		<>
@@ -188,13 +213,7 @@ const Details: React.FC = (): JSX.Element => {
 								{loadingArkivkopi && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
 
-							{downloadStatus?.target_name && (
-								<p>
-									Arkivutrekket vil bli tilgjengelig her:
-									<br />
-									{downloadStatus.target_name}
-								</p>
-							)}
+							{showDownloadLocation('Arkiv', downloadStatus)}
 						</Grid>
 
 						<Grid item xs={4}>
@@ -221,13 +240,7 @@ const Details: React.FC = (): JSX.Element => {
 								{loadingOverforingspakke && <CircularProgress className={classes.buttonProgress} size={22} />}
 							</div>
 
-							{overforingspakkeStatus?.target_name && (
-								<p>
-									Overføringspakken vil bli tilgjengelig her:
-									<br />
-									{overforingspakkeStatus.target_name}
-								</p>
-							)}
+							{showDownloadLocation('Overføringspakke', overforingspakkeStatus)}
 						</Grid>
 					</Grid>
 				</>
