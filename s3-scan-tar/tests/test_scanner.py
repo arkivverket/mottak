@@ -10,6 +10,7 @@ import logging
 
 import pytest
 from unittest.mock import Mock
+from pyclamd.pyclamd import BufferTooLongError, ConnectionError
 
 
 from app.scanner import scan_archive, stream_tar
@@ -108,15 +109,30 @@ def _scan_stream(stream, **kwargs):
 
 def _scan_stream_reset(stream, **kwargs):
     """ Helper for the mock that mocks the .scanstream method from pyclamd.
-     This one will raise a ConnectionResetError if we go past out limit. Mimicks a
+     This one will raise a BufferTooLongError if we go past out limit. Mimicks a
      misconfigured clamd. """
     content = b''
     while buffer := stream.read(60):
         content = content + buffer
         if len(content) + 60 > 300:
-            raise ConnectionResetError("Boom!")
+            raise BufferTooLongError("buffer size exceeds clamd limits")
     if content == VIRUS:
         return {'stream': 'fakevirus'}
+    return None
+
+
+def _scan_stream_connection_error(stream, **kwargs):
+    """ Helper for the mock that mocks the .scanstream method from pyclamd.
+     This one will raise a ConnectionError if we go past out limit. Mimicks a
+     communication error with clamd. """
+    content = b''
+    while buffer := stream.read(60):
+        content = content + buffer
+        if len(content) > 60:
+            raise ConnectionError("communication problem with clamd")
+    if content == VIRUS:
+        return {'stream': 'fakevirus'}
+
     return None
 
 
@@ -146,3 +162,17 @@ def test_scan_archive_reset():
     assert ret.clean == 4
     assert ret.virus == 1
     assert ret.skipped == 6
+
+
+def test_scan_archive_connection_error():
+    """ Tests the scanning of a archive via a filehandle that contains a tar. Trigges resets from clamd."""
+    fh = _generate_tarfile()
+    magic_socket = Mock()
+    magic_socket.scan_stream = _scan_stream_connection_error
+    # Set the restriction to 300 bytes.
+    # This should make the 60,120,180,240 and VIRUS pass
+    # 300, 360, 420, 480, 540, 600 should be skipped.
+    ret = scan_archive(fh, magic_socket, DEFAULT_BUFFER_SIZE)
+    assert ret.clean == 1
+    assert ret.virus == 1
+    assert ret.skipped == 9
