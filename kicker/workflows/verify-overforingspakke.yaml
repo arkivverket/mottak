@@ -8,11 +8,11 @@ spec:
     - name: verify-overforingspakke
       dag:
         tasks:
-          - name: task-checksum
+          - name: task-checksum-check
             template: checksum-check
           - name: task-avscan
             template: avscan
-            dependencies: [ task-checksum ]
+            dependencies: [ task-checksum-check ]
           - name: task-notify-coordinator
             template: notify-coordinator
             dependencies: [ task-avscan ]
