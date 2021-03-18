@@ -2,19 +2,17 @@
 """ Scans a tar archive stored in a objectstore """
 # pylint: disable=logging-fstring-interpolation
 
-import os
-import sys
 import logging
-import tarfile
+import os
 import socket
+import sys
+import tarfile
 import time
 
-from collections import namedtuple
 from libcloud.storage.types import ObjectDoesNotExistError
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
-from typing import Tuple
 
 from models import AVScanResult
 
@@ -128,8 +126,12 @@ def scan_archive(tar_file, clamd_socket, limit) -> AVScanResult:
             raise exception
 
     logging.debug(f'clean: {clean}, virus: {virus}, skipped: {skipped}')
-    ret = namedtuple("scan", ["clean", "virus", "skipped"])
-    return ret(clean, virus, skipped)
+    return AVScanResult(clean, virus, skipped)
+
+
+def write_result(scan_result: AVScanResult):
+    with open(RESULT, 'w') as result_file:
+        result_file.write(scan_result.get_message())
 
 
 def main():
@@ -139,7 +141,7 @@ def main():
     logging.getLogger().addHandler(logging.StreamHandler())
 
     # Max file size for ClamAV is 4GiB, or UINT_MAX, or 4294967295 bytes (2^32-1)
-    scan_limit = 2**32-1
+    scan_limit = 2 ** 32 - 1
     bucket = os.getenv('BUCKET')
     objectname = os.getenv('TUSD_OBJECT_NAME')
 
@@ -192,12 +194,13 @@ def main():
         logging.error("Could not connect to clamd socket")
         logging.error(exception)
         sys.exit(CLAMAVERROR)
-    scan_ret = scan_archive(
+    scan_result = scan_archive(
         object_stream, clamd_socket, scan_limit)
 
-    logging.info(f"{scan_ret.clean} files scanned and found clean")
-    logging.info(f"{scan_ret.virus} viruses found")
-    logging.info(f"{scan_ret.skipped} files skipped")
+    logging.info(f"{scan_result.clean} files scanned and found clean")
+    logging.info(f"{scan_result.virus} viruses found")
+    logging.info(f"{scan_result.skipped} files skipped")
+    write_result(scan_result)
     logging.info("Archive scanned - exiting")
 
 
