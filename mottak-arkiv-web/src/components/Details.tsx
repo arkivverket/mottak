@@ -44,16 +44,16 @@ const Details: React.FC = (): JSX.Element => {
 
 	const { data, loading, error } = useGetOnMount<ArkivUttrekk>(`/arkivuttrekk/${id}`)
 
-	const {
-		status: downloadStatus,
-		loading: loadingArkivkopi,
-		disable: disableBestillingButton,
-		error: errorArkivkopi,
-		performRequest: requestArkivkopi,
-	} = useArkivkopi({
-		url: `/arkivuttrekk/${id}/bestill_nedlasting`,
-		statusInterval,
-	})
+	// const {
+	// 	status: downloadStatus,
+	// 	loading: loadingArkivkopi,
+	// 	disable: disableBestillingButton,
+	// 	error: errorArkivkopi,
+	// 	performRequest: requestArkivkopi,
+	// } = useArkivkopi({
+	// 	url: `/arkivuttrekk/${id}/bestill_nedlasting`,
+	// 	statusInterval,
+	// })
 
 	const {
 		status: overforingspakkeStatus,
@@ -79,12 +79,12 @@ const Details: React.FC = (): JSX.Element => {
 			})
 		}
 
-		if (errorArkivkopi) {
-			setAlertContent({
-				msg: errorArkivkopi?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
-				type: 'error',
-			})
-		}
+		// if (errorArkivkopi) {
+		// 	setAlertContent({
+		// 		msg: errorArkivkopi?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
+		// 		type: 'error',
+		// 	})
+		// }
 
 		if (errorOverforingspakke) {
 			setAlertContent({
@@ -92,7 +92,7 @@ const Details: React.FC = (): JSX.Element => {
 				type: 'error',
 			})
 		}
-	}, [error, setAlertContent, errorArkivkopi, errorOverforingspakke])
+	}, [error, setAlertContent, errorOverforingspakke])
 
 	const showDownloadLocation = useCallback((type: string, download: DownloadStatusState): null | JSX.Element => {
 		const { status, target_name } = download
@@ -193,7 +193,7 @@ const Details: React.FC = (): JSX.Element => {
 					</List>
 
 					<Grid container>
-						<Grid item xs={4}>
+						{/* <Grid item xs={4}>
 							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
 								Nedlastnings status:{' '}
 								<span style={{ fontWeight: 400 }}>
@@ -214,7 +214,7 @@ const Details: React.FC = (): JSX.Element => {
 							</div>
 
 							{showDownloadLocation('Arkiv', downloadStatus)}
-						</Grid>
+						</Grid> */}
 
 						<Grid item xs={4}>
 							<Typography variant="h6" color="primary" gutterBottom style={{ marginBottom: '1rem' }}>
