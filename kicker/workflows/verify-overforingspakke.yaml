@@ -14,6 +14,9 @@ spec:
             template: notify-coordinator
             dependencies: [ task-avscan ]
             arguments:
+              parameters:
+                - name: av_message
+                  from: "{{tasks.task-avscan.outputs.parameters.av_message}}"
               artifacts:
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
@@ -55,6 +58,8 @@ spec:
 
     - name: notify-coordinator
       inputs:
+        parameters:
+          - name: av_message
         artifacts:
           - name: avlog
             path: /tmp/attachments/avlog.txt
