@@ -43,6 +43,10 @@ spec:
           - name: AVLOG
             value: /tmp/avlog
       outputs:
+        parameters:
+          - name: av_message
+            valueFrom:
+              path: /tmp/message
         artifacts:
           - name: avlog
             path: /tmp/avlog
