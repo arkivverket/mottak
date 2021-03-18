@@ -88,7 +88,9 @@ const Details: React.FC = (): JSX.Element => {
 
 		if (errorOverforingspakke) {
 			setAlertContent({
-				msg: errorOverforingspakke?.response?.data?.detail || 'Det skjedde en feil under bestilling av arkivkopi.',
+				msg:
+					errorOverforingspakke?.response?.data?.detail ||
+					'Det skjedde en feil under nedlastning av overføringspakke.',
 				type: 'error',
 			})
 		}
