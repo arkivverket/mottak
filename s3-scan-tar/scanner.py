@@ -23,7 +23,7 @@ try:
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
 
-RESULT = '/tmp/result'
+MESSAGE_PATH = '/tmp/message'
 
 MEGABYTES = 1024 ** 2
 
@@ -130,7 +130,7 @@ def scan_archive(tar_file, clamd_socket, limit) -> AVScanResult:
 
 
 def write_result(scan_result: AVScanResult):
-    with open(RESULT, 'w') as result_file:
+    with open(MESSAGE_PATH, 'w') as result_file:
         result_file.write(scan_result.get_message())
 
 
