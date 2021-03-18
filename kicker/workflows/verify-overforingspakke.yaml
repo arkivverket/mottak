@@ -17,9 +17,9 @@ spec:
             template: notify-coordinator
             dependencies: [ task-avscan ]
             arguments:
-#              parameters:
-#                - name: av_message
-#                  from: "{{tasks.task-avscan.outputs.parameters.av_message}}"
+              parameters:
+                - name: av_message
+                  value: "{{tasks.task-avscan.outputs.parameters.av_message}}"
               artifacts:
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
@@ -95,8 +95,8 @@ spec:
 
     - name: notify-coordinator
       inputs:
-#        parameters:
-#          - name: av_message
+        parameters:
+          - name: av_message
         artifacts:
           - name: avlog
             path: /tmp/attachments/avlog.txt
@@ -106,10 +106,10 @@ spec:
               data: |
                 Verifisering av overføringspakke utført.
                 Gjelder overforingspakke:
-                  arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
-                  ekstern id: {{workflow.parameters.EKSTERN_ID}}
+                    - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
+                    - ekstern id: {{workflow.parameters.EKSTERN_ID}}
 
-                input fra av_message
+                {{inputs.parameters.av_message}}
 
                 Vedlagt denne e-post er loggen fra antivirus-skanning.
                 Vennligst se over
