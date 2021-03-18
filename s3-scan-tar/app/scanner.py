@@ -2,19 +2,18 @@
 # -*- coding: utf-8 -*-
 """ Scans a tar archive stored in a objectstore """
 
+import logging
 import os
 import sys
-import logging
 import tarfile
 
-from collections import namedtuple
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.storage.blob import BlobClient
 from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError, BufferTooLongError
-from typing import Tuple
-from azure.storage.blob import BlobClient
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 
 from app.blob import Blob, DEFAULT_BUFFER_SIZE
+from app.models import AVScanResult
 from app.utils import sizeof_format, wait_for_port, fix_encoding
 
 try:
@@ -23,6 +22,8 @@ try:
     load_dotenv()
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
+
+MESSAGE_PATH = '/tmp/message'
 
 MEGABYTES = 1024 ** 2
 UINT_MAX = 2 ** 32 - 1
@@ -52,7 +53,7 @@ def stream_tar(stream: Blob) -> tarfile.TarFile:
     return tar_file
 
 
-def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) -> Tuple[int, int, int]:
+def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) -> AVScanResult:
     """Takes a Blob stream and opens it as a tarfile and iterates over the files.
     Each file is passed on to clamd for antivirus scan. If the the files is greater
     than the 4GB limit, it is skipped, and the Blob stream is fast-forwarded to
@@ -65,7 +66,7 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
     :param ClamdUnixSocket clamd_socket: ClamAV socket to connect to
     :param int buffer_size: how much of the stream to store in memory
 
-    :returns Tuple[int, int, int]: a named tuple of the scan resutls (clean, virus, skippd)
+    :returns AVScanResult:  a parameter class of the scan results (clean, virus, skipped)
 
     :raises Exception: when an unkown error is encountered
     """
@@ -115,8 +116,12 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
             raise exception
 
     logging.debug(f"clean: {clean}, virus: {virus}, skipped: {skipped}")
-    ret = namedtuple("scan", ["clean", "virus", "skipped"])
-    return ret(clean, virus, skipped)
+    return AVScanResult(clean, virus, skipped)
+
+
+def write_result(scan_result: AVScanResult):
+    with open(MESSAGE_PATH, 'w') as result_file:
+        result_file.write(scan_result.generate_message())
 
 
 def main() -> None:
@@ -191,11 +196,12 @@ def main() -> None:
 
     logging.info(f"Initialising scan on {bucket}/{objectname} with a scan limit of {sizeof_format(UINT_MAX)}")
     logging.info(f"Buffer size is set to {sizeof_format(buffer_size)}")
-    scan_ret = scan_archive(blob, clamd_socket, buffer_size)
+    scan_result = scan_archive(blob, clamd_socket, buffer_size)
 
-    logging.info(f"{scan_ret.clean} files scanned and found clean")
-    logging.info(f"{scan_ret.virus} viruses found")
-    logging.info(f"{scan_ret.skipped} files skipped")
+    logging.info(f"{scan_result.clean} files scanned and found clean")
+    logging.info(f"{scan_result.virus} viruses found")
+    logging.info(f"{scan_result.skipped} files skipped")
+    write_result(scan_result)
     logging.info("Archive scanned - exiting")
 
 
