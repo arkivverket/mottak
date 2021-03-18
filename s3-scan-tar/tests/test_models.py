@@ -1,5 +1,5 @@
 import pytest
-from models import AVScanResult
+from app.models import AVScanResult
 
 
 @pytest.fixture
@@ -31,7 +31,7 @@ def test_correct_message_when_no_virus_found(_scan_result):
         "Antall filer ikke kontrollert pga. filstørrelse: 0"
     )
 
-    assert expected_message == _scan_result.get_message()
+    assert expected_message == _scan_result.generate_message()
     # assert _scan_result.get_message() == expected_message
 
 
@@ -44,4 +44,4 @@ def test_correct_message_when_virus_found(_scan_result):
         "Antall filer ikke kontrollert pga. filstørrelse: 0"
     )
     actual = AVScanResult(8, 2, 0)
-    assert expected_message == actual.get_message()
+    assert expected_message == actual.generate_message()
