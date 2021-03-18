@@ -30,7 +30,7 @@ class AVScanResult:
         else:
             self.status = "Ikke ok"
 
-    def get_message(self):
+    def generate_message(self):
         return (
             f"Status etter virus scan: {self.status}\n\n"
             f"Antall filer kontrollert: {self.total}\n"
