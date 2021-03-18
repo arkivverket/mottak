@@ -16,12 +16,16 @@ from pyclamd import ClamdUnixSocket
 from pyclamd.pyclamd import ConnectionError
 from typing import Tuple
 
+from models import AVScanResult
+
 try:
     from dotenv import load_dotenv
 
     load_dotenv()
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
+
+RESULT = '/tmp/result'
 
 MEGABYTES = 1024 ** 2
 
@@ -82,9 +86,9 @@ def stream_tar(stream):
     return tar_iterator, t_f
 
 
-def scan_archive(tar_file, clamd_socket, limit) -> Tuple[int, int, int]:
+def scan_archive(tar_file, clamd_socket, limit) -> AVScanResult:
     """ Takes a tar_file typically a cloud storage object) and scans
-    it. Returns the named tuple (clean, virus, skipped)"""
+    it. Returns an object of type AVScanResult"""
     clean, virus, skipped = 0, 0, 0
     tar_stream, tar_file = stream_tar(tar_file)
 
