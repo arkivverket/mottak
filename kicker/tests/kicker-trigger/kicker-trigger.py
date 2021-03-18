@@ -20,6 +20,7 @@ def get_params() -> dict:
     return {
         'TUSD_OBJEKT_NAVN': "6bf65f3c3700f1152d4429f3d6599e8c",
         'EKSTERN_ID': "c574653e-f58c-4efe-b670-afe6fabea715",
+        'SJEKKSUM': "55a6b7b3f4d1bf2377af2a0f591106ff2df5a4e9d7699f6f5e38cadf2d738fda",
         'KOORDINATOR_EPOST': "marelm@arkivverket.no",
         'ARKIVUTTREKK_OBJ_ID': "38da4005-92de-4aea-81ac-2262f90d0f5b"
     }

@@ -12,6 +12,7 @@ mock_hook_data = HookData(tusd_id="9090fe36854e6761925e6e9ec475c17f",
 
 mock_dbdata = DataFromDatabase(invitasjon_id=1,
                                ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
+                               sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                koordinator_epost="laralv@arkivverket.no",
                                arkivuttrekk_obj_id="ed889fdc-b4d0-49fe-bf4b-caa0834cab2d")
 
@@ -40,6 +41,7 @@ def test_update_overforingspakke_in_db_fail(mocker):
 def test_gather_params(mocker):
     expected = {'TUSD_OBJEKT_NAVN': '9090fe36854e6761925e6e9ec475c17f',
                 'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
+                'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'KOORDINATOR_EPOST': 'laralv@arkivverket.no',
                 'ARKIVUTTREKK_OBJ_ID': "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d"}
     # data = json.loads(post_event)

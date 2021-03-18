@@ -48,6 +48,7 @@ This can be used to trigger kicker and argo in dev.
 - AZ_SB_QUEUE=argo-workflow
 - WORKFLOW=/opt/workflows/<name-of-workflow>
 - NAMESPACE=da-mottak-<env>
+- CHECKSUM_TAG=<image tag for component 's3-checksum256'>
 - AVSCAN_TAG=<image tag for component 's3-scan-tar'>
 - MAILER_TAG=<image tag for component 'mailer'>
 ```
