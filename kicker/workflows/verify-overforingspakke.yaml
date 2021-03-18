@@ -17,9 +17,9 @@ spec:
             template: notify-coordinator
             dependencies: [ task-avscan ]
             arguments:
-              parameters:
-                - name: av_message
-                  from: "{{tasks.task-avscan.outputs.parameters.av_message}}"
+#              parameters:
+#                - name: av_message
+#                  from: "{{tasks.task-avscan.outputs.parameters.av_message}}"
               artifacts:
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
@@ -95,11 +95,24 @@ spec:
 
     - name: notify-coordinator
       inputs:
-        parameters:
-          - name: av_message
+#        parameters:
+#          - name: av_message
         artifacts:
           - name: avlog
             path: /tmp/attachments/avlog.txt
+          - name: message
+            path: /tmp/message
+            raw:
+              data: |
+                Verifisering av overføringspakke utført.
+                Gjelder overforingspakke:
+                  arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
+                  ekstern id: {{workflow.parameters.EKSTERN_ID}}
+
+                input fra av_message
+
+                Vedlagt denne e-post er loggen fra antivirus-skanning.
+                Vennligst se over
       container:
         image: arkivverket.azurecr.io/da-mottak/mailer:{{workflow.parameters.MAILER_TAG}}
 
@@ -119,10 +132,6 @@ spec:
           - name: SUBJECT
             value: "Overforingspakke skannet"
           - name: MESSAGE
-            value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
-                    tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
-                    har blitt skannet for virus.
-                    Vedlagt denne e-posten er loggen fra antivirus-skanningen.
-                    Vennligst se over."
+            value: /tmp/message
           - name: ATTACHMENTS
             value: /tmp/attachments
