@@ -97,7 +97,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: MAILGUN_DOMAIN
-            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+            value: mg.mottak.digitalarkivet.no
           - name: MAILGUN_API_KEY
             valueFrom:
               secretKeyRef:
