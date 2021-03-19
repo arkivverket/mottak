@@ -167,8 +167,6 @@ spec:
         env:
           - name: TUSD_OBJECT_NAME
             value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
-          - name: OBJECTSTORE
-            value: abs
           - name: BUCKET
             value: "tusd-storage"
           - name: AZURE_STORAGE_CONNECTION_STRING
