@@ -19,12 +19,8 @@ The values given here are examples or hints to proper variables.
 - OUTPUT_PATH_LOG=/tmp/avlog
 - OUTPUT_PATH_RESULT=/tmp/result
 - BUCKET=bucket-storage
-- AZURE_ACCOUNT=myazureaccdev
-- AZURE_KEY=secret
 - AZURE_STORAGE_CONNECTION_STRING=***
 ```
-
-`AZURE_STORAGE_CONNECTION_STRING` is preferred if you have the connection string
 
 ### Testing
 
