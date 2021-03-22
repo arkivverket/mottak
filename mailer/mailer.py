@@ -51,7 +51,7 @@ def send_message(name, recipient, subject, message, attachments):
     logging.info(
         "Message has attachments" if attachments else "No attachments")
     ret = requests.post(
-        "https://api.mailgun.net/v3/%s/messages" % os.getenv('MAILGUN_DOMAIN'),
+        "https://api.eu.mailgun.net/v3/%s/messages" % os.getenv('MAILGUN_DOMAIN'),
         auth=("api", os.getenv('MAILGUN_API_KEY')),
         data={"from": "The Mailgun <donotreply@%s>" % os.getenv('MAILGUN_DOMAIN'),
               "to": [name, recipient],
