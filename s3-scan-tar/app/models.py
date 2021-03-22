@@ -29,9 +29,9 @@ class AVScanResult:
 
     def generate_message(self):
         return (
-            f"Status etter virus scan: {self.status}\n\n"
-            f"Antall filer kontrollert: {self.total}\n"
-            f"    - Filer uten virus: {self.clean}\n"
-            f"    - Filer med virus: {self.virus}\n"
-            f"Antall filer ikke kontrollert pga. filstørrelse: {self.skipped}"
-        )
+                f"Status etter virus scan: {self.get_status()}\n\n"
+                f"Antall filer kontrollert: {self.get_sum_scanned()}\n"
+                f"    - Filer uten virus: {self.clean}\n"
+                f"    - Filer med virus: {self.virus}\n"
+                f"    - Filer ikke kontrollert pga. filstørrelse: {self.skipped}\n"
+                )
