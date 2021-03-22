@@ -107,7 +107,7 @@ spec:
                 Verifisering av overføringspakke utført.
                 Gjelder overforingspakke:
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
-                    - ekstern id: {{workflow.parameters.EKSTERN_ID}}
+                    - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
 
                 {{inputs.parameters.av_message}}
 
