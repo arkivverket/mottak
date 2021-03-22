@@ -106,6 +106,7 @@ spec:
               data: |
                 Verifisering av overføringspakke utført.
                 Gjelder overforingspakke:
+                    - tittel: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
                     - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
 
@@ -130,7 +131,7 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Overforingspakke skannet"
+            value: "Overføringspakke skannet: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}"
           - name: MESSAGE
             value: /tmp/message
           - name: ATTACHMENTS
