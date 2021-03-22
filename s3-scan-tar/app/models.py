@@ -24,13 +24,15 @@ class AVScanResult:
         else:
             return "Ikke ok"
 
-    def get_sum_scanned(self):
-        return self.clean + self.virus + self.skipped
+    def get_scanned_summation(self):
+        scanned = self.clean + self.virus
+        total = scanned + self.skipped
+        return f"{scanned} av {total}"
 
     def generate_message(self):
         return (
                 f"Status etter virus scan: {self.get_status()}\n\n"
-                f"Antall filer kontrollert: {self.get_sum_scanned()}\n"
+                f"Antall filer kontrollert: {self.get_scanned_summation()}\n"
                 f"    - Filer uten virus: {self.clean}\n"
                 f"    - Filer med virus: {self.virus}\n"
                 f"    - Filer ikke kontrollert pga. filstørrelse: {self.skipped}"

@@ -25,7 +25,7 @@ def test_status_has_correct_values():
 def test_correct_message_when_no_virus_found(_scan_result):
     expected_message = (
         "Status etter virus scan: ok\n\n"
-        "Antall filer kontrollert: 10\n"
+        "Antall filer kontrollert: 10 av 10\n"
         "    - Filer uten virus: 10\n"
         "    - Filer med virus: 0\n"
         "    - Filer ikke kontrollert pga. filstørrelse: 0"
@@ -35,13 +35,25 @@ def test_correct_message_when_no_virus_found(_scan_result):
     # assert _scan_result.get_message() == expected_message
 
 
-def test_correct_message_when_virus_found(_scan_result):
+def test_correct_message_when_virus_found():
     expected_message = (
         "Status etter virus scan: Ikke ok\n\n"
-        "Antall filer kontrollert: 10\n"
+        "Antall filer kontrollert: 10 av 10\n"
         "    - Filer uten virus: 8\n"
         "    - Filer med virus: 2\n"
         "    - Filer ikke kontrollert pga. filstørrelse: 0"
     )
     actual = AVScanResult(8, 2, 0)
+    assert expected_message == actual.generate_message()
+
+
+def test_correct_message_when_skipped_files():
+    expected_message = (
+        "Status etter virus scan: Ikke ok\n\n"
+        "Antall filer kontrollert: 10 av 15\n"
+        "    - Filer uten virus: 8\n"
+        "    - Filer med virus: 2\n"
+        "    - Filer ikke kontrollert pga. filstørrelse: 5"
+    )
+    actual = AVScanResult(8, 2, 5)
     assert expected_message == actual.generate_message()
