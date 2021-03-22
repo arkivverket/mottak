@@ -5,30 +5,27 @@ class AVScanResult:
     clean: int
     virus: int
     skipped: int
-    total: int
-    status: str
 
     def __init__(self, clean, virus, skipped):
         self.clean = clean
         self.virus = virus
         self.skipped = skipped
-        self.total = clean + virus
-        self.set_status()
 
     def __eq__(self, other):
         if isinstance(other, AVScanResult):
             return self.clean == other.clean and \
                    self.virus == other.virus and \
-                   self.skipped == other.skipped and \
-                   self.total == other.total and \
-                   self.status == other.status
+                   self.skipped == other.skipped
         return False
 
-    def set_status(self):
+    def get_status(self):
         if self.virus == 0:
-            self.status = "ok"
+            return "ok"
         else:
-            self.status = "Ikke ok"
+            return "Ikke ok"
+
+    def get_sum_scanned(self):
+        return self.clean + self.virus + self.skipped
 
     def generate_message(self):
         return (
