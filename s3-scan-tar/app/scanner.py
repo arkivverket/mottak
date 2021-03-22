@@ -119,8 +119,8 @@ def scan_archive(blob: Blob, clamd_socket: ClamdUnixSocket, buffer_size: int) ->
     return AVScanResult(clean, virus, skipped)
 
 
-def write_result(scan_result: AVScanResult):
-    with open(MESSAGE_PATH, 'w') as result_file:
+def write_to_file(scan_result: AVScanResult, target_path: str):
+    with open(target_path, 'w') as result_file:
         result_file.write(scan_result.generate_message())
 
 
