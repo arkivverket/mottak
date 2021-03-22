@@ -16,6 +16,7 @@ The values given here are examples or hints to proper variables.
 ```yaml
 - TUSD_OBJECT_NAME=ok63e2f0-39bf-4fea-a741-58d472664ce2
 - AVLOG=/tmp/avlog
+- SUMMARY=/tmp/summary
 - BUCKET=bucket-storage
 - AZURE_ACCOUNT=myazureaccdev
 - AZURE_KEY=secret

@@ -18,8 +18,8 @@ spec:
             dependencies: [ task-avscan ]
             arguments:
               parameters:
-                - name: av_message
-                  value: "{{tasks.task-avscan.outputs.parameters.av_message}}"
+                - name: av_summary
+                  value: "{{tasks.task-avscan.outputs.parameters.av_summary}}"
               artifacts:
                 - name: avlog
                   from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
@@ -82,11 +82,13 @@ spec:
                 key: storageaccount-key
           - name: AVLOG
             value: /tmp/avlog
+          - name: SUMMARY
+            value: /tmp/summary
       outputs:
         parameters:
-          - name: av_message
+          - name: av_summary
             valueFrom:
-              path: /tmp/message
+              path: /tmp/summary
         artifacts:
           - name: avlog
             path: /tmp/avlog
@@ -96,7 +98,7 @@ spec:
     - name: notify-coordinator
       inputs:
         parameters:
-          - name: av_message
+          - name: av_summary
         artifacts:
           - name: avlog
             path: /tmp/attachments/avlog.txt
@@ -110,7 +112,7 @@ spec:
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
                     - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
 
-                {{inputs.parameters.av_message}}
+                {{inputs.parameters.av_summary}}
 
                 Vedlagt denne e-post er loggen fra antivirus-skanning.
                 Vennligst se over

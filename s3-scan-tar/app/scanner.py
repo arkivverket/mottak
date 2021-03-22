@@ -23,8 +23,6 @@ try:
 except ModuleNotFoundError:
     print("Failed to load dotenv file. Assuming production")
 
-MESSAGE_PATH = '/tmp/message'
-
 MEGABYTES = 1024 ** 2
 UINT_MAX = 2 ** 32 - 1
 
@@ -201,7 +199,8 @@ def main() -> None:
     logging.info(f"{scan_result.clean} files scanned and found clean")
     logging.info(f"{scan_result.virus} viruses found")
     logging.info(f"{scan_result.skipped} files skipped")
-    write_result(scan_result)
+    summary_path = os.getenv('SUMMARY')
+    write_to_file(scan_result, summary_path)
     logging.info("Archive scanned - exiting")
 
 
