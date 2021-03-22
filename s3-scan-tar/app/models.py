@@ -33,5 +33,5 @@ class AVScanResult:
                 f"Antall filer kontrollert: {self.get_sum_scanned()}\n"
                 f"    - Filer uten virus: {self.clean}\n"
                 f"    - Filer med virus: {self.virus}\n"
-                f"    - Filer ikke kontrollert pga. filstørrelse: {self.skipped}\n"
+                f"    - Filer ikke kontrollert pga. filstørrelse: {self.skipped}"
                 )
