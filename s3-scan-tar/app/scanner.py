@@ -124,7 +124,7 @@ def write_to_file(scan_result: AVScanResult, target_path: str):
 
 def main() -> None:
     """ Run from here, really """
-    logging.basicConfig(level=logging.INFO, filename=os.getenv("AVLOG", "/tmp/avlog"),
+    logging.basicConfig(level=logging.INFO, filename=os.getenv("OUTPUT_PATH_LOG", "/tmp/avlog"),
                         filemode="w", format="%(asctime)s | %(levelname)s | %(message)s")
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
@@ -199,7 +199,7 @@ def main() -> None:
     logging.info(f"{scan_result.clean} files scanned and found clean")
     logging.info(f"{scan_result.virus} viruses found")
     logging.info(f"{scan_result.skipped} files skipped")
-    summary_path = os.getenv('SUMMARY')
+    summary_path = os.getenv('OUTPUT_PATH_RESULT', "/tmp/result")
     write_to_file(scan_result, summary_path)
     logging.info("Archive scanned - exiting")
 
