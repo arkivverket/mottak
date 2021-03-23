@@ -177,7 +177,7 @@ def main() -> None:
 
     logging.info("Initialising connection to clamd")
     try:
-        wait_for_port(3310)
+        wait_for_port(port=3310, timeout=60.0)
         clamd_socket = ClamdUnixSocket()
         logging.info(f"Connected to clamd version {clamd_socket.version()}")
     except TimeoutError as exception:
