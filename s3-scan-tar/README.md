@@ -19,12 +19,11 @@ The values given here are examples or hints to proper variables.
 - OUTPUT_PATH_LOG=/tmp/avlog
 - OUTPUT_PATH_RESULT=/tmp/result
 - BUCKET=bucket-storage
-- AZURE_ACCOUNT=myazureaccdev
-- AZURE_KEY=secret
-- AZURE_STORAGE_CONNECTION_STRING=***
+- AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=**********;AccountKey=**********;EndpointSuffix=core.windows.net
 ```
 
-`AZURE_STORAGE_CONNECTION_STRING` is preferred if you have the connection string
+The environment variables `BUFFER_SIZE` and `MAX_CONCURRENCY` can be adjusted to tweak the performance.
+Their default values are set to give, on average, the best performane, and are therefore it is not commonly needed to adjust them.
 
 ### Testing
 
