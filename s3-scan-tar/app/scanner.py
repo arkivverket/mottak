@@ -136,6 +136,7 @@ def main() -> None:
     objectname = os.getenv("TUSD_OBJECT_NAME")
     buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
     max_concurrency = int(os.getenv("MAX_CONCURRENCY", 4))
+    summary_path = os.getenv('OUTPUT_PATH_RESULT', "/tmp/result")
 
     conn_str = os.getenv("AZURE_STORAGE_CONNECTION_STRING", None)
     if conn_str is None:
@@ -199,7 +200,6 @@ def main() -> None:
     logging.info(f"{scan_result.clean} files scanned and found clean")
     logging.info(f"{scan_result.virus} viruses found")
     logging.info(f"{scan_result.skipped} files skipped")
-    summary_path = os.getenv('OUTPUT_PATH_RESULT', "/tmp/result")
     write_to_file(scan_result, summary_path)
     logging.info("Archive scanned - exiting")
 
