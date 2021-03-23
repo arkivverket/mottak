@@ -10,28 +10,20 @@ spec:
         tasks:
           - name: task-checksum-check
             template: checksum-check
-            # Fjern checksum-error -> checksum og avscan i parallell, felles melding til coordinator
-          - name: task-checksum-error
-            template: checksum-error
-            dependencies: [ task-checksum-check ]
-            when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'mismatch'"
-            arguments:
-              artifacts:
-                - name: checksumlog
-                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
           - name: task-avscan
             template: avscan
-            dependencies: [ task-checksum ]
-            when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
           - name: task-notify-coordinator
             template: notify-coordinator
-            dependencies: [ task-avscan ]
-            when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
+            dependencies: [ task-checksum-check, task-avscan ]
             arguments:
               parameters:
+                - name: checksum_result
+                  value: "{{tasks.task-checksum-check.outputs.parameters.checksum_result}}"
                 - name: av_result
                   value: "{{tasks.task-avscan.outputs.parameters.av_result}}"
               artifacts:
+                - name: checksum_log
+                  from: "{{tasks.task-checksum-check.outputs.artifacts.checksum_log}}"
                 - name: av_log
                   from: "{{tasks.task-avscan.outputs.artifacts.av_log}}"
 
@@ -68,8 +60,8 @@ spec:
             valueFrom:
               path: /tmp/result
         artifacts:
-          - name: checksumlog
-            path: "/tmp/checksum.log"
+          - name: checksum_log
+            path: /tmp/log
             archive:
               none: {}
 
