@@ -65,35 +65,6 @@ spec:
             archive:
               none: {}
 
-    # Trengs sannsynligvis ikke
-    - name: checksum-error
-      inputs:
-        artifacts:
-          - name: checksumlog
-            path: /tmp/attachments/checksum.log
-      container:
-        image: arkivverket.azurecr.io/da-mottak/mailer:{{workflow.parameters.MAILER_TAG}}
-        imagePullPolicy: Always
-        env:
-          - name: MAILGUN_DOMAIN
-            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
-          - name: MAILGUN_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: mailgun-secret
-                key: mailgun-secret
-          - name: NAME
-            value: "Koordinator"  # {{workflow.parameters.KOORDINATOR_NAVN}}
-          - name: RECIPIENT
-            value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
-          - name: SUBJECT
-            value: "Overforingspakke avvist"
-          - name: MESSAGE
-            value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}} tilknyttet arkivuttrekk
-            med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}} avvist pga. feil sjekksum."
-          - name: ATTACHMENTS
-            value: /tmp/attachments
-
     - name: avscan
       container:
         image: arkivverket.azurecr.io/da-mottak/s3-scan-tar:{{workflow.parameters.AVSCAN_TAG}}
