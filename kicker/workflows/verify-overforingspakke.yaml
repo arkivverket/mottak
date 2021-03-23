@@ -97,10 +97,11 @@ spec:
     - name: notify-coordinator
       inputs:
         parameters:
+          - name: checksum_result
           - name: av_result
         artifacts:
-          - name: checksumlog
-            path: /tmp/attachments/checksum.log
+          - name: checksum_log
+            path: /tmp/attachments/checksum_log.txt
           - name: av_log
             path: /tmp/attachments/av_log.txt
           - name: message
