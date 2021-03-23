@@ -107,7 +107,7 @@ spec:
             raw:
               data: |
                 Verifisering av overføringspakke utført.
-                Gjelder overforingspakke:
+                Gjelder overføringspakke:
                     - tittel: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
                     - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
