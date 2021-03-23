@@ -48,6 +48,10 @@ spec:
             value: abs
           - name: BUCKET
             value: "tusd-storage"
+          - name: OUTPUT_PATH_RESULT
+            value: /tmp/result
+          - name: OUTPUT_PATH_LOG
+            value: /tmp/log
           - name: AZURE_ACCOUNT
             valueFrom:
               secretKeyRef:

@@ -17,6 +17,8 @@ All except SJEKKSUM are used when downloading an object from azure with Arkivver
 - SJEKKSUM=5cgdde307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a
 - OBJECTSTORE=abs
 - BUCKET=bucket-storage
+- OUTPUT_PATH_RESULT=/tmp/result
+- OUTPUT_PATH_LOG=/tmp/log
 - AZURE_ACCOUNT=myazureaccdev
 - AZURE_KEY=secret
 ```
