@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS prepare
+FROM python:3.9.2-slim AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -22,9 +22,7 @@ COPY pyproject.toml /app
 RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev
 
-FROM python:3.8-slim
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-WORKDIR /app
+FROM python:3.9.2-slim
 
 ENV PATH=/app/.venv/bin:${PATH}
 
@@ -38,11 +36,8 @@ RUN apt-get update \
     && freshclam
 
 COPY --chown=clamav --from=prepare /app/.venv /app/.venv
-COPY --chown=clamav scanner.py /app/
+COPY --chown=clamav app/ /app/
 COPY --chown=clamav conf/ /etc/clamav/
 
 USER clamav
-
-# If you wanna debug you might wanna drop your gcs.json into the container or perhaps bind-mount it or whatever.
-# COPY gcs.json /opt
-CMD ["/app/scanner.py"]
+CMD ["python", "-m", "app.scanner"]

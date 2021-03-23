@@ -9,7 +9,7 @@ class MailgunClient(AsyncClient):
 
     def __init__(self, domain: str, secret: str, tusd_url: str):
         super().__init__()
-        self.url = f'https://api.mailgun.net/v3/{domain}/messages'
+        self.url = f'https://api.eu.mailgun.net/v3/{domain}/messages'
         self.secret = secret
         self.domain = domain
         self.tusd_url = tusd_url

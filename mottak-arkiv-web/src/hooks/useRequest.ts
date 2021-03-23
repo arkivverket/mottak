@@ -3,9 +3,9 @@ import { useReducer, useRef } from 'react'
 
 import axiosAPI from '../request'
 
-type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string }
+export type Action<T> = { type: 'PENDING' } | { type: 'SUCCESS'; payload: T } | { type: 'ERROR'; payload: string }
 
-type Method = 'DELETE' | 'PATCH' | 'POST' | 'GET'
+export type Method = 'DELETE' | 'PATCH' | 'POST' | 'GET'
 
 interface State<T> {
 	data: T | null

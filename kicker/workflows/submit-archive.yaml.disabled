@@ -167,20 +167,13 @@ spec:
         env:
           - name: TUSD_OBJECT_NAME
             value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
-          - name: OBJECTSTORE
-            value: abs
           - name: BUCKET
             value: "tusd-storage"
-          - name: AZURE_ACCOUNT
+          - name: AZURE_STORAGE_CONNECTION_STRING
             valueFrom:
               secretKeyRef:
-                name: storageaccount-name
-                key: storageaccount-name
-          - name: AZURE_KEY
-            valueFrom:
-              secretKeyRef:
-                name: storageaccount-key
-                key: storageaccount-key
+                name: storageaccount-connection-string
+                key: storageaccount-connection-string
           - name: AVLOG
             value: /tmp/avlog
       outputs:

@@ -6,15 +6,16 @@ authors = ["Per Buer <per.buer@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-py-objectstore = { git = "https://github.com/arkivverket/py-objectstore.git" }
 pyClamd = "^0.4.0"
+azure-storage-blob = "^12.8.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.4.4"
-python-dotenv = "^0.13.0"
-autopep8 = "^1.5.4"
+python-dotenv = "^0.15.0"
+autopep8 = "^1.5.6"
 pytest = "^6.0.1"
 pytest-cov = "^2.10.1"
+flake8 = "^3.8.4"
 
 [build-system]
 requires = ["poetry>=0.12"]

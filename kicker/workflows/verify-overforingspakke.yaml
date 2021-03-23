@@ -8,11 +8,12 @@ spec:
     - name: verify-overforingspakke
       dag:
         tasks:
-          - name: task-checksum
+          - name: task-checksum-check
             template: checksum-check
+            # Fjern checksum-error -> checksum og avscan i parallell, felles melding til coordinator
           - name: task-checksum-error
             template: checksum-error
-            dependencies: [ task-checksum]
+            dependencies: [ task-checksum-check ]
             when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'mismatch'"
             arguments:
               artifacts:
@@ -27,11 +28,12 @@ spec:
             dependencies: [ task-avscan ]
             when: "'{{tasks.task-checksum.outputs.parameters.checksum_result}}' == 'ok'"
             arguments:
+              parameters:
+                - name: av_result
+                  value: "{{tasks.task-avscan.outputs.parameters.av_result}}"
               artifacts:
-                - name: checksumlog
-                  from: "{{tasks.task-checksum.outputs.artifacts.checksumlog}}"
-                - name: avlog
-                  from: "{{tasks.task-avscan.outputs.artifacts.avlog}}"
+                - name: av_log
+                  from: "{{tasks.task-avscan.outputs.artifacts.av_log}}"
 
     - name: checksum-check
       container:
@@ -67,6 +69,7 @@ spec:
             archive:
               none: {}
 
+    # Trengs sannsynligvis ikke
     - name: checksum-error
       inputs:
         artifacts:
@@ -102,42 +105,57 @@ spec:
         env:
           - name: TUSD_OBJECT_NAME
             value: "{{workflow.parameters.TUSD_OBJEKT_NAVN}}"
-          - name: OBJECTSTORE
-            value: abs
           - name: BUCKET
             value: "tusd-storage"
-          - name: AZURE_ACCOUNT
+          - name: AZURE_STORAGE_CONNECTION_STRING
             valueFrom:
               secretKeyRef:
-                name: storageaccount-name
-                key: storageaccount-name
-          - name: AZURE_KEY
-            valueFrom:
-              secretKeyRef:
-                name: storageaccount-key
-                key: storageaccount-key
-          - name: AVLOG
+                name: storageaccount-connection-string
+                key: storageaccount-connection-string
+          - name: OUTPUT_PATH_LOG
             value: /tmp/avlog
+          - name: OUTPUT_PATH_RESULT
+            value: /tmp/result
       outputs:
+        parameters:
+          - name: av_result
+            valueFrom:
+              path: /tmp/result
         artifacts:
-          - name: avlog
+          - name: av_log
             path: /tmp/avlog
             archive:
               none: {}  # no compression, default is tar+gzip compression
 
     - name: notify-coordinator
       inputs:
+        parameters:
+          - name: av_result
         artifacts:
           - name: checksumlog
             path: /tmp/attachments/checksum.log
-          - name: avlog
-            path: /tmp/attachments/avlog.txt
+          - name: av_log
+            path: /tmp/attachments/av_log.txt
+          - name: message
+            path: /tmp/message
+            raw:
+              data: |
+                Verifisering av overføringspakke utført.
+                Gjelder overføringspakke:
+                    - tittel: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}
+                    - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
+                    - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
+
+                {{inputs.parameters.av_result}}
+
+                Vedlagt denne e-post er loggen fra antivirus-skanning.
+                Vennligst se over
       container:
         image: arkivverket.azurecr.io/da-mottak/mailer:{{workflow.parameters.MAILER_TAG}}
         imagePullPolicy: Always
         env:
           - name: MAILGUN_DOMAIN
-            value: sandbox7cbdab032f7b4321af274439b1f353a2.mailgun.org
+            value: mg.mottak.digitalarkivet.no
           - name: MAILGUN_API_KEY
             valueFrom:
               secretKeyRef:
@@ -148,12 +166,8 @@ spec:
           - name: RECIPIENT
             value: "{{workflow.parameters.KOORDINATOR_EPOST}}"
           - name: SUBJECT
-            value: "Overforingspakke behandlet"
+            value: "Overføringspakke skannet: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}"
           - name: MESSAGE
-            value: "Overføringspakke med ekstern id {{workflow.parameters.EKSTERN_ID}}
-                    tilknyttet arkivuttrekk med objekt id {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
-                    har verifisert korrekt sjekksum og blitt skannet for virus.
-                    Vedlagt denne e-posten er loggen fra kontroll av sjekksum og antivirus-skanningen.
-                    Vennligst se over."
+            value: /tmp/message
           - name: ATTACHMENTS
             value: /tmp/attachments
