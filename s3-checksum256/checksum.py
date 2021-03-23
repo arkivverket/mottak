@@ -62,10 +62,10 @@ def main():
 
     if checksum == expected_checksum:
         logging.info(f'Checksum ({checksum}) verified')
-        write_to_file('ok', summary_path)
+        write_to_file('Status etter kontroll av sjekksum: ok', summary_path)
     else:
         logging.warning(f"Expected checksum {expected_checksum} doesn't match calculated {checksum}")
-        write_to_file('mismatch', summary_path)
+        write_to_file('Status etter kontroll av sjekksum: Ikke ok', summary_path)
 
 
 if __name__ == "__main__":
