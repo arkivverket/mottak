@@ -14,7 +14,8 @@ mock_dbdata = DataFromDatabase(invitasjon_id=1,
                                ekstern_id="df53d1d8-39bf-4fea-a741-58d472664ce2",
                                sjekksum="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
                                koordinator_epost="laralv@arkivverket.no",
-                               arkivuttrekk_obj_id="ed889fdc-b4d0-49fe-bf4b-caa0834cab2d")
+                               arkivuttrekk_obj_id="ed889fdc-b4d0-49fe-bf4b-caa0834cab2d",
+                               tittel="Archive Power")
 
 
 def test_update_overforingspakke_in_db(mocker):
@@ -43,7 +44,8 @@ def test_gather_params(mocker):
                 'EKSTERN_ID': 'df53d1d8-39bf-4fea-a741-58d472664ce2',
                 'SJEKKSUM': '2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a',
                 'KOORDINATOR_EPOST': 'laralv@arkivverket.no',
-                'ARKIVUTTREKK_OBJ_ID': "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d"}
+                'ARKIVUTTREKK_OBJ_ID': "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d",
+                'ARKIVUTTREKK_TITTEL': 'Archive Power'}
     # data = json.loads(post_event)
     # metadata = invitation_dict
     params = gather_params(hook_data=mock_hook_data, data_from_db=mock_dbdata)

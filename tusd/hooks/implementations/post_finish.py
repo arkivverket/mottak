@@ -54,7 +54,8 @@ def gather_params(data_from_db: DataFromDatabase, hook_data: HookData):
         'SJEKKSUM': data_from_db.sjekksum,
         'EKSTERN_ID': data_from_db.ekstern_id,
         'KOORDINATOR_EPOST': data_from_db.koordinator_epost,
-        'ARKIVUTTREKK_OBJ_ID': data_from_db.arkivuttrekk_obj_id
+        'ARKIVUTTREKK_OBJ_ID': data_from_db.arkivuttrekk_obj_id,
+        'ARKIVUTTREKK_TITTEL': data_from_db.tittel
     }
     return params
 

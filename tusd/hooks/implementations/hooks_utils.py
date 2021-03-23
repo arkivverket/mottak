@@ -46,7 +46,8 @@ def get_data_from_db(conn, invitasjon_ekstern_id: str, logger) -> Optional[DataF
             'i.ekstern_id           AS ekstern_id, '
             'a.sjekksum_sha256      AS sjekksum, '
             'a.koordinator_epost    AS koordinator_epost, '
-            'a.obj_id               AS arkivuttrekk_obj_id '
+            'a.obj_id               AS arkivuttrekk_obj_id, '
+            'a.tittel               AS arkivuttrekk_tittel '
             'FROM invitasjon i LEFT JOIN arkivuttrekk a ON i.arkivuttrekk_id = a.id '
             'WHERE i.ekstern_id =%s', [invitasjon_ekstern_id])
         rec = dict_cursor.fetchall()
