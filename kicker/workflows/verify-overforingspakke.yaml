@@ -114,7 +114,7 @@ spec:
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
                     - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
                 --------------------------------------------------------------------------------
-                inputs.parameters.checksum_result
+                {{inputs.parameters.checksum_result}}
                 --------------------------------------------------------------------------------
                 {{inputs.parameters.av_result}}
                 --------------------------------------------------------------------------------
