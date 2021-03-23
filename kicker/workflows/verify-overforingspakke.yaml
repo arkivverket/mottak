@@ -113,10 +113,12 @@ spec:
                     - tittel: {{workflow.parameters.ARKIVUTTREKK_TITTEL}}
                     - arkivuttrekk objekt id: {{workflow.parameters.ARKIVUTTREKK_OBJ_ID}}
                     - invitasjons id: {{workflow.parameters.EKSTERN_ID}}
-
+                --------------------------------------------------------------------------------
+                inputs.parameters.checksum_result
+                --------------------------------------------------------------------------------
                 {{inputs.parameters.av_result}}
-
-                Vedlagt denne e-post er loggen fra antivirus-skanning.
+                --------------------------------------------------------------------------------
+                Vedlagt denne e-post er loggen fra kontroll av sjekksum og antivirus-skanning.
                 Vennligst se over
       container:
         image: arkivverket.azurecr.io/da-mottak/mailer:{{workflow.parameters.MAILER_TAG}}
