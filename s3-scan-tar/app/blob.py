@@ -132,8 +132,8 @@ class Blob(io.BufferedIOBase):
 
     # Override some methods from io.IOBase.
     def close(self) -> None:
-        """Break the blob lease, flush and close this stream."""
-        self._blob_lease.break_lease()
+        """Release the blob lease, flush and close this stream."""
+        self._blob_lease.release()
         self._blob_lease = None
         self.client = None
         self._reader = None
