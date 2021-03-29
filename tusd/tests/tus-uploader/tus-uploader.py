@@ -6,14 +6,16 @@ from tusclient import client
 tusd_url = 'https://mottak.plattform.arkivverket.dev/tusd/files/'
 file_name = '../../../../eksempel-arkiv/large/ed889fdc-b4d0-49fe-bf4b-caa0834cab2d.tar'
 # 16 MiB = 16777216 bytes
-chunk_size_in_bytes = 16777216
+# 1 MiB = 1048576 bytes
+chunk_size_in_bytes = 1048576
+
 
 prefix_dev = 'dpldrdev://'
 prefix = 'dpldr://'
 
 invitation = {
     "reference": "ed889fdc-b4d0-49fe-bf4b-caa0834cab2d",
-    "uploadUrl": "https://mottak.plattform.arkivverket.dev/tusd",
+    "uploadUrl": "https://mottak.plattform.arkivverket.dev/tusd/files",
     "uploadType": "tar",
     "meta": {
         # Replace this with an UUID from the "invitasjon" table
