@@ -1,4 +1,4 @@
-FROM python:3.9.2-slim AS prepare
+FROM python:3.9.3-slim AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -22,7 +22,7 @@ COPY pyproject.toml /app
 RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev
 
-FROM python:3.9.2-slim
+FROM python:3.9.3-slim
 
 ENV PATH=/app/.venv/bin:${PATH}
 
