@@ -1,11 +1,13 @@
 import xml.etree.ElementTree as ET
 from datetime import date
-from typing import Union
+from typing import Optional, Union
 from uuid import UUID
 
-from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Metadata import Metadata
 
 NOT_PRESENT_RETURN_VALUE = ''
+
 
 def _recursive_ns(elem: ET.Element, ns: dict) -> dict:
     """
@@ -41,7 +43,7 @@ def _get_objekt_id(root: ET.Element) -> UUID:
     return UUID(uuid_str[5:])
 
 
-def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
+def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> Optional[ArkivuttrekkType]:
     """
     Method that converts a str to a ArkivuttrekkType Enum value or returns None
     """
@@ -56,7 +58,7 @@ def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
     return None
 
 
-def _get_arkivtype(root: ET.Element, ns: dict) -> str:
+def _get_arkivtype(root: ET.Element, ns: dict) -> Optional[ArkivuttrekkType]:
     # Arkivtype: DELIVERYSPECIFICATION
     try:
         alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
@@ -127,7 +129,7 @@ def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Union[date, str]:
     return NOT_PRESENT_RETURN_VALUE
 
 
-def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> date:
+def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> Optional[date]:
     alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
     for alt_record in alt_record_ids:
         if alt_record.get('TYPE') == "ENDDATE":
@@ -165,7 +167,7 @@ def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
         return NOT_PRESENT_RETURN_VALUE
 
 
-def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -> Arkivuttrekk:
+def create_metadata_from_parsed_metadatafil(metadatafil_id: int, innhold: str) -> Metadata:
     """
     Method that parse the content (innhold) of a metadatfil
     and returns a domain object of type Arkivuttrekk.
@@ -173,10 +175,10 @@ def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -
     root = ET.fromstring(innhold)
     ns = _get_all_namespaces(root)
 
-    arkivuttrekk = Arkivuttrekk(
+    metadata = Metadata(
         obj_id=_get_objekt_id(root),
         status=ArkivuttrekkStatus.OPPRETTET,
-        type_=_get_arkivtype(root, ns),
+        arkivutrekk_type=_get_arkivtype(root, ns),
         tittel=_get_title(root, ns),
         sjekksum_sha256=_get_checksum(root, ns),
         avgiver_navn=_get_avgiver_navn(root, ns),
@@ -187,4 +189,5 @@ def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -
         storrelse=_get_storrelse(root, ns),
         avtalenummer=_get_avtalenummer(root, ns)
     )
-    return arkivuttrekk
+
+    return metadata

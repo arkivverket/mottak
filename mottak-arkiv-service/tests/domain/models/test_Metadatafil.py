@@ -24,5 +24,5 @@ def test_as_arkivuttrekk(testfile_metadatfil):
         storrelse=0.44032,
         avtalenummer="01/12345"
     )
-    actual = testfile_metadatfil.as_arkivuttrekk()
+    actual = testfile_metadatfil.as_metadata()
     assert vars(actual) == vars(expected)

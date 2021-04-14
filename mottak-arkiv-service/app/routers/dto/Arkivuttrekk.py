@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -18,7 +19,7 @@ class ArkivuttrekkBase(BaseModel):
     sjekksum_sha256: str
     avgiver_navn: str
     avgiver_epost: str
-    koordinator_epost: str = None
+    koordinator_epost: Optional[str]
     metadatafil_id: int
     arkiv_startdato: date
     arkiv_sluttdato: date
@@ -42,24 +43,6 @@ class ArkivuttrekkBase(BaseModel):
             avtalenummer=self.avtalenummer,
         )
 
-    @staticmethod
-    def from_domain(arkivuttrekk: Arkivuttrekk_domain):
-        return ArkivuttrekkBase(
-            obj_id=arkivuttrekk.obj_id,
-            status=arkivuttrekk.status,
-            type=arkivuttrekk.type,
-            tittel=arkivuttrekk.tittel,
-            sjekksum_sha256=arkivuttrekk.sjekksum_sha256,
-            avgiver_navn=arkivuttrekk.avgiver_navn,
-            avgiver_epost=arkivuttrekk.avgiver_epost,
-            koordinator_epost=arkivuttrekk.koordinator_epost,
-            metadatafil_id=arkivuttrekk.metadatafil_id,
-            arkiv_startdato=arkivuttrekk.arkiv_startdato,
-            arkiv_sluttdato=arkivuttrekk.arkiv_sluttdato,
-            storrelse=arkivuttrekk.storrelse,
-            avtalenummer=arkivuttrekk.avtalenummer
-        )
-
 
 class Arkivuttrekk(ArkivuttrekkBase):
     """
@@ -71,24 +54,3 @@ class Arkivuttrekk(ArkivuttrekkBase):
 
     class Config:
         orm_mode = True
-
-
-class Metadata(ArkivuttrekkBase):
-    type: ArkivuttrekkType = None
-    @staticmethod
-    def from_domain(arkivuttrekk: Arkivuttrekk_domain):
-        return Metadata(
-            obj_id=arkivuttrekk.obj_id,
-            status=arkivuttrekk.status,
-            type=arkivuttrekk.type,
-            tittel=arkivuttrekk.tittel,
-            sjekksum_sha256=arkivuttrekk.sjekksum_sha256,
-            avgiver_navn=arkivuttrekk.avgiver_navn,
-            avgiver_epost=arkivuttrekk.avgiver_epost,
-            koordinator_epost=arkivuttrekk.koordinator_epost,
-            metadatafil_id=arkivuttrekk.metadatafil_id,
-            arkiv_startdato=arkivuttrekk.arkiv_startdato,
-            arkiv_sluttdato=arkivuttrekk.arkiv_sluttdato,
-            storrelse=arkivuttrekk.storrelse,
-            avtalenummer=arkivuttrekk.avtalenummer
-        )

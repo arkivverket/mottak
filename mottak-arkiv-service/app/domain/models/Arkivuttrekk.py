@@ -39,22 +39,22 @@ class Arkivuttrekk:
     endret: datetime
 
     def __init__(self,
-                 id_=None,
-                 obj_id=None,
-                 status=None,
-                 type_=None,
-                 tittel=None,
-                 sjekksum_sha256=None,
-                 avgiver_navn=None,
-                 avgiver_epost=None,
-                 koordinator_epost=None,
-                 metadatafil_id=None,
-                 arkiv_startdato=None,
-                 arkiv_sluttdato=None,
-                 storrelse=None,
-                 avtalenummer=None,
-                 opprettet=None,
-                 endret=None):
+                 id_,
+                 obj_id,
+                 status,
+                 type_,
+                 tittel,
+                 sjekksum_sha256,
+                 avgiver_navn,
+                 avgiver_epost,
+                 koordinator_epost,
+                 metadatafil_id,
+                 arkiv_startdato,
+                 arkiv_sluttdato,
+                 storrelse,
+                 avtalenummer,
+                 opprettet,
+                 endret):
         self.id = id_
         self.obj_id = obj_id
         self.status = status

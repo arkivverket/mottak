@@ -1,8 +1,8 @@
 from datetime import datetime
 from enum import Enum
 
-from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold
-from app.domain.models.Arkivuttrekk import Arkivuttrekk
+from app.domain.models.Metadata import Metadata
+from app.domain.xmlparser import create_metadata_from_parsed_metadatafil
 
 
 class MetadataType(str, Enum):
@@ -31,5 +31,5 @@ class Metadatafil:
         self.innhold = innhold
         self.opprettet = opprettet
 
-    def as_arkivuttrekk(self) -> Arkivuttrekk:
-        return create_arkivuttrekk_from_parsed_innhold(self.id, self.innhold)
+    def as_metadata(self) -> Metadata:
+        return create_metadata_from_parsed_metadatafil(self.id, self.innhold)
