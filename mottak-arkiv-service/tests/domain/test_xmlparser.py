@@ -6,8 +6,9 @@ import pytest
 
 from app.routers.services.metadatafil_service import metadatafil_mapper
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Metadata import Metadata
 from app.domain.models.Metadatafil import Metadatafil
-from app.domain.xmlparser import create_arkivuttrekk_from_parsed_innhold, _get_all_namespaces, _get_title, \
+from app.domain.xmlparser import create_metadata_from_parsed_metadatafil, _get_all_namespaces, _get_title, \
     _get_arkivtype, _get_storrelse, _get_avtalenummer, _get_objekt_id, \
     _str_2_arkivuttrekk_type, _get_checksum, _get_avgiver_navn, _get_avgiver_epost, _get_arkiv_startdato, \
     _get_arkiv_sluttdato, _convert_2_megabytes
@@ -217,16 +218,16 @@ def test_get_avtalenummer_success(_root, _ns):
     assert actual == execpected
 
 
-def test_create_arkivuttrekk_from_parsed_innhold(_innhold):
+def test_create_metadata_from_parsed_metadatafil(_innhold):
     """
     GIVEN   the content(XML) of a METS/XML file
-    WHEN    calling the method create_arkivuttrekk_from_parsed_innhold()
+    WHEN    calling the method create_metadata_from_parsed_metadatafil()
     THEN    check that the returned Arkivuttrekk domain object is correct
     """
-    expected = Arkivuttrekk(
+    expected = Metadata(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.OPPRETTET,
-        type_=ArkivuttrekkType.NOARK5,
+        arkivutrekk_type=ArkivuttrekkType.NOARK5,
         tittel="The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
         avgiver_navn="Lewis Caroll",
@@ -238,6 +239,6 @@ def test_create_arkivuttrekk_from_parsed_innhold(_innhold):
         avtalenummer="01/12345"
     )
     metadatafil_id = 1
-    actual = create_arkivuttrekk_from_parsed_innhold(metadatafil_id, _innhold)
+    actual = create_metadata_from_parsed_metadatafil(metadatafil_id, _innhold)
     assert vars(actual) == vars(expected)
 

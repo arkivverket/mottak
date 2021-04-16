@@ -1,7 +1,8 @@
 from datetime import date
 from uuid import UUID
 
-from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType, Arkivuttrekk
+from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Metadata import Metadata
 
 
 def test_as_arkivuttrekk(testfile_metadatfil):
@@ -10,10 +11,10 @@ def test_as_arkivuttrekk(testfile_metadatfil):
     WHEN    calling the internal method .as_arkivuttrekk()
     THEN    control that the returned Arkivuttrekk domain object is correct
     """
-    expected = Arkivuttrekk(
+    expected = Metadata(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.OPPRETTET,
-        type_=ArkivuttrekkType.NOARK5,
+        arkivutrekk_type=ArkivuttrekkType.NOARK5,
         tittel="The Lewis Caroll Society -- Wonderland (1862 - 1864) - 1234",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
         avgiver_navn="Lewis Caroll",

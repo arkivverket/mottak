@@ -33,7 +33,7 @@ async def router_get_content(metadatafil_id: int, db: Session = Depends(get_db_s
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
-@router.get("/{id}/parsed",
+@router.get("/{metadatafil_id}/parsed",
             status_code=status.HTTP_200_OK,
             response_model=Metadata,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
