@@ -1,12 +1,12 @@
-from datetime import date
+from datetime import datetime, date
 from uuid import UUID
 
 import pytest
 
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk as Arkivuttrekk_dto
 
-
+# Domain model
 @pytest.fixture
 def _arkivuttrekk(testfile_metadatfil) -> Arkivuttrekk:
     return Arkivuttrekk(
@@ -24,14 +24,15 @@ def _arkivuttrekk(testfile_metadatfil) -> Arkivuttrekk:
         arkiv_sluttdato=date.fromisoformat("1900-05-12"),
         storrelse=0.4562,
         avtalenummer="01/12345",
-        opprettet=date.fromisoformat("2020-10-10"),
-        endret=date.fromisoformat("2020-11-10")
+        opprettet=datetime.fromisoformat("2020-10-10"),
+        endret=datetime.fromisoformat("2020-11-10")
     )
 
-
+# DTO model
 @pytest.fixture
-def _arkivuttrekk_base(testfile_metadatfil) -> ArkivuttrekkBase:
-    return ArkivuttrekkBase(
+def _arkivuttrekk_dto(testfile_metadatfil) -> Arkivuttrekk_dto:
+    return Arkivuttrekk_dto(
+        id=1,
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.OPPRETTET,
         type=ArkivuttrekkType.NOARK5,
@@ -45,19 +46,23 @@ def _arkivuttrekk_base(testfile_metadatfil) -> ArkivuttrekkBase:
         arkiv_sluttdato=date.fromisoformat("1900-05-12"),
         storrelse=0.4562,
         avtalenummer="01/12345",
+        opprettet=datetime.fromisoformat("2020-10-10"),
+        endret=datetime.fromisoformat("2020-11-10")
     )
 
 
-def test_init_from(_arkivuttrekk):
+def test_to_domain(_arkivuttrekk_dto):
     """
-    GIVEN   a domain object of type Arkivuttrekk
-    WHEN    calling the static method from_domain()
-    THEN    check that returned DTO object ArkivuttrekkBase is correct
+    GIVEN   an object of type ArkivuttrekkBase
+    WHEN    calling the internal method to_domain()
+    THEN    check that returned domain object Arkivuttrekk is correct
     """
-    expected = ArkivuttrekkBase(
+    # Domain
+    expected = Arkivuttrekk(
+        id_=1,
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.OPPRETTET,
-        type=ArkivuttrekkType.NOARK5,
+        type_=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
         avgiver_navn="Lewis Caroll",
@@ -68,6 +73,8 @@ def test_init_from(_arkivuttrekk):
         arkiv_sluttdato=date.fromisoformat("1900-05-12"),
         storrelse=0.4562,
         avtalenummer="01/12345",
+        opprettet=datetime.fromisoformat("2020-10-10"),
+        endret=datetime.fromisoformat("2020-11-10")
     )
-    actual = ArkivuttrekkBase.from_domain(_arkivuttrekk)
+    actual = _arkivuttrekk_dto.to_domain()
     assert vars(actual) == vars(expected)

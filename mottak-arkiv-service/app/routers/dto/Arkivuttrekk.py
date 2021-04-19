@@ -7,11 +7,12 @@ from pydantic import BaseModel
 from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType, Arkivuttrekk as Arkivuttrekk_domain
 
 
-class ArkivuttrekkBase(BaseModel):
+class Arkivuttrekk(BaseModel):
     """
     Used as the input parameter in POST "/arkivuttrekk/"
     and the response model for GET "/metadatafile/{id}/parsed
     """
+    id: int
     obj_id: UUID
     status: ArkivuttrekkStatus
     type: ArkivuttrekkType
@@ -25,9 +26,12 @@ class ArkivuttrekkBase(BaseModel):
     arkiv_sluttdato: date
     storrelse: float
     avtalenummer: str
+    opprettet: datetime
+    endret: datetime
 
     def to_domain(self) -> Arkivuttrekk_domain:
         return Arkivuttrekk_domain(
+            id_=self.id,
             obj_id=self.obj_id,
             status=self.status,
             type_=self.type,
@@ -41,16 +45,20 @@ class ArkivuttrekkBase(BaseModel):
             arkiv_sluttdato=self.arkiv_sluttdato,
             storrelse=self.storrelse,
             avtalenummer=self.avtalenummer,
+            opprettet=self.opprettet,
+            endret=self.endret
         )
-
-
-class Arkivuttrekk(ArkivuttrekkBase):
-    """
-    Used as the response model for all kinds of arkivuttrekk.
-    """
-    id: int
-    opprettet: datetime
-    endret: datetime
 
     class Config:
         orm_mode = True
+
+# class Arkivuttrekk(ArkivuttrekkBase):
+#     """
+#     Used as the response model for all kinds of arkivuttrekk.
+#     """
+#     id: int
+#     opprettet: datetime
+#     endret: datetime
+#
+#     class Config:
+#         orm_mode = True
