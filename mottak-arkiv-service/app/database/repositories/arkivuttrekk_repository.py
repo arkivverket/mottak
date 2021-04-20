@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
 from app.database.dbo.mottak import Arkivuttrekk as Arkivuttrekk_DBO
@@ -16,6 +16,10 @@ def create(db: Session, arkivuttrekk: Arkivuttrekk) -> Arkivuttrekk_DBO:
 
 def get_all(db: Session, skip: int, limit: int) -> List[Arkivuttrekk_DBO]:
     return db.query(Arkivuttrekk_DBO).order_by(desc(Arkivuttrekk_DBO.endret)).offset(skip).limit(limit).all()
+
+
+def get_count(db: Session) -> int:
+    return db.query(func.count(Arkivuttrekk_DBO.id)).scalar()
 
 
 def get_by_id(db: Session, id_: int) -> Arkivuttrekk_DBO:
