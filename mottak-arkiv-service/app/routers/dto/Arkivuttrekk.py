@@ -10,7 +10,6 @@ from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType,
 class Arkivuttrekk(BaseModel):
     """
     Used as the input parameter in POST "/arkivuttrekk/"
-    and the response model for GET "/metadatafile/{id}/parsed
     """
     id: int
     obj_id: UUID
@@ -51,14 +50,3 @@ class Arkivuttrekk(BaseModel):
 
     class Config:
         orm_mode = True
-
-# class Arkivuttrekk(ArkivuttrekkBase):
-#     """
-#     Used as the response model for all kinds of arkivuttrekk.
-#     """
-#     id: int
-#     opprettet: datetime
-#     endret: datetime
-#
-#     class Config:
-#         orm_mode = True

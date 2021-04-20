@@ -27,11 +27,10 @@ def get_content(id_: int, db: Session) -> str:
 
 # TODO: Find good name for this method
 # TODO: Update desc
-def get_metadata(id_: int, db: Session) -> Metadatafil:
+def get_metadatafil(metadatafil_id: int, db: Session) -> Metadatafil:
     """
-    Method that retrieves an Metadatafil database object by the input id_
-    and parses its content for values used when initializing an object of type ArkivuttrekkBase.
+    Method that retrieves an Metadatafil database object by the input metadatafil_id
     """
-    metadatafil_dbo = _get_dbo_by_id(db, id_)
+    metadatafil_dbo = _get_dbo_by_id(db, metadatafil_id)
     metadatafil = map_dbo2model(metadatafil_dbo)
     return metadatafil

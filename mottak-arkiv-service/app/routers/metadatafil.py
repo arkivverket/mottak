@@ -6,7 +6,7 @@ from app.routers.dto.Metadata import Metadata
 from app.routers.dto.Metadatafil import Metadatafil
 from app.routers.mappers.metadafil import to_metadata
 from app.routers.router_dependencies import get_db_session
-from app.routers.services.metadatafil_service import get_content, get_metadata, upload_metadatafil
+from app.routers.services.metadatafil_service import get_content, get_metadatafil, upload_metadatafil
 
 router = APIRouter()
 
@@ -39,8 +39,7 @@ async def router_get_content(metadatafil_id: int, db: Session = Depends(get_db_s
             summary="Henter ut parset innehold(XML) fra en metadatafil")
 async def router_get_parsed_content(metadatafil_id: int, db: Session = Depends(get_db_session)):
     try:
-
-        metadatafil = get_metadata(metadatafil_id, db)
+        metadatafil = get_metadatafil(metadatafil_id, db)
         metadata = to_metadata(metadatafil)
         return metadata
     except MetadatafilNotFound as err:

@@ -9,7 +9,9 @@ from app.domain.models.Metadata import Metadata as Metadata_domain
 
 
 class Metadata(BaseModel):
-    # TODO: Add desc
+    """
+    Used as response model for GET "/metadatafile/{id}/parsed
+    """
 
     obj_id: Optional[UUID]
     arkivutrekk_type: Optional[ArkivuttrekkType]
