@@ -91,7 +91,7 @@ jobs:
         run: |
           git config --local user.name "GitHub workflow arkade5-deployment.yaml"
           git config --local user.email "github-actions[bot]"
-          git add -u
+          git add -A
           echo $(git status)
           git commit -m "Set arkade5 image tag in dev to ${{ github.sha }}"
           git push origin master

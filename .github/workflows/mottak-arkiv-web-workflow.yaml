@@ -117,7 +117,7 @@ jobs:
         run: |
           git config --local user.name "GitHub workflow mottak-arkiv-web-deployment.yaml"
           git config --local user.email "github-actions[bot]"
-          git add -u
+          git add -A
           echo $(git status)
           git commit -m "Set mottak-arkiv-web image tag in dev to ${{ github.sha }}"
           git push origin master
