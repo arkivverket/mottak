@@ -572,8 +572,8 @@ six = ">=1.5"
 
 [[package]]
 name = "python-dotenv"
-version = "0.15.0"
-description = "Add .env support to your django/flask apps in development and deployments"
+version = "0.17.0"
+description = "Read key-value pairs from a .env file and set them as environment variables"
 category = "dev"
 optional = false
 python-versions = "*"
@@ -799,7 +799,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "07b41067ef2455ec5a66473b549cb450fe9174be0dc4f4e35a989a06b98a14da"
+content-hash = "69c0e748db038b181f4245a9b40711c898101f0670bda46ae61c1be28d631edd"
 
 [metadata.files]
 adal = [
@@ -1179,8 +1179,8 @@ python-dateutil = [
     {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
 ]
 python-dotenv = [
-    {file = "python-dotenv-0.15.0.tar.gz", hash = "sha256:587825ed60b1711daea4832cf37524dfd404325b7db5e25ebe88c495c9f807a0"},
-    {file = "python_dotenv-0.15.0-py2.py3-none-any.whl", hash = "sha256:0c8d1b80d1a1e91717ea7d526178e3882732420b03f08afea0406db6402e220e"},
+    {file = "python-dotenv-0.17.0.tar.gz", hash = "sha256:471b782da0af10da1a80341e8438fca5fadeba2881c54360d5fd8d03d03a4f4a"},
+    {file = "python_dotenv-0.17.0-py2.py3-none-any.whl", hash = "sha256:49782a97c9d641e8a09ae1d9af0856cc587c8d2474919342d5104d85be9890b2"},
 ]
 python-editor = [
     {file = "python-editor-1.0.4.tar.gz", hash = "sha256:51fda6bcc5ddbbb7063b2af7509e43bd84bfc32a4ff71349ec7847713882327b"},
