@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
 import {
 	CircularProgress,
 	Table,
@@ -59,19 +59,33 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 
 	const classes = useStyles()
 
-	//@ts-ignore
-	const handleChangePage = (e, newPage) => {
-		setPage(newPage)
-		handleTableChange(newPage * rows, rows)
-	}
+	const handleTableChange = useCallback(
+		(skip: number, limit: number) => {
+			performRequest({
+				url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
+				method: 'GET',
+			})
+		},
+		[performRequest],
+	)
 
-	//@ts-ignore
-	const handleChangeRows = (e) => {
-		const tmpRows = parseInt(e.target.value, 10)
-		setRows(tmpRows)
-		setPage(0)
-		handleTableChange(0, tmpRows)
-	}
+	const handleChangePage = useCallback(
+		(_, newPage: number) => {
+			setPage(newPage)
+			handleTableChange(newPage * rows, rows)
+		},
+		[setPage, handleTableChange, rows],
+	)
+
+	const handleChangeRows = useCallback(
+		({ target }) => {
+			const tmpRows = parseInt(target.value, 10)
+			setRows(tmpRows)
+			setPage(0)
+			handleTableChange(0, tmpRows)
+		},
+		[handleTableChange],
+	)
 
 	useEffect(() => {
 		error &&
@@ -92,14 +106,7 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const handleTableChange = (skip: number, limit: number) => {
-		performRequest({
-			url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
-			method: 'GET',
-		})
-	}
-
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (!data) return
 
 		const { result, count } = data
