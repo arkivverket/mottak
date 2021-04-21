@@ -33,7 +33,7 @@ async def router_create_arkivuttrekk(arkivuttrekk: Arkivuttrekk, db: Session = D
             response_model=List[str],
             summary="Hent ut alle støttede arkivtyper")
 async def router_get_parsed_content():
-    return arkivuttrekk_service._get_all_types()
+    return arkivuttrekk_service.get_all_types()
 
 
 @router.get("/{id}",
