@@ -79,12 +79,11 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 
 	const handleChangeRows = useCallback(
 		({ target }) => {
-			const tmpRows = parseInt(target.value, 10)
-			setRows(tmpRows)
-			setPage(0)
-			handleTableChange(0, tmpRows)
+			const rows = parseInt(target.value, 10)
+			setRows(rows)
+			handleTableChange(page, rows)
 		},
-		[handleTableChange],
+		[handleTableChange, page],
 	)
 
 	useEffect(() => {
