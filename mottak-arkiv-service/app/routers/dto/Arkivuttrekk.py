@@ -11,7 +11,7 @@ class Arkivuttrekk(BaseModel):
     """
     Used as the input parameter in POST "/arkivuttrekk/"
     """
-    id: int
+    id: Optional[int]
     obj_id: UUID
     status: ArkivuttrekkStatus
     type: ArkivuttrekkType
@@ -25,8 +25,8 @@ class Arkivuttrekk(BaseModel):
     arkiv_sluttdato: date
     storrelse: float
     avtalenummer: str
-    opprettet: datetime
-    endret: datetime
+    opprettet: Optional[datetime]
+    endret: Optional[datetime]
 
     def to_domain(self) -> Arkivuttrekk_domain:
         return Arkivuttrekk_domain(

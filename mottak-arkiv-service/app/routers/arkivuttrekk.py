@@ -9,12 +9,11 @@ from app.connectors.connectors_variables import get_mailgun_domain, get_mailgun_
 from app.connectors.mailgun.mailgun_client import MailgunClient
 from app.connectors.sas_generator.sas_generator_client import SASGeneratorClient
 from app.domain import arkivuttrekk_service
-from app.domain.models.Arkivuttrekk import ArkivuttrekkType
 from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, SASTokenPreconditionFailed, \
     ArkivkopiNotFound
 from app.routers.dto.Arkivkopi import Arkivkopi
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk, Arkivuttrekk
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_request_sender, get_sas_generator_client
 
