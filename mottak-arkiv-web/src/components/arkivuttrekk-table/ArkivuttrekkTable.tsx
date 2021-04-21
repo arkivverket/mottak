@@ -84,8 +84,7 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 
 	useEffect(() => {
 		performRequest({
-			// TODO: limit=1000 is a hack until backend supports get all
-			url: `/arkivuttrekk${pagination ? '' : '?limit=1000'}`,
+			url: `/arkivuttrekk${pagination ? '' : '?limit=-1'}`,
 			method: 'GET',
 		})
 

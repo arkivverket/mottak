@@ -36,6 +36,9 @@ def get_by_id(arkivuttrekk_id: int, db: Session) -> Arkivuttrekk_DBO:
 
 
 def get_all(db: Session, skip: int, limit: int) -> dict[list, int]:
+    if limit == -1:
+        limit = None
+
     return {
         'result': arkivuttrekk_repository.get_all(db, skip, limit),
         'count': arkivuttrekk_repository.get_count(db)
