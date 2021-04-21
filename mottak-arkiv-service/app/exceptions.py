@@ -84,6 +84,7 @@ class ArkivkopiNotFound(Exception):
                      or an overforingspakke (is_object=True)
         message -- explanation of the error
     """
+
     def __init__(self, arkivuttrekk_obj_id: UUID, invitasjon_id: int, is_object: bool):
         self.arkivuttrekk_obj_id = arkivuttrekk_obj_id
         self.invitasjon_id = invitasjon_id
@@ -178,4 +179,3 @@ class InvitasjonNotFound(Exception):
 
     def __str__(self):
         return self.message
-
