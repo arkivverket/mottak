@@ -10,6 +10,9 @@ on:
       - 's3-checksum256/**'
       - '.github/workflows/s3-checksum256-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

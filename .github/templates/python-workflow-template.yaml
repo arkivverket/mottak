@@ -10,6 +10,9 @@ on:
       - '!COMPONENT_NAME!/**'
       - '.github/workflows/!COMPONENT_NAME!-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

@@ -10,6 +10,9 @@ on:
       - 'arkiv-downloader/**'
       - '.github/workflows/arkiv-downloader-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

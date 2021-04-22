@@ -10,6 +10,9 @@ on:
       - 'storage-sas-generator/**'
       - '.github/workflows/storage-sas-generator-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

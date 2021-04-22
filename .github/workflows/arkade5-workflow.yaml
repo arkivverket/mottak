@@ -10,6 +10,9 @@ on:
       - 'arkade5/**'
       - '.github/workflows/arkade5-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 
