@@ -10,6 +10,9 @@ on:
       - 's3-delete/**'
       - '.github/workflows/s3-delete-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

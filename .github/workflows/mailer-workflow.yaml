@@ -10,6 +10,9 @@ on:
       - 'mailer/**'
       - '.github/workflows/mailer-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 

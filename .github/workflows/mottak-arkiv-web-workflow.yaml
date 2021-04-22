@@ -10,6 +10,9 @@ on:
       - 'mottak-arkiv-web/**'
       - '.github/workflows/mottak-arkiv-web-workflow.yaml'
 
+env:
+  DOCKER_BUILDKIT: 1
+
 jobs:
   test:
 
