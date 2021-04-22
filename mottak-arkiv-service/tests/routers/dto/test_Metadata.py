@@ -28,9 +28,9 @@ def _metadata() -> Metadata_domain:
 
 def test_init_from(_metadata):
     """
-    GIVEN   a domain object of type Arkivuttrekk
+    GIVEN   a domain object of type Metadata
     WHEN    calling the static method from_domain()
-    THEN    check that returned DTO object ArkivuttrekkBase is correct
+    THEN    check that returned DTO object Metadata is correct
     """
     expected = Metadata(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),

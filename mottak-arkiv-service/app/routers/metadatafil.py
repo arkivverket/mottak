@@ -22,7 +22,7 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err)
 
 
-@router.get("/{id}/content",
+@router.get("/{metadatafil_id}/content",
             status_code=status.HTTP_200_OK,
             response_model=str,
             summary="Henter ut innehold(XML) fra en metadatafil")

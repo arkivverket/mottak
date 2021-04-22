@@ -5,7 +5,7 @@ from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
 from app.domain.models.Metadata import Metadata
 
 
-def test_as_arkivuttrekk(testfile_metadatfil):
+def test_as_metadata(testfile_metadatfil):
     """
     GIVEN   a Metadatafil domain object
     WHEN    calling the internal method .as_arkivuttrekk()

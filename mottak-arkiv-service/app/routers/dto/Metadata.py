@@ -36,7 +36,6 @@ class Metadata(BaseModel):
             sjekksum_sha256=metadata.sjekksum_sha256,
             avgiver_navn=metadata.avgiver_navn,
             avgiver_epost=metadata.avgiver_epost,
-
             metadatafil_id=metadata.metadatafil_id,
             arkiv_startdato=metadata.arkiv_startdato,
             arkiv_sluttdato=metadata.arkiv_sluttdato,

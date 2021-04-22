@@ -170,7 +170,7 @@ def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
 def create_metadata_from_parsed_metadatafil(metadatafil_id: int, innhold: str) -> Metadata:
     """
     Method that parse the content (innhold) of a metadatfil
-    and returns a domain object of type Arkivuttrekk.
+    and returns a domain object of type Metadata.
     """
     root = ET.fromstring(innhold)
     ns = _get_all_namespaces(root)

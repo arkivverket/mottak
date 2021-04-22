@@ -25,8 +25,6 @@ def get_content(id_: int, db: Session) -> str:
     return dbo.innhold
 
 
-# TODO: Find good name for this method
-# TODO: Update desc
 def get_metadatafil(metadatafil_id: int, db: Session) -> Metadatafil:
     """
     Method that retrieves an Metadatafil database object by the input metadatafil_id

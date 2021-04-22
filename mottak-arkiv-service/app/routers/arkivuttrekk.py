@@ -32,7 +32,7 @@ async def router_create_arkivuttrekk(arkivuttrekk: Arkivuttrekk, db: Session = D
             status_code=status.HTTP_200_OK,
             response_model=List[str],
             summary="Hent ut alle støttede arkivtyper")
-async def router_get_parsed_content():
+async def router_get_all_types():
     return arkivuttrekk_service.get_all_types()
 
 
