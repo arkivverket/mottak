@@ -32,7 +32,10 @@ const arkivuttrekk = [
 
 //@ts-ignore
 useRequest.mockReturnValue({
-	data: arkivuttrekk,
+	data: {
+		result: arkivuttrekk,
+		count: arkivuttrekk.length,
+	},
 	loading: false,
 	error: null,
 	performRequest: jest.fn(),
