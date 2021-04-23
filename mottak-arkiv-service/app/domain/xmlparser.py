@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as ET
 from datetime import date
-from typing import Union
+from typing import Optional, Union
 from uuid import UUID
 
-from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType
+from app.domain.models.Metadata import Metadata
 
 NOT_PRESENT_RETURN_VALUE = ''
 
@@ -42,9 +43,9 @@ def _get_objekt_id(root: ET.Element) -> UUID:
     return UUID(uuid_str[5:])
 
 
-def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
+def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> Optional[ArkivuttrekkType]:
     """
-    Method that converts a str to a ArkivuttrekkType Enum value or returns a ValueError
+    Method that converts a str to a ArkivuttrekkType Enum value or returns None
     """
     if "Noark" in arkivuttrekk_str and "5" in arkivuttrekk_str:
         return ArkivuttrekkType.NOARK5
@@ -54,17 +55,17 @@ def _str_2_arkivuttrekk_type(arkivuttrekk_str: str) -> ArkivuttrekkType:
         return ArkivuttrekkType.FAGSYSTEM
     if "SIARD" in arkivuttrekk_str:
         return ArkivuttrekkType.SIARD
-    return NOT_PRESENT_RETURN_VALUE
+    return None
 
 
-def _get_arkivtype(root: ET.Element, ns: dict) -> str:
+def _get_arkivtype(root: ET.Element, ns: dict) -> Optional[ArkivuttrekkType]:
     # Arkivtype: DELIVERYSPECIFICATION
     try:
         alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
         arkivtype = [alt for alt in alt_record_ids
                      if "DELIVERYSPECIFICATION" == alt.get('TYPE')].pop().text
     except IndexError:
-        return NOT_PRESENT_RETURN_VALUE
+        return None
     else:
         return _str_2_arkivuttrekk_type(arkivtype)
 
@@ -119,16 +120,16 @@ def _get_avgiver_epost(root: ET.Element, ns: dict) -> str:
         return email_list.pop().text if email_list else NOT_PRESENT_RETURN_VALUE
 
 
-def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Union[date, str]:
+def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Optional[date]:
     alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
     for alt_record in alt_record_ids:
         if alt_record.get('TYPE') == "STARTDATE":
             date_ = alt_record.text
             return date.fromisoformat(date_)
-    return NOT_PRESENT_RETURN_VALUE
+    return None
 
 
-def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> date:
+def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> Optional[date]:
     alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
     for alt_record in alt_record_ids:
         if alt_record.get('TYPE') == "ENDDATE":
@@ -166,18 +167,18 @@ def _get_avtalenummer(root: ET.Element, ns: dict) -> str:
         return NOT_PRESENT_RETURN_VALUE
 
 
-def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -> Arkivuttrekk:
+def create_metadata_from_parsed_metadatafil(metadatafil_id: int, innhold: str) -> Metadata:
     """
     Method that parse the content (innhold) of a metadatfil
-    and returns a domain object of type Arkivuttrekk.
+    and returns a domain object of type Metadata.
     """
     root = ET.fromstring(innhold)
     ns = _get_all_namespaces(root)
 
-    arkivuttrekk = Arkivuttrekk(
+    metadata = Metadata(
         obj_id=_get_objekt_id(root),
         status=ArkivuttrekkStatus.OPPRETTET,
-        type_=_get_arkivtype(root, ns),
+        arkivutrekk_type=_get_arkivtype(root, ns),
         tittel=_get_title(root, ns),
         sjekksum_sha256=_get_checksum(root, ns),
         avgiver_navn=_get_avgiver_navn(root, ns),
@@ -188,4 +189,5 @@ def create_arkivuttrekk_from_parsed_innhold(metadatafil_id: int, innhold: str) -
         storrelse=_get_storrelse(root, ns),
         avtalenummer=_get_avtalenummer(root, ns)
     )
-    return arkivuttrekk
+
+    return metadata

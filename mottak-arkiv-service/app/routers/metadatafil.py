@@ -1,11 +1,12 @@
-from fastapi import APIRouter, status, Depends, UploadFile, File, HTTPException, Response
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile, status
 from sqlalchemy.orm import Session
 
-from app.domain.metadatafil_service import upload_metadatafil, get_content, get_parsed_content
-from app.exceptions import MetadatafilNotFound, InvalidContentType
-from app.routers.dto.Arkivuttrekk import ArkivuttrekkBase
+from app.exceptions import InvalidContentType, MetadatafilNotFound
+from app.routers.dto.Metadata import Metadata
 from app.routers.dto.Metadatafil import Metadatafil
+from app.routers.mappers.metadafil import to_metadata
 from app.routers.router_dependencies import get_db_session
+from app.routers.services.metadatafil_service import get_content, get_metadatafil, upload_metadatafil
 
 router = APIRouter()
 
@@ -21,23 +22,25 @@ async def router_upload_metadatafil(file: UploadFile = File(...), db: Session = 
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err)
 
 
-@router.get("/{id}/content",
+@router.get("/{metadatafil_id}/content",
             status_code=status.HTTP_200_OK,
             response_model=str,
             summary="Henter ut innehold(XML) fra en metadatafil")
-async def router_get_content(id: int, db: Session = Depends(get_db_session)):
+async def router_get_content(metadatafil_id: int, db: Session = Depends(get_db_session)):
     try:
-        return Response(content=get_content(id, db), media_type="application/xml")
+        return Response(content=get_content(metadatafil_id, db), media_type="application/xml")
     except MetadatafilNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
 
 
-@router.get("/{id}/parsed",
+@router.get("/{metadatafil_id}/parsed",
             status_code=status.HTTP_200_OK,
-            response_model=ArkivuttrekkBase,
+            response_model=Metadata,
             summary="Henter ut parset innehold(XML) fra en metadatafil")
-async def router_get_parsed_content(id: int, db: Session = Depends(get_db_session)):
+async def router_get_parsed_content(metadatafil_id: int, db: Session = Depends(get_db_session)):
     try:
-        return get_parsed_content(id, db)
+        metadatafil = get_metadatafil(metadatafil_id, db)
+        metadata = to_metadata(metadatafil)
+        return metadata
     except MetadatafilNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)

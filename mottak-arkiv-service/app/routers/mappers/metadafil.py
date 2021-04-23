@@ -4,6 +4,7 @@ from fastapi import UploadFile
 
 from app.domain.models.Metadatafil import MetadataType, Metadatafil
 from app.exceptions import InvalidContentType
+from app.routers.dto.Metadata import Metadata
 
 
 def _content_type2metadata_type(content_type: str) -> MetadataType:
@@ -40,3 +41,8 @@ def metadatafil_mapper(file: UploadFile) -> Metadatafil:
     return Metadatafil(filnavn=file.filename,
                        type_=_content_type2metadata_type(file.content_type),
                        innhold=_get_file_content(file))
+
+
+def to_metadata(metadatafil: Metadatafil) -> Metadata:
+    parsed_metadatafil = metadatafil.as_metadata()
+    return Metadata.from_domain(parsed_metadatafil)

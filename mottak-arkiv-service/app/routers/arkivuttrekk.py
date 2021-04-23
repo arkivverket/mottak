@@ -13,7 +13,7 @@ from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, SASTokenPreconditionFailed, \
     ArkivkopiNotFound
 from app.routers.dto.Arkivkopi import Arkivkopi
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkBase
+from app.routers.dto.Arkivuttrekk import Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_request_sender, get_sas_generator_client
 
@@ -24,8 +24,16 @@ router = APIRouter()
              status_code=status.HTTP_201_CREATED,
              response_model=Arkivuttrekk,
              summary="Lagre et arkivuttrekk ut fra redigerbare felter")
-async def router_create_arkivuttrekk(arkivuttrekk: ArkivuttrekkBase, db: Session = Depends(get_db_session)):
+async def router_create_arkivuttrekk(arkivuttrekk: Arkivuttrekk, db: Session = Depends(get_db_session)):
     return arkivuttrekk_service.create(arkivuttrekk.to_domain(), db)
+
+
+@router.get("/typer",
+            status_code=status.HTTP_200_OK,
+            response_model=List[str],
+            summary="Hent ut alle støttede arkivtyper")
+async def router_get_all_types():
+    return arkivuttrekk_service.get_all_types()
 
 
 @router.get("/{id}",

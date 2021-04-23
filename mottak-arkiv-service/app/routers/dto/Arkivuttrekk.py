@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -6,11 +7,11 @@ from pydantic import BaseModel
 from app.domain.models.Arkivuttrekk import ArkivuttrekkStatus, ArkivuttrekkType, Arkivuttrekk as Arkivuttrekk_domain
 
 
-class ArkivuttrekkBase(BaseModel):
+class Arkivuttrekk(BaseModel):
     """
     Used as the input parameter in POST "/arkivuttrekk/"
-    and the response model for GET "/metadatafile/{id}/parsed
     """
+    id: Optional[int]
     obj_id: UUID
     status: ArkivuttrekkStatus
     type: ArkivuttrekkType
@@ -18,15 +19,18 @@ class ArkivuttrekkBase(BaseModel):
     sjekksum_sha256: str
     avgiver_navn: str
     avgiver_epost: str
-    koordinator_epost: str = None
+    koordinator_epost: Optional[str]
     metadatafil_id: int
     arkiv_startdato: date
     arkiv_sluttdato: date
     storrelse: float
     avtalenummer: str
+    opprettet: Optional[datetime]
+    endret: Optional[datetime]
 
     def to_domain(self) -> Arkivuttrekk_domain:
         return Arkivuttrekk_domain(
+            id_=self.id,
             obj_id=self.obj_id,
             status=self.status,
             type_=self.type,
@@ -40,34 +44,9 @@ class ArkivuttrekkBase(BaseModel):
             arkiv_sluttdato=self.arkiv_sluttdato,
             storrelse=self.storrelse,
             avtalenummer=self.avtalenummer,
+            opprettet=self.opprettet,
+            endret=self.endret
         )
-
-    @staticmethod
-    def from_domain(arkivuttrekk: Arkivuttrekk_domain):
-        return ArkivuttrekkBase(
-            obj_id=arkivuttrekk.obj_id,
-            status=arkivuttrekk.status,
-            type=arkivuttrekk.type,
-            tittel=arkivuttrekk.tittel,
-            sjekksum_sha256=arkivuttrekk.sjekksum_sha256,
-            avgiver_navn=arkivuttrekk.avgiver_navn,
-            avgiver_epost=arkivuttrekk.avgiver_epost,
-            koordinator_epost=arkivuttrekk.koordinator_epost,
-            metadatafil_id=arkivuttrekk.metadatafil_id,
-            arkiv_startdato=arkivuttrekk.arkiv_startdato,
-            arkiv_sluttdato=arkivuttrekk.arkiv_sluttdato,
-            storrelse=arkivuttrekk.storrelse,
-            avtalenummer=arkivuttrekk.avtalenummer
-        )
-
-
-class Arkivuttrekk(ArkivuttrekkBase):
-    """
-    Used as the response model for all kinds of arkivuttrekk.
-    """
-    id: int
-    opprettet: datetime
-    endret: datetime
 
     class Config:
         orm_mode = True

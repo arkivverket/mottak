@@ -49,6 +49,17 @@ app.include_router(
     prefix="/metadatafil",
     tags=['metadatafil'])
 
+if os.getenv("PYTHON_ENV", None) == "local":
+    from fastapi.middleware.cors import CORSMiddleware
+    logger.info("Running locally")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:3000"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 
 @app.on_event("startup")
 async def init_jobs():
