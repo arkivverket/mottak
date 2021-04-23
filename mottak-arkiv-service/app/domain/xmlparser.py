@@ -120,13 +120,13 @@ def _get_avgiver_epost(root: ET.Element, ns: dict) -> str:
         return email_list.pop().text if email_list else NOT_PRESENT_RETURN_VALUE
 
 
-def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Union[date, str]:
+def _get_arkiv_startdato(root: ET.Element, ns: dict) -> Optional[date]:
     alt_record_ids = root.findall('mets:metsHdr/mets:altRecordID', namespaces=ns)
     for alt_record in alt_record_ids:
         if alt_record.get('TYPE') == "STARTDATE":
             date_ = alt_record.text
             return date.fromisoformat(date_)
-    return NOT_PRESENT_RETURN_VALUE
+    return None
 
 
 def _get_arkiv_sluttdato(root: ET.Element, ns: dict) -> Optional[date]:
