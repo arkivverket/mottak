@@ -13,7 +13,7 @@ from app.domain.models.Invitasjon import InvitasjonStatus
 from app.exceptions import ArkivuttrekkNotFound, ArkivkopiOfArchiveRequestFailed, SASTokenPreconditionFailed, \
     ArkivkopiNotFound
 from app.routers.dto.Arkivkopi import Arkivkopi
-from app.routers.dto.Arkivuttrekk import Arkivuttrekk
+from app.routers.dto.Arkivuttrekk import AllArkivuttrekk, Arkivuttrekk
 from app.routers.dto.Invitasjon import Invitasjon
 from app.routers.router_dependencies import get_db_session, get_request_sender, get_sas_generator_client
 
@@ -49,8 +49,8 @@ async def router_get_by_id(id: int, db: Session = Depends(get_db_session)):
 
 @router.get("",
             status_code=status.HTTP_200_OK,
-            response_model=List[Arkivuttrekk],
-            summary="Hent alle arkivuttrekk")
+            response_model=AllArkivuttrekk,
+            summary="Hent alle arkivuttrekk som liste og hvor mange arkivutrekk det finnes")
 async def router_get_all(db: Session = Depends(get_db_session), skip: int = 0, limit: int = 10):
     return arkivuttrekk_service.get_all(db, skip, limit)
 
@@ -139,4 +139,3 @@ async def router_get_download_status_of_overforingspakke(id: int, db: Session = 
         return await arkivuttrekk_service.get_arkivkopi_status(id, db, is_object=True)
     except ArkivkopiNotFound as err:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=err.message)
-

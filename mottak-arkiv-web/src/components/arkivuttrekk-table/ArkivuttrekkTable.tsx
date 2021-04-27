@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react'
 import {
 	CircularProgress,
 	Table,
@@ -50,26 +50,41 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 		},
 	]
 
-	const { data, loading, error, performRequest } = useRequest<ArkivUttrekk[]>()
+	const { data, loading, error, performRequest } = useRequest<{ result: ArkivUttrekk[]; count: number }>()
 	const { setAlertContent } = useContext(AlertContext)
-	const [page, setPage] = useState(0)
-	const [rows, setRows] = useState(10)
+	const [page, setPage] = useState<number>(0)
+	const [rows, setRows] = useState<number>(10)
+	const [results, setResults] = useState<ArkivUttrekk[]>([])
+	const [totalArkivuttrek, setTotalArkivuttrekk] = useState<number>(0)
 
 	const classes = useStyles()
 
-	//@ts-ignore
-	const handleChangePage = (e, newPage) => {
-		setPage(newPage)
-		handleTableChange(newPage * rows, rows)
-	}
+	const handleTableChange = useCallback(
+		(skip: number, limit: number) => {
+			performRequest({
+				url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
+				method: 'GET',
+			})
+		},
+		[performRequest],
+	)
 
-	//@ts-ignore
-	const handleChangeRows = (e) => {
-		const tmpRows = parseInt(e.target.value, 10)
-		setRows(tmpRows)
-		setPage(0)
-		handleTableChange(0, tmpRows)
-	}
+	const handleChangePage = useCallback(
+		(_, newPage: number) => {
+			setPage(newPage)
+			handleTableChange(newPage * rows, rows)
+		},
+		[setPage, handleTableChange, rows],
+	)
+
+	const handleChangeRows = useCallback(
+		({ target }) => {
+			const rows = parseInt(target.value, 10)
+			setRows(rows)
+			handleTableChange(page, rows)
+		},
+		[handleTableChange, page],
+	)
 
 	useEffect(() => {
 		error &&
@@ -78,22 +93,26 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 				msg: error?.response?.data?.detail || 'Det skjedde en feil under lasting av arkivuttrekk.',
 				type: 'error',
 			})
-	}, [error])
+	}, [error, setAlertContent])
 
 	useEffect(() => {
 		performRequest({
-			// TODO: limit=1000 is a hack until backend supports get all
-			url: `/arkivuttrekk${pagination ? '' : '?limit=1000'}`,
+			url: `/arkivuttrekk${pagination ? '' : '?limit=-1'}`,
 			method: 'GET',
 		})
+
+		// @TODO: Figure out why useRequest causes infinte requests
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
-	const handleTableChange = (skip: number, limit: number) => {
-		performRequest({
-			url: `/arkivuttrekk?skip=${skip}&limit=${limit}`,
-			method: 'GET',
-		})
-	}
+	useLayoutEffect(() => {
+		if (!data) return
+
+		const { result, count } = data
+
+		setResults(result)
+		setTotalArkivuttrekk(count)
+	}, [data])
 
 	return loading ? (
 		<CircularProgress />
@@ -109,8 +128,8 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 				</TableRow>
 			</TableHead>
 			<TableBody>
-				{data?.length ? (
-					data.map((arkivUttrekk: ArkivUttrekk) => (
+				{results.length ? (
+					results.map((arkivUttrekk: ArkivUttrekk) => (
 						<ArkivuttrekkRow key={arkivUttrekk.id} arkivUttrekk={arkivUttrekk} />
 					))
 				) : (
@@ -124,10 +143,10 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 					<TableRow>
 						<TablePagination
 							rowsPerPageOptions={[5, 10, 20, 50]}
-							count={-1} //TODO: update once we get total count from backend
+							count={totalArkivuttrek}
 							rowsPerPage={rows}
 							labelRowsPerPage={'Velg antall per side'}
-							labelDisplayedRows={({ from, to }) => `${from}-${to} av totalt`} //TODO: update once we get total count from backend
+							labelDisplayedRows={({ from, to }) => `${from}-${to} av totalt`}
 							page={page}
 							onChangePage={handleChangePage}
 							onChangeRowsPerPage={handleChangeRows}

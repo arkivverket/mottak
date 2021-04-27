@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime, date
 from typing import Optional
 from uuid import UUID
@@ -50,3 +51,12 @@ class Arkivuttrekk(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class AllArkivuttrekk(BaseModel):
+    """
+    Used as the return model when getting all arkivuttrekk from GET "/arkivuttrekk"
+    """
+
+    result: List[Arkivuttrekk]
+    count: int

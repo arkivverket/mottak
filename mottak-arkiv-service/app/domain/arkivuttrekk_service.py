@@ -14,8 +14,8 @@ from app.database.repositories import arkivkopi_repository, arkivuttrekk_reposit
 from app.domain.models.Arkivkopi import Arkivkopi, ArkivkopiRequestParameters
 from app.domain.models.Arkivuttrekk import Arkivuttrekk, ArkivuttrekkType
 from app.domain.models.Invitasjon import Invitasjon, InvitasjonStatus
-from app.exceptions import ArkivkopiNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiOfOverforingspakkeRequestFailed, ArkivuttrekkNotFound, InvitasjonNotFound,\
-    OverforingspakkeNotFound, SASTokenPreconditionFailed
+from app.exceptions import ArkivkopiNotFound, ArkivkopiOfArchiveRequestFailed, ArkivkopiOfOverforingspakkeRequestFailed, \
+    ArkivuttrekkNotFound, InvitasjonNotFound, OverforingspakkeNotFound, SASTokenPreconditionFailed
 
 ZERO_GENERATION = "0"
 TAR_SUFFIX = ".tar"
@@ -35,8 +35,14 @@ def get_by_id(arkivuttrekk_id: int, db: Session) -> Arkivuttrekk_DBO:
     return result
 
 
-def get_all(db: Session, skip: int, limit: int) -> List[Arkivuttrekk_DBO]:
-    return arkivuttrekk_repository.get_all(db, skip, limit)
+def get_all(db: Session, skip: int, limit: int) -> dict[list, int]:
+    if limit == -1:
+        limit = None
+
+    return {
+        'result': arkivuttrekk_repository.get_all(db, skip, limit),
+        'count': arkivuttrekk_repository.get_count(db)
+    }
 
 
 async def create_invitasjon(arkivuttrekk_id: int, db: Session, mailgun_client: MailgunClient) -> Optional[Invitasjon]:
