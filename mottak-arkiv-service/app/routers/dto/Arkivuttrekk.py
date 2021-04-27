@@ -55,6 +55,7 @@ class Arkivuttrekk(BaseModel):
 
 class AllArkivuttrekk(BaseModel):
     """
+    Used as the return model when getting all arkivuttrekk from GET "/arkivuttrekk"
     """
 
     result: List[Arkivuttrekk]
