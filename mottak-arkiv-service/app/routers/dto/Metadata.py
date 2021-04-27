@@ -14,7 +14,7 @@ class Metadata(BaseModel):
     """
 
     obj_id: Optional[UUID]
-    arkivutrekk_type: Optional[ArkivuttrekkType]
+    type: Optional[ArkivuttrekkType]
     tittel: Optional[str]
     status: Optional[str]
     sjekksum_sha256: Optional[str]
@@ -31,7 +31,7 @@ class Metadata(BaseModel):
         return Metadata(
             obj_id=metadata.obj_id,
             status=metadata.status,
-            arkivutrekk_type=metadata.arkivutrekk_type,
+            type=metadata.arkivutrekk_type,
             tittel=metadata.tittel,
             sjekksum_sha256=metadata.sjekksum_sha256,
             avgiver_navn=metadata.avgiver_navn,

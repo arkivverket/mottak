@@ -35,7 +35,7 @@ def test_init_from(_metadata):
     expected = Metadata(
         obj_id=UUID("df53d1d8-39bf-4fea-a741-58d472664ce2"),
         status=ArkivuttrekkStatus.OPPRETTET,
-        arkivutrekk_type=ArkivuttrekkType.NOARK5,
+        type=ArkivuttrekkType.NOARK5,
         tittel="tittel",
         sjekksum_sha256="2afeec307b0573339b3292e27e7971b5b040a5d7e8f7432339cae2fcd0eb936a",
         avgiver_navn="Lewis Caroll",

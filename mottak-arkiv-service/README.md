@@ -91,7 +91,7 @@ Initiate the database
 poetry run alembic upgrade head
 ```
 
-#### Starting the application
+### Starting the application
 
 ```console
 poetry run uvicorn app.main:app --reload
