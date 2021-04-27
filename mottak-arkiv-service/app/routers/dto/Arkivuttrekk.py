@@ -59,6 +59,3 @@ class AllArkivuttrekk(BaseModel):
 
     result: List[Arkivuttrekk]
     count: int
-
-    class Config:
-        orm_mode = True
