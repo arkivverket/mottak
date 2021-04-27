@@ -7,7 +7,7 @@ authors = ["Per Buer <per.buer@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pyClamd = "^0.4.0"
-azure-storage-blob = "^12.8.0"
+azure-storage-blob = "^12.8.1"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.8.2"
