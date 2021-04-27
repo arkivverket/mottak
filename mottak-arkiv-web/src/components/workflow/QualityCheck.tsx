@@ -4,7 +4,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/picker
 import MomentUtils from '@date-io/moment'
 import { validate as uuidValidate } from 'uuid'
 
-import { ArchiveType, ArkivUttrekk, ParsedMetadataFil, Status } from '../../types/sharedTypes'
+import { ArchiveType, ArkivUttrekk, Metadata, Status } from '../../types/sharedTypes'
 import { useSharedStyles } from '../../styles/sharedStyles'
 import { WorkflowContext } from './InvitationWorkflowContainer'
 import { StepperContext } from './WorkflowStepper'
@@ -31,7 +31,7 @@ const QualityCheck: React.FC = (): JSX.Element => {
 	const { setAlertContent } = useContext(AlertContext)
 	const sharedClasses = useSharedStyles()
 
-	const { data, loading, error } = useGetOnMount<ParsedMetadataFil>(`/metadatafil/${metadataId}/parsed`)
+	const { data, loading, error } = useGetOnMount<Metadata>(`/metadatafil/${metadataId}/parsed`)
 
 	const { data: dataAU, loading: loadingAU, error: errorAU, performRequest } = useRequest<ArkivUttrekk>()
 
@@ -61,6 +61,11 @@ const QualityCheck: React.FC = (): JSX.Element => {
 			errorMsg: 'Tittel er påkrevd.',
 			validator: (tittel: string) => tittel !== null && tittel !== '',
 		},
+		type: {
+			hasError: false,
+			errorMsg: 'Arkivtype er påkrevd.',
+			validator: (type: string) => archiveTypes.includes(type),
+		},
 		avgiver_epost: {
 			hasError: false,
 			errorMsg: 'Ugyldig epostadresse.',
@@ -78,7 +83,7 @@ const QualityCheck: React.FC = (): JSX.Element => {
 		},
 	}
 
-	const [values, setValues] = useState<ParsedMetadataFil>(initalvalues)
+	const [values, setValues] = useState<Metadata>(initalvalues)
 	const [validation, setValidation] = useState<ValidationType>(initialValidation)
 
 	const handleSubmit = (event: React.FormEvent) => {
@@ -90,6 +95,7 @@ const QualityCheck: React.FC = (): JSX.Element => {
 		const validTittel = validation['tittel'].validator(values?.tittel)
 		const validObjId = validation['obj_id'].validator(values?.obj_id)
 		const validKoordEpost = validation['koordinator_epost'].validator(values?.koordinator_epost)
+		const validType = validation['type'].validator(values?.type)
 
 		setValidation((prevState) => ({
 			...prevState,
@@ -107,7 +113,14 @@ const QualityCheck: React.FC = (): JSX.Element => {
 			},
 		}))
 
-		if (!(validTittel && validObjId && validKoordEpost)) return
+		setValidation((prevState) => ({
+			...prevState,
+			type: {
+				...prevState['type'],
+				hasError: !validType,
+			},
+		}))
+		if (!(validTittel && validObjId && validKoordEpost && validType)) return
 
 		performRequest({
 			url: '/arkivuttrekk',
@@ -250,6 +263,8 @@ const QualityCheck: React.FC = (): JSX.Element => {
 								value={values.type}
 								onChange={handleValueChange}
 								fullWidth
+								helperText={validation['type'].hasError ? validation['type'].errorMsg : ''}
+								error={validation['type'].hasError}
 							>
 								{archiveTypes.map((option) => (
 									<MenuItem key={option} value={option}>

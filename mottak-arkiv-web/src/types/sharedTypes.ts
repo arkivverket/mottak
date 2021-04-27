@@ -10,7 +10,7 @@ export type MetadataFil = {
 	opprettet: Date
 }
 
-export type ParsedMetadataFil = {
+export type Metadata = {
 	obj_id: string
 	status: Status
 	type: ArchiveType
@@ -26,7 +26,7 @@ export type ParsedMetadataFil = {
 	avtalenummer: string
 }
 
-export type ArkivUttrekk = ParsedMetadataFil & {
+export type ArkivUttrekk = Metadata & {
 	id: number
 	opprettet: Date
 	endret: Date
