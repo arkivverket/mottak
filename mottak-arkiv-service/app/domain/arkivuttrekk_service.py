@@ -1,6 +1,6 @@
 import logging
 import uuid
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from sqlalchemy.orm import Session
 
@@ -35,7 +35,7 @@ def get_by_id(arkivuttrekk_id: int, db: Session) -> Arkivuttrekk_DBO:
     return result
 
 
-def get_all(db: Session, skip: int, limit: int) -> dict[list, int]:
+def get_all(db: Session, skip: int, limit: int) -> Dict[List, int]:
     if limit == -1:
         limit = None
 
