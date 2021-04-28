@@ -146,7 +146,7 @@ const ArkivuttrekkTable: React.FC<{ pagination?: boolean }> = ({ pagination = tr
 							count={totalArkivuttrek}
 							rowsPerPage={rows}
 							labelRowsPerPage={'Velg antall per side'}
-							labelDisplayedRows={({ from, to }) => `${from}-${to} av totalt`}
+							labelDisplayedRows={({ from, to, count }) => `${from}-${to} av totalt ${count}`}
 							page={page}
 							onChangePage={handleChangePage}
 							onChangeRowsPerPage={handleChangeRows}
