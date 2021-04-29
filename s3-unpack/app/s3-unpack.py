@@ -7,6 +7,11 @@ import tarfile
 
 from py_objectstore import ArkivverketObjectStorage, MakeIterIntoFile, TarfileIterator
 
+
+logging.basicConfig(level=logging.INFO, format='%(name)s | %(levelname)s | %(message)s')
+logger = logging.getLogger(__name__)
+
+
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -36,11 +41,11 @@ storage = ArkivverketObjectStorage()
 
 
 def create_file(name, handle, target_container):
-    logging.debug(f"Creating {name} in {target_container}")
+    logger.debug(f"Creating {name} in {target_container}")
     try:
         storage.upload_stream(target_container, name, handle)
     except Exception as e:
-        logging.error(f'Failed to do streaming upload to {target_container} / {name}: {e}')
+        logger.error(f'Failed to do streaming upload to {target_container} / {name}: {e}')
         sys.exit(UPLOAD_ERROR)
 
 
@@ -48,14 +53,14 @@ def stream_tar(stream):
     """ Takes an stream and created both a tarfile object
     as well as a TarfileIterator using the stream """
     if stream is None:
-        logging.error("Could not open file.")
+        logger.error("Could not open file.")
         raise Exception('Could not get object handle')
     try:
         t_f = tarfile.open(fileobj=stream, mode='r|')
         tar_iterator = TarfileIterator(t_f)
     except Exception as exception:
-        logging.error(f'Failed to open stream to object {stream}')
-        logging.error(f'Error: {exception}')
+        logger.error(f'Failed to open stream to object {stream}')
+        logger.error(f'Error: {exception}')
         raise exception
     return tar_iterator, t_f
 
@@ -69,29 +74,29 @@ def unpack_tar(target_container):
         # If it is a directory or if a slash is the last char (root node?)
         if member.isdir() or member.name[-1] == '/':
             # Handle is none - likely a directory.
-            logging.info(f'Skipping {member.name} of size {member.size}')
+            logger.info(f'Skipping {member.name} of size {member.size}')
             continue
         # If non directory member isn't a file, logg warning
         elif not member.isfile():
-            logging.warning(f"Content {member.name} has not been unpacked because it is not a regular type of file")
+            logger.warning(f"Content {member.name} has not been unpacked because it is not a regular type of file")
             continue
         handle = tar_file.extractfile(member)
         # If member is the mets file, calculate sha256 checksum and log it
         if member.name.endswith(METS_FILENAME):
             checksum = get_sha256(handle)
-            logging.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
+            logger.info(f'Unpacking {member.name} of size {member.size} with checksum {checksum}')
             continue
-        logging.info(f'Unpacking {member.name} of size {member.size}')
+        logger.info(f'Unpacking {member.name} of size {member.size}')
         create_file(name=member.name, handle=handle, target_container=target_container)
 
 
 def create_target(container_name):
     try:
-        logging.info(f'Creating container {container_name}')
+        logger.info(f'Creating container {container_name}')
         container = storage.create_container(container_name)
         return container
     except Exception as e:
-        logging.error(f'Error while creating container {container_name}: {e}')
+        logger.error(f'Error while creating container {container_name}: {e}')
         raise e
 
 
@@ -110,13 +115,9 @@ def get_sha256(handle):
 
 
 def main():
-    logging.basicConfig(level=logging.INFO, filename=LOG_PATH, filemode='w',
-                        format='%(asctime)s %(levelname)s %(message)s')
-    # Also log to STDERR so k8s understands what is going on.
-    logging.getLogger().addHandler(logging.StreamHandler())
-    logging.info("Starting s3-unpack")
+    logger.info("Starting s3-unpack")
 
-    logging.info(f"Unpacking {objectname} into container {target_bucket_name}")
+    logger.info(f"Unpacking {objectname} into container {target_bucket_name}")
     target_container = create_target(target_bucket_name)
     unpack_tar(target_container)
 
