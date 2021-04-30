@@ -1,4 +1,4 @@
-FROM python:3.8-slim AS prepare
+FROM python:3.9.4-slim AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -9,10 +9,7 @@ ENV \
 	# Adds poetry bin to $PATH, so we don't need to link it to /usr/local/bin
 	PATH=/opt/poetry/bin:${PATH}
 
-RUN apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y \
-        curl \
-        git
+RUN pip install --upgrade pip
 
 RUN pip install --no-cache-dir poetry
 
@@ -23,7 +20,7 @@ RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev --no-interaction
 
 
-FROM python:3.8-slim
+FROM python:3.9.4-slim
 
 ENV PATH=/app/.venv/bin:${PATH}
 COPY --from=prepare /app/.venv /app/.venv
