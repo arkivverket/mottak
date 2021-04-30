@@ -67,7 +67,7 @@ def stream_tar(stream: Blob) -> tarfile.TarFile:
     :raises Exception: if an error is encountered
     """
     try:
-        tar_file = tarfile.open(fileobj=stream, mode="r")
+        tar_file = tarfile.open(fileobj=stream, mode="r|")
     except Exception as exception:
         logging.critical(f"Failed to open stream to object {stream.client.container_name}/{stream.client.blob_name}")
         logging.critical(f"Error: {exception}")

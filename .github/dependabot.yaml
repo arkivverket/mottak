@@ -35,3 +35,13 @@ updates:
     directory: "/s3-scan-tar"
     schedule:
       interval: "daily"
+
+  # s3-unpack
+  - package-ecosystem: "docker"
+    directory: "/s3-unpack"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    directory: "/s3-unpack"
+    schedule:
+      interval: "daily"
