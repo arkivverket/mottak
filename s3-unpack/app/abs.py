@@ -41,7 +41,7 @@ def create_target_bucket(blob_service_client: BlobServiceClient, bucket_name: st
         return blob_service_client.create_container(bucket_name)
     except ResourceExistsError as e:
         logger.error(f'Error while creating container {bucket_name}: {e}')
-        raise e
+        sys.exit(OBJECTSTORE_ERROR)
 
 
 def get_source_blob(blob_service_client: BlobServiceClient, source_bucket: str, source_object_name: str) -> BlobClient:
