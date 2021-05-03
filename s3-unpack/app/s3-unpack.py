@@ -75,7 +75,6 @@ def unpack_tar(target_bucket: ContainerClient, source_blob: Blob) -> None:
         if file_name.endswith(METS_FILENAME):
             checksum = get_sha256(handle)
             logger.info(f'Unpacking {file_name} of size {member.size} with checksum {checksum}')
-            continue
         logger.info(f'Unpacking {file_name} of size {member.size}')
         upload_file(name=file_name, handle=handle, target_bucket=target_bucket)
 
