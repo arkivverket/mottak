@@ -88,6 +88,7 @@ def main():
     azure_blob = get_source_blob(blob_service_client, source_bucket, source_object_name)
     blob = Blob(azure_blob, max_concurrency, buffer_size)
     unpack_tar(target_bucket, blob)
+    logger.info(f"Finished unpacking {source_object_name} into container {target_bucket_name}")
 
 
 if __name__ == "__main__":
