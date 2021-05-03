@@ -38,3 +38,15 @@ def get_sha256(handle: Optional[BytesIO]) -> str:
         sha.update(memory_view[:n])
 
     return sha.hexdigest()
+
+
+def sizeof_format(size: int) -> str:
+    """Convert bytes to human readable units using binary prefix (KiB, MiB), divisble by 1024
+    :param int size: size in bytes
+    :returns str: Human readable size
+    """
+    for unit in ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB"]:
+        if abs(size) < 1024.0:
+            return f"{size:.1f} {unit}"
+        size /= 1024.0
+    return f"{size:.1f} YiB"

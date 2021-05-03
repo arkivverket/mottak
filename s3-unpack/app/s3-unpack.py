@@ -2,13 +2,15 @@
 import os
 import logging
 import tarfile
+from typing import Optional
+from io import BytesIO
 
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
 
 from app.abs import create_target_bucket, get_source_blob, upload_file, get_blob_service_client
 from app.blob import Blob, DEFAULT_BUFFER_SIZE
-from app.utils import fix_encoding, get_sha256
+from app.utils import fix_encoding, get_sha256, sizeof_format
 
 
 logging.basicConfig(level=logging.INFO, format='%(name)s | %(levelname)s | %(message)s')
@@ -19,7 +21,7 @@ logger = logging.getLogger(__name__)
 try:
     from dotenv import load_dotenv
     load_dotenv()
-except:
+except ModuleNotFoundError:
     logger.info("Failed to load dotenv file. Assuming production")
 
 # Constants
@@ -64,7 +66,7 @@ def unpack_tar(target_bucket: ContainerClient, source_blob: Blob) -> None:
         # If it is a directory or if a slash is the last char (root node?)
         if member.isdir() or file_name[-1] == '/':
             # Handle is none - likely a directory.
-            logger.info(f'Skipping {file_name} of size {member.size}')
+            logger.info(f'Skipping {file_name} of size {sizeof_format(member.size)}')
             continue
         # If non directory member isn't a file, logg warning
         elif not member.isfile():
@@ -74,8 +76,9 @@ def unpack_tar(target_bucket: ContainerClient, source_blob: Blob) -> None:
         # If member is the mets file, calculate sha256 checksum and log it
         if file_name.endswith(METS_FILENAME):
             checksum = get_sha256(handle)
-            logger.info(f'Unpacking {file_name} of size {member.size} with checksum {checksum}')
-        logger.info(f'Unpacking {file_name} of size {member.size}')
+            logger.info(f'Unpacking {file_name} of size {sizeof_format(member.size)} with checksum {checksum}')
+        else:
+            logger.info(f'Unpacking {file_name} of size {sizeof_format(member.size)}')
         upload_file(name=file_name, handle=handle, target_bucket=target_bucket)
 
 
