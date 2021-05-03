@@ -11,8 +11,6 @@ ENV \
 	# Adds poetry bin to $PATH, so we don't need to link it to /usr/local/bin
 	PATH=/opt/poetry/bin:${PATH}
 
-RUN pip install --upgrade pip
-
 RUN pip install --no-cache-dir poetry
 
 WORKDIR /app
