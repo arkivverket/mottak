@@ -1,4 +1,4 @@
-ARG PYTHONIMAGE=python:3.9.4-slim
+ARG PYTHONIMAGE=python:3.9.3-slim
 
 FROM $PYTHONIMAGE AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
