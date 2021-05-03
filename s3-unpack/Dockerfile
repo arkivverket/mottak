@@ -3,13 +3,6 @@ ARG PYTHONIMAGE=python:3.9.4-slim
 FROM $PYTHONIMAGE AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-ENV \
-    # make poetry install to this location
-    POETRY_HOME="/opt/poetry" \
-    # do not ask any interactive question
-    POETRY_NO_INTERACTION=1 \
-	# Adds poetry bin to $PATH, so we don't need to link it to /usr/local/bin
-	PATH=/opt/poetry/bin:${PATH}
 
 RUN pip install --no-cache-dir poetry
 
