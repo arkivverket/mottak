@@ -1,4 +1,6 @@
-FROM python:3.9.4-slim AS prepare
+ARG PYTHONIMAGE=python:3.9.4-slim
+
+FROM $PYTHONIMAGE AS prepare
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV \
@@ -20,7 +22,7 @@ RUN poetry config virtualenvs.in-project true \
 	&& poetry install --no-dev --no-interaction
 
 
-FROM python:3.9.4-slim
+FROM $PYTHONIMAGE
 
 ENV PATH=/app/.venv/bin:${PATH}
 COPY --from=prepare /app/.venv /app/.venv
