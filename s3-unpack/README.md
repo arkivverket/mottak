@@ -15,5 +15,5 @@ The values given here are examples where we have chosen Azure blob storage as ob
 - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=**********;AccountKey=**********;EndpointSuffix=core.windows.net
 - OUTPUT_PATH_LOG= Optional, defaults to "/tmp/unpack.log"
 - MAX_CONCURRENCY= Optional, defaults to 4
-- BUFFER_SIZE= Optional, defaults to blob.DEFAULT_BUFFER_SIZE
+- BUFFER_SIZE= Optional, defaults to app/blob.DEFAULT_BUFFER_SIZE
 ```

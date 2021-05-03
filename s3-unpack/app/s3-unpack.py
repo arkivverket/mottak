@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 import os
-import sys
 import logging
-import hashlib
 import tarfile
-from io import BytesIO
-from typing import Optional
 
 from azure.storage.blob import BlobServiceClient, ContainerClient
-from azure.core.exceptions import ResourceExistsError
 
 
+from app.abs import create_target_bucket, get_source_blob, upload_file, get_blob_service_client
 from app.blob import Blob, DEFAULT_BUFFER_SIZE
-from app.utils import fix_encoding
+from app.utils import fix_encoding, get_sha256
+
 
 logging.basicConfig(level=logging.INFO, format='%(name)s | %(levelname)s | %(message)s')
 logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.WARNING)
@@ -28,11 +25,6 @@ except:
 # Constants
 METS_FILENAME = "dias-mets.xml"
 
-# Exit values
-TAR_ERROR = 10
-UPLOAD_ERROR = 11
-OBJECTSTORE_ERROR = 12
-
 
 # ENV variables
 source_bucket = os.getenv('SOURCE_BUCKET')  # Also known as a Container in Azure Blob Storage
@@ -42,22 +34,6 @@ conn_str = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 max_concurrency = int(os.getenv("MAX_CONCURRENCY", 4))
 buffer_size = int(os.getenv("BUFFER_SIZE", DEFAULT_BUFFER_SIZE))
 os.getenv("OUTPUT_PATH_LOG", "/tmp/unpack.log")
-
-
-def upload_file(name: str, handle: Optional[BytesIO], target_bucket: ContainerClient) -> None:
-    """Uploades a file to Azure Blob Storage
-
-    :param name: the name of the target object on ABS
-    :param handle: bytes buffer of the file
-    :param target_bucket: container/bucket to store the file in
-    """
-    logger.debug(f"Creating {name} in {target_bucket}")
-    try:
-        blob_client = target_bucket.get_blob_client(blob=name)
-        blob_client.upload_blob(handle)
-    except Exception as e:
-        logger.error(f'Failed to do streaming upload to {target_bucket} / {name}: {e}')
-        sys.exit(UPLOAD_ERROR)
 
 
 def stream_tar(stream: Blob) -> tarfile.TarFile:
@@ -104,50 +80,14 @@ def unpack_tar(target_bucket: ContainerClient, source_blob: Blob) -> None:
         upload_file(name=file_name, handle=handle, target_bucket=target_bucket)
 
 
-def create_target_bucket(bucket_name: str, blob_service_client: BlobServiceClient) -> ContainerClient:
-    """Creates a new bucket on Azure Blob Storage
-
-    :param bucket_name: the name of the new bucket
-    :param blob_service_client: A Blob Service Client with the rights to create a new bucket
-    :return: a container client of the new bucket
-    :raises: ResourceExistsError if the bucket already exists
-    """
-    try:
-        logger.info(f'Creating container {bucket_name}')
-        return blob_service_client.create_container(bucket_name)
-    except ResourceExistsError as e:
-        logger.error(f'Error while creating container {bucket_name}: {e}')
-        raise e
-
-
-def get_source_blob(blob_service_client: BlobServiceClient) -> Blob:
-    azure_blob = blob_service_client.get_blob_client(container=source_bucket, blob=source_object_name)
-    blob = Blob(azure_blob, max_concurrency, buffer_size)
-    logger.info(f"Connected to Azure with API version {blob.client.api_version}")
-    return blob
-
-
-def get_sha256(handle: Optional[BytesIO]) -> str:
-    """
-    Get SHA256 hash of the file, directly in memory
-    """
-    sha = hashlib.sha256()
-    byte_array = bytearray(128 * 1024)
-    memory_view = memoryview(byte_array)
-
-    for n in iter(lambda: handle.readinto(memory_view), 0):
-        sha.update(memory_view[:n])
-
-    return sha.hexdigest()
-
-
 def main():
     logger.info("Starting s3-unpack")
-    blob_service_client: BlobServiceClient = BlobServiceClient.from_connection_string(conn_str)
+    blob_service_client: BlobServiceClient = get_blob_service_client(conn_str)
     logger.info(f"Unpacking {source_object_name} into container {target_bucket_name}")
-    target_bucket = create_target_bucket(target_bucket_name, blob_service_client)
-    source_blob = get_source_blob(blob_service_client)
-    unpack_tar(target_bucket, source_blob)
+    target_bucket = create_target_bucket(blob_service_client, target_bucket_name)
+    azure_blob = get_source_blob(blob_service_client, source_bucket, source_object_name)
+    blob = Blob(azure_blob, max_concurrency, buffer_size)
+    unpack_tar(target_bucket, blob)
 
 
 if __name__ == "__main__":

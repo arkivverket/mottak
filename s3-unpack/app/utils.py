@@ -1,3 +1,8 @@
+import hashlib
+from typing import Optional
+from io import BytesIO
+
+
 def fix_encoding(string: str) -> str:
     """Fixes æøåÆØÅ erros encountered if the file name is latin1 encoding in UTF-8
 
@@ -19,3 +24,17 @@ def fix_encoding(string: str) -> str:
         string = string.replace(search, replace)
 
     return string
+
+
+def get_sha256(handle: Optional[BytesIO]) -> str:
+    """
+    Get SHA256 hash of the file, directly in memory
+    """
+    sha = hashlib.sha256()
+    byte_array = bytearray(128 * 1024)
+    memory_view = memoryview(byte_array)
+
+    for n in iter(lambda: handle.readinto(memory_view), 0):
+        sha.update(memory_view[:n])
+
+    return sha.hexdigest()
