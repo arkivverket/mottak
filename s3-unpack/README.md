@@ -21,6 +21,7 @@ The values given here are examples.
 ```
 
 ### Optional env variables
+
 ```dotenv
 - OUTPUT_PATH_LOG="/tmp/unpack.log"
 - MAX_CONCURRENCY="4"
