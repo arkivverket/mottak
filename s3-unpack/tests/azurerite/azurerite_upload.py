@@ -6,7 +6,7 @@ import os
 import sys
 import uuid
 
-from azure.storage.blob import ContainerClient, BlobServiceClient
+from azure.storage.blob import ContainerClient
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 
 from dotenv import load_dotenv
