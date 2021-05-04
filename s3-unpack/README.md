@@ -11,6 +11,7 @@ It creates a log of the operation that argo can pick up as an artifact.
 The values given here are examples.
 
 ### Required env variables
+
 ```dotenv
 - SOURCE_OBJECT_NAME=ok63e2f0-39bf-4fea-a741-58d472664ce2
 - SOURCE_BUCKET=bucket-storage
