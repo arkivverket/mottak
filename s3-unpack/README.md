@@ -7,6 +7,7 @@ It creates a log of the operation that argo can pick up as an artifact.
 
 
 ## Environment variables
+
 The values given here are examples.
 
 ### Required env variables
