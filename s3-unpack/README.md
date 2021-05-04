@@ -31,6 +31,7 @@ The values given here are examples.
 ## Running locally
 
 ### Prerequisites
+
 Create `.env` file in [root folder](.) containing env variables, use [`.env.default`](.env.default) as a template.
 
 ### With Azurite
