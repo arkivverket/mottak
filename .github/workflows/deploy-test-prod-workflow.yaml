@@ -29,6 +29,7 @@ jobs:
             cp values/test/values-containers.yaml values/prod/values-containers.yaml
           else
             echo "${{ github.event.inputs.env }} is not supported as an environment"
+            exit 1
           fi
 
       - name: Run Helm Template
